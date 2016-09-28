@@ -3,10 +3,12 @@ package mark.server;
 import com.googlecode.jsonrpc4j.JsonRpcServer;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.concurrent.ArrayBlockingQueue;
 import mark.activation.ActivationController;
 import mark.activation.ActivationProfile;
+import mark.activation.InvalidProfileException;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -18,17 +20,20 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
  */
 public class Datastore implements Runnable {
 
+    private Config config;
 
-    private MasfadConfig config;
-    private Server http_server;
+    // isStarted() will be called from another thread => must be volatile
+    private volatile Server http_server;
     private final ActivationController activation_controller;
 
     /**
      * Instatiate a datastore with default config and empty activation profiles.
      */
     public Datastore() {
-        this.config = new MasfadConfig();
+        this.config = new Config();
         this.activation_controller = new ActivationController();
+        activation_controller.setServerAddress(
+                "http://" + config.server_host + ":" + config.server_port);
     }
 
     /**
@@ -43,11 +48,22 @@ public class Datastore implements Runnable {
         activation_controller.setProfiles(profiles);
     }
 
-    public void setActivationProfiles(InputStream profiles) throws Exception  {
+    /**
+     * Set the activation profiles from a file before starting the server.
+     * @param profiles
+     * @throws FileNotFoundException
+     * @throws InvalidProfileException
+     */
+    public final void setActivationProfiles(final InputStream profiles)
+        throws FileNotFoundException, InvalidProfileException{
         activation_controller.setProfiles(profiles);
     }
 
-    public void setConfiguration(MasfadConfig config) {
+    /**
+     * Set the configuration before starting the server.
+     * @param config
+     */
+    public final void setConfiguration(final Config config) {
         this.config = config;
     }
 
@@ -79,6 +95,7 @@ public class Datastore implements Runnable {
         http_server = new Server(thread_pool);
 
         ServerConnector http_connector = new ServerConnector(http_server);
+        http_connector.setHost(config.server_host);
         http_connector.setPort(config.server_port);
 
         http_server.setConnectors(new Connector[]{http_connector});
@@ -109,6 +126,8 @@ public class Datastore implements Runnable {
             http_server.stop();
 
         } catch (Exception ex) {
+            System.err.println(
+                    "HTTP server failed to stop: " + ex.getMessage());
         }
     }
 

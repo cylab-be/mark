@@ -1,6 +1,8 @@
 package mark.agent.detection.http;
 
-import java.util.Map;
+import java.net.ConnectException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
 import mark.core.RawData;
 import mark.client.Client;
@@ -16,23 +18,22 @@ import org.apache.commons.math3.transform.TransformType;
 public class Frequency extends AbstractDetectionAgent {
 
     /**
-     * Sampling interval (in second)
+     * Sampling interval (in second).
      */
     public static final int SAMPLING_INTERVAL = 60;
 
-    public Frequency(String type, String client, String server) {
-        super(type, client, server);
-    }
-
-
-
-    public void setParameters(Map<String, Object> parameters) {
-
-    }
-
-    public void run() {
-        Client datastore = new Client();
-        RawData[] raw_data = datastore.findRawData(type, client, server);
+    public final void run() {
+        Client datastore;
+        RawData[] raw_data;
+        try {
+            datastore = getDatastore();
+            raw_data = datastore.findRawData(
+                getType(), getClient(), getServer());
+        } catch (Throwable ex) {
+            System.err.println("Could not connect!");
+            System.err.println(ex.getMessage());
+            return;
+        }
 
         FastFourierTransformer fft_transformer = new FastFourierTransformer(
                 DftNormalization.STANDARD);
@@ -58,7 +59,8 @@ public class Frequency extends AbstractDetectionAgent {
             System.out.println(count);
         }
 
-        Complex[] transform = fft_transformer.transform(counts, TransformType.FORWARD);
+        Complex[] transform =
+                fft_transformer.transform(counts, TransformType.FORWARD);
 
         for (Complex complex : transform) {
             System.out.println(complex.getReal());

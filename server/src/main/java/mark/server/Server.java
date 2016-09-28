@@ -6,32 +6,34 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import mark.activation.ActivationProfile;
+import mark.activation.InvalidProfileException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 /**
- * Represents a masfad server, composed of a datastore + some data agents.
+ * Represents a MARK server, composed of a datastore + some data agents.
  * @author Thibault Debatty
  */
 public class Server {
 
     private static final int START_WAIT_MS = 1000;
 
-    private MasfadConfig config;
+    private Config config;
     private final Datastore datastore;
-    private Iterable<SourceProfile> source_profiles;
-    private ArrayList<Thread> source_threads;
+
+    private LinkedList<SourceProfile> source_profiles;
+    private LinkedList<DataAgentInterface> source_agents;
+    private LinkedList<Thread> source_threads;
 
 
     /**
-     * Initialize a masfad server with default configuration, no data agents
+     * Initialize a server with default configuration, no data agents
      * and no detection agents.
      */
     public Server() {
-        config = new MasfadConfig();
+        config = new Config();
         datastore = new Datastore();
 
         // Create an empty list of source profiles
@@ -39,7 +41,8 @@ public class Server {
     }
 
     /**
-     * Start the datastore and data agents (sources) in separate threads.
+     * Non-blocking start the datastore and data agents (sources) in separate
+     * threads.
      * This method returns when the server and agents are started.
      * You can use server.stop()
      */
@@ -72,12 +75,18 @@ public class Server {
         while (!datastore.isStarted()) {
             try {
                 Thread.sleep(START_WAIT_MS);
+
             } catch (InterruptedException ex) {
+                // Something is trying to stop the main thread
+
+                datastore.stop();
+                return;
             }
         }
 
         // Start the data agents (sources)
-        source_threads = new ArrayList<Thread>();
+        source_agents = new LinkedList<DataAgentInterface>();
+        source_threads = new LinkedList<Thread>();
 
         for (SourceProfile profile : source_profiles) {
             try {
@@ -87,7 +96,9 @@ public class Server {
                 source.setParameters(profile.parameters);
                 Thread source_thread = new Thread(source);
                 source_thread.start();
+
                 source_threads.add(source_thread);
+                source_agents.add(source);
 
             } catch (ClassNotFoundException ex) {
                 // If any of the data agents fail to start,
@@ -113,17 +124,38 @@ public class Server {
     }
 
     /**
-     * Kill the data agents, wait for all detection agents to complete and
+     * Stop the data agents, wait for all detection agents to complete and
      * eventually stop the datastore.
      */
     public final void stop() {
         System.out.println("Stopping server...");
-        System.out.println("Kill data agents (sources)");
-        for (Thread source_thread : source_threads) {
-            source_thread.stop();
+        System.out.println("Ask data agents (sources) to finish");
+        for (DataAgentInterface source : source_agents) {
+            source.stop();
         }
 
-        System.out.println("Wait for tasks to complete...");
+        System.out.println("Wait for data agents (sources) to finish");
+        // this cannot be interrupted...
+        boolean interrupted = false;
+        try {
+            for (Thread thread : source_threads) {
+                while (true) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        interrupted = true;
+                        // fall through and retry
+                    }
+                }
+            }
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+
+        System.out.println("Wait for detection tasks to complete...");
         datastore.stop();
     }
 
@@ -135,8 +167,8 @@ public class Server {
      */
     public final void awaitTermination() throws InterruptedException {
         System.out.println("Wait for data agents to finish...");
-        for (Thread source_thread : source_threads) {
-            source_thread.join();
+        for (DataAgentInterface source : source_agents) {
+            source.stop();
         }
     }
 
@@ -144,7 +176,7 @@ public class Server {
      *
      * @return
      */
-    public final MasfadConfig getConfiguration() {
+    public final Config getConfiguration() {
         return config;
     }
 
@@ -156,16 +188,16 @@ public class Server {
     public final void setConfiguration(final InputStream config_file)
             throws FileNotFoundException {
 
-        Yaml yaml = new Yaml(new Constructor(MasfadConfig.class));
+        Yaml yaml = new Yaml(new Constructor(Config.class));
         this.setConfiguration(yaml.loadAs(
-                config_file, MasfadConfig.class));
+                config_file, Config.class));
     }
 
     /**
      * Set configuration before starting the server.
      * @param config
      */
-    public final void setConfiguration(final MasfadConfig config) {
+    public final void setConfiguration(final Config config) {
         this.config = config;
         this.datastore.setConfiguration(config);
     }
@@ -185,11 +217,12 @@ public class Server {
 
     /**
      * Set activation profiles from YAML file before starting the server.
-     * @param profiles
-     * @throws Exception if the file does not exist or cannot be parsed.
+     * @param profiles file
+     * @throws java.io.FileNotFoundException
+     * @throws mark.activation.InvalidProfileException
      */
     public final void setActivationProfiles(final InputStream profiles)
-            throws Exception {
+            throws FileNotFoundException, InvalidProfileException {
 
         datastore.setActivationProfiles(profiles);
     }
@@ -199,7 +232,7 @@ public class Server {
      * @param profiles
      */
     public final void setSourceProfiles(
-            final Iterable<SourceProfile> profiles) {
+            final LinkedList<SourceProfile> profiles) {
         this.source_profiles = profiles;
     }
 

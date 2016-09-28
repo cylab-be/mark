@@ -1,7 +1,6 @@
 package mark.client;
 
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
-import java.net.MalformedURLException;
 import java.net.URL;
 import mark.core.ServerInterface;
 import mark.core.Evidence;
@@ -18,77 +17,70 @@ public class Client implements ServerInterface {
     /**
      * Instantiate a connection to datastore server with default URL (localhost
      * and port 8080).
+     *
+     * @throws java.net.ConnectException
      */
-    public Client() {
-        try {
-            datastore = new JsonRpcHttpClient(
-                    new URL("http://127.0.0.1:8080"));
-        } catch (MalformedURLException ex) {
-            System.err.println("URL of datastore server is not valid!");
-            System.exit(1);
-        }
+    public Client() throws Throwable {
+        this("http://127.0.0.1:8080");
+    }
+
+    /**
+     * Create a connection to server with provided URL, and test the connection.
+     * So we can directly throw an exception if connection failed...
+     *
+     * @param server_address
+     * @throws java.net.ConnectException
+     */
+    public Client(final String server_address) throws Throwable {
+
+        datastore = new JsonRpcHttpClient(new URL(server_address));
+        datastore.setConnectionTimeoutMillis(5000);
+        test();
     }
 
     /**
      * {@inheritDoc}
      */
-    public final String test() {
-        try {
-            return datastore.invoke("test", null, String.class);
+    public final String test() throws Throwable {
+        return datastore.invoke("test", null, String.class);
 
-        } catch (Throwable ex) {
-            System.err.println("test failed: " + ex.getMessage());
-        }
-
-        return null;
     }
 
     /**
      * {@inheritDoc}
+     *
      * @param data {@inheritDoc}
      */
-    public final void addRawData(final RawData data) {
-        try {
-            datastore.invoke("addRawData", new Object[]{data});
-        } catch (Throwable ex) {
-            System.err.println("addRawData failed: " + ex.getMessage());
-        }
+    public final void addRawData(final RawData data) throws Throwable {
+
+        datastore.invoke("addRawData", new Object[]{data});
 
     }
 
     /**
      * {@inheritDoc}
+     *
      * @param data {@inheritDoc }
      */
-    public final void testString(final String data) {
-        try {
-            datastore.invoke("testString", new Object[]{data});
-        } catch (Throwable ex) {
-            System.err.println("testString failed: " + ex.getMessage());
-        }
+    public final void testString(final String data) throws Throwable {
+
+        datastore.invoke("testString", new Object[]{data});
     }
 
-    public final RawData[] findRawData(String type, String client, String server) {
-        try {
-            return datastore.invoke(
-                    "findRawData",
-                    new Object[]{type, client, server},
-                    RawData[].class);
+    public final RawData[] findRawData(
+            final String type, final String client, final String server)
+            throws Throwable {
 
-        } catch (Throwable ex) {
-            System.err.println("findRawData failed: " + ex.getMessage());
-            return new RawData[0];
-        }
+        return datastore.invoke(
+                "findRawData",
+                new Object[]{type, client, server},
+                RawData[].class);
 
     }
 
-    public void addEvidence(Evidence evidence) {
-        try {
-            datastore.invoke("addEvidence", new Object[]{evidence});
+    public final void addEvidence(final Evidence evidence) throws Throwable {
 
-        } catch (Throwable ex) {
-            System.err.println("addEvidence failed: " + ex.getMessage());
-        }
+        datastore.invoke("addEvidence", new Object[]{evidence});
     }
 
 }

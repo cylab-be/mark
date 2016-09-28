@@ -2,6 +2,7 @@ package mark.server;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import mark.activation.InvalidProfileException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -24,9 +25,11 @@ public final class Main {
      * @param args
      * @throws org.apache.commons.cli.ParseException
      * @throws java.io.FileNotFoundException
+     * @throws mark.activation.InvalidProfileException
      */
     public static void main(final String[] args)
-            throws ParseException, FileNotFoundException, Exception {
+            throws ParseException, FileNotFoundException,
+            InvalidProfileException {
         // Parse command line arguments
         Options options = new Options();
 
@@ -61,7 +64,7 @@ public final class Main {
             server.setActivationProfiles(
                     new FileInputStream(cmd.getOptionValue("a")));
         }
-        server.start();
 
+        server.start();
     }
 }

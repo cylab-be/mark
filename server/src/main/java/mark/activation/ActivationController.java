@@ -2,14 +2,11 @@ package mark.activation;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mark.core.RawData;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
@@ -26,75 +23,10 @@ public class ActivationController {
     private int task_count;
 
     /**
-     * Get the total number of detection tasks that were activated.
-     * @return
+     * The address on which the server is bound. Will be provided to every
+     * analysis task, as they will need it!
      */
-    public final int getTaskCount() {
-        return task_count;
-    }
-
-    /**
-     * Set the activation profiles to be used by the ActivationController.
-     * @param profiles
-     * @throws Exception if the profiles are not correct
-     */
-    public final void setProfiles(final Iterable<ActivationProfile> profiles)
-            throws Exception {
-
-        testProfiles(profiles);
-        this.profiles = profiles;
-    }
-
-    /**
-     * Set the activation profiles to use from Yaml configuation file.
-     * @param activation_file
-     * @throws FileNotFoundException if Yaml configuration file was not found.
-     * @throws Exception if the profiles are not correct.
-     */
-    public final void setProfiles(final InputStream activation_file)
-            throws FileNotFoundException, Exception {
-        setProfiles(parseActivationFile(activation_file));
-    }
-
-    protected void testProfiles(final Iterable<ActivationProfile> profiles)
-            throws Exception {
-        // Test the profiles: instantiate (without running)
-        // one of each task defined in te profiles
-
-        for (ActivationProfile profile : profiles) {
-            try {
-                DetectionAgentInterface new_task = (DetectionAgentInterface)
-                        Class.forName(profile.class_name)
-                        .getConstructor(String.class, String.class, String.class)
-                        .newInstance(profile.type, "1.2.3.4", "www.google.be");
-
-            } catch (Exception ex) {
-                throw new Exception(
-                        "Invalid profile: " + profile.toString()
-                        + " : " + ex.getMessage(), ex);
-            }
-        }
-    }
-
-    protected final Iterable<ActivationProfile> getProfiles() {
-        return profiles;
-    }
-
-    /**
-     * Available collections: RAW_DATA and EVIDENCE.
-     */
-    public enum Collection {
-
-        /**
-         * for RawData.
-         */
-        RAW_DATA,
-
-        /**
-         * For Evidence.
-         */
-        EVIDENCE
-    }
+    private String server_address;
 
     /**
      * Time to wait for the Ignite framework to start (in ms).
@@ -120,7 +52,7 @@ public class ActivationController {
             System.err.println("This should never happen!");
             System.exit(1);
 
-        } catch (Exception ex) {
+        } catch (InvalidProfileException ex) {
             System.err.println("Default activation file is corrupted!");
             System.err.println(ex.getMessage());
             System.err.println("This should never happen!");
@@ -136,13 +68,112 @@ public class ActivationController {
         }
         executor_service = ignite.executorService();
 
-
         // Wait for Ignite to start...
         try {
             Thread.sleep(STARTUP_DELAY);
         } catch (InterruptedException ex) {
+            // Something is trying to stop this thread
+            // TODO: handle this correctly
 
         }
+    }
+
+    public final void setServerAddress(String server_address) {
+        this.server_address = server_address;
+    }
+
+    /**
+     * Get the total number of detection tasks that were activated.
+     * @return
+     */
+    public final int getTaskCount() {
+        return task_count;
+    }
+
+    /**
+     * Set the activation profiles to be used by the ActivationController.
+     * @param profiles
+     * @throws InvalidProfileException if the profiles are not correct
+     */
+    public final void setProfiles(final Iterable<ActivationProfile> profiles)
+            throws InvalidProfileException {
+
+        testProfiles(profiles);
+        this.profiles = profiles;
+    }
+
+    /**
+     * Set the activation profiles to use from Yaml configuation file.
+     * @param activation_file
+     * @throws FileNotFoundException if Yaml configuration file was not found.
+     * @throws InvalidProfileException if the profiles are not correct.
+     */
+    public final void setProfiles(final InputStream activation_file)
+            throws FileNotFoundException, InvalidProfileException {
+        setProfiles(parseActivationFile(activation_file));
+    }
+
+    /**
+     * Test the profiles: instantiate (without running) one of each task defined
+     * in the profiles.
+     * @param profiles
+     * @throws InvalidProfileException if one of the profiles is corrupted
+     */
+    protected final void testProfiles(
+            final Iterable<ActivationProfile> profiles)
+            throws InvalidProfileException {
+
+        for (ActivationProfile profile : profiles) {
+            try {
+                DetectionAgentInterface new_task = (DetectionAgentInterface)
+                        Class.forName(profile.class_name).newInstance();
+
+                new_task.setType(profile.type);
+                new_task.setClient("1.2.3.4");
+                new_task.setServer("www.google.be");
+
+            } catch (ClassNotFoundException ex) {
+                throw new InvalidProfileException(
+                        "Invalid profile: " + profile.toString()
+                        + " : " + ex.getMessage(), ex);
+            } catch (IllegalAccessException ex) {
+                throw new InvalidProfileException(
+                        "Invalid profile: " + profile.toString()
+                                + " : " + ex.getMessage(), ex);
+            } catch (IllegalArgumentException ex) {
+                throw new InvalidProfileException(
+                        "Invalid profile: " + profile.toString()
+                                + " : " + ex.getMessage(), ex);
+            } catch (InstantiationException ex) {
+                throw new InvalidProfileException(
+                        "Invalid profile: " + profile.toString()
+                                + " : " + ex.getMessage(), ex);
+            } catch (SecurityException ex) {
+                throw new InvalidProfileException(
+                        "Invalid profile: " + profile.toString()
+                                + " : " + ex.getMessage(), ex);
+            }
+        }
+    }
+
+    protected final Iterable<ActivationProfile> getProfiles() {
+        return profiles;
+    }
+
+    /**
+     * Available collections: RAW_DATA and EVIDENCE.
+     */
+    public enum Collection {
+
+        /**
+         * for RawData.
+         */
+        RAW_DATA,
+
+        /**
+         * For Evidence.
+         */
+        EVIDENCE
     }
 
     protected final List<ActivationProfile> parseActivationFile(
@@ -182,7 +213,6 @@ public class ActivationController {
 
         updateCounters(data);
 
-
         List<DetectionAgentInterface> tasks = findTasks(
                 Collection.RAW_DATA, data.type, data.client, data.server);
 
@@ -192,6 +222,15 @@ public class ActivationController {
         }
     }
 
+    /**
+     * Find the tasks that have to be triggered, based on: collection (RAW_DATA
+     * or EVIDENCE), type, client, server and internal counters and timers.
+     * @param collection
+     * @param type
+     * @param client
+     * @param server
+     * @return
+     */
     private List<DetectionAgentInterface> findTasks(
             final Collection collection,
             final String type,
@@ -202,8 +241,7 @@ public class ActivationController {
                 new LinkedList<DetectionAgentInterface>();
 
         for (ActivationProfile profile : profiles) {
-            if (
-                    profile.collection != collection
+            if (profile.collection != collection
                     || !profile.type.equals(type)) {
                 continue;
             }
@@ -225,47 +263,48 @@ public class ActivationController {
 
             long time_last_run = 0;
             if (activation_times.containsKey(time_key)) {
-                time_last_run = activation_times. get(time_key);
+                time_last_run = activation_times.get(time_key);
             }
 
             int time_since_last_run =
                     (int) (System.currentTimeMillis()
                     - time_last_run);
 
-            if (
-                    data_counters.get(counter_key).get() < profile.condition_count
+            if (data_counters.get(counter_key).get() < profile.condition_count
                     && time_since_last_run <= profile.condition_time) {
                 continue;
             }
 
+            // OK, we have a task to start
             // Reset the data counter
             data_counters.put(counter_key, new Counter());
             activation_times.put(time_key, System.currentTimeMillis());
 
             // Create analysis task
             try {
-                DetectionAgentInterface new_task = (DetectionAgentInterface) Class.forName(profile.class_name)
-                        .getConstructor(String.class, String.class, String.class)
-                        .newInstance(type, client, server);
+                DetectionAgentInterface new_task =
+                        (DetectionAgentInterface)
+                        Class.forName(profile.class_name)
+                        .newInstance();
+
+                new_task.setClient(client);
+                new_task.setServer(server);
+                new_task.setType(type);
+                new_task.setServerAddress(server_address);
 
                 tasks.add(new_task);
 
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NoSuchMethodException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Oups :(");
             } catch (SecurityException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Oups :(");
             } catch (InstantiationException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Oups :(");
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Oups :(");
             } catch (IllegalArgumentException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InvocationTargetException ex) {
-                Logger.getLogger(ActivationController.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println("Oups :(");
             }
-
         }
 
         return tasks;

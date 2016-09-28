@@ -2,7 +2,10 @@ package mark.integration;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import junit.framework.TestCase;
+import mark.activation.InvalidProfileException;
 import mark.client.Client;
 import mark.core.RawData;
 import mark.server.Server;
@@ -17,7 +20,8 @@ public class ClientIT extends TestCase {
 
     private Server masfad_server;
 
-    protected final void startDummyServer() throws Exception {
+    protected final void startDummyServer()
+            throws FileNotFoundException, InvalidProfileException {
         masfad_server = new Server();
 
         // Activate the dummy activation profiles
@@ -29,9 +33,8 @@ public class ClientIT extends TestCase {
 
     /**
      * Test of Test method, of class DatastoreClient.
-     * @throws java.lang.Exception
      */
-    public final void testTest() throws Exception {
+    public final void testTest() throws Throwable {
         System.out.println("test");
         startDummyServer();
         Client datastore = new Client();
@@ -41,8 +44,10 @@ public class ClientIT extends TestCase {
 
     /**
      *
+     * @throws java.io.FileNotFoundException
+     * @throws mark.activation.InvalidProfileException
      */
-    public final void testString() throws Exception {
+    public final void testString() throws Throwable {
         System.out.println("testString");
         startDummyServer();
         Client datastore = new Client();
@@ -52,8 +57,10 @@ public class ClientIT extends TestCase {
 
     /**
      * Test of Test method, of class DatastoreClient.
+     * @throws java.io.FileNotFoundException
+     * @throws mark.activation.InvalidProfileException
      */
-    public final void testAddRawData() throws Exception {
+    public final void testAddRawData() throws Throwable {
         System.out.println("addRawData");
 
         startDummyServer();
@@ -68,7 +75,7 @@ public class ClientIT extends TestCase {
         masfad_server.stop();
     }
 
-    public final void testAddFindRawData() throws Exception {
+    public final void testAddFindRawData() throws Throwable {
         System.out.println("addRawData and findRawData");
 
         startDummyServer();
@@ -94,8 +101,12 @@ public class ClientIT extends TestCase {
         masfad_server.stop();
     }
 
-    public final void testReadWriteRawData()
-            throws FileNotFoundException, Exception {
+    /**
+     *
+     * @throws FileNotFoundException
+     * @throws InvalidProfileException
+     */
+    public final void testReadWriteRawData() throws Throwable {
         System.out.println("addRawData, with a ReadWrite detection agent");
 
         // Start server with read-write activation profile
@@ -114,5 +125,24 @@ public class ClientIT extends TestCase {
         data.data = "A proxy log line...";
         datastore.addRawData(data);
         masfad_server.stop();
+    }
+
+    public final void testInvalidConnection() throws Throwable {
+
+        System.out.println("Test invalid connection");
+        startDummyServer();
+
+        Client datastore = null;
+        try {
+            datastore = new Client("http://123.45.67.89:8082");
+            fail("Should throw a SocketTimeoutException !");
+            datastore.test();
+
+        } catch (SocketTimeoutException ex) {
+            assertEquals(ex.getClass().getName(), "java.net.SocketTimeoutException");
+
+        } finally {
+            masfad_server.stop();
+        }
     }
 }

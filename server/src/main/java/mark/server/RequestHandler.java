@@ -16,7 +16,7 @@ import org.bson.Document;
 public class RequestHandler implements ServerInterface {
 
     private static final String COLLECTION_RAW_DATA = "RAW_DATA";
-    private final String COLLECTION_EVIDENCE = "EVIDENCE";
+    private static final String COLLECTION_EVIDENCE = "EVIDENCE";
 
     private final MongoDatabase mongodb_database;
     private final ActivationController activation_controller;
@@ -35,7 +35,7 @@ public class RequestHandler implements ServerInterface {
     }
 
     /**
-     *
+     * Should return the string 1.
      * @return
      */
     @Override
