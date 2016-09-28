@@ -1,8 +1,5 @@
 package mark.agent.detection.http;
 
-import java.net.ConnectException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
 import mark.core.RawData;
 import mark.client.Client;
@@ -76,7 +73,7 @@ public class Frequency extends AbstractDetectionAgent {
         return result;
     }
 
-    static int min(int[] values) {
+    static int min(final int[] values) {
         int result = Integer.MAX_VALUE;
         for (int value : values) {
             if (value < result) {
@@ -86,7 +83,7 @@ public class Frequency extends AbstractDetectionAgent {
         return result;
     }
 
-    static int max(int[] values) {
+    static int max(final int[] values) {
         int result = Integer.MIN_VALUE;
         for (int value : values) {
             if (value > result) {

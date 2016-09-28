@@ -121,6 +121,8 @@ public class Server {
                 stop();
             }
         }
+
+        System.out.println("Server started!");
     }
 
     /**
@@ -139,7 +141,7 @@ public class Server {
         boolean interrupted = false;
         try {
             for (Thread thread : source_threads) {
-                while (true) {
+                while (thread.isAlive()) {
                     try {
                         thread.join();
                     } catch (InterruptedException e) {

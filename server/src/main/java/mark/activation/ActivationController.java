@@ -11,6 +11,7 @@ import mark.core.RawData;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.configuration.IgniteConfiguration;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -59,7 +60,9 @@ public class ActivationController {
             System.exit(1);
         }
 
-        // Start Ignite framework...
+        // Start Ignite framework..
+
+        IgniteConfiguration conf = new IgniteConfiguration();
         Ignite ignite;
         if (Ignition.state() == IgniteState.STARTED) {
             ignite = Ignition.ignite();

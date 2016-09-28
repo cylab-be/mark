@@ -44,7 +44,7 @@ public final class Main {
 
         if (cmd.hasOption("h")) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("masfad-server", options);
+            formatter.printHelp("java -jar server-<version>.jar", options);
             return;
         }
 

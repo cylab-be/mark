@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.ConnectException;
 import java.net.URI;
 import java.util.Map;
 import java.util.logging.Level;
@@ -130,7 +129,7 @@ public class FileSource implements DataAgentInterface {
      *
      * @param parameters
      */
-    public final void setParameters(final Map<String, Object> parameters) {
+    public final void setParameters(final Map<String, String> parameters) {
         try {
             this.setInputStream(new FileInputStream(
                     new File((String) parameters.get("file"))));

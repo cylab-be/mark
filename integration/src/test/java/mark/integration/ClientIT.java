@@ -2,7 +2,6 @@ package mark.integration;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import junit.framework.TestCase;
 import mark.activation.InvalidProfileException;
@@ -139,7 +138,8 @@ public class ClientIT extends TestCase {
             datastore.test();
 
         } catch (SocketTimeoutException ex) {
-            assertEquals(ex.getClass().getName(), "java.net.SocketTimeoutException");
+            assertEquals(
+                    ex.getClass().getName(), "java.net.SocketTimeoutException");
 
         } finally {
             masfad_server.stop();

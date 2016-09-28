@@ -17,7 +17,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>masfad2.server.Main</mainClass>
+              <mainClass>mark.server.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -44,7 +44,7 @@
               </filters>
               <transformers>
                 <transformer>
-                  <mainClass>masfad2.server.Main</mainClass>
+                  <mainClass>mark.server.Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>

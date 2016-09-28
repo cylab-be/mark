@@ -12,7 +12,7 @@ public interface DataAgentInterface extends Runnable {
      *
      * @param parameters
      */
-    void setParameters(Map<String, Object> parameters);
+    void setParameters(Map<String, String> parameters);
 
     /**
      * Ask the task to stop, used by the server to stop data agent (sources)

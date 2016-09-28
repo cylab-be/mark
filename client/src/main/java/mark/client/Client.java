@@ -60,7 +60,7 @@ public class Client implements ServerInterface {
     /**
      * {@inheritDoc}
      *
-     * @param data {@inheritDoc }
+     * @param data {@inheritDoc}
      */
     public final void testString(final String data) throws Throwable {
 

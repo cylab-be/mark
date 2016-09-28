@@ -16,5 +16,5 @@ public class SourceProfile {
     /**
      * Additional parameters to pass to the agent (e.g time range).
      */
-    public Map<String, Object> parameters;
+    public Map<String, String> parameters;
 }
