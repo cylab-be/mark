@@ -1,0 +1,7 @@
+# Launch a single Dummy agent for every
+# new http data
+---
+class_name: mark.agent.detection.dummy.Dummy
+type:       http
+collection: RAW_DATA
+

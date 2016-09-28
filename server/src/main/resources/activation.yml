@@ -1,5 +1,5 @@
 # Default activation profile
 ---
-class_name: masfad2.agent.detection.dummy.Dummy
+class_name: mark.agent.detection.dummy.Dummy
 type:       http
 collection: RAW_DATA
