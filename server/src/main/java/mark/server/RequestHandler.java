@@ -4,6 +4,8 @@ import com.mongodb.client.FindIterable;
 import mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import mark.activation.ActivationController;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -29,9 +31,9 @@ public class RequestHandler implements ServerInterface {
     RequestHandler(
             final MongoDatabase mongodb_database,
             final ActivationController activation_controller) {
+
         this.mongodb_database = mongodb_database;
         this.activation_controller = activation_controller;
-
     }
 
     /**
@@ -39,11 +41,16 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     @Override
-    public String test() {
+    public final String test() {
         return "1";
     }
 
-    public void testString(String data) {
+    /**
+     * Test RPC method that accepts a single string parameter.
+     * Do nothing but print string on screen.
+     * @param data
+     */
+    public final void testString(final String data) {
         System.out.println(data);
     }
 
@@ -59,7 +66,15 @@ public class RequestHandler implements ServerInterface {
         activation_controller.notifyRawData(data);
     }
 
-    public RawData[] findRawData(String type, String client, String server) {
+    /**
+     *
+     * @param type
+     * @param client
+     * @param server
+     * @return
+     */
+    public final RawData[] findRawData(
+            final String type, final String client, final String server) {
         FindIterable<Document> documents = mongodb_database
                 .getCollection(COLLECTION_RAW_DATA)
                 .find(new Document(RawDataDocument.TYPE, type)
@@ -75,20 +90,34 @@ public class RequestHandler implements ServerInterface {
 
     }
 
-    public void addEvidence(Evidence evidence) {
+    /**
+     *
+     * @param evidence
+     */
+    public final void addEvidence(final Evidence evidence) {
         mongodb_database.getCollection(COLLECTION_EVIDENCE)
                 .insertOne(EvidenceDocument.convert(evidence));
 
         // Do not notify of new evidence for now..
         //activation_controller.notifyEvidence(evidence);
     }
+
+    /**
+     *
+     * @return
+     */
+    public final  Map<String, String> status() {
+        HashMap<String, String> status = new HashMap<String, String>();
+        status.put("STATE", "running");
+        return status;
+    }
 }
 
 /**
- * Helper class for converting between Evidence and MongoDB Document
+ * Helper class for converting between Evidence and MongoDB Document.
  * @author Thibault Debatty
  */
-class EvidenceDocument {
+final class EvidenceDocument {
     public static final String AGENT = "AGENT";
     public static final String TIME = "TIME";
     public static final String CLIENT = "CLIENT";
@@ -96,7 +125,7 @@ class EvidenceDocument {
     public static final String SERVER = "SERVER";
     public static final String REPORT = "REPORT";
 
-    static Document convert(Evidence evidence) {
+    static Document convert(final Evidence evidence) {
         return new Document()
                 .append(AGENT, evidence.agent)
                 .append(TIME, evidence.time)
@@ -105,13 +134,17 @@ class EvidenceDocument {
                 .append(SERVER, evidence.server)
                 .append(TIME, evidence.time);
     }
+
+    private EvidenceDocument() {
+
+    }
 }
 
 /**
- * Helper class for converting between RawData and MongoDB Document
+ * Helper class for converting between RawData and MongoDB Document.
  * @author Thibault Debatty
  */
-class RawDataDocument {
+final class RawDataDocument {
     public static final String TYPE = "TYPE";
     public static final String TIME = "TIME";
     public static final String CLIENT = "CLIENT";
@@ -138,5 +171,9 @@ class RawDataDocument {
                 .append(CLIENT, data.client)
                 .append(SERVER, data.server)
                 .append(DATA, data.data);
+    }
+
+    private RawDataDocument() {
+
     }
 }
