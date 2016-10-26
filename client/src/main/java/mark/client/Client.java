@@ -15,27 +15,15 @@ public class Client implements ServerInterface {
     private JsonRpcHttpClient datastore;
 
     /**
-     * Instantiate a connection to datastore server with default URL (localhost
-     * and port 8080).
-     *
-     * @throws java.net.ConnectException
-     */
-    public Client() throws Throwable {
-        this("http://127.0.0.1:8080");
-    }
-
-    /**
      * Create a connection to server with provided URL, and test the connection.
      * So we can directly throw an exception if connection failed...
      *
-     * @param server_address
-     * @throws java.net.ConnectException
+     * @param server_url
      */
-    public Client(final String server_address) throws Throwable {
+    public Client(final URL server_url) {
 
-        datastore = new JsonRpcHttpClient(new URL(server_address));
+        datastore = new JsonRpcHttpClient(server_url);
         datastore.setConnectionTimeoutMillis(5000);
-        test();
     }
 
     /**

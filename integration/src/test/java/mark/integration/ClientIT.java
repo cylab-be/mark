@@ -2,7 +2,9 @@ package mark.integration;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import junit.framework.TestCase;
 import mark.activation.InvalidProfileException;
 import mark.client.Client;
@@ -20,7 +22,8 @@ public class ClientIT extends TestCase {
     private Server masfad_server;
 
     protected final void startDummyServer()
-            throws FileNotFoundException, InvalidProfileException {
+            throws FileNotFoundException, InvalidProfileException,
+            MalformedURLException {
         masfad_server = new Server();
 
         // Activate the dummy activation profiles
@@ -36,7 +39,7 @@ public class ClientIT extends TestCase {
     public final void testTest() throws Throwable {
         System.out.println("test");
         startDummyServer();
-        Client datastore = new Client();
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         assertEquals("1", datastore.test());
         masfad_server.stop();
     }
@@ -49,7 +52,7 @@ public class ClientIT extends TestCase {
     public final void testString() throws Throwable {
         System.out.println("testString");
         startDummyServer();
-        Client datastore = new Client();
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         datastore.testString("My String");
         masfad_server.stop();
     }
@@ -63,7 +66,7 @@ public class ClientIT extends TestCase {
         System.out.println("addRawData");
 
         startDummyServer();
-        Client datastore = new Client();
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
         data.type = "http";
         data.client = "1.2.3.4";
@@ -82,7 +85,7 @@ public class ClientIT extends TestCase {
         String client = "1.2.3.4";
         String server = "www.google.be";
 
-        Client datastore = new Client();
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData[] original_data =
                 datastore.findRawData(type, client, server);
 
@@ -115,7 +118,7 @@ public class ClientIT extends TestCase {
         masfad_server.setActivationProfiles(activation_file);
         masfad_server.start();
 
-        Client datastore = new Client();
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
         data.type = "http";
         data.client = "1.2.3.4";
@@ -133,7 +136,8 @@ public class ClientIT extends TestCase {
 
         Client datastore = null;
         try {
-            datastore = new Client("http://123.45.67.89:8082");
+            datastore = new Client(new URL("http://123.45.67.89:8082"));
+            datastore.test();
             fail("Should throw a SocketTimeoutException !");
             datastore.test();
 

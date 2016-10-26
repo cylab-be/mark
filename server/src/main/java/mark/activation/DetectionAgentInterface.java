@@ -1,6 +1,7 @@
 package mark.activation;
 
 import java.util.Map;
+import mark.core.ServerInterface;
 
 /**
  * The minimum interface for implementing a detection agent.
@@ -13,6 +14,6 @@ interface DetectionAgentInterface extends Runnable {
     void setType(String type);
     void setClient(String client);
     void setServer(String server);
-    void setServerAddress(String address);
+    void setDatastore(ServerInterface datastore);
 
 }

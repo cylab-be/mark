@@ -1,6 +1,7 @@
 package mark.server;
 
 import java.util.Map;
+import mark.core.ServerInterface;
 
 /**
  *
@@ -31,4 +32,6 @@ public interface DataAgentInterface extends Runnable {
      * For file data sources, the agent should stop ASAP.
      */
     void kill();
+
+    void setDatastore(ServerInterface datastore);
 }

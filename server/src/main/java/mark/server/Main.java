@@ -2,6 +2,7 @@ package mark.server;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
 import mark.activation.InvalidProfileException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -29,7 +30,7 @@ public final class Main {
      */
     public static void main(final String[] args)
             throws ParseException, FileNotFoundException,
-            InvalidProfileException {
+            InvalidProfileException, MalformedURLException {
         // Parse command line arguments
         Options options = new Options();
 

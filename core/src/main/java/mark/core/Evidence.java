@@ -12,4 +12,9 @@ public class Evidence {
     public double score;
     public String report;
 
+    @Override
+    public String toString() {
+        return agent + " : " + report;
+    }
+
 }

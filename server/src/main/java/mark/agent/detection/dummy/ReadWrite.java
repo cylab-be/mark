@@ -1,12 +1,11 @@
 package mark.agent.detection.dummy;
 
-import java.net.ConnectException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
-import mark.client.Client;
 import mark.core.Evidence;
 import mark.core.RawData;
+import mark.core.ServerInterface;
 
 /**
  * Dummy detection agent that reads some raw data from datastore and writes
@@ -21,7 +20,7 @@ public class ReadWrite extends AbstractDetectionAgent {
     public final void run() {
 
         // Read data from datastore
-        Client datastore;
+        ServerInterface datastore;
         RawData[] data;
         try {
             datastore = getDatastore();

@@ -9,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.LinkedList;
 import mark.activation.ActivationProfile;
 import mark.activation.InvalidProfileException;
+import mark.client.Client;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -32,7 +33,7 @@ public class Server {
      * Initialize a server with default configuration, no data agents
      * and no detection agents.
      */
-    public Server() {
+    public Server() throws MalformedURLException {
         config = new Config();
         datastore = new Datastore();
 
@@ -46,7 +47,10 @@ public class Server {
      * This method returns when the server and agents are started.
      * You can use server.stop()
      */
-    public final void start() {
+    public final void start() throws MalformedURLException {
+
+        URL server_url = new URL(
+                "http://" + config.server_host + ":" + config.server_port);
 
         // Set the plugins directory
         ClassLoader original_classloader =
@@ -94,6 +98,7 @@ public class Server {
                         Class.forName(profile.class_name).newInstance();
 
                 source.setParameters(profile.parameters);
+                source.setDatastore(new Client(server_url));
                 Thread source_thread = new Thread(source);
                 source_thread.start();
 

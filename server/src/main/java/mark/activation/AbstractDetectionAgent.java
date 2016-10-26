@@ -1,7 +1,7 @@
 package mark.activation;
 
 import java.util.Map;
-import mark.client.Client;
+import mark.core.ServerInterface;
 
 /**
  *
@@ -14,10 +14,7 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
     private String client;
     private String server;
     private Map<String, String> parameters;
-    private String server_address;
-
-    // Internal objects
-    private Client datastore;
+    private ServerInterface datastore;
 
     /**
      *
@@ -54,25 +51,16 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
         this.server = server;
     }
 
-    public final void setServerAddress(String server_address) {
-        this.server_address = server_address;
+    /**
+     * Return a connection to the server.
+     * @return
+     */
+    public final ServerInterface getDatastore() {
+        return datastore;
     }
 
-    /**
-     * Return a connection to the server, using the address that was provided
-     * by the activation logic engine.
-     * We use lazy initialization here, hence:
-     * - the connection is instantiated and tested by the computer that will
-     * really execute the analysis (not necessarily the same as the server)
-     * - the Client object is not serialized and transmitted over the network.
-     * @return
-     * @throws java.net.ConnectException
-     */
-    public final Client getDatastore() throws Throwable {
-        if (datastore == null) {
-            datastore = new Client(server_address);
-        }
-        return datastore;
+    public final void setDatastore(final ServerInterface datastore) {
+        this.datastore = datastore;
     }
 
     /**

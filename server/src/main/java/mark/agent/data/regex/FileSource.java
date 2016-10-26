@@ -13,8 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import mark.client.Client;
 import mark.core.RawData;
+import mark.core.ServerInterface;
 import mark.server.DataAgentInterface;
 
 /**
@@ -27,6 +27,7 @@ import mark.server.DataAgentInterface;
  */
 public class FileSource implements DataAgentInterface {
 
+    private ServerInterface datastore;
     private final String regex =
             "^(\\d{10})\\..*\\s(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s"
             + "(\\S+)\\s(\\S+)\\s(\\S+)\\s(\\S+)\\s.*$";
@@ -51,15 +52,6 @@ public class FileSource implements DataAgentInterface {
      *
      */
     public final void run() {
-        // Connect to datastore
-        Client datastore;
-        try {
-            datastore = new Client();
-        } catch (Throwable ex) {
-            System.err.println("Could not connect to server!");
-            System.err.println(ex.getMessage());
-            return;
-        }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(stream));
         String line = null;
@@ -153,6 +145,10 @@ public class FileSource implements DataAgentInterface {
      */
     public final void kill() {
         run = false;
+    }
+
+    public void setDatastore(ServerInterface datastore) {
+        this.datastore = datastore;
     }
 
 }

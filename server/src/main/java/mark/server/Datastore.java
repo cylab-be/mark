@@ -5,6 +5,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import mark.activation.ActivationController;
 import mark.activation.ActivationProfile;
@@ -29,7 +30,7 @@ public class Datastore implements Runnable {
     /**
      * Instatiate a datastore with default config and empty activation profiles.
      */
-    public Datastore() {
+    public Datastore() throws MalformedURLException {
         this.config = new Config();
         this.activation_controller = new ActivationController();
         activation_controller.setServerAddress(

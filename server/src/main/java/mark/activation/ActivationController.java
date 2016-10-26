@@ -2,11 +2,14 @@ package mark.activation;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import mark.client.Client;
 import mark.core.RawData;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
@@ -27,7 +30,7 @@ public class ActivationController {
      * The address on which the server is bound. Will be provided to every
      * analysis task, as they will need it!
      */
-    private String server_address;
+    private URL server_url;
 
     /**
      * Time to wait for the Ignite framework to start (in ms).
@@ -81,8 +84,9 @@ public class ActivationController {
         }
     }
 
-    public final void setServerAddress(String server_address) {
-        this.server_address = server_address;
+    public final void setServerAddress(String server_address)
+            throws MalformedURLException {
+        this.server_url = new URL(server_address);
     }
 
     /**
@@ -293,7 +297,7 @@ public class ActivationController {
                 new_task.setClient(client);
                 new_task.setServer(server);
                 new_task.setType(type);
-                new_task.setServerAddress(server_address);
+                new_task.setDatastore(new Client(server_url));
 
                 tasks.add(new_task);
 

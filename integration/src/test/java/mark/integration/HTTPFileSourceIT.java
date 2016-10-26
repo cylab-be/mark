@@ -2,6 +2,7 @@ package mark.integration;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import junit.framework.TestCase;
@@ -17,7 +18,8 @@ import mark.server.SourceProfile;
 public class HTTPFileSourceIT extends TestCase {
 
     public final void testHTTPFileSource()
-            throws FileNotFoundException, InvalidProfileException {
+            throws FileNotFoundException, InvalidProfileException,
+            MalformedURLException {
 
         System.out.println("test with a HTTP file source");
         Server masfad_server = new Server();
