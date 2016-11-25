@@ -1,6 +1,6 @@
 <?php
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set("display_errors", "1");
+error_reporting(E_ALL);
+ini_set('display_errors','On');
 ?>
 
 
@@ -48,5 +48,9 @@ if ($err) {
 }
 ?>
 
-<p>Server state: <?= $state->STATE ?></p>
+<p>Server state: <?= $state->state ?></p>
+
+<pre>
+<?php var_dump($state) ?>
+</pre>
 

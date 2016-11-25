@@ -163,7 +163,7 @@ public class ActivationController {
         }
     }
 
-    protected final Iterable<ActivationProfile> getProfiles() {
+    public final Iterable<ActivationProfile> getProfiles() {
         return profiles;
     }
 

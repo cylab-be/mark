@@ -70,9 +70,11 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.5.3</version>
+
                 <configuration>
                     <descriptor>src/assembly/dep.xml</descriptor>
                 </configuration>
+
                 <executions>
                     <execution>
                         <id>create-archive</id>
@@ -155,7 +157,7 @@
             <artifactId>core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>

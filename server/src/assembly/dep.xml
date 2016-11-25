@@ -2,9 +2,11 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
   <id>distrib</id>
+  
   <formats>
     <format>zip</format>
   </formats>
+  
   <fileSets>
     <fileSet>
       <directory>${project.basedir}</directory>
@@ -15,16 +17,19 @@
         <include>NOTICE*</include>
       </includes>
     </fileSet>
+    
     <fileSet>
-      <directory>${project.basedir}/src/scripts</directory>
-      <outputDirectory></outputDirectory>
+      <directory>${project.basedir}/scripts</directory>
+      <outputDirectory>scripts</outputDirectory>
       <includes>
         <include>*.sh</include>
+        <include>*.yml</include>
       </includes>
     </fileSet>
+    
     <fileSet>
       <directory>${project.build.directory}</directory>
-      <outputDirectory></outputDirectory>
+      <outputDirectory>target</outputDirectory>
       <includes>
         <include>${project.build.finalName}.jar</include>
       </includes>

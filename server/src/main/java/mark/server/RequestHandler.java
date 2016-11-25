@@ -106,9 +106,11 @@ public class RequestHandler implements ServerInterface {
      *
      * @return
      */
-    public final  Map<String, String> status() {
-        HashMap<String, String> status = new HashMap<String, String>();
-        status.put("STATE", "running");
+    public final  Map<String, Object> status() {
+        HashMap<String, Object> status = new HashMap<String, Object>();
+        status.put("state", "running");
+        status.put("activation", activation_controller.getProfiles());
+        status.put("executed", activation_controller.getTaskCount());
         return status;
     }
 }
