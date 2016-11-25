@@ -7,6 +7,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.activation.ActivationProfile;
 import mark.activation.InvalidProfileException;
 import mark.client.Client;
@@ -71,6 +73,18 @@ public class Server {
                     + ex.getMessage());
             return;
         }
+
+        final FileServer file_server = new FileServer();
+        // Start the file server in a separate thread
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    file_server.start();
+                } catch (Exception ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }).start();
 
         // Start the datastore
         new Thread(datastore).start();
