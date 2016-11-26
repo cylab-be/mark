@@ -3,13 +3,10 @@ package mark.server;
 import com.googlecode.jsonrpc4j.JsonRpcServer;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.concurrent.ArrayBlockingQueue;
 import mark.activation.ActivationController;
-import mark.activation.ActivationProfile;
-import mark.activation.InvalidProfileException;
+import mark.activation.DetectionAgentProfile;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -43,20 +40,9 @@ public class Datastore implements Runnable {
      * @throws Exception if the profiles are corrupted (misspelled class name?)
      */
     public final void setActivationProfiles(
-            final Iterable<ActivationProfile> profiles)
+            final Iterable<DetectionAgentProfile> profiles)
             throws Exception {
 
-        activation_controller.setProfiles(profiles);
-    }
-
-    /**
-     * Set the activation profiles from a file before starting the server.
-     * @param profiles
-     * @throws FileNotFoundException
-     * @throws InvalidProfileException
-     */
-    public final void setActivationProfiles(final InputStream profiles)
-        throws FileNotFoundException, InvalidProfileException{
         activation_controller.setProfiles(profiles);
     }
 

@@ -38,6 +38,8 @@ public class FileServer {
     private static final Logger LOGGER
             = Logger.getLogger(FileServer.class.getName());
 
+    private org.eclipse.jetty.server.Server server;
+
     /**
      * Start the file server (blocking).
      *
@@ -47,7 +49,7 @@ public class FileServer {
         LOGGER.info("Starting web interface at http://localhost:8000");
 
 
-        org.eclipse.jetty.server.Server server = new org.eclipse.jetty.server.Server(8000);
+        server = new org.eclipse.jetty.server.Server(8000);
 
         ServletHandler handler = new ServletHandler();
         handler.addServletWithMapping(com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
@@ -63,5 +65,9 @@ public class FileServer {
         server.setHandler(webapp);
 
         server.start();
+    }
+
+    public final void stop() throws Exception {
+        server.stop();
     }
 }

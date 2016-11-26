@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import junit.framework.TestCase;
+import mark.activation.DetectionAgentProfile;
 import mark.activation.InvalidProfileException;
 import mark.client.Client;
 import mark.core.RawData;
@@ -19,18 +20,18 @@ import mark.server.Server;
  */
 public class ClientIT extends TestCase {
 
-    private Server masfad_server;
+    private Server server;
 
     protected final void startDummyServer()
             throws FileNotFoundException, InvalidProfileException,
-            MalformedURLException {
-        masfad_server = new Server();
+            MalformedURLException, Exception {
+        server = new Server();
 
         // Activate the dummy activation profiles
         InputStream activation_file = getClass()
-                .getResourceAsStream("/activation-dummy.yml");
-        masfad_server.setActivationProfiles(activation_file);
-        masfad_server.start();
+                .getResourceAsStream("/detection.dummy.yml");
+        server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(activation_file));
+        server.start();
     }
 
     /**
@@ -41,7 +42,7 @@ public class ClientIT extends TestCase {
         startDummyServer();
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         assertEquals("1", datastore.test());
-        masfad_server.stop();
+        server.stop();
     }
 
     /**
@@ -54,7 +55,7 @@ public class ClientIT extends TestCase {
         startDummyServer();
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         datastore.testString("My String");
-        masfad_server.stop();
+        server.stop();
     }
 
     /**
@@ -74,7 +75,7 @@ public class ClientIT extends TestCase {
         data.time = 1230987;
         data.data = "A proxy log line...";
         datastore.addRawData(data);
-        masfad_server.stop();
+        server.stop();
     }
 
     public final void testAddFindRawData() throws Throwable {
@@ -83,24 +84,24 @@ public class ClientIT extends TestCase {
         startDummyServer();
         String type = "http";
         String client = "1.2.3.4";
-        String server = "www.google.be";
+        String servername = "www.google.be";
 
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData[] original_data =
-                datastore.findRawData(type, client, server);
+                datastore.findRawData(type, client, servername);
 
         RawData new_data = new RawData();
         new_data.type = type;
         new_data.client = client;
-        new_data.server = server;
+        new_data.server = servername;
         new_data.time = (int) (System.currentTimeMillis() / 1000L);
         new_data.data = "A proxy log line...";
         datastore.addRawData(new_data);
 
         assertEquals(
                 original_data.length + 1,
-                datastore.findRawData(type, client, server).length);
-        masfad_server.stop();
+                datastore.findRawData(type, client, servername).length);
+        server.stop();
     }
 
     /**
@@ -112,11 +113,11 @@ public class ClientIT extends TestCase {
         System.out.println("addRawData, with a ReadWrite detection agent");
 
         // Start server with read-write activation profile
-        masfad_server = new Server();
+        server = new Server();
         InputStream activation_file = getClass()
                 .getResourceAsStream("/activation-readwrite.yml");
-        masfad_server.setActivationProfiles(activation_file);
-        masfad_server.start();
+        server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(activation_file));
+        server.start();
 
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
@@ -126,7 +127,7 @@ public class ClientIT extends TestCase {
         data.time = 1230987;
         data.data = "A proxy log line...";
         datastore.addRawData(data);
-        masfad_server.stop();
+        server.stop();
     }
 
     public final void testInvalidConnection() throws Throwable {
@@ -146,7 +147,7 @@ public class ClientIT extends TestCase {
                     ex.getClass().getName(), "java.net.SocketTimeoutException");
 
         } finally {
-            masfad_server.stop();
+            server.stop();
         }
     }
 }

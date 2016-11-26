@@ -1,6 +1,5 @@
 package mark.server;
 
-import java.util.Map;
 import mark.core.ServerInterface;
 
 /**
@@ -8,12 +7,6 @@ import mark.core.ServerInterface;
  * @author Thibault Debatty
  */
 public interface DataAgentInterface extends Runnable {
-
-    /**
-     *
-     * @param parameters
-     */
-    void setParameters(Map<String, String> parameters);
 
     /**
      * Ask the task to stop, used by the server to stop data agent (sources)
@@ -34,4 +27,7 @@ public interface DataAgentInterface extends Runnable {
     void kill();
 
     void setDatastore(ServerInterface datastore);
+
+    public void setProfile(DataAgentProfile profile) throws Exception;
+
 }

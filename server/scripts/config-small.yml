@@ -1,0 +1,12 @@
+# A small configuration
+# check folder modules-small to see
+# which modules are activated
+---
+mongo_host:   127.0.0.1
+mongo_port:   27017
+mongo_db:     MASFAD
+
+server_host:  127.0.0.1
+server_port:  8080
+
+modules:      ./modules-small

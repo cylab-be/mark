@@ -1,5 +1,0 @@
-# Default activation profile
----
-class_name: mark.agent.detection.dummy.Dummy
-type:       http
-collection: RAW_DATA

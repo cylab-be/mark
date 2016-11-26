@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  * @author Thibault Debatty
  */
 public class ActivationController {
-    private Iterable<ActivationProfile> profiles;
+    private Iterable<DetectionAgentProfile> profiles;
     private int task_count;
 
     /**
@@ -44,28 +44,7 @@ public class ActivationController {
      */
     public ActivationController() {
 
-        // Load default activation profiles
-        InputStream activation_file = getClass()
-                .getResourceAsStream("/activation.yml");
-        try {
-            setProfiles(activation_file);
-
-        } catch (FileNotFoundException ex) {
-            System.err.println("Default activation file was not found!");
-            System.err.println(ex.getMessage());
-            System.err.println("This should never happen!");
-            System.exit(1);
-
-        } catch (InvalidProfileException ex) {
-            System.err.println("Default activation file is corrupted!");
-            System.err.println(ex.getMessage());
-            System.err.println("This should never happen!");
-            System.exit(1);
-        }
-
         // Start Ignite framework..
-
-        IgniteConfiguration conf = new IgniteConfiguration();
         Ignite ignite;
         if (Ignition.state() == IgniteState.STARTED) {
             ignite = Ignition.ignite();
@@ -102,7 +81,7 @@ public class ActivationController {
      * @param profiles
      * @throws InvalidProfileException if the profiles are not correct
      */
-    public final void setProfiles(final Iterable<ActivationProfile> profiles)
+    public final void setProfiles(final Iterable<DetectionAgentProfile> profiles)
             throws InvalidProfileException {
 
         testProfiles(profiles);
@@ -127,10 +106,10 @@ public class ActivationController {
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
     protected final void testProfiles(
-            final Iterable<ActivationProfile> profiles)
+            final Iterable<DetectionAgentProfile> profiles)
             throws InvalidProfileException {
 
-        for (ActivationProfile profile : profiles) {
+        for (DetectionAgentProfile profile : profiles) {
             try {
                 DetectionAgentInterface new_task = (DetectionAgentInterface)
                         Class.forName(profile.class_name).newInstance();
@@ -163,7 +142,7 @@ public class ActivationController {
         }
     }
 
-    public final Iterable<ActivationProfile> getProfiles() {
+    public final Iterable<DetectionAgentProfile> getProfiles() {
         return profiles;
     }
 
@@ -183,17 +162,17 @@ public class ActivationController {
         EVIDENCE
     }
 
-    protected final List<ActivationProfile> parseActivationFile(
+    protected final List<DetectionAgentProfile> parseActivationFile(
             final InputStream activation_file) throws FileNotFoundException {
 
-        Yaml yaml = new Yaml(new Constructor(ActivationProfile.class));
+        Yaml yaml = new Yaml(new Constructor(DetectionAgentProfile.class));
 
         Iterable<Object> all = yaml.loadAll(activation_file);
-        LinkedList<ActivationProfile> all_profiles =
-                new LinkedList<ActivationProfile>();
+        LinkedList<DetectionAgentProfile> all_profiles =
+                new LinkedList<DetectionAgentProfile>();
 
         for (Object profile_object : all) {
-            all_profiles.add((ActivationProfile) profile_object);
+            all_profiles.add((DetectionAgentProfile) profile_object);
         }
 
         return all_profiles;
@@ -247,7 +226,7 @@ public class ActivationController {
         LinkedList<DetectionAgentInterface> tasks =
                 new LinkedList<DetectionAgentInterface>();
 
-        for (ActivationProfile profile : profiles) {
+        for (DetectionAgentProfile profile : profiles) {
             if (profile.collection != collection
                     || !profile.type.equals(type)) {
                 continue;
@@ -321,7 +300,7 @@ public class ActivationController {
     private void updateCounters(final RawData data) {
 
         // One counter for each activation profile concerned with this data
-        for (ActivationProfile profile : profiles) {
+        for (DetectionAgentProfile profile : profiles) {
             if (
                     profile.collection != Collection.RAW_DATA
                     || !profile.type.equals(data.type)) {

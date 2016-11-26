@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.server.DataAgentInterface;
+import mark.server.DataAgentProfile;
 
 /**
  *
@@ -117,20 +118,6 @@ public class FileSource implements DataAgentInterface {
         return rd;
     }
 
-    /**
-     *
-     * @param parameters
-     */
-    public final void setParameters(final Map<String, String> parameters) {
-        try {
-            this.setInputStream(new FileInputStream(
-                    new File((String) parameters.get("file"))));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(
-                    FileSource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
 
     /**
      * {@inheritDoc}
@@ -149,6 +136,12 @@ public class FileSource implements DataAgentInterface {
 
     public void setDatastore(ServerInterface datastore) {
         this.datastore = datastore;
+    }
+
+    public void setProfile(DataAgentProfile profile) throws Exception {
+        File profile_file = new File(profile.path);
+        File data_file = new File(profile_file.toURI().resolve((String) profile.parameters.get("file")));
+        this.setInputStream(new FileInputStream(data_file));
     }
 
 }
