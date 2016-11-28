@@ -1,8 +1,11 @@
 package mark.server;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import mark.activation.InvalidProfileException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -27,6 +30,7 @@ public final class Main {
      * @throws org.apache.commons.cli.ParseException
      * @throws java.io.FileNotFoundException
      * @throws mark.activation.InvalidProfileException
+     * @throws java.net.MalformedURLException
      */
     public static void main(final String[] args)
             throws ParseException, FileNotFoundException,
@@ -54,5 +58,28 @@ public final class Main {
         }
 
         server.start();
+
+        // Launch browser
+        String url = "http://127.0.0.1:8000";
+
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI(url));
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec("xdg-open " + url);
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
     }
 }
