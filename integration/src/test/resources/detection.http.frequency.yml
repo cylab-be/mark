@@ -1,0 +1,7 @@
+# Launch a single frequency agent for every
+# new http data
+---
+class_name:     mark.agent.detection.http.Frequency
+label:          detection.http.frequency
+trigger_label:  data.http
+

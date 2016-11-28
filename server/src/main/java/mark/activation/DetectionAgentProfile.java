@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import mark.server.DataAgentProfile;
+import mark.server.AnalysisUnit;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -15,21 +15,20 @@ import org.yaml.snakeyaml.constructor.Constructor;
 public class DetectionAgentProfile {
 
     /**
-     * Eg: RAW_DATA.
+     * The label attached to the evidence produced by this detection agent.
+     * Ex: evidence.http.frequency.1week or aggregation
      */
-    public ActivationController.Collection collection;
+    public String label;
 
     /**
-     * Eg: http.
+     * The label that will trigger this detection agent.
+     * Ex: http frequency could be triggered by data.http and aggregation could
+     * be triggered by evidence.
      */
-    public String type;
-
-    public int condition_count;
-
-    public int condition_time = Integer.MAX_VALUE;
+    public String trigger_label;
 
     /**
-     *
+     * The class of the detection agent to trigger.
      */
     public String class_name;
 
@@ -41,6 +40,34 @@ public class DetectionAgentProfile {
 
     public static final DetectionAgentProfile fromInputStream(final InputStream input) {
         return PARSER.loadAs(input, DetectionAgentProfile.class);
+    }
+
+    /**
+     * 
+     * @param link
+     * @return
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
+    DetectionAgentInterface getTaskFor(final AnalysisUnit link)
+            throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException {
+        // Create analysis task
+        DetectionAgentInterface new_task =
+                (DetectionAgentInterface)
+                Class.forName(class_name)
+                .newInstance();
+
+        new_task.setClient(link.client);
+        new_task.setServer(link.server);
+        new_task.setLabel(label);
+
+        return new_task;
+    }
+
+    boolean match(String label) {
+        return this.trigger_label.startsWith(label);
     }
 
 }

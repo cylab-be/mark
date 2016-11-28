@@ -3,6 +3,6 @@
 # for every new RAM_DATA.http entry
 
 ---
-class_name: mark.agent.detection.dummy.Dummy
-type:       http
-collection: RAW_DATA
+class_name:     mark.agent.detection.dummy.Dummy
+trigger_label:  data.http
+label:          detection.dummy

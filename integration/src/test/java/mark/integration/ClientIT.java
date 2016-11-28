@@ -69,7 +69,7 @@ public class ClientIT extends TestCase {
         startDummyServer();
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
-        data.type = "http";
+        data.label = "http";
         data.client = "1.2.3.4";
         data.server = "www.google.be";
         data.time = 1230987;
@@ -91,7 +91,7 @@ public class ClientIT extends TestCase {
                 datastore.findRawData(type, client, servername);
 
         RawData new_data = new RawData();
-        new_data.type = type;
+        new_data.label = type;
         new_data.client = client;
         new_data.server = servername;
         new_data.time = (int) (System.currentTimeMillis() / 1000L);
@@ -115,13 +115,13 @@ public class ClientIT extends TestCase {
         // Start server with read-write activation profile
         server = new Server();
         InputStream activation_file = getClass()
-                .getResourceAsStream("/activation-readwrite.yml");
+                .getResourceAsStream("/detection.readwrite.yml");
         server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(activation_file));
         server.start();
 
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
-        data.type = "http";
+        data.label = "http";
         data.client = "1.2.3.4";
         data.server = "www.google.be";
         data.time = 1230987;

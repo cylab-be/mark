@@ -1,7 +1,0 @@
-# Launch a single dummy.ReadWrite agent for every
-# new http data
----
-class_name: mark.agent.detection.dummy.ReadWrite
-type:       http
-collection: RAW_DATA
-

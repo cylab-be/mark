@@ -68,7 +68,7 @@ public class FakeClient implements ServerInterface {
             data[i] = new RawData();
             data[i].client = client;
             data[i].server = server;
-            data[i].type = type;
+            data[i].label = type;
 
 
             data[i].time = start + APT_INTERVAL * i;
@@ -79,7 +79,7 @@ public class FakeClient implements ServerInterface {
             data[i] = new RawData();
             data[i].client = client;
             data[i].server = server;
-            data[i].type = type;
+            data[i].label = type;
             data[i].time = start + rand.nextInt(N_APT * APT_INTERVAL);
         }
 

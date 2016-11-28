@@ -3,6 +3,7 @@
 #
 ---
 class_name: mark.agent.data.regex.FileSource
+label:      data.http
 parameters: {
   file:   ./httpfile.data.txt
 }

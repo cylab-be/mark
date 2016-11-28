@@ -21,31 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.agent.detection.http;
-
-import junit.framework.TestCase;
-import mark.client.FakeClient;
+package mark.server;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class FrequencyTest extends TestCase {
+public class AnalysisUnit {
 
-    /**
-     * Test of run method, of class Frequency.
-     */
-    public void testRun() {
-        System.out.println("run");
+    public final String client;
+    public final String server;
 
-        FakeClient fakce_client = new FakeClient();
-
-        Frequency agent = new Frequency();
-        agent.setDatastore(fakce_client);
-        agent.setClient("1.2.3.4");
-        agent.setServer("www.evil.com");
-        agent.setLabel("http");
-        agent.run();
+    public AnalysisUnit(String client, String server) {
+        this.client = client;
+        this.server = server;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.client != null ? this.client.hashCode() : 0);
+        hash = 53 * hash + (this.server != null ? this.server.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final AnalysisUnit other = (AnalysisUnit) obj;
+
+        return (this.server.equals(other.server) && this.client.equals(other.client));
+    }
+
+    @Override
+    public String toString() {
+        return "[" + client + " " + server + "]";
+    }
 }

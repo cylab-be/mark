@@ -66,6 +66,9 @@ public class Datastore implements Runnable {
                 config.mongo_host, config.mongo_port);
         MongoDatabase mongodb_database = mongodb.getDatabase(config.mongo_db);
 
+        // Start Activation controller
+        activation_controller.start();
+
         // Create and run HTTP / JSON-RPC server
         RequestHandler datastore_handler = new RequestHandler(
                 mongodb_database,

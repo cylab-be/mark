@@ -157,7 +157,7 @@ public class Server {
 
         String modules_dir_path = config.getModulesDirectory();
         if (modules_dir_path == null) {
-            System.err.println("Modules directory is not valid! Skipping!");
+            System.err.println("Modules directory is not valid. Skipping modules support!");
             return;
         }
 

@@ -19,6 +19,8 @@ public class DataAgentProfile {
      */
     public String class_name;
 
+    public String label;
+
     /**
      * Additional parameters to pass to the agent (e.g time range).
      */

@@ -37,7 +37,7 @@ public class Frequency extends AbstractDetectionAgent {
         agent.setDatastore(fakce_client);
         agent.setClient("1.2.3.4");
         agent.setServer("www.evil.com");
-        agent.setType("http");
+        agent.setLabel("http");
         agent.run();
     }
 

@@ -31,7 +31,7 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
         return type;
     }
 
-    public final void setType(final String type) {
+    public final void setLabel(final String type) {
         this.type = type;
     }
 

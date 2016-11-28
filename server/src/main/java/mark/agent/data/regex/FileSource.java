@@ -3,12 +3,10 @@ package mark.agent.data.regex;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -32,13 +30,13 @@ public class FileSource implements DataAgentInterface {
     private final String regex =
             "^(\\d{10})\\..*\\s(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s"
             + "(\\S+)\\s(\\S+)\\s(\\S+)\\s(\\S+)\\s.*$";
-    private final String type = "http";
 
     private InputStream stream;
     private int line_count;
     private int error_count;
 
     private volatile boolean run = true;
+    private String label;
 
     /**
      * Return the number of lines in the file that caused an exception while
@@ -107,7 +105,7 @@ public class FileSource implements DataAgentInterface {
         }
 
         RawData rd = new RawData();
-        rd.type = type;
+        rd.label = label;
         rd.time = Integer.valueOf(match.group(1));
         rd.client = match.group(2);
 
@@ -142,6 +140,7 @@ public class FileSource implements DataAgentInterface {
         File profile_file = new File(profile.path);
         File data_file = new File(profile_file.toURI().resolve((String) profile.parameters.get("file")));
         this.setInputStream(new FileInputStream(data_file));
+        this.label = profile.label;
     }
 
 }

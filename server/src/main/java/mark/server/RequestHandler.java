@@ -77,7 +77,7 @@ public class RequestHandler implements ServerInterface {
             final String type, final String client, final String server) {
         FindIterable<Document> documents = mongodb_database
                 .getCollection(COLLECTION_RAW_DATA)
-                .find(new Document(RawDataDocument.TYPE, type)
+                .find(new Document(RawDataDocument.LABEL, type)
                         .append(RawDataDocument.CLIENT, client)
                         .append(RawDataDocument.SERVER, server));
 
@@ -98,7 +98,6 @@ public class RequestHandler implements ServerInterface {
         mongodb_database.getCollection(COLLECTION_EVIDENCE)
                 .insertOne(EvidenceDocument.convert(evidence));
 
-        // Do not notify of new evidence for now..
         //activation_controller.notifyEvidence(evidence);
     }
 
@@ -147,7 +146,7 @@ final class EvidenceDocument {
  * @author Thibault Debatty
  */
 final class RawDataDocument {
-    public static final String TYPE = "TYPE";
+    public static final String LABEL = "LABEL";
     public static final String TIME = "TIME";
     public static final String CLIENT = "CLIENT";
     public static final String SERVER = "SERVER";
@@ -159,7 +158,7 @@ final class RawDataDocument {
         data.data = doc.getString(DATA);
         data.server = doc.getString(SERVER);
         data.time = doc.getInteger(TIME);
-        data.type = doc.getString(TYPE);
+        data.label = doc.getString(LABEL);
 
         return data;
 
@@ -168,7 +167,7 @@ final class RawDataDocument {
     static Document convert(final RawData data) {
 
         return new Document()
-                .append(TYPE, data.type)
+                .append(LABEL, data.label)
                 .append(TIME, data.time)
                 .append(CLIENT, data.client)
                 .append(SERVER, data.server)

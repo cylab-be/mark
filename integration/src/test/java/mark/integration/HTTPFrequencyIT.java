@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.activation.InvalidProfileException;
@@ -40,7 +39,7 @@ public class HTTPFrequencyIT extends TestCase {
 
         // Activate the dummy activation profiles
         InputStream activation_file = getClass()
-                .getResourceAsStream("/activation-frequency.yml");
+                .getResourceAsStream("/detection.http.frequency.yml");
         masfad_server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(activation_file));
         masfad_server.start();
         masfad_server.stop();

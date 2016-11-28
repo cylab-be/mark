@@ -1,28 +1,33 @@
 package mark.activation;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import mark.client.Client;
+import mark.core.Evidence;
 import mark.core.RawData;
+import mark.server.AnalysisUnit;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
-import org.apache.ignite.configuration.IgniteConfiguration;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 /**
  *
  * @author Thibault Debatty
  */
 public class ActivationController {
+    /**
+     * Time to wait for the Ignite framework to start (in ms).
+     */
+    private static final int STARTUP_DELAY = 3000;
+
     private Iterable<DetectionAgentProfile> profiles;
     private int task_count;
 
@@ -31,18 +36,16 @@ public class ActivationController {
      * analysis task, as they will need it!
      */
     private URL server_url;
+    private ExecutorService executor_service;
+    private final Map<String, HashSet<AnalysisUnit>> events;
 
-    /**
-     * Time to wait for the Ignite framework to start (in ms).
-     */
-    private static final int STARTUP_DELAY = 3000;
-
-    private final ExecutorService executor_service;
-
-    /**
-     *
-     */
     public ActivationController() {
+        events = Collections.synchronizedMap(new HashMap<String, HashSet<AnalysisUnit>>());
+    }
+
+
+
+    public void start() {
 
         // Start Ignite framework..
         Ignite ignite;
@@ -59,6 +62,46 @@ public class ActivationController {
         } catch (InterruptedException ex) {
             // Something is trying to stop this thread
             // TODO: handle this correctly
+
+        }
+
+        // Start the scheduled activation task
+        Timer timer = new Timer();
+        timer.schedule(new ScheduledTask(), 1000, 1000);
+
+
+    }
+
+    class ScheduledTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            // Clone the list of events and clear
+            HashSet<Map.Entry<String, HashSet<AnalysisUnit>>> local_events = new HashSet<Map.Entry<String, HashSet<AnalysisUnit>>>(events.entrySet());
+            events.clear();
+
+            for (Map.Entry<String, HashSet<AnalysisUnit>> entry : local_events) {
+                String label = entry.getKey();
+
+                for (DetectionAgentProfile profile : profiles) {
+                    if (profile.match(label)) {
+                        for (AnalysisUnit link : entry.getValue()) {
+                            try {
+                                DetectionAgentInterface new_task = profile.getTaskFor(link);
+                                new_task.setDatastore(new Client(server_url));
+                                executor_service.submit(new_task);
+                                task_count++;
+
+                            } catch (Exception ex) {
+                                System.err.println("Oups!");
+                                System.err.println(ex.getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+
 
         }
     }
@@ -89,17 +132,6 @@ public class ActivationController {
     }
 
     /**
-     * Set the activation profiles to use from Yaml configuation file.
-     * @param activation_file
-     * @throws FileNotFoundException if Yaml configuration file was not found.
-     * @throws InvalidProfileException if the profiles are not correct.
-     */
-    public final void setProfiles(final InputStream activation_file)
-            throws FileNotFoundException, InvalidProfileException {
-        setProfiles(parseActivationFile(activation_file));
-    }
-
-    /**
      * Test the profiles: instantiate (without running) one of each task defined
      * in the profiles.
      * @param profiles
@@ -111,12 +143,7 @@ public class ActivationController {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
-                DetectionAgentInterface new_task = (DetectionAgentInterface)
-                        Class.forName(profile.class_name).newInstance();
-
-                new_task.setType(profile.type);
-                new_task.setClient("1.2.3.4");
-                new_task.setServer("www.google.be");
+                DetectionAgentInterface new_task = profile.getTaskFor(new AnalysisUnit("1.2.3.4", "www.google.be"));
 
             } catch (ClassNotFoundException ex) {
                 throw new InvalidProfileException(
@@ -162,34 +189,7 @@ public class ActivationController {
         EVIDENCE
     }
 
-    protected final List<DetectionAgentProfile> parseActivationFile(
-            final InputStream activation_file) throws FileNotFoundException {
 
-        Yaml yaml = new Yaml(new Constructor(DetectionAgentProfile.class));
-
-        Iterable<Object> all = yaml.loadAll(activation_file);
-        LinkedList<DetectionAgentProfile> all_profiles =
-                new LinkedList<DetectionAgentProfile>();
-
-        for (Object profile_object : all) {
-            all_profiles.add((DetectionAgentProfile) profile_object);
-        }
-
-        return all_profiles;
-    }
-
-    // Activation conditions accounting
-    // Data count since last activation
-    // Collection_DataType_ClientIP_ActivationProfile
-    private static final String DATA_COUNTER_FORMAT = "%s_%s_%s_%s";
-    private final HashMap<String, Counter> data_counters =
-            new HashMap<String, Counter>();
-
-    // Time of last activation
-    // ClientIP_ActivationProfile
-    private static final String ACTIVATION_TIME_FORMAT = "%s_%s";
-    private final HashMap<String, Long> activation_times =
-            new HashMap<String, Long>();
 
     /**
      * Trigger required tasks for this new RawData.
@@ -197,128 +197,14 @@ public class ActivationController {
      */
     public final void notifyRawData(final RawData data) {
 
-        updateCounters(data);
+        HashSet<AnalysisUnit> set = events.get(data.label);
 
-        List<DetectionAgentInterface> tasks = findTasks(
-                Collection.RAW_DATA, data.type, data.client, data.server);
-
-        for (Runnable task : tasks) {
-            executor_service.submit(task);
-            task_count++;
-        }
-    }
-
-    /**
-     * Find the tasks that have to be triggered, based on: collection (RAW_DATA
-     * or EVIDENCE), type, client, server and internal counters and timers.
-     * @param collection
-     * @param type
-     * @param client
-     * @param server
-     * @return
-     */
-    private List<DetectionAgentInterface> findTasks(
-            final Collection collection,
-            final String type,
-            final String client,
-            final String server) {
-
-        LinkedList<DetectionAgentInterface> tasks =
-                new LinkedList<DetectionAgentInterface>();
-
-        for (DetectionAgentProfile profile : profiles) {
-            if (profile.collection != collection
-                    || !profile.type.equals(type)) {
-                continue;
-            }
-
-            // Check the data and time counter
-            String counter_key = String.format(
-                    DATA_COUNTER_FORMAT,
-                    collection,
-                    type,
-                    client,
-                    profile.toString());
-
-            String time_key = String.format(
-                    ACTIVATION_TIME_FORMAT,
-                    client,
-                    profile.toString()
-            );
-
-
-            long time_last_run = 0;
-            if (activation_times.containsKey(time_key)) {
-                time_last_run = activation_times.get(time_key);
-            }
-
-            int time_since_last_run =
-                    (int) (System.currentTimeMillis()
-                    - time_last_run);
-
-            if (data_counters.get(counter_key).get() < profile.condition_count
-                    && time_since_last_run <= profile.condition_time) {
-                continue;
-            }
-
-            // OK, we have a task to start
-            // Reset the data counter
-            data_counters.put(counter_key, new Counter());
-            activation_times.put(time_key, System.currentTimeMillis());
-
-            // Create analysis task
-            try {
-                DetectionAgentInterface new_task =
-                        (DetectionAgentInterface)
-                        Class.forName(profile.class_name)
-                        .newInstance();
-
-                new_task.setClient(client);
-                new_task.setServer(server);
-                new_task.setType(type);
-                new_task.setDatastore(new Client(server_url));
-
-                tasks.add(new_task);
-
-            } catch (ClassNotFoundException ex) {
-                System.err.println("Oups :(");
-            } catch (SecurityException ex) {
-                System.err.println("Oups :(");
-            } catch (InstantiationException ex) {
-                System.err.println("Oups :(");
-            } catch (IllegalAccessException ex) {
-                System.err.println("Oups :(");
-            } catch (IllegalArgumentException ex) {
-                System.err.println("Oups :(");
-            }
+        if (set == null) {
+            set = new HashSet<AnalysisUnit>();
+            events.put(data.label, set);
         }
 
-        return tasks;
-
-    }
-
-    private void updateCounters(final RawData data) {
-
-        // One counter for each activation profile concerned with this data
-        for (DetectionAgentProfile profile : profiles) {
-            if (
-                    profile.collection != Collection.RAW_DATA
-                    || !profile.type.equals(data.type)) {
-
-                continue;
-            }
-
-            String counter_key = String.format(
-                    DATA_COUNTER_FORMAT,
-                    Collection.RAW_DATA,
-                    data.type,
-                    data.client,
-                    profile.toString());
-            if (!data_counters.containsKey(counter_key)) {
-                data_counters.put(counter_key, new Counter());
-            }
-            data_counters.get(counter_key).increment();
-        }
+        set.add(new AnalysisUnit(data.client, data.server));
     }
 
     /**
@@ -330,28 +216,5 @@ public class ActivationController {
         } catch (InterruptedException ex) {
             System.err.println("Activation controller was interrupted!");
         }
-    }
-}
-
-/**
- *
- * @author Thibault Debatty
- */
-class Counter {
-    private int value = 0;
-
-    /**
-     * Increment the inner value of this counter.
-     */
-    public void increment() {
-        value++;
-    }
-
-    /**
-     * Get the inner value of this value.
-     * @return
-     */
-    public int get() {
-        return value;
     }
 }
