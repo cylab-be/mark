@@ -25,7 +25,7 @@ public class ReadWrite extends AbstractDetectionAgent {
         try {
             datastore = getDatastore();
             data = datastore.findRawData(
-                getType(), getClient(), getServer());
+                getLabel(), getClient(), getServer());
         } catch (Throwable ex) {
             System.err.println("Could not connect to server!");
             System.err.println(ex.getMessage());
@@ -38,12 +38,9 @@ public class ReadWrite extends AbstractDetectionAgent {
         // Process data
 
         // Add evidences to datastore
-        Evidence evidence = new Evidence();
-        evidence.agent = getClass().getName();
-        evidence.client = getClient();
+        Evidence evidence = createEvidenceTemplate();
         evidence.report = "Some report...";
         evidence.score = 0.6;
-        evidence.server = getServer();
         evidence.time = data[0].time;
 
         try {

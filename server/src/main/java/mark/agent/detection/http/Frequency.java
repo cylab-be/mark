@@ -46,7 +46,7 @@ public class Frequency extends AbstractDetectionAgent {
         RawData[] raw_data;
         try {
             raw_data = datastore.findRawData(
-                getType(), getClient(), getServer());
+                getLabel(), getClient(), getServer());
         } catch (Throwable ex) {
             System.err.println("Could not connect!");
             System.err.println(ex.getMessage());
@@ -101,10 +101,7 @@ public class Frequency extends AbstractDetectionAgent {
                 continue;
             }
 
-            Evidence evidence = new Evidence();
-            evidence.agent = "http.frequency";
-            evidence.client = getClient();
-            evidence.server = getServer();
+            Evidence evidence = createEvidenceTemplate();
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found peak for frequency " + freqs[i] + "\n"
                     + "= " + (1/freqs[i]) + " seconds\n";

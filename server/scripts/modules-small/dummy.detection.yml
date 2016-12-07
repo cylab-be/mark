@@ -4,5 +4,5 @@
 
 ---
 class_name:     mark.agent.detection.dummy.Dummy
-trigger_label:  data.http
+trigger_label:  detection.readwrite
 label:          detection.dummy

@@ -13,6 +13,7 @@ Multi Agent Ranking Framework
   - A **datastore** that combines:
     - A **json-rpc server** (based on a Jetty http server) that will receive requests to add or retrieve data. The rpc-server connects to a **MongoDB** server to actually store the data.
     - An **activation logic engine** that decides which agents should be triggered when new data or new evidences are saved to the database. The activation logic engine starts and connects to an Apache Ignite compute cluster to run the analysis tasks.
+    - A **http file server** (also based on Jetty) to serve the web interface. This web interface is implemented using PHP and JavaScript.
 
 
 ## Maven modules
@@ -21,3 +22,28 @@ Multi Agent Ranking Framework
 - **server:** contains the server code, with basic agents
 - **integration:** contains integration tests (which require compiled core, client and server code)
 - **mark:** maven parent module, that allows to compile and test all modules at once
+
+## Building & starting
+
+To run the system, you need a MongoDB server running.
+
+To build the complete system:
+```
+cd mark
+mvn clean install
+```
+
+In the server/scripts folder, there are different scripts to start the server, with different configurations. To start a small server with only a single data source and a few detection agents:
+
+```
+cd server
+./scripts/start-small.sh
+```
+
+When the server is started, it will launch your browser and display the status page.
+
+## JSON-RPC calls
+Here are the json-rpc method provided by the datastore:
+
+### status
+![status json-rpc call](./status-rpc.png)

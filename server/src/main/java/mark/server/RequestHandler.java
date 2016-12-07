@@ -98,7 +98,7 @@ public class RequestHandler implements ServerInterface {
         mongodb_database.getCollection(COLLECTION_EVIDENCE)
                 .insertOne(EvidenceDocument.convert(evidence));
 
-        //activation_controller.notifyEvidence(evidence);
+        activation_controller.notifyEvidence(evidence);
     }
 
     /**
@@ -119,7 +119,7 @@ public class RequestHandler implements ServerInterface {
  * @author Thibault Debatty
  */
 final class EvidenceDocument {
-    public static final String AGENT = "AGENT";
+    public static final String LABEL = "LABEL";
     public static final String TIME = "TIME";
     public static final String CLIENT = "CLIENT";
     public static final String SCORE = "SCORE";
@@ -128,7 +128,7 @@ final class EvidenceDocument {
 
     static Document convert(final Evidence evidence) {
         return new Document()
-                .append(AGENT, evidence.agent)
+                .append(LABEL, evidence.label)
                 .append(TIME, evidence.time)
                 .append(CLIENT, evidence.client)
                 .append(SCORE, evidence.score)

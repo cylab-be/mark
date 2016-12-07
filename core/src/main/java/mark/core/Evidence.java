@@ -5,7 +5,7 @@ package mark.core;
  * @author Thibault Debatty
  */
 public class Evidence {
-    public String agent;
+    public String label;
     public int time;
     public String client;
     public String server;
@@ -14,7 +14,7 @@ public class Evidence {
 
     @Override
     public String toString() {
-        return agent + " : " + report;
+        return label + " : " + report;
     }
 
 }

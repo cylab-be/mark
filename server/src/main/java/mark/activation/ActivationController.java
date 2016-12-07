@@ -43,8 +43,6 @@ public class ActivationController {
         events = Collections.synchronizedMap(new HashMap<String, HashSet<AnalysisUnit>>());
     }
 
-
-
     public void start() {
 
         // Start Ignite framework..
@@ -70,6 +68,17 @@ public class ActivationController {
         timer.schedule(new ScheduledTask(), 1000, 1000);
 
 
+    }
+
+    public void notifyEvidence(Evidence evidence) {
+        HashSet<AnalysisUnit> set = events.get(evidence.label);
+
+        if (set == null) {
+            set = new HashSet<AnalysisUnit>();
+            events.put(evidence.label, set);
+        }
+
+        set.add(new AnalysisUnit(evidence.client, evidence.server));
     }
 
     class ScheduledTask extends TimerTask {
@@ -188,7 +197,6 @@ public class ActivationController {
          */
         EVIDENCE
     }
-
 
 
     /**

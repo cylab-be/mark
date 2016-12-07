@@ -1,6 +1,7 @@
 package mark.activation;
 
 import java.util.Map;
+import mark.core.Evidence;
 import mark.core.ServerInterface;
 
 /**
@@ -10,7 +11,7 @@ import mark.core.ServerInterface;
 public abstract class AbstractDetectionAgent implements DetectionAgentInterface {
 
     // Things that are provided by the activation logic engine:
-    private String type;
+    private String label;
     private String client;
     private String server;
     private Map<String, String> parameters;
@@ -27,12 +28,12 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
         this.parameters = parameters;
     }
 
-    public final String getType() {
-        return type;
+    public final String getLabel() {
+        return label;
     }
 
     public final void setLabel(final String type) {
-        this.type = type;
+        this.label = type;
     }
 
     public final String getClient() {
@@ -71,5 +72,18 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
      */
     public final String getParameter(final String name) {
         return parameters.get(name);
+    }
+
+    /**
+     * Create the basic Evidence object, with fields that were provided by
+     * the activation logic: client, server and label.
+     * @return
+     */
+    public Evidence createEvidenceTemplate() {
+        Evidence evidence = new Evidence();
+        evidence.client = getClient();
+        evidence.server = getServer();
+        evidence.label = getLabel();
+        return evidence;
     }
 }
