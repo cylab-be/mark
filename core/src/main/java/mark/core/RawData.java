@@ -7,8 +7,7 @@ package mark.core;
 public class RawData {
     public String label;
     public int time;
-    public String client;
-    public String server;
+    public Link subject;
     public String data;
 
 }

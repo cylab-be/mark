@@ -6,7 +6,7 @@ package mark.core;
  *
  * @author Thibault Debatty
  */
-public interface ServerInterface {
+public interface ServerInterface<T extends AnalysisUnit> {
 
     /**
      *
@@ -40,7 +40,7 @@ public interface ServerInterface {
      * @param server
      * @return
      */
-    RawData[] findRawData(String type, String client, String server)
+    RawData[] findRawData(String type, Link subject)
             throws Throwable;
 
 

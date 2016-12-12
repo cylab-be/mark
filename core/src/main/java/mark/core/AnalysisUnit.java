@@ -21,31 +21,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.agent.detection.http;
 
-import junit.framework.TestCase;
-import mark.client.FakeClient;
-import mark.core.Link;
+package mark.core;
+
+import java.io.Serializable;
+import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class FrequencyTest extends TestCase {
+public abstract class AnalysisUnit implements Serializable {
 
-    /**
-     * Test of run method, of class Frequency.
-     */
-    public void testRun() {
-        System.out.println("run");
-
-        FakeClient fakce_client = new FakeClient();
-
-        Frequency agent = new Frequency();
-        agent.setDatastore(fakce_client);
-        agent.setSubject(new Link("192.168.2.3", "www.google.com"));
-        agent.setLabel("http");
-        agent.run();
-    }
+    public abstract void writeToMongo(Document doc);
+    public abstract void readFromMongo(Document doc);
 
 }

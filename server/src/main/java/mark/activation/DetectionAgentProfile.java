@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import mark.server.AnalysisUnit;
+import mark.core.AnalysisUnit;
+import mark.core.Link;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -43,14 +44,14 @@ public class DetectionAgentProfile {
     }
 
     /**
-     * 
-     * @param link
+     *
+     * @param subject
      * @return
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    DetectionAgentInterface getTaskFor(final AnalysisUnit link)
+    DetectionAgentInterface getTaskFor(final Link subject)
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
         // Create analysis task
@@ -59,8 +60,7 @@ public class DetectionAgentProfile {
                 Class.forName(class_name)
                 .newInstance();
 
-        new_task.setClient(link.client);
-        new_task.setServer(link.server);
+        new_task.setSubject(subject);
         new_task.setLabel(label);
 
         return new_task;

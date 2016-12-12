@@ -7,8 +7,7 @@ package mark.core;
 public class Evidence {
     public String label;
     public int time;
-    public String client;
-    public String server;
+    public Link subject;
     public double score;
     public String report;
 

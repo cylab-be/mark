@@ -1,7 +1,9 @@
 package mark.activation;
 
 import java.util.Map;
+import mark.core.AnalysisUnit;
 import mark.core.Evidence;
+import mark.core.Link;
 import mark.core.ServerInterface;
 
 /**
@@ -12,8 +14,7 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
 
     // Things that are provided by the activation logic engine:
     private String label;
-    private String client;
-    private String server;
+    private Link subject;
     private Map<String, String> parameters;
     private ServerInterface datastore;
 
@@ -36,21 +37,16 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
         this.label = type;
     }
 
-    public final String getClient() {
-        return client;
+
+    public Link getSubject() {
+        return subject;
     }
 
-    public final void setClient(final String client) {
-        this.client = client;
+    public void setSubject(Link subject) {
+        this.subject = subject;
     }
 
-    public final String getServer() {
-        return server;
-    }
 
-    public final void setServer(final String server) {
-        this.server = server;
-    }
 
     /**
      * Return a connection to the server.
@@ -81,8 +77,7 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
      */
     public Evidence createEvidenceTemplate() {
         Evidence evidence = new Evidence();
-        evidence.client = getClient();
-        evidence.server = getServer();
+        evidence.subject = getSubject();
         evidence.label = getLabel();
         return evidence;
     }

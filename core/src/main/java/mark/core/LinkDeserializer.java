@@ -21,31 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.agent.detection.http;
 
-import junit.framework.TestCase;
-import mark.client.FakeClient;
-import mark.core.Link;
+package mark.core;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import java.io.IOException;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class FrequencyTest extends TestCase {
+public class LinkDeserializer extends JsonDeserializer<Link> {
 
-    /**
-     * Test of run method, of class Frequency.
-     */
-    public void testRun() {
-        System.out.println("run");
+    @Override
+    public Link deserialize(JsonParser jparser, DeserializationContext context) throws IOException, JsonProcessingException {
 
-        FakeClient fakce_client = new FakeClient();
+        TreeNode tree = jparser.getCodec().readTree(jparser);
+        return new Link(
+                tree.get("client").toString(),
+                tree.get("server").toString());
 
-        Frequency agent = new Frequency();
-        agent.setDatastore(fakce_client);
-        agent.setSubject(new Link("192.168.2.3", "www.google.com"));
-        agent.setLabel("http");
-        agent.run();
     }
 
 }

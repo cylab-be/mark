@@ -24,8 +24,7 @@ public class ReadWrite extends AbstractDetectionAgent {
         RawData[] data;
         try {
             datastore = getDatastore();
-            data = datastore.findRawData(
-                getLabel(), getClient(), getServer());
+            data = datastore.findRawData(getLabel(), getSubject());
         } catch (Throwable ex) {
             System.err.println("Could not connect to server!");
             System.err.println(ex.getMessage());

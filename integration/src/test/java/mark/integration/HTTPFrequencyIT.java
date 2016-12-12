@@ -22,6 +22,8 @@ public class HTTPFrequencyIT extends TestCase {
 
 
         System.out.println("test frequency agent");
+        System.out.println("====================");
+        
         Server masfad_server = new Server();
 
         // Configure a single data source (HTTP, Regex, file with 47k reqs)

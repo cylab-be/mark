@@ -1,6 +1,8 @@
 package mark.activation;
 
 import java.util.Map;
+import mark.core.AnalysisUnit;
+import mark.core.Link;
 import mark.core.ServerInterface;
 
 /**
@@ -12,8 +14,7 @@ import mark.core.ServerInterface;
 interface DetectionAgentInterface extends Runnable {
     void setParameters(Map<String, String> parameters);
     void setLabel(String label);
-    void setClient(String client);
-    void setServer(String server);
+    void setSubject(Link subject);
     void setDatastore(ServerInterface datastore);
 
 }

@@ -13,9 +13,10 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
  * @author Thibault Debatty
  */
 class JettyHandler extends AbstractHandler {
+
     private final JsonRpcServer jsonrpc_server;
 
-    JettyHandler(JsonRpcServer jsonrpc_server) {
+    JettyHandler(final JsonRpcServer jsonrpc_server) {
         this.jsonrpc_server = jsonrpc_server;
     }
 
@@ -29,10 +30,10 @@ class JettyHandler extends AbstractHandler {
      * @throws ServletException
      */
     public void handle(
-            String target,
-            Request base_request,
-            HttpServletRequest request,
-            HttpServletResponse response)
+            final String target,
+            final Request base_request,
+            final HttpServletRequest request,
+            final HttpServletResponse response)
             throws IOException, ServletException {
 
         jsonrpc_server.handle(request, response);

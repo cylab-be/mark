@@ -2,15 +2,17 @@ package mark.client;
 
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
 import java.net.URL;
+import mark.core.AnalysisUnit;
 import mark.core.ServerInterface;
 import mark.core.Evidence;
+import mark.core.Link;
 import mark.core.RawData;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class Client implements ServerInterface {
+public class Client<T extends AnalysisUnit> implements ServerInterface<T> {
 
     private JsonRpcHttpClient datastore;
 
@@ -56,14 +58,13 @@ public class Client implements ServerInterface {
     }
 
     public final RawData[] findRawData(
-            final String type, final String client, final String server)
+            final String label, final Link subject)
             throws Throwable {
 
         return datastore.invoke(
                 "findRawData",
-                new Object[]{type, client, server},
+                new Object[]{label, subject},
                 RawData[].class);
-
     }
 
     public final void addEvidence(final Evidence evidence) throws Throwable {

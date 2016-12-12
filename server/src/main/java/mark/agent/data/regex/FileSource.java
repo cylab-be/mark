@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import mark.core.Link;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.server.DataAgentInterface;
@@ -104,16 +105,20 @@ public class FileSource implements DataAgentInterface {
             throw new Exception("Regex did not match line " + line);
         }
 
-        RawData rd = new RawData();
-        rd.label = label;
-        rd.time = Integer.valueOf(match.group(1));
-        rd.client = match.group(2);
+        Link link = new Link();
+
+        RawData data = new RawData();
+        data.label = label;
+        data.time = Integer.valueOf(match.group(1));
+        link.client = match.group(2);
 
         URI uri = new URI(match.group(6));
         String domain = uri.getHost();
-        rd.server = domain;
-        rd.data = line;
-        return rd;
+        link.server = domain;
+        data.subject = link;
+
+        data.data = line;
+        return data;
     }
 
 

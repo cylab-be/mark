@@ -13,7 +13,8 @@ import java.util.concurrent.TimeUnit;
 import mark.client.Client;
 import mark.core.Evidence;
 import mark.core.RawData;
-import mark.server.AnalysisUnit;
+import mark.core.AnalysisUnit;
+import mark.core.Link;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
@@ -37,10 +38,10 @@ public class ActivationController {
      */
     private URL server_url;
     private ExecutorService executor_service;
-    private final Map<String, HashSet<AnalysisUnit>> events;
+    private final Map<String, HashSet<Link>> events;
 
     public ActivationController() {
-        events = Collections.synchronizedMap(new HashMap<String, HashSet<AnalysisUnit>>());
+        events = Collections.synchronizedMap(new HashMap<String, HashSet<Link>>());
     }
 
     public void start() {
@@ -71,14 +72,14 @@ public class ActivationController {
     }
 
     public void notifyEvidence(Evidence evidence) {
-        HashSet<AnalysisUnit> set = events.get(evidence.label);
+        HashSet<Link> set = events.get(evidence.label);
 
         if (set == null) {
-            set = new HashSet<AnalysisUnit>();
+            set = new HashSet<Link>();
             events.put(evidence.label, set);
         }
 
-        set.add(new AnalysisUnit(evidence.client, evidence.server));
+        set.add(evidence.subject);
     }
 
     class ScheduledTask extends TimerTask {
@@ -87,18 +88,18 @@ public class ActivationController {
         public void run() {
 
             // Clone the list of events and clear
-            HashSet<Map.Entry<String, HashSet<AnalysisUnit>>> local_events = new HashSet<Map.Entry<String, HashSet<AnalysisUnit>>>(events.entrySet());
+            HashSet<Map.Entry<String, HashSet<Link>>> local_events = new HashSet<Map.Entry<String, HashSet<Link>>>(events.entrySet());
             events.clear();
 
-            for (Map.Entry<String, HashSet<AnalysisUnit>> entry : local_events) {
+            for (Map.Entry<String, HashSet<Link>> entry : local_events) {
                 String label = entry.getKey();
 
                 for (DetectionAgentProfile profile : profiles) {
                     if (profile.match(label)) {
-                        for (AnalysisUnit link : entry.getValue()) {
+                        for (Link link : entry.getValue()) {
                             try {
                                 DetectionAgentInterface new_task = profile.getTaskFor(link);
-                                new_task.setDatastore(new Client(server_url));
+                                new_task.setDatastore(new Client<Link>(server_url));
                                 executor_service.submit(new_task);
                                 task_count++;
 
@@ -152,7 +153,8 @@ public class ActivationController {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
-                DetectionAgentInterface new_task = profile.getTaskFor(new AnalysisUnit("1.2.3.4", "www.google.be"));
+                DetectionAgentInterface new_task = profile.getTaskFor(
+                        new Link("1.2.3.4", "www.google.be"));
 
             } catch (ClassNotFoundException ex) {
                 throw new InvalidProfileException(
@@ -205,14 +207,14 @@ public class ActivationController {
      */
     public final void notifyRawData(final RawData data) {
 
-        HashSet<AnalysisUnit> set = events.get(data.label);
+        HashSet<Link> set = events.get(data.label);
 
         if (set == null) {
-            set = new HashSet<AnalysisUnit>();
+            set = new HashSet<Link>();
             events.put(data.label, set);
         }
 
-        set.add(new AnalysisUnit(data.client, data.server));
+        set.add(data.subject);
     }
 
     /**

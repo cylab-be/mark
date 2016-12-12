@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.DetectionAgentProfile;
 import mark.client.Client;
+import mark.core.Link;
 
 /**
  * Represents a MARK server, composed of a datastore + some data agents + a
@@ -58,13 +59,9 @@ public class Server {
                 "http://" + config.server_host + ":" + config.server_port);
 
         parseModulesDirectory();
-
         startFileServer();
-
         startDatastore();
-
         startDataAgents();
-
         System.out.println("Server started!");
     }
 
@@ -182,10 +179,8 @@ public class Server {
         Thread.currentThread().setContextClassLoader(new_classloader);
 
         // Parse *.data.yml files
-
-
         File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
+            public boolean accept(final File dir, final String name) {
                 return name.endsWith(".data.yml");
             }
         });
@@ -222,7 +217,7 @@ public class Server {
         }).start();
     }
 
-    private void startDatastore() throws MalformedURLException, Exception {
+    private void startDatastore() throws MalformedURLException, InterruptedException, Exception {
         datastore = new Datastore();
         datastore.setConfiguration(config);
         datastore.setActivationProfiles(detection_agent_profiles);
@@ -233,15 +228,8 @@ public class Server {
 
         // Wait for Jetty server to start...
         while (!datastore.isStarted()) {
-            try {
-                Thread.sleep(START_WAIT_MS);
 
-            } catch (InterruptedException ex) {
-                // Something is trying to stop the main thread
-
-                datastore.stop();
-                return;
-            }
+            Thread.sleep(START_WAIT_MS);
         }
     }
 
@@ -256,7 +244,7 @@ public class Server {
                         Class.forName(profile.class_name).newInstance();
 
                 source.setProfile(profile);
-                source.setDatastore(new Client(server_url));
+                source.setDatastore(new Client<Link>(server_url));
                 Thread source_thread = new Thread(source);
                 source_thread.start();
 

@@ -6,8 +6,12 @@ import com.mongodb.client.MongoDatabase;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.activation.ActivationController;
+import mark.core.AnalysisUnit;
 import mark.core.Evidence;
+import mark.core.Link;
 import mark.core.RawData;
 import org.bson.Document;
 
@@ -15,7 +19,7 @@ import org.bson.Document;
  *
  * @author Thibault Debatty
  */
-public class RequestHandler implements ServerInterface {
+public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T> {
 
     private static final String COLLECTION_RAW_DATA = "RAW_DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
@@ -60,6 +64,8 @@ public class RequestHandler implements ServerInterface {
      */
     public final void addRawData(final RawData data) {
 
+        Logger.getLogger(RequestHandler.class.getName()).log(Level.INFO, data.toString());
+
         mongodb_database.getCollection(COLLECTION_RAW_DATA)
                 .insertOne(RawDataDocument.convert(data));
 
@@ -68,18 +74,20 @@ public class RequestHandler implements ServerInterface {
 
     /**
      *
-     * @param type
-     * @param client
-     * @param server
+     * @param label
+     * @param subject
      * @return
      */
     public final RawData[] findRawData(
-            final String type, final String client, final String server) {
+            final String label, final Link subject) {
+
+        Document query = new Document();
+        query.append(RawDataDocument.LABEL, label);
+        subject.writeToMongo(query);
+
         FindIterable<Document> documents = mongodb_database
                 .getCollection(COLLECTION_RAW_DATA)
-                .find(new Document(RawDataDocument.LABEL, type)
-                        .append(RawDataDocument.CLIENT, client)
-                        .append(RawDataDocument.SERVER, server));
+                .find(query);
 
         ArrayList<RawData> results = new ArrayList<RawData>();
         for (Document doc : documents) {
@@ -121,19 +129,18 @@ public class RequestHandler implements ServerInterface {
 final class EvidenceDocument {
     public static final String LABEL = "LABEL";
     public static final String TIME = "TIME";
-    public static final String CLIENT = "CLIENT";
     public static final String SCORE = "SCORE";
-    public static final String SERVER = "SERVER";
     public static final String REPORT = "REPORT";
 
     static Document convert(final Evidence evidence) {
-        return new Document()
+        Document doc = new Document()
                 .append(LABEL, evidence.label)
                 .append(TIME, evidence.time)
-                .append(CLIENT, evidence.client)
                 .append(SCORE, evidence.score)
-                .append(SERVER, evidence.server)
                 .append(TIME, evidence.time);
+
+        evidence.subject.writeToMongo(doc);
+        return doc;
     }
 
     private EvidenceDocument() {
@@ -148,15 +155,16 @@ final class EvidenceDocument {
 final class RawDataDocument {
     public static final String LABEL = "LABEL";
     public static final String TIME = "TIME";
-    public static final String CLIENT = "CLIENT";
-    public static final String SERVER = "SERVER";
     public static final String DATA = "DATA";
 
     static RawData convert(final Document doc) {
+
+        Link subject = new Link();
+        subject.readFromMongo(doc);
+
         RawData data = new RawData();
-        data.client = doc.getString(CLIENT);
+        data.subject = subject;
         data.data = doc.getString(DATA);
-        data.server = doc.getString(SERVER);
         data.time = doc.getInteger(TIME);
         data.label = doc.getString(LABEL);
 
@@ -166,12 +174,14 @@ final class RawDataDocument {
 
     static Document convert(final RawData data) {
 
-        return new Document()
+        Document doc = new Document()
                 .append(LABEL, data.label)
                 .append(TIME, data.time)
-                .append(CLIENT, data.client)
-                .append(SERVER, data.server)
                 .append(DATA, data.data);
+
+        data.subject.writeToMongo(doc);
+        return doc;
+
     }
 
     private RawDataDocument() {

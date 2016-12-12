@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
 import mark.client.FakeClient;
 import mark.core.Evidence;
+import mark.core.Link;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import org.apache.commons.math3.complex.Complex;
@@ -35,8 +36,7 @@ public class Frequency extends AbstractDetectionAgent {
         FakeClient fakce_client = new FakeClient();
         Frequency agent = new Frequency();
         agent.setDatastore(fakce_client);
-        agent.setClient("1.2.3.4");
-        agent.setServer("www.evil.com");
+        agent.setSubject(new Link("192.168.2.3", "www.google.com"));
         agent.setLabel("http");
         agent.run();
     }
@@ -45,8 +45,7 @@ public class Frequency extends AbstractDetectionAgent {
         ServerInterface datastore = getDatastore();
         RawData[] raw_data;
         try {
-            raw_data = datastore.findRawData(
-                getLabel(), getClient(), getServer());
+            raw_data = datastore.findRawData(getLabel(), getSubject());
         } catch (Throwable ex) {
             System.err.println("Could not connect!");
             System.err.println(ex.getMessage());

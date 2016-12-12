@@ -22,6 +22,7 @@ public class HTTPFileSourceIT extends TestCase {
             MalformedURLException, Exception {
 
         System.out.println("Test with a HTTP file source");
+        System.out.println("============================");
         Server server = new Server();
 
         // Configure a single data source (HTTP, Regex, file with 1000 reqs)

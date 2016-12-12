@@ -1,12 +1,28 @@
 package mark.server;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JavaType;
 import com.googlecode.jsonrpc4j.JsonRpcServer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import java.net.MalformedURLException;
+import java.util.Collection;
 import java.util.concurrent.ArrayBlockingQueue;
 import mark.activation.ActivationController;
 import mark.activation.DetectionAgentProfile;
+import mark.core.AnalysisUnit;
+import mark.core.Link;
+import mark.core.LinkDeserializer;
+import mark.core.LinkSerializer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -70,11 +86,17 @@ public class Datastore implements Runnable {
         activation_controller.start();
 
         // Create and run HTTP / JSON-RPC server
-        RequestHandler datastore_handler = new RequestHandler(
+        RequestHandler datastore_handler = new RequestHandler<Link>(
                 mongodb_database,
                 activation_controller);
 
-        JsonRpcServer jsonrpc_server = new JsonRpcServer(datastore_handler);
+        ObjectMapper object_mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        //module.addSerializer(AnalysisUnit.class, new LinkSerializer());
+        module.addDeserializer(AnalysisUnit.class, new LinkDeserializer());
+        object_mapper.registerModule(module);
+
+        JsonRpcServer jsonrpc_server = new JsonRpcServer(object_mapper, datastore_handler);
 
         QueuedThreadPool thread_pool = new QueuedThreadPool(
                 config.max_threads,

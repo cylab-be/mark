@@ -21,51 +21,64 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.server;
+
+package mark.core;
+
+import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class AnalysisUnit {
+public class Link extends AnalysisUnit {
 
-    public final String client;
-    public final String server;
+    private static final String FIELD_CLIENT = "CLIENT";
+    private static final String FIELD_SERVER = "SERVER";
 
-    public AnalysisUnit(String client, String server) {
+    public String client;
+    public String server;
+
+    public Link() {
+    }
+
+    public Link(String client, String server) {
         this.client = client;
         this.server = server;
     }
 
+    public void writeToMongo(Document doc) {
+        doc.append(FIELD_CLIENT, client);
+        doc.append(FIELD_SERVER, server);
+    }
+
+    public void readFromMongo(Document doc) {
+        client = doc.getString(FIELD_CLIENT);
+        server = doc.getString(FIELD_SERVER);
+    }
+
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + (this.client != null ? this.client.hashCode() : 0);
-        hash = 53 * hash + (this.server != null ? this.server.hashCode() : 0);
+        int hash = 3;
+        hash = 59 * hash + (this.client != null ? this.client.hashCode() : 0);
+        hash = 59 * hash + (this.server != null ? this.server.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
         if (obj == null) {
             return false;
         }
-
         if (getClass() != obj.getClass()) {
             return false;
         }
-
-        final AnalysisUnit other = (AnalysisUnit) obj;
-
-        return (this.server.equals(other.server) && this.client.equals(other.client));
-    }
-
-    @Override
-    public String toString() {
-        return "[" + client + " " + server + "]";
+        final Link other = (Link) obj;
+        if ((this.client == null) ? (other.client != null) : !this.client.equals(other.client)) {
+            return false;
+        }
+        if ((this.server == null) ? (other.server != null) : !this.server.equals(other.server)) {
+            return false;
+        }
+        return true;
     }
 }

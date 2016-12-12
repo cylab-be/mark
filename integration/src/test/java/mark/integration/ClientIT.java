@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.activation.InvalidProfileException;
 import mark.client.Client;
+import mark.core.Link;
 import mark.core.RawData;
 import mark.server.Server;
 
@@ -21,6 +22,12 @@ import mark.server.Server;
 public class ClientIT extends TestCase {
 
     private Server server;
+
+    @Override
+    protected void tearDown() throws Exception {
+        server.stop();
+        super.tearDown();
+    }
 
     protected final void startDummyServer()
             throws FileNotFoundException, InvalidProfileException,
@@ -39,10 +46,11 @@ public class ClientIT extends TestCase {
      */
     public final void testTest() throws Throwable {
         System.out.println("test");
+        System.out.println("====");
+
         startDummyServer();
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         assertEquals("1", datastore.test());
-        server.stop();
     }
 
     /**
@@ -52,10 +60,11 @@ public class ClientIT extends TestCase {
      */
     public final void testString() throws Throwable {
         System.out.println("testString");
+        System.out.println("==========");
+
         startDummyServer();
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         datastore.testString("My String");
-        server.stop();
     }
 
     /**
@@ -65,43 +74,40 @@ public class ClientIT extends TestCase {
      */
     public final void testAddRawData() throws Throwable {
         System.out.println("addRawData");
+        System.out.println("==========");
 
         startDummyServer();
+
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
         data.label = "http";
-        data.client = "1.2.3.4";
-        data.server = "www.google.be";
+        data.subject = new Link("1.2.3.4", "www.google.be");
         data.time = 1230987;
         data.data = "A proxy log line...";
         datastore.addRawData(data);
-        server.stop();
     }
 
     public final void testAddFindRawData() throws Throwable {
         System.out.println("addRawData and findRawData");
+        System.out.println("==========================");
 
         startDummyServer();
-        String type = "http";
-        String client = "1.2.3.4";
-        String servername = "www.google.be";
+        String label = "http";
+        Link link = new Link("1.2.3.4", "www.google.be");
 
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
-        RawData[] original_data =
-                datastore.findRawData(type, client, servername);
+        RawData[] original_data = datastore.findRawData(label, link);
 
         RawData new_data = new RawData();
-        new_data.label = type;
-        new_data.client = client;
-        new_data.server = servername;
+        new_data.label = label;
+        new_data.subject = link;
         new_data.time = (int) (System.currentTimeMillis() / 1000L);
         new_data.data = "A proxy log line...";
         datastore.addRawData(new_data);
 
         assertEquals(
                 original_data.length + 1,
-                datastore.findRawData(type, client, servername).length);
-        server.stop();
+                datastore.findRawData(label, link).length);
     }
 
     /**
@@ -111,28 +117,28 @@ public class ClientIT extends TestCase {
      */
     public final void testReadWriteRawData() throws Throwable {
         System.out.println("addRawData, with a ReadWrite detection agent");
+        System.out.println("============================================");
 
         // Start server with read-write activation profile
         server = new Server();
         InputStream activation_file = getClass()
                 .getResourceAsStream("/detection.readwrite.yml");
-        server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(activation_file));
+        server.addDetectionAgentProfile(
+                DetectionAgentProfile.fromInputStream(activation_file));
         server.start();
 
         Client datastore = new Client(new URL("http://127.0.0.1:8080"));
         RawData data = new RawData();
         data.label = "http";
-        data.client = "1.2.3.4";
-        data.server = "www.google.be";
+        data.subject = new Link("1.2.3.4", "www.google.be");
         data.time = 1230987;
         data.data = "A proxy log line...";
         datastore.addRawData(data);
-        server.stop();
     }
 
     public final void testInvalidConnection() throws Throwable {
-
         System.out.println("Test invalid connection");
+        System.out.println("=======================");
         startDummyServer();
 
         Client datastore = null;
@@ -146,8 +152,6 @@ public class ClientIT extends TestCase {
             assertEquals(
                     ex.getClass().getName(), "java.net.SocketTimeoutException");
 
-        } finally {
-            server.stop();
         }
     }
 }
