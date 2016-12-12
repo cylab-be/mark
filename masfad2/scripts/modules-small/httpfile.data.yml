@@ -2,7 +2,7 @@
 # from a file
 #
 ---
-class_name: mark.agent.data.regex.FileSource
+class_name: mark.masfad2.FileSource
 label:      data.http
 parameters: {
   file:   ./httpfile.data.txt
