@@ -25,15 +25,11 @@
 package mark.core;
 
 import java.io.Serializable;
-import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public abstract class AnalysisUnit implements Serializable {
-
-    public abstract void writeToMongo(Document doc);
-    public abstract void readFromMongo(Document doc);
+public interface Subject extends Serializable {
 
 }

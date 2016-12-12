@@ -21,31 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.agent.detection.http;
+package mark.integration;
 
-import junit.framework.TestCase;
-import mark.client.FakeClient;
-import mark.core.Link;
+import java.net.URL;
+import mark.client.Client;
+import mark.core.RawData;
+import mark.masfad2.Link;
+import mark.masfad2.LinkAdapter;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class FrequencyTest extends TestCase {
+public class FindRawData {
 
-    /**
-     * Test of run method, of class Frequency.
-     */
-    public void testRun() {
-        System.out.println("run");
-
-        FakeClient fakce_client = new FakeClient();
-
-        Frequency agent = new Frequency();
-        agent.setDatastore(fakce_client);
-        agent.setSubject(new Link("192.168.2.3", "www.google.com"));
-        agent.setLabel("http");
-        agent.run();
+    public static void main(String[] args) throws Throwable {
+        FindRawData test = new FindRawData();
+        test.testAddFindRawData();
     }
 
+
+    public final void testAddFindRawData() throws Throwable {
+        System.out.println("addRawData and findRawData");
+        System.out.println("==========================");
+
+        String label = "http";
+        Link link = new Link("1.2.3.4", "www.google.be");
+
+        Client<Link> datastore = new Client<Link>(new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        RawData[] data = datastore.findRawData(label, link);
+
+        System.out.println(data.length);
+
+    }
 }

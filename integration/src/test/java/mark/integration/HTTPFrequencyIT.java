@@ -7,7 +7,9 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.activation.InvalidProfileException;
-import mark.agent.data.regex.FileSource;
+import mark.masfad2.FileSource;
+import mark.masfad2.Link;
+import mark.masfad2.LinkAdapter;
 import mark.server.Server;
 import mark.server.DataAgentProfile;
 
@@ -23,8 +25,8 @@ public class HTTPFrequencyIT extends TestCase {
 
         System.out.println("test frequency agent");
         System.out.println("====================");
-        
-        Server masfad_server = new Server();
+
+        Server<Link> masfad_server = new Server<Link>(new LinkAdapter());
 
         // Configure a single data source (HTTP, Regex, file with 47k reqs)
         HashMap<String, String> parameters = new HashMap<String, String>();

@@ -9,8 +9,9 @@ import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.activation.InvalidProfileException;
 import mark.client.Client;
-import mark.core.Link;
+import mark.masfad2.Link;
 import mark.core.RawData;
+import mark.masfad2.LinkAdapter;
 import mark.server.Server;
 
 /**
@@ -21,7 +22,7 @@ import mark.server.Server;
  */
 public class ClientIT extends TestCase {
 
-    private Server server;
+    private Server<Link> server;
 
     @Override
     protected void tearDown() throws Exception {
@@ -32,7 +33,7 @@ public class ClientIT extends TestCase {
     protected final void startDummyServer()
             throws FileNotFoundException, InvalidProfileException,
             MalformedURLException, Exception {
-        server = new Server();
+        server = new Server<Link>(new LinkAdapter());
 
         // Activate the dummy activation profiles
         InputStream activation_file = getClass()
@@ -49,7 +50,7 @@ public class ClientIT extends TestCase {
         System.out.println("====");
 
         startDummyServer();
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
         assertEquals("1", datastore.test());
     }
 
@@ -63,7 +64,7 @@ public class ClientIT extends TestCase {
         System.out.println("==========");
 
         startDummyServer();
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
         datastore.testString("My String");
     }
 
@@ -78,7 +79,7 @@ public class ClientIT extends TestCase {
 
         startDummyServer();
 
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData data = new RawData();
         data.label = "http";
         data.subject = new Link("1.2.3.4", "www.google.be");
@@ -92,10 +93,11 @@ public class ClientIT extends TestCase {
         System.out.println("==========================");
 
         startDummyServer();
+
         String label = "http";
         Link link = new Link("1.2.3.4", "www.google.be");
 
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
+        Client<Link> datastore = new Client<Link>(new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData[] original_data = datastore.findRawData(label, link);
 
         RawData new_data = new RawData();
@@ -120,14 +122,14 @@ public class ClientIT extends TestCase {
         System.out.println("============================================");
 
         // Start server with read-write activation profile
-        server = new Server();
+        server = new Server<Link>(new LinkAdapter());
         InputStream activation_file = getClass()
                 .getResourceAsStream("/detection.readwrite.yml");
         server.addDetectionAgentProfile(
                 DetectionAgentProfile.fromInputStream(activation_file));
         server.start();
 
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData data = new RawData();
         data.label = "http";
         data.subject = new Link("1.2.3.4", "www.google.be");
@@ -143,7 +145,7 @@ public class ClientIT extends TestCase {
 
         Client datastore = null;
         try {
-            datastore = new Client(new URL("http://123.45.67.89:8082"));
+            datastore = new Client(new URL("http://123.45.67.89:8082"), new LinkAdapter());
             datastore.test();
             fail("Should throw a SocketTimeoutException !");
             datastore.test();

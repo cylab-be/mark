@@ -24,27 +24,18 @@
 
 package mark.core;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import java.io.IOException;
+import com.fasterxml.jackson.core.TreeNode;
+import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class LinkDeserializer extends JsonDeserializer<Link> {
+public abstract class SubjectAdapter<T> extends JsonDeserializer<T> {
 
-    @Override
-    public Link deserialize(JsonParser jparser, DeserializationContext context) throws IOException, JsonProcessingException {
-
-        TreeNode tree = jparser.getCodec().readTree(jparser);
-        return new Link(
-                tree.get("client").toString(),
-                tree.get("server").toString());
-
-    }
-
+    public abstract void writeToMongo(T subject, Document doc);
+    public abstract T readFromMongo(Document doc);
+    public abstract T getInstance();
+    public abstract T deserialize(TreeNode node);
 }

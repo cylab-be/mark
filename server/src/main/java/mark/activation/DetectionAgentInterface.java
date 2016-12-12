@@ -1,8 +1,7 @@
 package mark.activation;
 
 import java.util.Map;
-import mark.core.AnalysisUnit;
-import mark.core.Link;
+import mark.core.Subject;
 import mark.core.ServerInterface;
 
 /**
@@ -11,10 +10,10 @@ import mark.core.ServerInterface;
  * AbstractDetectionAgent, which provides a lot of helpers.
  * @author Thibault Debatty
  */
-interface DetectionAgentInterface extends Runnable {
+interface DetectionAgentInterface<T extends Subject> extends Runnable {
     void setParameters(Map<String, String> parameters);
     void setLabel(String label);
-    void setSubject(Link subject);
-    void setDatastore(ServerInterface datastore);
+    void setSubject(T subject);
+    void setDatastore(ServerInterface<T> datastore);
 
 }

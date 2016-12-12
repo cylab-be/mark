@@ -9,23 +9,24 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.ActivationController;
-import mark.core.AnalysisUnit;
+import mark.core.Subject;
 import mark.core.Evidence;
-import mark.core.Link;
 import mark.core.RawData;
+import mark.core.SubjectAdapter;
 import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T> {
+public class RequestHandler<T extends Subject> implements ServerInterface<T> {
 
     private static final String COLLECTION_RAW_DATA = "RAW_DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
 
     private final MongoDatabase mongodb_database;
     private final ActivationController activation_controller;
+    private final SubjectAdapter<T> adapter;
 
     /**
      *
@@ -34,10 +35,13 @@ public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T
      */
     RequestHandler(
             final MongoDatabase mongodb_database,
-            final ActivationController activation_controller) {
+            final ActivationController activation_controller,
+            final SubjectAdapter<T> adapter) {
 
         this.mongodb_database = mongodb_database;
         this.activation_controller = activation_controller;
+        this.adapter = adapter;
+
     }
 
     /**
@@ -67,7 +71,7 @@ public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T
         Logger.getLogger(RequestHandler.class.getName()).log(Level.INFO, data.toString());
 
         mongodb_database.getCollection(COLLECTION_RAW_DATA)
-                .insertOne(RawDataDocument.convert(data));
+                .insertOne(convert(data));
 
         activation_controller.notifyRawData(data);
     }
@@ -79,11 +83,11 @@ public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T
      * @return
      */
     public final RawData[] findRawData(
-            final String label, final Link subject) {
+            final String label, final T subject) {
 
         Document query = new Document();
-        query.append(RawDataDocument.LABEL, label);
-        subject.writeToMongo(query);
+        query.append(LABEL, label);
+        adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb_database
                 .getCollection(COLLECTION_RAW_DATA)
@@ -91,7 +95,7 @@ public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T
 
         ArrayList<RawData> results = new ArrayList<RawData>();
         for (Document doc : documents) {
-            results.add(RawDataDocument.convert(doc));
+            results.add(convert(doc));
         }
         return results.toArray(new RawData[results.size()]);
 
@@ -104,7 +108,7 @@ public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T
      */
     public final void addEvidence(final Evidence evidence) {
         mongodb_database.getCollection(COLLECTION_EVIDENCE)
-                .insertOne(EvidenceDocument.convert(evidence));
+                .insertOne(convert(evidence));
 
         activation_controller.notifyEvidence(evidence);
     }
@@ -120,50 +124,22 @@ public class RequestHandler<T extends AnalysisUnit> implements ServerInterface<T
         status.put("executed", activation_controller.getTaskCount());
         return status;
     }
-}
 
-/**
- * Helper class for converting between Evidence and MongoDB Document.
- * @author Thibault Debatty
- */
-final class EvidenceDocument {
-    public static final String LABEL = "LABEL";
-    public static final String TIME = "TIME";
-    public static final String SCORE = "SCORE";
-    public static final String REPORT = "REPORT";
+    private static final String LABEL = "LABEL";
+    private static final String TIME = "TIME";
+    private static final String DATA = "DATA";
+    private static final String SCORE = "SCORE";
+    private static final String REPORT = "REPORT";
 
-    static Document convert(final Evidence evidence) {
-        Document doc = new Document()
-                .append(LABEL, evidence.label)
-                .append(TIME, evidence.time)
-                .append(SCORE, evidence.score)
-                .append(TIME, evidence.time);
-
-        evidence.subject.writeToMongo(doc);
-        return doc;
-    }
-
-    private EvidenceDocument() {
-
-    }
-}
-
-/**
- * Helper class for converting between RawData and MongoDB Document.
- * @author Thibault Debatty
- */
-final class RawDataDocument {
-    public static final String LABEL = "LABEL";
-    public static final String TIME = "TIME";
-    public static final String DATA = "DATA";
-
-    static RawData convert(final Document doc) {
-
-        Link subject = new Link();
-        subject.readFromMongo(doc);
+    /**
+     * Convert from MongoDB document to RawData.
+     * @param doc
+     * @return
+     */
+    private RawData convert(final Document doc) {
 
         RawData data = new RawData();
-        data.subject = subject;
+        data.subject = adapter.readFromMongo(doc);
         data.data = doc.getString(DATA);
         data.time = doc.getInteger(TIME);
         data.label = doc.getString(LABEL);
@@ -172,19 +148,37 @@ final class RawDataDocument {
 
     }
 
-    static Document convert(final RawData data) {
+    /**
+     * Convert from RawData to MongoDB document.
+     * @param data
+     * @return
+     */
+    private Document convert(final RawData<T> data) {
 
         Document doc = new Document()
                 .append(LABEL, data.label)
                 .append(TIME, data.time)
                 .append(DATA, data.data);
-
-        data.subject.writeToMongo(doc);
+        adapter.writeToMongo(data.subject, doc);
         return doc;
-
     }
 
-    private RawDataDocument() {
 
+    /**
+     * Convert from Evidence to MongoDB document.
+     * @param evidence
+     * @return
+     */
+    Document convert(final Evidence<T> evidence) {
+        Document doc = new Document()
+                .append(LABEL, evidence.label)
+                .append(TIME, evidence.time)
+                .append(SCORE, evidence.score)
+                .append(TIME, evidence.time);
+
+        adapter.writeToMongo(evidence.subject, doc);
+        return doc;
     }
+
+
 }

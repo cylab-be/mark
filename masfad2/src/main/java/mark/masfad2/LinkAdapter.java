@@ -22,63 +22,55 @@
  * THE SOFTWARE.
  */
 
-package mark.core;
+package mark.masfad2;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import java.io.IOException;
+import mark.core.SubjectAdapter;
 import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class Link extends AnalysisUnit {
+public class LinkAdapter extends SubjectAdapter<Link> {
 
     private static final String FIELD_CLIENT = "CLIENT";
     private static final String FIELD_SERVER = "SERVER";
 
-    public String client;
-    public String server;
+    @Override
+    public final Link deserialize(
+            final JsonParser jparser,
+            final DeserializationContext context)
+            throws IOException, JsonProcessingException {
 
-    public Link() {
+        TreeNode tree = jparser.getCodec().readTree(jparser);
+        return new Link(
+                tree.get("client").toString(),
+                tree.get("server").toString());
+
     }
 
-    public Link(String client, String server) {
-        this.client = client;
-        this.server = server;
+    public void writeToMongo(Link link, Document doc) {
+        doc.append(FIELD_CLIENT, link.client);
+        doc.append(FIELD_SERVER, link.server);
     }
 
-    public void writeToMongo(Document doc) {
-        doc.append(FIELD_CLIENT, client);
-        doc.append(FIELD_SERVER, server);
+    public Link readFromMongo(Document doc) {
+        return new Link(
+                doc.getString(FIELD_CLIENT),
+                doc.getString(FIELD_SERVER));
     }
 
-    public void readFromMongo(Document doc) {
-        client = doc.getString(FIELD_CLIENT);
-        server = doc.getString(FIELD_SERVER);
+    public Link getInstance() {
+        return new Link();
     }
 
     @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 59 * hash + (this.client != null ? this.client.hashCode() : 0);
-        hash = 59 * hash + (this.server != null ? this.server.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Link other = (Link) obj;
-        if ((this.client == null) ? (other.client != null) : !this.client.equals(other.client)) {
-            return false;
-        }
-        if ((this.server == null) ? (other.server != null) : !this.server.equals(other.server)) {
-            return false;
-        }
-        return true;
+    public Link deserialize(TreeNode node) {
+        return new Link(node.get("client").toString(), node.get("server").toString());
     }
 }

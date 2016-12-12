@@ -21,29 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.core;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import java.io.IOException;
+package mark.masfad2;
+
+import mark.core.Subject;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class LinkSerializer extends JsonSerializer<Link> {
+public class Link implements Subject {
 
+    public String client;
+    public String server;
 
-    @Override
-    public void serialize(Link link, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-
-        jgen.writeStartObject();
-        jgen.writeStringField("client", link.client);
-        jgen.writeStringField("server", link.server);
-        jgen.writeEndObject();
-
+    public Link() {
     }
 
+    public Link(String client, String server) {
+        this.client = client;
+        this.server = server;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.client != null ? this.client.hashCode() : 0);
+        hash = 59 * hash + (this.server != null ? this.server.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Link other = (Link) obj;
+        if ((this.client == null) ? (other.client != null) : !this.client.equals(other.client)) {
+            return false;
+        }
+        if ((this.server == null) ? (other.server != null) : !this.server.equals(other.server)) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -1,4 +1,4 @@
-package mark.agent.data.regex;
+package mark.masfad2;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import mark.core.Link;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.server.DataAgentInterface;

@@ -1,18 +1,27 @@
 package mark.client;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
+import java.io.IOException;
 import java.net.URL;
-import mark.core.AnalysisUnit;
+import java.util.HashMap;
+import mark.core.Subject;
 import mark.core.ServerInterface;
 import mark.core.Evidence;
-import mark.core.Link;
 import mark.core.RawData;
+import mark.core.SubjectAdapter;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class Client<T extends AnalysisUnit> implements ServerInterface<T> {
+public class Client<T extends Subject> implements ServerInterface<T> {
 
     private JsonRpcHttpClient datastore;
 
@@ -22,10 +31,36 @@ public class Client<T extends AnalysisUnit> implements ServerInterface<T> {
      *
      * @param server_url
      */
-    public Client(final URL server_url) {
+    public Client(final URL server_url, final SubjectAdapter<T> adapter) {
 
-        datastore = new JsonRpcHttpClient(server_url);
+        JsonDeserializer<RawData> deserializer = new JsonDeserializer<RawData>() {
+
+            @Override
+            public RawData deserialize(
+                    JsonParser jparser,
+                    DeserializationContext context)
+                    throws IOException, JsonProcessingException {
+
+
+                TreeNode tree = jparser.getCodec().readTree(jparser);
+                RawData<T> data = new RawData<T>();
+                data.data = tree.get("data").toString();
+                data.label = tree.get("label").toString();
+                data.subject = adapter.deserialize(tree.get("subject"));
+                data.time = Integer.valueOf(tree.get("time").toString());
+
+                return data;
+            }
+        };
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(RawData.class, deserializer);
+        mapper.registerModule(module);
+
+        datastore = new JsonRpcHttpClient(mapper, server_url, new HashMap<String, String>());
         datastore.setConnectionTimeoutMillis(5000);
+
     }
 
     /**
@@ -41,7 +76,7 @@ public class Client<T extends AnalysisUnit> implements ServerInterface<T> {
      *
      * @param data {@inheritDoc}
      */
-    public final void addRawData(final RawData data) throws Throwable {
+    public final void addRawData(final RawData<T> data) throws Throwable {
 
         datastore.invoke("addRawData", new Object[]{data});
 
@@ -57,8 +92,8 @@ public class Client<T extends AnalysisUnit> implements ServerInterface<T> {
         datastore.invoke("testString", new Object[]{data});
     }
 
-    public final RawData[] findRawData(
-            final String label, final Link subject)
+    public final RawData<T>[] findRawData(
+            final String label, final T subject)
             throws Throwable {
 
         return datastore.invoke(

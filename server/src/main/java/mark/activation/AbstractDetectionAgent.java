@@ -1,22 +1,22 @@
 package mark.activation;
 
 import java.util.Map;
-import mark.core.AnalysisUnit;
+import mark.core.Subject;
 import mark.core.Evidence;
-import mark.core.Link;
 import mark.core.ServerInterface;
 
 /**
  *
  * @author Thibault Debatty
  */
-public abstract class AbstractDetectionAgent implements DetectionAgentInterface {
+public abstract class AbstractDetectionAgent<T extends Subject>
+        implements DetectionAgentInterface<T> {
 
     // Things that are provided by the activation logic engine:
     private String label;
-    private Link subject;
+    private T subject;
     private Map<String, String> parameters;
-    private ServerInterface datastore;
+    private ServerInterface<T> datastore;
 
     /**
      *
@@ -38,11 +38,11 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
     }
 
 
-    public Link getSubject() {
+    public T getSubject() {
         return subject;
     }
 
-    public void setSubject(Link subject) {
+    public void setSubject(T subject) {
         this.subject = subject;
     }
 
@@ -52,11 +52,11 @@ public abstract class AbstractDetectionAgent implements DetectionAgentInterface 
      * Return a connection to the server.
      * @return
      */
-    public final ServerInterface getDatastore() {
+    public final ServerInterface<T> getDatastore() {
         return datastore;
     }
 
-    public final void setDatastore(final ServerInterface datastore) {
+    public final void setDatastore(final ServerInterface<T> datastore) {
         this.datastore = datastore;
     }
 

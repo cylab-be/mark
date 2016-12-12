@@ -1,11 +1,10 @@
-package mark.agent.detection.http;
+package mark.masfad2;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
 import mark.client.FakeClient;
 import mark.core.Evidence;
-import mark.core.Link;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import org.apache.commons.math3.complex.Complex;

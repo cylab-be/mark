@@ -4,10 +4,10 @@ package mark.core;
  *
  * @author Thibault Debatty
  */
-public class Evidence {
+public class Evidence<T extends Subject> {
     public String label;
     public int time;
-    public Link subject;
+    public T subject;
     public double score;
     public String report;
 

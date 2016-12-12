@@ -24,9 +24,8 @@
 package mark.client;
 
 import java.util.Random;
-import mark.core.AnalysisUnit;
+import mark.core.Subject;
 import mark.core.Evidence;
-import mark.core.Link;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 
@@ -35,7 +34,7 @@ import mark.core.ServerInterface;
  * It will simply return fake data, and write out what it receives...
  * @author Thibault Debatty
  */
-public class FakeClient<T extends AnalysisUnit> implements ServerInterface<T> {
+public class FakeClient<T extends Subject> implements ServerInterface<T> {
 
     public String test() throws Throwable {
         return "test";
@@ -58,7 +57,7 @@ public class FakeClient<T extends AnalysisUnit> implements ServerInterface<T> {
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
 
-    public RawData[] findRawData(String type, Link subject)
+    public RawData[] findRawData(String type, T subject)
             throws Throwable {
 
         int start = 123456;

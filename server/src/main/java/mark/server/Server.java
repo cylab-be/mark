@@ -11,14 +11,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.DetectionAgentProfile;
 import mark.client.Client;
-import mark.core.Link;
+import mark.core.Subject;
+import mark.core.SubjectAdapter;
 
 /**
  * Represents a MARK server, composed of a datastore + some data agents + a
  * file server.
  * @author Thibault Debatty
  */
-public class Server {
+public class Server<T extends Subject> {
 
     private static final int START_WAIT_MS = 1000;
 
@@ -32,6 +33,7 @@ public class Server {
     private LinkedList<Thread> data_agent_threads;
 
     private LinkedList<DetectionAgentProfile> detection_agent_profiles;
+    private SubjectAdapter<T> adapter;
 
 
     /**
@@ -39,7 +41,9 @@ public class Server {
      * and no detection agents.
      * @throws java.net.MalformedURLException
      */
-    public Server() throws MalformedURLException {
+    public Server(final SubjectAdapter<T> adapter) throws MalformedURLException {
+
+        this.adapter = adapter;
         config = new Config();
 
         // Create an empty list of source profiles
@@ -218,10 +222,10 @@ public class Server {
     }
 
     private void startDatastore() throws MalformedURLException, InterruptedException, Exception {
-        datastore = new Datastore();
+
+        datastore = new Datastore<T>(adapter);
         datastore.setConfiguration(config);
         datastore.setActivationProfiles(detection_agent_profiles);
-
 
         // Start the datastore
         new Thread(datastore).start();
@@ -244,7 +248,7 @@ public class Server {
                         Class.forName(profile.class_name).newInstance();
 
                 source.setProfile(profile);
-                source.setDatastore(new Client<Link>(server_url));
+                source.setDatastore(new Client<T>(server_url, adapter));
                 Thread source_thread = new Thread(source);
                 source_thread.start();
 

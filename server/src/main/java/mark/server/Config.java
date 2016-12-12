@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import mark.core.Subject;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -87,9 +88,7 @@ public class Config {
         if (file == null) {
             return null;
         }
-        
+
         return file.toURI().resolve(modules).getPath();
     }
-
-
 }
