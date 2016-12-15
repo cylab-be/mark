@@ -83,4 +83,8 @@ public class FakeClient<T extends Subject> implements ServerInterface<T> {
         return data;
     }
 
+    public Evidence<T>[] findEvidence(String label, T subject) throws Throwable {
+        return null;
+    }
+
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
@@ -33,29 +34,11 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      */
     public Client(final URL server_url, final SubjectAdapter<T> adapter) {
 
-        JsonDeserializer<RawData> deserializer = new JsonDeserializer<RawData>() {
-
-            @Override
-            public RawData deserialize(
-                    JsonParser jparser,
-                    DeserializationContext context)
-                    throws IOException, JsonProcessingException {
-
-
-                TreeNode tree = jparser.getCodec().readTree(jparser);
-                RawData<T> data = new RawData<T>();
-                data.data = tree.get("data").toString();
-                data.label = tree.get("label").toString();
-                data.subject = adapter.deserialize(tree.get("subject"));
-                data.time = Integer.valueOf(tree.get("time").toString());
-
-                return data;
-            }
-        };
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(RawData.class, deserializer);
+        module.addDeserializer(RawData.class, new RawDataDezerializer(adapter));
+        module.addDeserializer(Evidence.class, new EvidenceDeserializer(adapter));
         mapper.registerModule(module);
 
         datastore = new JsonRpcHttpClient(mapper, server_url, new HashMap<String, String>());
@@ -96,15 +79,72 @@ public class Client<T extends Subject> implements ServerInterface<T> {
             final String label, final T subject)
             throws Throwable {
 
+        System.out.println("Client : search " + subject);
         return datastore.invoke(
                 "findRawData",
                 new Object[]{label, subject},
                 RawData[].class);
     }
 
+    public final Evidence<T>[] findEvidence(
+            final String label, final T subject)
+            throws Throwable {
+
+        return datastore.invoke(
+                "findEvidence",
+                new Object[]{label, subject},
+                Evidence[].class);
+
+    }
+
     public final void addEvidence(final Evidence evidence) throws Throwable {
 
         datastore.invoke("addEvidence", new Object[]{evidence});
+    }
+
+    private static class RawDataDezerializer<T extends Subject> extends JsonDeserializer<RawData> {
+        private SubjectAdapter<T> adapter;
+
+        public RawDataDezerializer(SubjectAdapter<T> adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public RawData deserialize(
+                JsonParser jparser,
+                DeserializationContext context)
+                throws IOException, JsonProcessingException {
+
+            TreeNode tree = jparser.getCodec().readTree(jparser);
+            RawData<T> data = new RawData<T>();
+            data.data = tree.get("data").toString();
+            data.label = tree.get("label").toString();
+            data.subject = adapter.deserialize((JsonNode) tree.get("subject"));
+            data.time = Integer.valueOf(tree.get("time").toString());
+
+            return data;
+        }
+    }
+
+    private static class EvidenceDeserializer<T extends Subject> extends JsonDeserializer<Evidence> {
+        private SubjectAdapter<T> adapter;
+
+        public EvidenceDeserializer(SubjectAdapter<T> adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public Evidence deserialize(JsonParser jparser, DeserializationContext arg1) throws IOException, JsonProcessingException {
+            TreeNode tree = jparser.getCodec().readTree(jparser);
+            Evidence<T> data = new Evidence<T>();
+            data.report = tree.get("report").toString();
+            data.score = Double.valueOf(tree.get("score").toString());
+            data.label = tree.get("label").toString();
+            data.subject = adapter.deserialize((JsonNode) tree.get("subject"));
+            data.time = Integer.valueOf(tree.get("time").toString());
+
+            return data;
+        }
     }
 
 }

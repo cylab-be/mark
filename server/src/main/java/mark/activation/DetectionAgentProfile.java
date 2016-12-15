@@ -61,6 +61,7 @@ public class DetectionAgentProfile<T extends Subject> {
 
         new_task.setSubject(subject);
         new_task.setLabel(label);
+        new_task.setInputLabel(trigger_label);
 
         return new_task;
     }

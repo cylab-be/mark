@@ -24,18 +24,16 @@
 
 package mark.core;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.bson.Document;
-
 /**
  *
  * @author Thibault Debatty
  */
-public abstract class SubjectAdapter<T> extends JsonDeserializer<T> {
+public class DummySuject implements Subject {
 
-    public abstract void writeToMongo(T subject, Document doc);
-    public abstract T readFromMongo(Document doc);
-    public abstract T getInstance();
-    public abstract T deserialize(JsonNode node);
+    public String name = "";
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -14,6 +14,7 @@ public abstract class AbstractDetectionAgent<T extends Subject>
 
     // Things that are provided by the activation logic engine:
     private String label;
+    private String input_label;
     private T subject;
     private Map<String, String> parameters;
     private ServerInterface<T> datastore;
@@ -23,6 +24,14 @@ public abstract class AbstractDetectionAgent<T extends Subject>
      */
     public AbstractDetectionAgent() {
 
+    }
+
+    public final String getInputLabel() {
+        return input_label;
+    }
+
+    public final void setInputLabel(final String input_label) {
+        this.input_label = input_label;
     }
 
     public final void setParameters(final Map<String, String> parameters) {

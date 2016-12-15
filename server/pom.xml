@@ -19,7 +19,7 @@
 
     <build>
         <plugins>
-            
+
         </plugins>
     </build>
 
@@ -122,6 +122,11 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.7.2</version>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ignite</groupId>
+            <artifactId>ignite-log4j</artifactId>
+            <version>1.5.0.final</version>
         </dependency>
     </dependencies>
 </project>

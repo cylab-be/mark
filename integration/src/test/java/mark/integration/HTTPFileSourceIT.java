@@ -3,10 +3,12 @@ package mark.integration;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.activation.InvalidProfileException;
+import mark.client.Client;
 import mark.masfad2.FileSource;
 import mark.masfad2.Link;
 import mark.masfad2.LinkAdapter;
@@ -36,14 +38,22 @@ public class HTTPFileSourceIT extends TestCase {
         DataAgentProfile http_1000_source = new DataAgentProfile();
         http_1000_source.class_name = FileSource.class.getCanonicalName();
         http_1000_source.parameters = parameters;
-
         server.addDataAgentProfile(http_1000_source);
 
         // Activate the dummy activation profiles
         InputStream input = getClass()
-                .getResourceAsStream("/detection.dummy.yml");
-        server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(input));
+                .getResourceAsStream("/detection.readwrite.yml");
+        server.addDetectionAgentProfile(
+                DetectionAgentProfile.fromInputStream(input));
         server.start();
+
+        // Wait for data sources and detection to finish...
+        server.awaitTermination();
+
+        // Connect to server
+        Client<Link> datastore = new Client<Link>(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
         server.stop();
     }
 }

@@ -6,13 +6,14 @@ import mark.activation.AbstractDetectionAgent;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
+import mark.core.Subject;
 
 /**
  * Dummy detection agent that reads some raw data from datastore and writes
  * two evidences. Requires a running server.
  * @author Thibault Debatty
  */
-public class ReadWrite extends AbstractDetectionAgent {
+public class ReadWrite<T extends Subject> extends AbstractDetectionAgent<T> {
 
     /**
      * {@inheritDoc}
@@ -20,11 +21,12 @@ public class ReadWrite extends AbstractDetectionAgent {
     public final void run() {
 
         // Read data from datastore
-        ServerInterface datastore;
-        RawData[] data;
+        ServerInterface<T> datastore;
+        RawData<T>[] data;
         try {
             datastore = getDatastore();
-            data = datastore.findRawData(getLabel(), getSubject());
+            System.out.println("Search for " + getInputLabel() + " - " + getSubject());
+            data = datastore.findRawData(getInputLabel(), getSubject());
         } catch (Throwable ex) {
             System.err.println("Could not connect to server!");
             System.err.println(ex.getMessage());
@@ -32,12 +34,12 @@ public class ReadWrite extends AbstractDetectionAgent {
         }
 
         System.out.println("Found " + data.length + " elements");
-        System.out.println(data[data.length - 1]);
+        //System.out.println(data[data.length - 1]);
 
         // Process data
 
         // Add evidences to datastore
-        Evidence evidence = createEvidenceTemplate();
+        Evidence<T> evidence = createEvidenceTemplate();
         evidence.report = "Some report...";
         evidence.score = 0.6;
         evidence.time = data[0].time;

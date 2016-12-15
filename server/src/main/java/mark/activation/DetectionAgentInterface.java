@@ -13,7 +13,9 @@ import mark.core.ServerInterface;
 interface DetectionAgentInterface<T extends Subject> extends Runnable {
     void setParameters(Map<String, String> parameters);
     void setLabel(String label);
+    void setInputLabel(String input_label);
     void setSubject(T subject);
     void setDatastore(ServerInterface<T> datastore);
+
 
 }

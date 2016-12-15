@@ -68,8 +68,6 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      */
     public final void addRawData(final RawData data) {
 
-        Logger.getLogger(RequestHandler.class.getName()).log(Level.INFO, data.toString());
-
         mongodb_database.getCollection(COLLECTION_RAW_DATA)
                 .insertOne(convert(data));
 
@@ -85,6 +83,8 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
     public final RawData[] findRawData(
             final String label, final T subject) {
 
+        System.out.println("Server : search " + subject);
+
         Document query = new Document();
         query.append(LABEL, label);
         adapter.writeToMongo(subject, query);
@@ -98,8 +98,6 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
             results.add(convert(doc));
         }
         return results.toArray(new RawData[results.size()]);
-
-
     }
 
     /**
@@ -148,6 +146,19 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
 
     }
 
+    private Evidence convertEvidence(final Document doc) {
+
+        Evidence evidence = new Evidence();
+        evidence.subject = adapter.readFromMongo(doc);
+        evidence.score = doc.getDouble(SCORE);
+        evidence.time = doc.getInteger(TIME);
+        evidence.label = doc.getString(LABEL);
+        evidence.report = doc.getString(REPORT);
+
+        return evidence;
+
+    }
+
     /**
      * Convert from RawData to MongoDB document.
      * @param data
@@ -169,7 +180,7 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      * @param evidence
      * @return
      */
-    Document convert(final Evidence<T> evidence) {
+    private Document convert(final Evidence<T> evidence) {
         Document doc = new Document()
                 .append(LABEL, evidence.label)
                 .append(TIME, evidence.time)
@@ -178,6 +189,22 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
 
         adapter.writeToMongo(evidence.subject, doc);
         return doc;
+    }
+
+    public Evidence<T>[] findEvidence(String label, T subject) throws Throwable {
+        Document query = new Document();
+        query.append(LABEL, label);
+        adapter.writeToMongo(subject, query);
+
+        FindIterable<Document> documents = mongodb_database
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
+
+        ArrayList<Evidence> results = new ArrayList<Evidence>();
+        for (Document doc : documents) {
+            results.add(convertEvidence(doc));
+        }
+        return results.toArray(new Evidence[results.size()]);
     }
 
 

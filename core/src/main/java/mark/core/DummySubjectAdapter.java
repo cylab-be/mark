@@ -22,55 +22,49 @@
  * THE SOFTWARE.
  */
 
-package mark.masfad2;
+package mark.core;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import mark.core.SubjectAdapter;
 import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class LinkAdapter extends SubjectAdapter<Link> {
-
-    private static final String FIELD_CLIENT = "CLIENT";
-    private static final String FIELD_SERVER = "SERVER";
+public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
 
     @Override
-    public final Link deserialize(
-            final JsonParser jparser,
-            final DeserializationContext context)
-            throws IOException, JsonProcessingException {
-
-        JsonNode tree = jparser.getCodec().readTree(jparser);
-        return deserialize(tree);
-
+    public void writeToMongo(DummySuject subject, Document doc) {
+        doc.append("name", subject.name);
     }
 
-    public void writeToMongo(Link link, Document doc) {
-        doc.append(FIELD_CLIENT, link.client);
-        doc.append(FIELD_SERVER, link.server);
+    @Override
+    public DummySuject readFromMongo(Document doc) {
+        DummySuject ds = new DummySuject();
+        ds.name = doc.getString("name");
+        return ds;
     }
 
-    public Link readFromMongo(Document doc) {
-        return new Link(
-                doc.getString(FIELD_CLIENT),
-                doc.getString(FIELD_SERVER));
+    @Override
+    public DummySuject getInstance() {
+        return new DummySuject();
     }
 
-    public Link getInstance() {
-        return new Link();
+    @Override
+    public DummySuject deserialize(JsonNode node) {
+        DummySuject ds = new DummySuject();
+        ds.name = node.get("name").toString();
+        return ds;
     }
 
-
-    public Link deserialize(JsonNode node) {
-        return new Link(
-                node.get("client").textValue(),
-                node.get("server").textValue());
+    @Override
+    public DummySuject deserialize(JsonParser jparser, DeserializationContext arg1) throws IOException, JsonProcessingException {
+        return deserialize((JsonNode) jparser.getCodec().readTree(jparser));
     }
+
 }

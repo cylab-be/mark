@@ -40,8 +40,9 @@ public interface ServerInterface<T extends Subject> {
      * @param server
      * @return
      */
-    RawData<T>[] findRawData(String type, T subject)
-            throws Throwable;
+    RawData<T>[] findRawData(String type, T subject) throws Throwable;
+
+    Evidence<T>[] findEvidence(String label, T subject) throws Throwable;
 
 
 

@@ -44,6 +44,11 @@ public class Link implements Subject {
     }
 
     @Override
+    public String toString() {
+        return client + " : " + server;
+    }
+
+    @Override
     public int hashCode() {
         int hash = 3;
         hash = 59 * hash + (this.client != null ? this.client.hashCode() : 0);
