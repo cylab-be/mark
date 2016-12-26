@@ -5,18 +5,23 @@ package mark.core;
  * These are implemented by the client and server packages.
  *
  * @author Thibault Debatty
+ * @param <T> The type of data that this server is dealing with (can be a
+ * link between between a local computer and a server on the internet, or
+ * a person, etc.).
  */
 public interface ServerInterface<T extends Subject> {
 
     /**
      *
      * @return
+     * @throws java.lang.Throwable if request fails
      */
     String test() throws Throwable;
 
     /**
      *
      * @param data
+     * @throws java.lang.Throwable if request fails
      */
     void testString(String data) throws Throwable;
 
@@ -24,26 +29,41 @@ public interface ServerInterface<T extends Subject> {
      * Add raw data to the datastore and eventually trigger analysis.
      *
      * @param data
+     * @throws java.lang.Throwable if request fails
      */
     void addRawData(RawData<T> data) throws Throwable;
 
     /**
      *
      * @param evidence
+     * @throws java.lang.Throwable if request fails
      */
     void addEvidence(Evidence evidence) throws Throwable;
 
     /**
      *
      * @param type
-     * @param client
-     * @param server
+     * @param subject
      * @return
+     * @throws java.lang.Throwable if request fails
      */
     RawData<T>[] findRawData(String type, T subject) throws Throwable;
 
+    /**
+     *
+     * @param label
+     * @param subject
+     * @return
+     * @throws java.lang.Throwable if request fails
+     */
     Evidence<T>[] findEvidence(String label, T subject) throws Throwable;
 
-
-
+    /**
+     * Find evidence of given label, for all subjects. Useful for displaying
+     * ranked list of subjects.
+     * @param label
+     * @return
+     * @throws java.lang.Throwable if request fails
+     */
+    Evidence<T>[] findEvidence(String label) throws Throwable;
 }

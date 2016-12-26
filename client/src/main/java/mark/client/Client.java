@@ -21,16 +21,20 @@ import mark.core.SubjectAdapter;
 /**
  *
  * @author Thibault Debatty
+ * @param <T> Type of subject that this server is dealing with
  */
 public class Client<T extends Subject> implements ServerInterface<T> {
 
-    private JsonRpcHttpClient datastore;
+    private static final int CONNECTION_TIMEOUT = 5000;
+
+    private final JsonRpcHttpClient datastore;
 
     /**
      * Create a connection to server with provided URL, and test the connection.
      * So we can directly throw an exception if connection failed...
      *
      * @param server_url
+     * @param adapter
      */
     public Client(final URL server_url, final SubjectAdapter<T> adapter) {
 
@@ -38,11 +42,14 @@ public class Client<T extends Subject> implements ServerInterface<T> {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(RawData.class, new RawDataDezerializer(adapter));
-        module.addDeserializer(Evidence.class, new EvidenceDeserializer(adapter));
+        module.addDeserializer(
+                Evidence.class, new EvidenceDeserializer(adapter));
         mapper.registerModule(module);
 
-        datastore = new JsonRpcHttpClient(mapper, server_url, new HashMap<String, String>());
-        datastore.setConnectionTimeoutMillis(5000);
+        datastore =
+                new JsonRpcHttpClient(
+                        mapper, server_url, new HashMap<String, String>());
+        datastore.setConnectionTimeoutMillis(CONNECTION_TIMEOUT);
 
     }
 
@@ -75,17 +82,32 @@ public class Client<T extends Subject> implements ServerInterface<T> {
         datastore.invoke("testString", new Object[]{data});
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param label
+     * @param subject
+     * @return
+     * @throws Throwable
+     */
     public final RawData<T>[] findRawData(
             final String label, final T subject)
             throws Throwable {
 
-        System.out.println("Client : search " + subject);
         return datastore.invoke(
                 "findRawData",
                 new Object[]{label, subject},
                 RawData[].class);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param label
+     * @param subject
+     * @return
+     * @throws Throwable
+     */
     public final Evidence<T>[] findEvidence(
             final String label, final T subject)
             throws Throwable {
@@ -97,22 +119,41 @@ public class Client<T extends Subject> implements ServerInterface<T> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param evidence
+     * @throws Throwable
+     */
     public final void addEvidence(final Evidence evidence) throws Throwable {
 
         datastore.invoke("addEvidence", new Object[]{evidence});
     }
 
-    private static class RawDataDezerializer<T extends Subject> extends JsonDeserializer<RawData> {
-        private SubjectAdapter<T> adapter;
+    public Evidence<T>[] findEvidence(String label) throws Throwable {
+        return datastore.invoke(
+                "findEvidence",
+                new Object[]{label},
+                Evidence[].class);
+    }
 
-        public RawDataDezerializer(SubjectAdapter<T> adapter) {
+    /**
+     * Helper class to deserialize raw data, using the subject adapter.
+     * @param <T>
+     */
+    private static class RawDataDezerializer<T extends Subject>
+            extends JsonDeserializer<RawData> {
+
+        private final SubjectAdapter<T> adapter;
+
+        RawDataDezerializer(final SubjectAdapter<T> adapter) {
             this.adapter = adapter;
         }
 
         @Override
         public RawData deserialize(
-                JsonParser jparser,
-                DeserializationContext context)
+                final JsonParser jparser,
+                final DeserializationContext context)
                 throws IOException, JsonProcessingException {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
@@ -126,15 +167,25 @@ public class Client<T extends Subject> implements ServerInterface<T> {
         }
     }
 
-    private static class EvidenceDeserializer<T extends Subject> extends JsonDeserializer<Evidence> {
-        private SubjectAdapter<T> adapter;
+    /**
+     * Helper class to deserialize evidence, using subject adapter.
+     * @param <T>
+     */
+    private static class EvidenceDeserializer<T extends Subject>
+            extends JsonDeserializer<Evidence> {
 
-        public EvidenceDeserializer(SubjectAdapter<T> adapter) {
+        private final SubjectAdapter<T> adapter;
+
+        EvidenceDeserializer(final SubjectAdapter<T> adapter) {
             this.adapter = adapter;
         }
 
         @Override
-        public Evidence deserialize(JsonParser jparser, DeserializationContext arg1) throws IOException, JsonProcessingException {
+        public Evidence deserialize(
+                final JsonParser jparser,
+                final DeserializationContext ctx)
+                throws IOException, JsonProcessingException {
+
             TreeNode tree = jparser.getCodec().readTree(jparser);
             Evidence<T> data = new Evidence<T>();
             data.report = tree.get("report").toString();

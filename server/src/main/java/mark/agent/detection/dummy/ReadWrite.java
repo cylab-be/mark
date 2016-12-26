@@ -1,5 +1,6 @@
 package mark.agent.detection.dummy;
 
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
@@ -25,7 +26,6 @@ public class ReadWrite<T extends Subject> extends AbstractDetectionAgent<T> {
         RawData<T>[] data;
         try {
             datastore = getDatastore();
-            System.out.println("Search for " + getInputLabel() + " - " + getSubject());
             data = datastore.findRawData(getInputLabel(), getSubject());
         } catch (Throwable ex) {
             System.err.println("Could not connect to server!");
@@ -33,15 +33,13 @@ public class ReadWrite<T extends Subject> extends AbstractDetectionAgent<T> {
             return;
         }
 
-        System.out.println("Found " + data.length + " elements");
-        //System.out.println(data[data.length - 1]);
-
         // Process data
+        Random rand = new Random();
 
         // Add evidences to datastore
         Evidence<T> evidence = createEvidenceTemplate();
         evidence.report = "Some report...";
-        evidence.score = 0.6;
+        evidence.score = rand.nextDouble();
         evidence.time = data[0].time;
 
         try {
@@ -50,7 +48,7 @@ public class ReadWrite<T extends Subject> extends AbstractDetectionAgent<T> {
             Logger.getLogger(ReadWrite.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        evidence.score = 0.3;
+        evidence.score = rand.nextDouble();
         try {
             datastore.addEvidence(evidence);
         } catch (Throwable ex) {

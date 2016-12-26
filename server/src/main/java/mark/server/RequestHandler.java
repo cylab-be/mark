@@ -6,8 +6,6 @@ import com.mongodb.client.MongoDatabase;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mark.activation.ActivationController;
 import mark.core.Subject;
 import mark.core.Evidence;
@@ -18,6 +16,7 @@ import org.bson.Document;
 /**
  *
  * @author Thibault Debatty
+ * @param <T> Type of subject that this server is dealing with
  */
 public class RequestHandler<T extends Subject> implements ServerInterface<T> {
 
@@ -75,15 +74,13 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
     }
 
     /**
-     *
+     * {@inheritDoc}
      * @param label
      * @param subject
      * @return
      */
     public final RawData[] findRawData(
             final String label, final T subject) {
-
-        System.out.println("Server : search " + subject);
 
         Document query = new Document();
         query.append(LABEL, label);
@@ -191,7 +188,16 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
         return doc;
     }
 
-    public Evidence<T>[] findEvidence(String label, T subject) throws Throwable {
+    /**
+     * {@inheritDoc}
+     * @param label
+     * @param subject
+     * @return
+     * @throws Throwable if request fails
+     */
+    public final Evidence<T>[] findEvidence(final String label, final T subject)
+            throws Throwable {
+
         Document query = new Document();
         query.append(LABEL, label);
         adapter.writeToMongo(subject, query);
@@ -205,6 +211,40 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
             results.add(convertEvidence(doc));
         }
         return results.toArray(new Evidence[results.size()]);
+    }
+
+    /**
+     * Keep only one evidence per subject: the most recent one.
+     *
+     * @param label
+     * @return
+     * @throws Throwable if request fails
+     */
+    public final Evidence<T>[] findEvidence(final String label)
+            throws Throwable {
+
+        Document query = new Document();
+        query.append(LABEL, label);
+
+        FindIterable<Document> documents = mongodb_database
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
+
+        HashMap<T, Evidence> evidences = new HashMap<T, Evidence>();
+        for (Document doc : documents) {
+            Evidence<T> evidence = convertEvidence(doc);
+
+            Evidence inmap = evidences.get(evidence.subject);
+            if (inmap == null) {
+                evidences.put(evidence.subject, evidence);
+                continue;
+            }
+
+            if (evidence.time > inmap.time) {
+                evidences.put(evidence.subject, evidence);
+            }
+        }
+        return evidences.values().toArray(new Evidence[evidences.size()]);
     }
 
 

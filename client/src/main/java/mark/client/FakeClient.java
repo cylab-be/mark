@@ -84,7 +84,11 @@ public class FakeClient<T extends Subject> implements ServerInterface<T> {
     }
 
     public Evidence<T>[] findEvidence(String label, T subject) throws Throwable {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Evidence<T>[] findEvidence(String label) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
