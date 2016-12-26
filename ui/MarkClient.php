@@ -15,6 +15,29 @@ class MarkClient {
    */
   public function findEvidence($label) {
     $results = $this->exec("findEvidence", array($label));
+
+    /* result will look like
+     * array(2052) {
+      [0]=>
+      object(stdClass) (5) {
+      ["label"]=>
+      string(19) "detection.readwrite"
+      ["time"]=>
+      int(1472083251)
+      ["subject"]=>
+      object(stdClass) (2) {
+      ["client"]=>
+      string(12) "198.36.158.8"
+      ["server"]=>
+      string(17) "ajdd.rygxzzaid.mk"
+      }
+      ["score"]=>
+      float(0.6)
+      ["report"]=>
+      NULL
+      }
+     */
+
     $evidences = array();
     foreach ($results as $line) {
       $evidences[] = new Evidence($line);
