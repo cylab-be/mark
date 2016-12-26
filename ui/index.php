@@ -1,6 +1,9 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
+
+require_once "MarkClient.php";
+$client = new MarkClient();
 ?>
 
 <h1>Multi Agent Ranking Framework</h1>
@@ -40,47 +43,8 @@ if ($err) {
   return;
 }
 
-$results  = json_decode($response)->result;
+$evidences  = $client->findEvidence("detection.readwrite");
 
-class Evidence {
-  public $label;
-  public $time;
-  public $score;
-  public $subject;
-  public $report;
-
-  public function __construct(stdClass $obj) {
-    $this->label = $obj->label;
-    $this->time = $obj->time;
-    $this->score = $obj->score;
-    $this->subject = new Link($obj->subject);
-    $this->report = $obj->report;
-  }
-}
-
-class Link {
-  public $client;
-  public $server;
-
-  public function __construct(stdClass $obj) {
-    $this->client = $obj->client;
-    $this->server = $obj->server;
-  }
-
-  public function __toString() {
-    return $this->client . " <=> " . $this->server;
-  }
-}
-
-$evidences = array();
-foreach ($results as $line) {
-  $evidences[] = new Evidence($line);
-}
-$results = null;
-
-usort($evidences, function(Evidence $e1, Evidence $e2){
-  return $e1->score < $e2->score ? 1 : -1;
-});
 
 /* result will look like
  * array(2052) {
