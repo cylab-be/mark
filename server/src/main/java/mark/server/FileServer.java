@@ -39,6 +39,15 @@ public class FileServer {
             = Logger.getLogger(FileServer.class.getName());
 
     private org.eclipse.jetty.server.Server server;
+    private final Config config;
+
+    /**
+     * Instantiate a web server with provided config.
+     * @param config
+     */
+    public FileServer(final Config config) {
+        this.config = config;
+    }
 
     /**
      * Start the file server (blocking).
@@ -46,27 +55,29 @@ public class FileServer {
      * @throws Exception if server cannot start
      */
     public final void start() throws Exception {
-        LOGGER.info("Starting web interface at http://localhost:8000");
+        LOGGER.info("Starting web interface at port 8000");
 
+        server = new org.eclipse.jetty.server.Server(config.web_port);
 
-        server = new org.eclipse.jetty.server.Server(8000);
-
-        ServletHandler handler = new ServletHandler();
-        handler.addServletWithMapping(com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
+        ServletHandler php_handler = new ServletHandler();
+        php_handler.addServletWithMapping(
+                com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
 
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/");
         webapp.setWelcomeFiles(new String[]{"index.php", "index.html"});
-        webapp.setBaseResource(Resource.newResource(new File("../ui")));
-        webapp.setServletHandler(handler);
+        webapp.setBaseResource(Resource.newResource(new File(config.web_root)));
+        webapp.setServletHandler(php_handler);
+        webapp.setHandler(php_handler);
 
-        // A WebAppContext is a ContextHandler as well so it needs to be set to
-        // the server so it is aware of where to send the appropriate requests.
         server.setHandler(webapp);
-
         server.start();
     }
 
+    /**
+     * Wait for the server to stop.
+     * @throws Exception if Jetty goes wrong...
+     */
     public final void stop() throws Exception {
         server.stop();
     }

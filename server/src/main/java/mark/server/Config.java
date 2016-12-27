@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import mark.core.Subject;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -21,6 +20,9 @@ public class Config {
     private static final int    DEFAULT_SERVER_PORT = 8080;
     private static final int    DEFAULT_MAX_PENDING_REQUESTS = 200;
     private static final String DEFAULT_MODULES = "./modules";
+
+    private static final int    DEFAULT_WEB_PORT = 8000;
+    private static final String DEFAULT_WEB_ROOT = "../ui";
 
     // Server configuration
 
@@ -56,7 +58,7 @@ public class Config {
     private File file;
 
     /**
-     * Folder containing modules: jar files (if any) and activation files
+     * Folder containing modules: jar files (if any) and activation files.
      */
     public String modules = DEFAULT_MODULES;
 
@@ -68,15 +70,18 @@ public class Config {
     public int server_port = DEFAULT_SERVER_PORT;
     public int max_pending_requests = DEFAULT_MAX_PENDING_REQUESTS;
 
+    // Web server parameters
+    public int web_port = DEFAULT_WEB_PORT;
+    public String web_root = DEFAULT_WEB_ROOT;
+
     // MONGODB parameters
     public String mongo_host = "127.0.0.1";
     public int mongo_port = 27017;
     public String mongo_db = DEFAULT_MONGO_DB;
 
 
-
     @Override
-    public String toString() {
+    public final String toString() {
         return "Config with port " + this.server_port;
     }
 
@@ -84,7 +89,7 @@ public class Config {
      *
      * @return null if the path is incorrect.
      */
-    String getModulesDirectory() {
+    final String getModulesDirectory() {
         if (file == null) {
             return null;
         }

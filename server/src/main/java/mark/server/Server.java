@@ -207,7 +207,7 @@ public class Server<T extends Subject> {
     }
 
     private void startFileServer() {
-        file_server = new FileServer();
+        file_server = new FileServer(config);
 
         // Start the file server in a separate thread
         new Thread(new Runnable() {
