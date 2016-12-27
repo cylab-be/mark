@@ -18,6 +18,7 @@ import mark.core.SubjectAdapter;
  * Represents a MARK server, composed of a datastore + some data agents + a
  * file server.
  * @author Thibault Debatty
+ * @param <T> Type of subject that this server is dealing with
  */
 public class Server<T extends Subject> {
 
@@ -32,16 +33,16 @@ public class Server<T extends Subject> {
     private LinkedList<DataAgentInterface> data_agents;
     private LinkedList<Thread> data_agent_threads;
 
-    private LinkedList<DetectionAgentProfile> detection_agent_profiles;
-    private SubjectAdapter<T> adapter;
+    private final LinkedList<DetectionAgentProfile> detection_agent_profiles;
+    private final SubjectAdapter<T> adapter;
 
 
     /**
      * Initialize a server with default configuration, no data agents
      * and no detection agents.
-     * @throws java.net.MalformedURLException
+     * @param adapter
      */
-    public Server(final SubjectAdapter<T> adapter) throws MalformedURLException {
+    public Server(final SubjectAdapter<T> adapter) {
 
         this.adapter = adapter;
         config = new Config();
@@ -56,8 +57,12 @@ public class Server<T extends Subject> {
      * threads.
      * This method returns when the server and agents are started.
      * You can use server.stop()
+     * @throws java.net.MalformedURLException if the URL specified by config is
+     * invalid
+     * @throws Exception if Jetty caused an exception
      */
-    public final void start() throws MalformedURLException, FileNotFoundException, Exception {
+    public final void start()
+            throws MalformedURLException, Exception {
 
         server_url = new URL(
                 "http://" + config.server_host + ":" + config.server_port);
@@ -72,6 +77,7 @@ public class Server<T extends Subject> {
     /**
      * Stop the data agents, wait for all detection agents to complete and
      * eventually stop the datastore.
+     * @throws java.lang.Exception if stopping jetty caused an exception
      */
     public final void stop() throws Exception {
         System.out.println("Stopping server...");
@@ -113,7 +119,7 @@ public class Server<T extends Subject> {
      * Wait for data agents to complete, but does NOT stop the datastore.
      * Attention: if your data agent is a network sink, it might never complete.
      * This method is mainly useful for testing with file data sources.
-     * @throws InterruptedException
+     * @throws InterruptedException if current thread gets en interruption
      */
     public final void awaitTermination() throws InterruptedException {
         System.out.println("Wait for data agents to finish...");
@@ -147,27 +153,28 @@ public class Server<T extends Subject> {
     }
 
     /**
-     * Analyze the module folder:
+     * Analyze the module folder.
      * - modify the class path
      * - parse data agent profiles
      * - parse detection agent profiles
      * @throws MalformedURLException
      */
-    private void parseModulesDirectory() throws MalformedURLException, FileNotFoundException {
+    private void parseModulesDirectory()
+            throws MalformedURLException, FileNotFoundException {
 
 
         String modules_dir_path = config.getModulesDirectory();
         if (modules_dir_path == null) {
-            System.err.println("Modules directory is not valid. Skipping modules support!");
+            System.err.println("Modules directory is not valid, skipping...");
             return;
         }
 
         File modules_dir = new File(modules_dir_path);
-        System.out.println("Parsing modules directory " + modules_dir.getAbsolutePath());
+        System.out.println("Parsing modules directory "
+                + modules_dir.getAbsolutePath());
 
         if (!modules_dir.isDirectory()) {
-            System.err.println(modules_dir.getAbsolutePath() + " is not a directory!");
-            System.err.println("Skipping!");
+            System.err.println("Not a directory, skipping...");
             return;
         }
 
@@ -195,8 +202,9 @@ public class Server<T extends Subject> {
 
         // Parse *.detection.yml files
 
-        File[] detection_agent_files = modules_dir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
+        File[] detection_agent_files =
+                modules_dir.listFiles(new FilenameFilter() {
+            public boolean accept(final File dir, final String name) {
                 return name.endsWith(".detection.yml");
             }
         });
@@ -221,7 +229,8 @@ public class Server<T extends Subject> {
         }).start();
     }
 
-    private void startDatastore() throws MalformedURLException, InterruptedException, Exception {
+    private void startDatastore()
+            throws MalformedURLException, InterruptedException, Exception {
 
         datastore = new Datastore<T>(adapter);
         datastore.setConfiguration(config);
@@ -282,7 +291,12 @@ public class Server<T extends Subject> {
         }
     }
 
-    public void addDetectionAgentProfile(final DetectionAgentProfile detection_agent_profile) {
+    /**
+     * Add the profile for a detection agent.
+     * @param detection_agent_profile
+     */
+    public final void addDetectionAgentProfile(
+            final DetectionAgentProfile detection_agent_profile) {
         detection_agent_profiles.add(detection_agent_profile);
     }
 }
