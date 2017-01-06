@@ -124,28 +124,31 @@ function draw_graph(json_data) {
 		.call(force.drag);
 
 	// add the nodes
-/*	node.append("rect")
+	node.append("rect")
 		.attr("x", 0)
-		.attr("y", -20)
+		.attr("y", -10)
 		.attr("width", function(d){
-			return 500;})
+			return 300;})
 		.attr("height", function(d){
-			return 50;});*/
-	node.append("circle")
-		.attr("r", 5);
+			return 50;});
+/*	node.append("circle")
+		.attr("r", 5);*/
 /*eslint-enable no-unused-vars*/
 	// add the text 
 	node.append("foreignObject")
 		.attr("x", 12)
 		.attr("dy", ".35em")
 		.attr("font-size", "10xp")
-		.text(function(d) { 
+		.html(function(d) { 
 			var name;
 			if (d.class){
-				name = d.class + "\n" + d.name;
+				var first_line = "<font color=\"red\">Agent:</font>" + d.class;
+				var second_line = "<font color=\"red\">Label:</font>" + d.name;
+				name = first_line + "\n" + second_line;
 			} else {
-				name = d.name;
+				name = "<font color=\"red\">Agent:</font>" + "\n" + "<font color=\"red\">Label:</font>" + d.name;
 			}
+			console.log(name);
 			return name;
 		});
 
