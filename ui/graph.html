@@ -82,6 +82,10 @@
     </div>
   </footer>
   <script>
+    hide(document.getElementById('domain_clustering'));
+    hide(document.getElementById('domain_fusion'));
+    hide(document.getElementById('feature_fusion'));
+
     $("#apply_button").click(function(){
       var jsonbody = {"jsonrpc": "2.0",
                           "method": "status",

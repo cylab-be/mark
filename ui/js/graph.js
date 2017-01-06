@@ -8,10 +8,9 @@ function draw_graph(json_data) {
 		var trigger_label = activation.trigger_label;
 		var label = activation.label;
 		var class_name = activation.class_name;
-		links.push({"source": trigger_label, "target": label});
-		links.push({"source": label, "target": class_name});
+		links.push({"source": trigger_label, "target": label, "class": class_name});
 	}
-	//console.log(links);
+
 	var nodes = {};
 		
 	// Compute the distinct nodes from the links.
@@ -19,11 +18,11 @@ function draw_graph(json_data) {
 		link.source = nodes[link.source] || 
 			(nodes[link.source] = {name: link.source});
 		link.target = nodes[link.target] || 
-			(nodes[link.target] = {name: link.target});
-		link.value = +link.value;
+			(nodes[link.target] = {name: link.target, class: link.class});
 	});
 
-	//console.log(nodes);
+	console.log(nodes);
+	console.log(links);
 
 	var width = window.innerWidth; 
 	var	height = window.innerHeight; 
@@ -113,7 +112,7 @@ function draw_graph(json_data) {
 					.attr('x', 0)
 					.attr('y', -10)
 					.attr("font-size","30px")
-					.text(function(d) { return ""; });
+					.text(function(d) { console.log(d); });
 			} else {
 				d3.select(this).select('text.info').remove();	
 			}
@@ -136,12 +135,19 @@ function draw_graph(json_data) {
 		.attr("r", 5);
 /*eslint-enable no-unused-vars*/
 	// add the text 
-	node.append("text")
+	node.append("foreignObject")
 		.attr("x", 12)
 		.attr("dy", ".35em")
 		.attr("font-size", "10xp")
-		.text(function(d) { return d.name; });
-
+		.text(function(d) { 
+			var name;
+			if (d.class){
+				name = d.class + "\n" + d.name;
+			} else {
+				name = d.name;
+			}
+			return name;
+		});
 
 	resize();
 	d3.select(window).on("resize", resize);
