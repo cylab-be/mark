@@ -35,10 +35,10 @@ function draw_graph(json_data) {
 		.links(links)
 		.size([width / 2 , height/ 1.5])
 		.linkDistance(300)
-		.charge(-1000)
+		.charge(-2000)
 		.on("tick", tick)
 		.start();
-
+	
 	// remove if anything was already drawn on the screen
 	d3.select("body").select("#container").select("#parent").select("#graph").select("svg").remove();
 	// draw new graph
@@ -53,8 +53,8 @@ function draw_graph(json_data) {
 	.enter().append("svg:marker")    // This section adds in the arrows
 		.attr("id", String)
 		.attr("viewBox", "0 -5 10 10")
-		.attr("refX", 13)
-		.attr("refY", -1)
+		.attr("refX", 23)
+		.attr("refY", 0)
 		.attr("fill", "black")
 		.attr("markerWidth", 10)
 		.attr("markerHeight", 6)
@@ -125,7 +125,7 @@ function draw_graph(json_data) {
 
 	// add the nodes
 	node.append("rect")
-		.attr("x", 0)
+		.attr("x", -150)
 		.attr("y", -10)
 		.attr("width", function(d){
 			return 300;})
@@ -136,7 +136,7 @@ function draw_graph(json_data) {
 /*eslint-enable no-unused-vars*/
 	// add the text 
 	node.append("foreignObject")
-		.attr("x", 12)
+		.attr("x", -145)
 		.attr("dy", ".35em")
 		.attr("font-size", "10xp")
 		.html(function(d) { 
