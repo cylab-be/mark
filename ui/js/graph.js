@@ -36,6 +36,7 @@ function draw_graph(json_data) {
 		.size([width / 2 , height/ 1.5])
 		.linkDistance(300)
 		.charge(-2000)
+		.gravity(.1)
 		.on("tick", tick)
 		.start();
 	
@@ -73,7 +74,7 @@ function draw_graph(json_data) {
 			path_index = path_index + 1;
 			return path_index;
 		} )
-		.on("mouseover", function(d){
+		/*.on("mouseover", function(d){
 			var g = d3.select(this); // The node
 			// The class is used to remove the additional text later
 	//			if (d3.select(this).select('text.info')[0][0] == null){
@@ -92,7 +93,7 @@ function draw_graph(json_data) {
 		.on("mouseout", function() {
 		// Remove the info text on mouse out.
 			//d3.select(this).select('text.info').remove();
-		})
+		})*/
 		.attr("marker-end", function(d) {if (d.value === 0){
 											return "";
 										} else {
@@ -157,9 +158,10 @@ function draw_graph(json_data) {
 	// add the curvy lines
 	function tick() {
 		path.attr("d", function(d) {
-			var dx = d.target.x - d.source.x,
-				dy = d.target.y - d.source.y,
-				dr = Math.sqrt(dx * dx + dy * dy);
+			var dx = d.target.x - d.source.x;
+			var	dy = d.target.y - d.source.y;
+			//var dr = Math.sqrt(dx * dx + dy * dy);
+			var dr = 0;
 			return "M" + 
 				d.source.x + "," + 
 				d.source.y + "A" + 
