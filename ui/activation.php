@@ -18,33 +18,36 @@
     </div>
 
     <script>
-        function draw(data) {
+        function draw(detection_agents) {
 
-            var links = []; // dict = {source: , target: , value: ,}
-            for (var n = 0; n < data.length; n++) {
-                var activation = data[n];
-                var trigger_label = activation.trigger_label;
-                var label = activation.label;
-                var class_name = activation.class_name;
-                links.push({"trigger": trigger_label, "label": label, "class": class_name});
-            }
+            // each detection agent has following attributes:
+            // - label
+            // - trigger_label
+            // - class_name
 
-            var graphsrc = 'digraph G { node [fontsize=10, shape=box]; ';
-            links.forEach(function(link){
-                console.log(link);
-                graphsrc += '"' + link.trigger + '" -> "' + link.label + '"; ';
-                graphsrc += '"' + link.label +  '" [label="' + link.class + '\n' + link.label + '"]; ';
+            // Describe the graph using graphviz dot notation
+            var graph_src = 'digraph G { node [fontsize=10, shape=box]; ';
+            detection_agents.forEach(function(detection_agent){
+                console.log(detection_agent);
+                graph_src += '"' + detection_agent.trigger_label + '" -> "'
+                        + detection_agent.label + '"; ';
+                graph_src += '"' + detection_agent.label +  '" [label="'
+                        + detection_agent.class_name + '\n'
+                        + detection_agent.label + '"]; ';
             });
 
-            graphsrc += '}';
+            graph_src += '}';
 
-            console.log(graphsrc);
+            console.log(graph_src);
 
+            // let graphviz compute the graph representation
+            var graph_graphviz = Viz(graph_src);
+
+            // inject the graph svg in the page
             var parser = new DOMParser();
-            var result = Viz(graphsrc);
-            var graph = document.querySelector("#activation-graph");
-            var svg = parser.parseFromString(result, "image/svg+xml");
-            graph.appendChild(svg.documentElement);
+            var graph_svg = parser.parseFromString(graph_graphviz, "image/svg+xml");
+            document.querySelector("#activation-graph")
+                    .appendChild(graph_svg.documentElement);
         }
 
         var json_request_body = {"jsonrpc": "2.0",
