@@ -97,7 +97,7 @@ function draw_graph(json_data) {
 		.attr("marker-end", function(d) {if (d.value === 0){
 											return "";
 										} else {
-											return "url(#end)";}});
+											return "url(#suit)";}});
 
 	// define the nodes
 	var node = svg.selectAll(".node")
