@@ -21,8 +21,8 @@ function draw_graph(json_data) {
 			(nodes[link.target] = {name: link.target, class: link.class});
 	});
 
-	console.log(nodes);
-	console.log(links);
+	//console.log(nodes);
+	//console.log(links);
 
 	var width = window.innerWidth;
 	var	height = window.innerHeight;
@@ -33,7 +33,7 @@ function draw_graph(json_data) {
 	var force = d3.layout.force()
 		.nodes(d3.values(nodes))
 		.links(links)
-		.size([width / 2 , height/ 1.5])
+		.size([width , height/ 1.5])
 		.linkDistance(300)
 		.charge(-2000)
 		.gravity(.1)
@@ -46,7 +46,9 @@ function draw_graph(json_data) {
 
 	var svg = d3.select("body").select("#container").select("#parent").select("#graph").append("svg")
 		.attr("width", graph_width)
-		.attr("height", side_bar_height);
+		.attr("height", height);
+//		.append("g")
+//		.call(d3.behavior.zoom().on("zoom", rescale));
 
 	// build the arrow.
 	svg.append("svg:defs").selectAll("marker")
@@ -54,7 +56,7 @@ function draw_graph(json_data) {
 	.enter().append("svg:marker")    // This section adds in the arrows
 		.attr("id", String)
 		.attr("viewBox", "0 -5 10 10")
-		.attr("refX", 23)
+		.attr("refX", 100)
 		.attr("refY", 0)
 		.attr("fill", "black")
 		.attr("markerWidth", 10)
@@ -74,30 +76,10 @@ function draw_graph(json_data) {
 			path_index = path_index + 1;
 			return path_index;
 		} )
-		/*.on("mouseover", function(d){
-			var g = d3.select(this); // The node
-			// The class is used to remove the additional text later
-	//			if (d3.select(this).select('text.info')[0][0] == null){
-			var info = g.append('text')
-				.classed('info', true)
-	//				.attr('x', 20)
-	//				.attr('y', 10)
-				.attr("font-size","30px")
-				.append("textPath")
-				.attr("xlink:href", function (d,i) {
-					var path_id = g[0][0].id;
-					return path_id; })
-				.text(function(d) {
-					return d.value; });
-		})
-		.on("mouseout", function() {
-		// Remove the info text on mouse out.
-			//d3.select(this).select('text.info').remove();
-		})*/
 		.attr("marker-end", function(d) {if (d.value === 0){
 											return "";
 										} else {
-											return "url(#suit)";}});
+											return "url(#end)";}});
 
 	// define the nodes
 	var node = svg.selectAll(".node")
@@ -137,8 +119,8 @@ function draw_graph(json_data) {
 /*eslint-enable no-unused-vars*/
 	// add the text
 	node.append("foreignObject")
-		.attr("x", -145)
-		.attr("dy", ".35em")
+		.attr("x", -140)
+		.attr("y", - 5)
 		.attr("font-size", "10xp")
 		.html(function(d) {
 			var name;
@@ -147,11 +129,11 @@ function draw_graph(json_data) {
 				var second_line = "<font color=\"red\">Label:</font>" + d.name;
 				name = first_line + "\n" + second_line;
 			} else {
-				name = "<font color=\"red\">Agent:</font>" + "\n" + "<font color=\"red\">Label:</font>" + d.name;
+				name = "<div><center><font color=\"red\">Agent:</font>" + 
+								"\n" + "<font color=\"red\">Label:</font>" + d.name + "</center></div>";
 			}
-			console.log(name);
 			return name;
-		});
+			});
 
 	resize();
 	d3.select(window).on("resize", resize);
@@ -161,6 +143,8 @@ function draw_graph(json_data) {
 			var dx = d.target.x - d.source.x;
 			var	dy = d.target.y - d.source.y;
 			//var dr = Math.sqrt(dx * dx + dy * dy);
+			var offsetX;
+			var offsetY;
 			var dr = 0;
 			return "M" +
 				d.source.x + "," +
@@ -178,7 +162,17 @@ function draw_graph(json_data) {
 	function resize(){
 		var graph_width = document.getElementById('graph').clientWidth;
 		svg.attr("width", graph_width).attr("height", height - height_panels);
-		force.size([width / 2, height / 1.5]).resume();
+		force.size([width, height / 1.5]).resume();
+	}
+
+		// rescale g
+	function rescale() {
+		trans=d3.event.translate;
+		scale=d3.event.scale;
+
+		svg.attr("transform",
+				"translate(" + trans + ")"
+				+ " scale(" + scale + ")");
 	}
 }
 

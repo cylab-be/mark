@@ -1,7 +1,7 @@
 path.link {
   fill: none;
 /*  stroke: #666;*/
-  stroke: darkgrey;
+  stroke: black;
   stroke-width: 2.5px;
 }
 
@@ -34,7 +34,7 @@ text {
 }
 
 .footer {
-  position: relative;
+  position: absolute;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
