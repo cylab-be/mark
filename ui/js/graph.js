@@ -12,20 +12,20 @@ function draw_graph(json_data) {
 	}
 
 	var nodes = {};
-		
+
 	// Compute the distinct nodes from the links.
 	links.forEach(function(link) {
-		link.source = nodes[link.source] || 
+		link.source = nodes[link.source] ||
 			(nodes[link.source] = {name: link.source});
-		link.target = nodes[link.target] || 
+		link.target = nodes[link.target] ||
 			(nodes[link.target] = {name: link.target, class: link.class});
 	});
 
 	console.log(nodes);
 	console.log(links);
 
-	var width = window.innerWidth; 
-	var	height = window.innerHeight; 
+	var width = window.innerWidth;
+	var	height = window.innerHeight;
 	var height_panels = 150;
 	var side_bar_height = document.getElementById('side_bar').clientHeight;
 	var graph_width = document.getElementById('graph').clientWidth;
@@ -39,7 +39,7 @@ function draw_graph(json_data) {
 		.gravity(.1)
 		.on("tick", tick)
 		.start();
-	
+
 	// remove if anything was already drawn on the screen
 	d3.select("body").select("#container").select("#parent").select("#graph").select("svg").remove();
 	// draw new graph
@@ -87,7 +87,7 @@ function draw_graph(json_data) {
 				.attr("xlink:href", function (d,i) {
 					var path_id = g[0][0].id;
 					return path_id; })
-				.text(function(d) { 
+				.text(function(d) {
 					return d.value; });
 		})
 		.on("mouseout", function() {
@@ -115,7 +115,7 @@ function draw_graph(json_data) {
 					.attr("font-size","30px")
 					.text(function(d) { console.log(d); });
 			} else {
-				d3.select(this).select('text.info').remove();	
+				d3.select(this).select('text.info').remove();
 			}
 		})
 	/*		.on("mouseout", function() {
@@ -135,12 +135,12 @@ function draw_graph(json_data) {
 /*	node.append("circle")
 		.attr("r", 5);*/
 /*eslint-enable no-unused-vars*/
-	// add the text 
+	// add the text
 	node.append("foreignObject")
 		.attr("x", -145)
 		.attr("dy", ".35em")
 		.attr("font-size", "10xp")
-		.html(function(d) { 
+		.html(function(d) {
 			var name;
 			if (d.class){
 				var first_line = "<font color=\"red\">Agent:</font>" + d.class;
@@ -162,16 +162,16 @@ function draw_graph(json_data) {
 			var	dy = d.target.y - d.source.y;
 			//var dr = Math.sqrt(dx * dx + dy * dy);
 			var dr = 0;
-			return "M" + 
-				d.source.x + "," + 
-				d.source.y + "A" + 
-				dr + "," + dr + " 0 0,1 " + 
-				d.target.x + "," + 
+			return "M" +
+				d.source.x + "," +
+				d.source.y + "A" +
+				dr + "," + dr + " 0 0,1 " +
+				d.target.x + "," +
 				d.target.y;
 		});
 
 		node
-			.attr("transform", function(d) { 
+			.attr("transform", function(d) {
 			return "translate(" + d.x + "," + d.y + ")"; });
 	}
 
@@ -180,7 +180,6 @@ function draw_graph(json_data) {
 		svg.attr("width", graph_width).attr("height", height - height_panels);
 		force.size([width / 2, height / 1.5]).resume();
 	}
-
 }
 
 // Returns a list of all nodes under the root.
