@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Thibault Debatty.
+ * Copyright 2017 Thibault Debatty.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,28 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.masfad2;
 
-import junit.framework.TestCase;
-import mark.activation.DummyDatastoreFactory;
+package mark.activation;
+
+import java.net.MalformedURLException;
+import mark.core.ServerInterface;
 
 /**
- *
+ * Returns an instance of a DummyClient (for testing purposes).
  * @author Thibault Debatty
  */
-public class FrequencyTest extends TestCase {
+public class DummyDatastoreFactory implements DatastoreFactory {
 
-    /**
-     * Test of run method, of class Frequency.
-     */
-    public void testRun() {
-        System.out.println("run");
-
-        Frequency agent = new Frequency();
-        agent.setDatastoreFactory(new DummyDatastoreFactory());
-        agent.setSubject(new Link("192.168.2.3", "www.google.com"));
-        agent.setLabel("http");
-        agent.run();
+    public ServerInterface getInstance(String datastore_url) throws MalformedURLException {
+        return new DummyClient();
     }
 
 }

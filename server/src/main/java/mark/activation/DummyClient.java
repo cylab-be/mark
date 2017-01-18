@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.client;
+package mark.activation;
 
 import java.util.Random;
 import mark.core.Subject;
@@ -34,7 +34,7 @@ import mark.core.ServerInterface;
  * It will simply return fake data, and write out what it receives...
  * @author Thibault Debatty
  */
-public class FakeClient<T extends Subject> implements ServerInterface<T> {
+public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
     public String test() throws Throwable {
         return "test";
@@ -90,5 +90,4 @@ public class FakeClient<T extends Subject> implements ServerInterface<T> {
     public Evidence<T>[] findEvidence(String label) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

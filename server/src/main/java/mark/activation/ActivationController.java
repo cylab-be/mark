@@ -101,7 +101,9 @@ public class ActivationController<T extends Subject> {
                         for (T link : entry.getValue()) {
                             try {
                                 DetectionAgentInterface new_task = profile.getTaskFor(link);
-                                new_task.setDatastore(new Client<T>(server_url, adapter));
+                                new_task.setDatastoreUrl(server_url.toString());
+                                new_task.setSubjectAdapter(adapter);
+                                // new Client<T>(server_url, adapter)
                                 executor_service.submit(new_task);
                                 task_count++;
 

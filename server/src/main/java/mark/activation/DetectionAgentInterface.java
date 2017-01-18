@@ -2,7 +2,7 @@ package mark.activation;
 
 import java.util.Map;
 import mark.core.Subject;
-import mark.core.ServerInterface;
+import mark.core.SubjectAdapter;
 
 /**
  * The minimum interface for implementing a detection agent.
@@ -10,12 +10,13 @@ import mark.core.ServerInterface;
  * AbstractDetectionAgent, which provides a lot of helpers.
  * @author Thibault Debatty
  */
-interface DetectionAgentInterface<T extends Subject> extends Runnable {
+public interface DetectionAgentInterface<T extends Subject> extends Runnable {
     void setParameters(Map<String, String> parameters);
     void setLabel(String label);
     void setInputLabel(String input_label);
     void setSubject(T subject);
-    void setDatastore(ServerInterface<T> datastore);
+    void setDatastoreUrl(String datastore_url);
+    void setSubjectAdapter(SubjectAdapter<T> subject_adapter);
 
 
 }

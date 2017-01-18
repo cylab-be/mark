@@ -1,9 +1,11 @@
 package mark.activation;
 
+import java.net.MalformedURLException;
 import java.util.Map;
 import mark.core.Subject;
 import mark.core.Evidence;
 import mark.core.ServerInterface;
+import mark.core.SubjectAdapter;
 
 /**
  *
@@ -17,7 +19,12 @@ public abstract class AbstractDetectionAgent<T extends Subject>
     private String input_label;
     private T subject;
     private Map<String, String> parameters;
+    private String datastore_url;
+    private SubjectAdapter<T> subject_adapter;
+
+    // Lazy initialized fields:
     private ServerInterface<T> datastore;
+    private DatastoreFactory datastore_factory;
 
     /**
      *
@@ -55,18 +62,21 @@ public abstract class AbstractDetectionAgent<T extends Subject>
         this.subject = subject;
     }
 
-
-
     /**
      * Return a connection to the server.
      * @return
      */
-    public final ServerInterface<T> getDatastore() {
+    public final ServerInterface<T> getDatastore() throws MalformedURLException {
+        // Lazy initialization...
+        if (datastore == null) {
+            datastore = getDatastoreFactory().getInstance(datastore_url);
+        }
+
         return datastore;
     }
 
-    public final void setDatastore(final ServerInterface<T> datastore) {
-        this.datastore = datastore;
+    public final void setDatastoreUrl(final String datastore_url) {
+        this.datastore_url = datastore_url;
     }
 
     /**
@@ -89,5 +99,26 @@ public abstract class AbstractDetectionAgent<T extends Subject>
         evidence.subject = getSubject();
         evidence.label = getLabel();
         return evidence;
+    }
+
+    private DatastoreFactory getDatastoreFactory() {
+        // Lazy initialization
+        if (datastore_factory == null) {
+            datastore_factory = new DefaultDatastoreFactory(subject_adapter);
+        }
+
+        return datastore_factory;
+    }
+
+    /**
+     * Allows to use a DummyDatastore for testing, for example.
+     * @param datastore_factory
+     */
+    public void setDatastoreFactory(DatastoreFactory datastore_factory) {
+        this.datastore_factory = datastore_factory;
+    }
+
+    public void setSubjectAdapter(SubjectAdapter<T> subject_adapter) {
+        this.subject_adapter = subject_adapter;
     }
 }

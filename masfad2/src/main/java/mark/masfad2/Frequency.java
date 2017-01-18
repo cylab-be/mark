@@ -1,9 +1,9 @@
 package mark.masfad2;
 
+import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.AbstractDetectionAgent;
-import mark.client.FakeClient;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
@@ -31,17 +31,14 @@ public class Frequency extends AbstractDetectionAgent {
     public static final int SAMPLING_INTERVAL = 2; // in seconds
     public static final double DETECTION_THRESHOLD = 10.0;
 
-    public static void main(String[] args) {
-        FakeClient fakce_client = new FakeClient();
-        Frequency agent = new Frequency();
-        agent.setDatastore(fakce_client);
-        agent.setSubject(new Link("192.168.2.3", "www.google.com"));
-        agent.setLabel("http");
-        agent.run();
-    }
-
     public final void run() {
-        ServerInterface datastore = getDatastore();
+        ServerInterface datastore;
+        try {
+            datastore = getDatastore();
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(Frequency.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
         RawData[] raw_data;
         try {
             raw_data = datastore.findRawData(getLabel(), getSubject());

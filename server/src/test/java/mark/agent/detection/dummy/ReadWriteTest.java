@@ -87,7 +87,8 @@ public class ReadWriteTest extends TestCase {
         instance.setInputLabel("manual.data");
         instance.setLabel("manual.detection");
         instance.setSubject(subject);
-        instance.setDatastore(client);
+        instance.setDatastoreUrl("http://127.0.0.1:8080");
+        instance.setSubjectAdapter(new DummySubjectAdapter());
         instance.run();
 
         Evidence<DummySuject>[] evidence_after_insert = client.findEvidence("manual.detection", subject);

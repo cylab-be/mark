@@ -38,7 +38,6 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      */
     public Client(final URL server_url, final SubjectAdapter<T> adapter) {
 
-
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(RawData.class, new RawDataDezerializer(adapter));
