@@ -70,7 +70,7 @@
           <button type="button" class="btn btn-default" id="cancel_button">Cancel</button>
         </div>
       </div>
-      <div class="col-md-8" id="graph"></div>
+      <div class="col-md-12" id="graph"></div>
     </div>
   </div>
   <footer class="footer">
@@ -82,34 +82,31 @@
     </div>
   </footer>
   <script>
-    hide(document.getElementById('domain_clustering'));
-    hide(document.getElementById('domain_fusion'));
-    hide(document.getElementById('feature_fusion'));
+    hide(document.getElementById('side_bar'));
 
-    $("#apply_button").click(function(){
-      var jsonbody = {"jsonrpc": "2.0",
-                          "method": "status",
-                          "params": { },
-                          "id": 123
-                        };
-      var request = json_post("http://127.0.0.1:8080" , jsonbody); 
-      request.addEventListener('load', function(){
-        if (request.readyState == 4 && request.status == 200){
-          json = JSON.parse(request.responseText);
-          $("#panel_head").text('Request Status = ' + request.status + ' ' + request.statusText);
-          $("#panel_head").css('color', 'green');
-          $("#panel_body").text("Server Response: " + json.result.activation.length + " Agent Activations;" + 
-                                " Executed: " + json.result.executed + ";" + " State: " + json.result.state + ";");
-          draw_graph(json.result.activation); 
-        }
-        else if (request.status != 400) {
-          $("#panel_head").text('Request Status Error = ' + request.status + ' ' + request.statusText);
-          $("#panel_head").css('color', 'red');
-          $("#panel_body").text("Server Response: " + json.result.activation.length + " Agent Activations;" + 
-                                " Executed: " + json.result.executed + ";" + " State: " + json.result.state + ";");
+    var jsonbody = {"jsonrpc": "2.0",
+                        "method": "status",
+                        "params": { },
+                        "id": 123
+                      };
+    var request = json_post("http://127.0.0.1:8080" , jsonbody); 
+    request.addEventListener('load', function(){
+      if (request.readyState == 4 && request.status == 200){
+        json = JSON.parse(request.responseText);
+        $("#panel_head").text('Request Status = ' + request.status + ' ' + request.statusText);
+        $("#panel_head").css('color', 'green');
+        $("#panel_body").text("Server Response: " + json.result.activation.length + " Agent Activations;" + 
+                              " Executed: " + json.result.executed + ";" + " State: " + json.result.state + ";");
+        draw_graph(json.result.activation); 
+      }
+      else if (request.status != 400) {
+        $("#panel_head").text('Request Status Error = ' + request.status + ' ' + request.statusText);
+        $("#panel_head").css('color', 'red');
+        $("#panel_body").text("Server Response: " + json.result.activation.length + " Agent Activations;" + 
+                              " Executed: " + json.result.executed + ";" + " State: " + json.result.state + ";");
 
-        } 
-      });
+      } 
     });
+
   </script>
 </body>
