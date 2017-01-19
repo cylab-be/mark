@@ -191,9 +191,8 @@ public class Server {
                 return name.endsWith(".jar");
             }
         });
-        
+
         for (File jar_file : jar_files) {
-            System.out.println(jar_file);
             method.invoke(classLoader, jar_file.toURI().toURL());
         }
 
