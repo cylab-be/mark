@@ -1,4 +1,8 @@
 language: java
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+  - openjdk6
 services:
   - mongodb
 install: cd mark && mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
