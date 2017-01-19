@@ -12,7 +12,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  *
  * @author Thibault Debatty
  */
-public class DetectionAgentProfile<T extends Subject> {
+public class DetectionAgentProfile {
 
     /**
      * The label attached to the evidence produced by this detection agent.
@@ -50,12 +50,12 @@ public class DetectionAgentProfile<T extends Subject> {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    DetectionAgentInterface getTaskFor(final T subject)
+    DetectionAgentInterface getTaskFor(final Subject subject)
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
         // Create analysis task
-        DetectionAgentInterface<T> new_task =
-                (DetectionAgentInterface<T>)
+        DetectionAgentInterface new_task =
+                (DetectionAgentInterface)
                 Class.forName(class_name)
                 .newInstance();
 

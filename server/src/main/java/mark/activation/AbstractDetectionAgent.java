@@ -8,11 +8,25 @@ import mark.core.ServerInterface;
 import mark.core.SubjectAdapter;
 
 /**
+ * Abstract implementation of a detection agent.
+ * It implements the DetectionAgentInterface so it can be instantiated and
+ * started by the server.
+ *
+ * The datastore field is lazy instantiated and transient such that, if we run
+ * over an Ignite cluster, the field is not serialized and it will be
+ * instantiated when it is run on the distant compute node.
+ *
+ * The datastore_factory is responsible for instantiating the correct
+ * datastore implementation (real datastore or dummy datastore for testing).
+ *
+ * Some detection agents may be generic, or they can be designed for one type
+ * of Subject, hence they should extend AbstractDetectionAgent<RealSubject>.
  *
  * @author Thibault Debatty
+ * @param <T> The type of Subject that this detection agent can deal with
  */
 public abstract class AbstractDetectionAgent<T extends Subject>
-        implements DetectionAgentInterface<T> {
+        implements DetectionAgentInterface {
 
     // Things that are provided by the activation logic engine:
     private String label;
@@ -22,9 +36,8 @@ public abstract class AbstractDetectionAgent<T extends Subject>
     private String datastore_url;
     private SubjectAdapter<T> subject_adapter;
 
-    // Lazy initialized fields:
-    private ServerInterface<T> datastore;
-    private DatastoreFactory datastore_factory;
+    // Lazy instantiated fields:
+    private transient ServerInterface<T> datastore;
 
     /**
      *
@@ -33,7 +46,7 @@ public abstract class AbstractDetectionAgent<T extends Subject>
 
     }
 
-    public final String getInputLabel() {
+    protected final String getInputLabel() {
         return input_label;
     }
 
@@ -45,7 +58,7 @@ public abstract class AbstractDetectionAgent<T extends Subject>
         this.parameters = parameters;
     }
 
-    public final String getLabel() {
+    protected final String getLabel() {
         return label;
     }
 
@@ -54,22 +67,22 @@ public abstract class AbstractDetectionAgent<T extends Subject>
     }
 
 
-    public T getSubject() {
+    protected T getSubject() {
         return subject;
     }
 
-    public void setSubject(T subject) {
-        this.subject = subject;
+    public void setSubject(Subject subject) {
+        this.subject = (T) subject;
     }
 
     /**
      * Return a connection to the server.
      * @return
      */
-    public final ServerInterface<T> getDatastore() throws MalformedURLException {
+    protected final ServerInterface<T> getDatastore() throws MalformedURLException {
         // Lazy initialization...
         if (datastore == null) {
-            datastore = getDatastoreFactory().getInstance(datastore_url);
+            datastore = subject_adapter.getDatastore(datastore_url);
         }
 
         return datastore;
@@ -85,7 +98,7 @@ public abstract class AbstractDetectionAgent<T extends Subject>
      * @param name
      * @return
      */
-    public final String getParameter(final String name) {
+    protected final String getParameter(final String name) {
         return parameters.get(name);
     }
 
@@ -94,31 +107,14 @@ public abstract class AbstractDetectionAgent<T extends Subject>
      * the activation logic: client, server and label.
      * @return
      */
-    public Evidence createEvidenceTemplate() {
+    protected Evidence createEvidenceTemplate() {
         Evidence evidence = new Evidence();
         evidence.subject = getSubject();
         evidence.label = getLabel();
         return evidence;
     }
 
-    private DatastoreFactory getDatastoreFactory() {
-        // Lazy initialization
-        if (datastore_factory == null) {
-            datastore_factory = new DefaultDatastoreFactory(subject_adapter);
-        }
-
-        return datastore_factory;
-    }
-
-    /**
-     * Allows to use a DummyDatastore for testing, for example.
-     * @param datastore_factory
-     */
-    public void setDatastoreFactory(DatastoreFactory datastore_factory) {
-        this.datastore_factory = datastore_factory;
-    }
-
-    public void setSubjectAdapter(SubjectAdapter<T> subject_adapter) {
+    public void setSubjectAdapter(SubjectAdapter subject_adapter) {
         this.subject_adapter = subject_adapter;
     }
 }

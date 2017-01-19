@@ -23,7 +23,7 @@ import org.jfree.ui.ApplicationFrame;
  *
  * @author Thibault Debatty
  */
-public class Frequency extends AbstractDetectionAgent {
+public class Frequency extends AbstractDetectionAgent<Link> {
 
     /**
      * Sampling interval (in second).

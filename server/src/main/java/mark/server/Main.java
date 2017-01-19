@@ -1,4 +1,4 @@
-package mark.masfad2;
+package mark.server;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import mark.activation.InvalidProfileException;
-import mark.server.Config;
-import mark.server.Server;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -53,7 +51,7 @@ public final class Main {
             return;
         }
 
-        Server<Link> server = new Server<Link>(new LinkAdapter());
+        Server server = new Server();
 
         if (cmd.hasOption("c")) {
             server.setConfiguration(Config.fromFile(new File(cmd.getOptionValue("c"))));

@@ -24,7 +24,6 @@
 package mark.masfad2;
 
 import junit.framework.TestCase;
-import mark.activation.DummyDatastoreFactory;
 
 /**
  *
@@ -39,7 +38,7 @@ public class FrequencyTest extends TestCase {
         System.out.println("run");
 
         Frequency agent = new Frequency();
-        agent.setDatastoreFactory(new DummyDatastoreFactory());
+        agent.setSubjectAdapter(new DatastoreLessLinkAdapter());
         agent.setSubject(new Link("192.168.2.3", "www.google.com"));
         agent.setLabel("http");
         agent.run();

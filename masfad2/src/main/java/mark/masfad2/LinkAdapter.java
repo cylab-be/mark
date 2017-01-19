@@ -29,6 +29,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mark.client.Client;
+import mark.core.ServerInterface;
 import mark.core.SubjectAdapter;
 import org.bson.Document;
 
@@ -72,5 +78,16 @@ public class LinkAdapter extends SubjectAdapter<Link> {
         return new Link(
                 node.get("client").textValue(),
                 node.get("server").textValue());
+    }
+
+    @Override
+    public ServerInterface<Link> getDatastore(String url) {
+        try {
+            return new Client<Link>(new URL(url), this);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(LinkAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 }

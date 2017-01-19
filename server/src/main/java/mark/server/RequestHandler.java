@@ -18,14 +18,14 @@ import org.bson.Document;
  * @author Thibault Debatty
  * @param <T> Type of subject that this server is dealing with
  */
-public class RequestHandler<T extends Subject> implements ServerInterface<T> {
+public class RequestHandler implements ServerInterface {
 
     private static final String COLLECTION_RAW_DATA = "RAW_DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
 
     private final MongoDatabase mongodb_database;
     private final ActivationController activation_controller;
-    private final SubjectAdapter<T> adapter;
+    private final SubjectAdapter adapter;
 
     /**
      *
@@ -35,7 +35,7 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
     RequestHandler(
             final MongoDatabase mongodb_database,
             final ActivationController activation_controller,
-            final SubjectAdapter<T> adapter) {
+            final SubjectAdapter adapter) {
 
         this.mongodb_database = mongodb_database;
         this.activation_controller = activation_controller;
@@ -80,7 +80,7 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      * @return
      */
     public final RawData[] findRawData(
-            final String label, final T subject) {
+            final String label, final Subject subject) {
 
         Document query = new Document();
         query.append(LABEL, label);
@@ -161,7 +161,7 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      * @param data
      * @return
      */
-    private Document convert(final RawData<T> data) {
+    private Document convert(final RawData data) {
 
         Document doc = new Document()
                 .append(LABEL, data.label)
@@ -177,7 +177,7 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      * @param evidence
      * @return
      */
-    private Document convert(final Evidence<T> evidence) {
+    private Document convert(final Evidence evidence) {
         Document doc = new Document()
                 .append(LABEL, evidence.label)
                 .append(TIME, evidence.time)
@@ -195,7 +195,8 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      * @return
      * @throws Throwable if request fails
      */
-    public final Evidence<T>[] findEvidence(final String label, final T subject)
+    public final Evidence[] findEvidence(
+            final String label, final Subject subject)
             throws Throwable {
 
         Document query = new Document();
@@ -220,7 +221,7 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
      * @return
      * @throws Throwable if request fails
      */
-    public final Evidence<T>[] findEvidence(final String label)
+    public final Evidence[] findEvidence(final String label)
             throws Throwable {
 
         Document query = new Document();
@@ -230,9 +231,9 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        HashMap<T, Evidence> evidences = new HashMap<T, Evidence>();
+        HashMap<Subject, Evidence> evidences = new HashMap<Subject, Evidence>();
         for (Document doc : documents) {
-            Evidence<T> evidence = convertEvidence(doc);
+            Evidence evidence = convertEvidence(doc);
 
             Evidence inmap = evidences.get(evidence.subject);
             if (inmap == null) {
@@ -246,6 +247,4 @@ public class RequestHandler<T extends Subject> implements ServerInterface<T> {
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
     }
-
-
 }

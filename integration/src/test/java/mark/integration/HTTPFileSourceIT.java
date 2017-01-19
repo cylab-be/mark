@@ -27,7 +27,8 @@ public class HTTPFileSourceIT extends TestCase {
 
         System.out.println("Test with a HTTP file source");
         System.out.println("============================");
-        Server<Link> server = new Server<Link>(new LinkAdapter());
+        Server server = new Server();
+        server.setSubjectAdapter(new LinkAdapter());
 
         // Configure a single data source (HTTP, Regex, file with 1000 reqs)
         HashMap<String, String> parameters = new HashMap<String, String>();

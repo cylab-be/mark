@@ -22,7 +22,7 @@ import mark.server.Server;
  */
 public class ClientIT extends TestCase {
 
-    private Server<Link> server;
+    private Server server;
 
     @Override
     protected void tearDown() throws Exception {
@@ -33,7 +33,8 @@ public class ClientIT extends TestCase {
     protected final void startDummyServer()
             throws FileNotFoundException, InvalidProfileException,
             MalformedURLException, Exception {
-        server = new Server<Link>(new LinkAdapter());
+        server = new Server();
+        server.setSubjectAdapter(new LinkAdapter());
 
         // Activate the dummy activation profiles
         InputStream activation_file = getClass()
@@ -122,7 +123,9 @@ public class ClientIT extends TestCase {
         System.out.println("============================================");
 
         // Start server with read-write activation profile
-        server = new Server<Link>(new LinkAdapter());
+        server = new Server();
+        server.setSubjectAdapter(new LinkAdapter());
+
         InputStream activation_file = getClass()
                 .getResourceAsStream("/detection.readwrite.yml");
         server.addDetectionAgentProfile(

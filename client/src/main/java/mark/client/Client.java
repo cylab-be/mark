@@ -21,9 +21,8 @@ import mark.core.SubjectAdapter;
 /**
  *
  * @author Thibault Debatty
- * @param <T> Type of subject that this server is dealing with
  */
-public class Client<T extends Subject> implements ServerInterface<T> {
+public class Client<T extends Subject> implements ServerInterface {
 
     private static final int CONNECTION_TIMEOUT = 5000;
 
@@ -36,7 +35,7 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      * @param server_url
      * @param adapter
      */
-    public Client(final URL server_url, final SubjectAdapter<T> adapter) {
+    public Client(final URL server_url, final SubjectAdapter adapter) {
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
@@ -65,7 +64,7 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      *
      * @param data {@inheritDoc}
      */
-    public final void addRawData(final RawData<T> data) throws Throwable {
+    public final void addRawData(final RawData data) throws Throwable {
 
         datastore.invoke("addRawData", new Object[]{data});
 
@@ -89,8 +88,8 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      * @return
      * @throws Throwable
      */
-    public final RawData<T>[] findRawData(
-            final String label, final T subject)
+    public final RawData[] findRawData(
+            final String label, final Subject subject)
             throws Throwable {
 
         return datastore.invoke(
@@ -107,8 +106,8 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      * @return
      * @throws Throwable
      */
-    public final Evidence<T>[] findEvidence(
-            final String label, final T subject)
+    public final Evidence[] findEvidence(
+            final String label, final Subject subject)
             throws Throwable {
 
         return datastore.invoke(
@@ -129,7 +128,7 @@ public class Client<T extends Subject> implements ServerInterface<T> {
         datastore.invoke("addEvidence", new Object[]{evidence});
     }
 
-    public Evidence<T>[] findEvidence(String label) throws Throwable {
+    public Evidence[] findEvidence(String label) throws Throwable {
         return datastore.invoke(
                 "findEvidence",
                 new Object[]{label},
@@ -170,12 +169,12 @@ public class Client<T extends Subject> implements ServerInterface<T> {
      * Helper class to deserialize evidence, using subject adapter.
      * @param <T>
      */
-    private static class EvidenceDeserializer<T extends Subject>
+    private static class EvidenceDeserializer
             extends JsonDeserializer<Evidence> {
 
-        private final SubjectAdapter<T> adapter;
+        private final SubjectAdapter adapter;
 
-        EvidenceDeserializer(final SubjectAdapter<T> adapter) {
+        EvidenceDeserializer(final SubjectAdapter adapter) {
             this.adapter = adapter;
         }
 
@@ -186,7 +185,7 @@ public class Client<T extends Subject> implements ServerInterface<T> {
                 throws IOException, JsonProcessingException {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
-            Evidence<T> data = new Evidence<T>();
+            Evidence data = new Evidence();
             data.report = tree.get("report").toString();
             data.score = Double.valueOf(tree.get("score").toString());
             data.label = tree.get("label").toString();

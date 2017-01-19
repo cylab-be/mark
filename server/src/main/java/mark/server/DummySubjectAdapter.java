@@ -22,14 +22,20 @@
  * THE SOFTWARE.
  */
 
-package mark.core;
+package mark.server;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mark.client.Client;
+import mark.core.ServerInterface;
+import mark.core.SubjectAdapter;
 import org.bson.Document;
 
 /**
@@ -63,8 +69,20 @@ public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
     }
 
     @Override
-    public DummySuject deserialize(JsonParser jparser, DeserializationContext arg1) throws IOException, JsonProcessingException {
+    public DummySuject deserialize(
+            final JsonParser jparser,final DeserializationContext ctx)
+            throws IOException, JsonProcessingException {
         return deserialize((JsonNode) jparser.getCodec().readTree(jparser));
     }
 
+    @Override
+    public ServerInterface<DummySuject> getDatastore(String url) {
+        try {
+            return new Client<DummySuject>(new URL(url), this);
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(DummySubjectAdapter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
 }

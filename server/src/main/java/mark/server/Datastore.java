@@ -22,22 +22,22 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
  *
  * @author Thibault Debatty
  */
-public class Datastore<T extends Subject> implements Runnable {
+public class Datastore implements Runnable {
 
     private Config config;
 
     // isStarted() will be called from another thread => must be volatile
     private volatile Server http_server;
     private volatile ActivationController activation_controller;
-    private SubjectAdapter<T> adapter;
+    private SubjectAdapter adapter;
 
     /**
      * Instatiate a datastore with default config and empty activation profiles.
      */
-    public Datastore(SubjectAdapter<T> adapter) {
+    public Datastore(SubjectAdapter adapter) {
         this.adapter = adapter;
 
-        this.activation_controller = new ActivationController<T>(adapter);
+        this.activation_controller = new ActivationController(adapter);
 
     }
 
@@ -90,7 +90,7 @@ public class Datastore<T extends Subject> implements Runnable {
         activation_controller.start();
 
         // Create and run HTTP / JSON-RPC server
-        RequestHandler<T> datastore_handler = new RequestHandler<T>(
+        RequestHandler datastore_handler = new RequestHandler(
                 mongodb_database,
                 activation_controller,
                 adapter);

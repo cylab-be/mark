@@ -10,7 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import mark.client.Client;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
@@ -151,7 +150,7 @@ public class ActivationController<T extends Subject> {
      * @param profiles
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
-    protected final void testProfiles(
+    private void testProfiles(
             final Iterable<DetectionAgentProfile> profiles)
             throws InvalidProfileException {
 

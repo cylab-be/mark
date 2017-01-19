@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Thibault Debatty.
+ * Copyright 2017 Thibault Debatty.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,20 @@
  * THE SOFTWARE.
  */
 
-package mark.core;
+package mark.masfad2;
+
+import mark.activation.DummyClient;
+import mark.core.ServerInterface;
 
 /**
- *
+ * Adapter for dealing with Link subject, but provides a dummy datastore
+ * client.
  * @author Thibault Debatty
  */
-public class DummySuject implements Subject {
-
-    public String name = "";
-
+public class DatastoreLessLinkAdapter extends LinkAdapter {
     @Override
-    public String toString() {
-        return name;
+    public ServerInterface<Link> getDatastore(String url) {
+
+        return new DummyClient<Link>();
     }
 }

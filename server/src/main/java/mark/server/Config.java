@@ -21,6 +21,8 @@ public class Config {
     private static final int    DEFAULT_MAX_PENDING_REQUESTS = 200;
     private static final String DEFAULT_MODULES = "./modules";
 
+    private static final String DEFAULT_ADAPTER = "mark.server.DummySubjectAdapter";
+
     private static final int    DEFAULT_WEB_PORT = 8000;
     private static final String DEFAULT_WEB_ROOT = "../ui";
 
@@ -61,6 +63,8 @@ public class Config {
      * Folder containing modules: jar files (if any) and activation files.
      */
     public String modules = DEFAULT_MODULES;
+
+    public String adapter_class = DEFAULT_ADAPTER;
 
     // Datastore HTTP/JSON-RPC server parameters
     public int max_threads = DEFAULT_MAX_THREADS;

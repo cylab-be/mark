@@ -1,0 +1,14 @@
+# A small configuration
+# check folder modules-small to see
+# which modules are activated
+---
+mongo_host:     127.0.0.1
+mongo_port:     27017
+mongo_db:       MASFAD
+
+server_host:    127.0.0.1
+server_port:    8080
+
+adapter_class:  mark.masfad2.LinkAdapter  
+
+modules:        ./modules

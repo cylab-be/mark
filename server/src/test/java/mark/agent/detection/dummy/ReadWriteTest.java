@@ -28,8 +28,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.TestCase;
 import mark.client.Client;
-import mark.core.DummySuject;
-import mark.core.DummySubjectAdapter;
+import mark.server.DummySuject;
+import mark.server.DummySubjectAdapter;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.server.Server;
@@ -40,7 +40,7 @@ import mark.server.Server;
  */
 public class ReadWriteTest extends TestCase {
 
-    private Server<DummySuject> server;
+    private Server server;
 
     @Override
     protected void tearDown() throws Exception {
@@ -55,7 +55,7 @@ public class ReadWriteTest extends TestCase {
         System.out.println("run Read Write detection agent");
 
         // Start a dummy server
-        server = new Server<DummySuject>(new DummySubjectAdapter());
+        server = new Server();
         server.start();
 
         // create a connexion to the server

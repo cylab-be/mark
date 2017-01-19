@@ -3,6 +3,8 @@ package mark.server;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -11,16 +13,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import mark.activation.DetectionAgentProfile;
 import mark.client.Client;
-import mark.core.Subject;
 import mark.core.SubjectAdapter;
 
 /**
  * Represents a MARK server, composed of a datastore + some data agents + a
  * file server.
  * @author Thibault Debatty
- * @param <T> Type of subject that this server is dealing with
  */
-public class Server<T extends Subject> {
+public class Server {
 
     private static final int START_WAIT_MS = 1000;
 
@@ -34,18 +34,14 @@ public class Server<T extends Subject> {
     private LinkedList<Thread> data_agent_threads;
 
     private final LinkedList<DetectionAgentProfile> detection_agent_profiles;
-    private final SubjectAdapter<T> adapter;
+    private SubjectAdapter adapter;
 
 
     /**
-     * Initialize a server with default configuration, no data agents
-     * and no detection agents.
-     * @param adapter
+     * Initialize a server with default configuration, dummy subject adapter,
+     * no data agents and no detection agents.
      */
-    public Server(final SubjectAdapter<T> adapter) {
-
-        this.adapter = adapter;
-        config = new Config();
+    public Server() {
 
         // Create an empty list of source profiles
         data_agent_profiles = new LinkedList<DataAgentProfile>();
@@ -64,10 +60,16 @@ public class Server<T extends Subject> {
     public final void start()
             throws MalformedURLException, Exception {
 
-        server_url = new URL(
-                "http://" + config.server_host + ":" + config.server_port);
-
+        parseConfig();
         parseModulesDirectory();
+
+        // Now we can try to instantiate the adapter, according to config
+        // No adapter has been provided programmatically => read from config
+        if (adapter == null) {
+            adapter = (SubjectAdapter) Class.forName(config.adapter_class)
+                    .newInstance();
+        }
+
         startFileServer();
         startDatastore();
         startDataAgents();
@@ -160,7 +162,7 @@ public class Server<T extends Subject> {
      * @throws MalformedURLException
      */
     private void parseModulesDirectory()
-            throws MalformedURLException, FileNotFoundException {
+            throws MalformedURLException, FileNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
 
 
         String modules_dir_path = config.getModulesDirectory();
@@ -178,16 +180,23 @@ public class Server<T extends Subject> {
             return;
         }
 
-        // Modify the class path
-        ClassLoader old_classloader =
-                Thread.currentThread().getContextClassLoader();
-        URL modules_url = modules_dir.toURI().toURL();
-        // Create class loader using given codebase
-        // Use prevCl as parent to maintain current visibility
-        ClassLoader new_classloader = URLClassLoader.newInstance(
-                new URL[]{modules_url},
-                old_classloader);
-        Thread.currentThread().setContextClassLoader(new_classloader);
+        // Parse *.jar and update the class path
+        // this is a hack that allows to modify the global (system) class loader.
+        URLClassLoader classLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+        Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        method.setAccessible(true);
+
+        File[] jar_files = modules_dir.listFiles(new FilenameFilter() {
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".jar");
+            }
+        });
+        
+        for (File jar_file : jar_files) {
+            System.out.println(jar_file);
+            method.invoke(classLoader, jar_file.toURI().toURL());
+        }
+
 
         // Parse *.data.yml files
         File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
@@ -201,7 +210,6 @@ public class Server<T extends Subject> {
         }
 
         // Parse *.detection.yml files
-
         File[] detection_agent_files =
                 modules_dir.listFiles(new FilenameFilter() {
             public boolean accept(final File dir, final String name) {
@@ -232,7 +240,7 @@ public class Server<T extends Subject> {
     private void startDatastore()
             throws MalformedURLException, InterruptedException, Exception {
 
-        datastore = new Datastore<T>(adapter);
+        datastore = new Datastore(adapter);
         datastore.setConfiguration(config);
         datastore.setActivationProfiles(detection_agent_profiles);
 
@@ -257,7 +265,7 @@ public class Server<T extends Subject> {
                         Class.forName(profile.class_name).newInstance();
 
                 source.setProfile(profile);
-                source.setDatastore(new Client<T>(server_url, adapter));
+                source.setDatastore(new Client(server_url, adapter));
                 Thread source_thread = new Thread(source);
                 source_thread.start();
 
@@ -298,5 +306,22 @@ public class Server<T extends Subject> {
     public final void addDetectionAgentProfile(
             final DetectionAgentProfile detection_agent_profile) {
         detection_agent_profiles.add(detection_agent_profile);
+    }
+
+    public final void setSubjectAdapter(final SubjectAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    private void parseConfig()
+            throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, MalformedURLException {
+
+        // No configuration has been provided => use default config.
+        if (config == null) {
+            config = new Config();
+        }
+
+        server_url = new URL(
+                "http://" + config.server_host + ":" + config.server_port);
     }
 }

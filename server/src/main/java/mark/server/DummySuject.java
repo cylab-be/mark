@@ -22,32 +22,20 @@
  * THE SOFTWARE.
  */
 
-package mark.core;
+package mark.server;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.bson.Document;
+import mark.core.Subject;
 
 /**
- * The SubjectAdapter is the adapter between the data that will be used
- * by the running server.
  *
- * It has four goals:
- * - Provide the implementation code to serialize and deserialize the subject
- *   to/from Mongo
- * - Provide the implementation code to deserialize the subject from JSON/RPC
- *   calls
- * - Provide the correct datastore link to detection agents (Factory pattern)
- * - Provide a single instance of the subject, which will be used to test the
- *   detection agent profiles before the server starts.
  * @author Thibault Debatty
  */
-public abstract class SubjectAdapter<T extends Subject> extends JsonDeserializer<T> {
+public class DummySuject implements Subject {
 
-    public abstract void writeToMongo(T subject, Document doc);
-    public abstract T readFromMongo(Document doc);
-    public abstract T deserialize(JsonNode node);
+    public String name = "";
 
-    public abstract T getInstance();
-    public abstract ServerInterface<T> getDatastore(String url);
+    @Override
+    public String toString() {
+        return name;
+    }
 }
