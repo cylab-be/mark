@@ -162,7 +162,10 @@ public class Server {
      * @throws MalformedURLException
      */
     private void parseModulesDirectory()
-            throws MalformedURLException, FileNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
+            throws MalformedURLException, FileNotFoundException,
+            ClassNotFoundException, InstantiationException,
+            IllegalAccessException, NoSuchMethodException,
+            IllegalArgumentException, InvocationTargetException {
 
 
         String modules_dir_path = config.getModulesDirectory();
@@ -181,9 +184,12 @@ public class Server {
         }
 
         // Parse *.jar and update the class path
-        // this is a hack that allows to modify the global (system) class loader.
-        URLClassLoader classLoader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-        Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+        // this is a hack that allows to modify the global (system) class
+        // loader.
+        URLClassLoader class_loader =
+                (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Method method = URLClassLoader.class.getDeclaredMethod(
+                "addURL", URL.class);
         method.setAccessible(true);
 
         File[] jar_files = modules_dir.listFiles(new FilenameFilter() {
@@ -193,7 +199,7 @@ public class Server {
         });
 
         for (File jar_file : jar_files) {
-            method.invoke(classLoader, jar_file.toURI().toURL());
+            method.invoke(class_loader, jar_file.toURI().toURL());
         }
 
 
@@ -230,7 +236,8 @@ public class Server {
                 try {
                     file_server.start();
                 } catch (Exception ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Server.class.getName()).log(
+                            Level.SEVERE, null, ex);
                 }
             }
         }).start();
@@ -307,6 +314,12 @@ public class Server {
         detection_agent_profiles.add(detection_agent_profile);
     }
 
+    /**
+     * Set the subject adapter.
+     * Normally the subject adapter is defined in the configuration file. This
+     * method is useful for writing tests.
+     * @param adapter
+     */
     public final void setSubjectAdapter(final SubjectAdapter adapter) {
         this.adapter = adapter;
     }
