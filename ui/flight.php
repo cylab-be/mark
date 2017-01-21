@@ -1,10 +1,10 @@
 <?php
 require_once "./libs/flight/Flight.php";
 
-
+// Allows to load classes from the "libs" folder
 spl_autoload_register(function ($class) {
 
-    // base directory for the namespace prefix
+    // base directory
     $base_dir = __DIR__ . '/libs/';
 
     // replace the namespace prefix with the base directory, replace namespace
@@ -18,16 +18,19 @@ spl_autoload_register(function ($class) {
     }
 });
 
-
+// Use Plates templates engine to render pages
 Flight::register('view', 'League\Plates\Engine', array('./app/templates'));
-
 Flight::map('render', function($template, $data){
     echo Flight::view()->render($template, $data);
 });
 
+
+// Define app routes
+// http://flightphp.com/learn/#routing
 Flight::route('/*', function(){
     // Render a template
     Flight::render('profile', ['name' => 'Tibo']);
 });
 
+// Start the framework and process the request...
 Flight::start();
