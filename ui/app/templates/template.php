@@ -17,6 +17,16 @@
     <![endif]-->
   </head>
   <body>
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/status">Status</a></li>
+          <li></li>
+        </ul>
+      </div>
+    </nav>
+
     <div class="container">
       <?= $this->section('content') ?>
     </div>
