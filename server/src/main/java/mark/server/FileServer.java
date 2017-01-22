@@ -24,10 +24,16 @@
 package mark.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.logging.Logger;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.webapp.WebAppContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.Rule;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 
 /**
  *
@@ -57,20 +63,33 @@ public class FileServer {
     public final void start() throws Exception {
         LOGGER.info("Starting web interface at port 8000");
 
-        server = new org.eclipse.jetty.server.Server(config.web_port);
-
-        ServletHandler php_handler = new ServletHandler();
-        php_handler.addServletWithMapping(
+        // Handle php files
+        ServletContextHandler php_handler = new ServletContextHandler();
+        php_handler.addServlet(
                 com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
+        php_handler.setResourceBase(config.web_root);
 
-        WebAppContext webapp = new WebAppContext();
-        webapp.setContextPath("/");
-        webapp.setWelcomeFiles(new String[]{"index.php", "index.html"});
-        webapp.setBaseResource(Resource.newResource(new File(config.web_root)));
-        webapp.setServletHandler(php_handler);
-        webapp.setHandler(php_handler);
+        // Handle static files (if it's not php)
+        ResourceHandler resource_handler = new ResourceHandler();
+        resource_handler.setDirectoriesListed(false);
+        resource_handler.setResourceBase(config.web_root);
 
-        server.setHandler(webapp);
+        HandlerList handler_list = new HandlerList();
+        handler_list.setHandlers(new Handler[]{
+            php_handler,
+            resource_handler
+        });
+
+        // First of all, redirect to index.php if file does not exist
+        RewriteHandler rewrite_handler = new RewriteHandler();
+        rewrite_handler.setRewriteRequestURI(false);
+        rewrite_handler.setRewritePathInfo(false);
+        rewrite_handler.setOriginalPathAttribute("requestedPath");
+        rewrite_handler.addRule(new RewriteIfNotExistsRule(config.web_root));
+        rewrite_handler.setHandler(handler_list);
+
+        server = new org.eclipse.jetty.server.Server(config.web_port);
+        server.setHandler(rewrite_handler);
         server.start();
     }
 
@@ -80,5 +99,43 @@ public class FileServer {
      */
     public final void stop() throws Exception {
         server.stop();
+    }
+}
+
+/**
+ * Rewrite the request if the requested file does not exist.
+ * Similar to following Apache .htaccess:
+ * RewriteEngine On
+ * RewriteCond %{REQUEST_FILENAME} !-f
+ * RewriteRule ^(.*)$ index.php [QSA,L]
+ *
+ * Or to following nginx:
+ * server {
+ *   location / {
+ *     try_files $uri /index.php;
+ *   }
+ * }
+ * @author Thibault Debatty
+ */
+class RewriteIfNotExistsRule extends Rule {
+    private final String root;
+
+    RewriteIfNotExistsRule(final String root) {
+        this.root = root;
+        _terminating = false;
+        _handling = false;
+    }
+
+    @Override
+    public String matchAndApply(
+            final String target,
+            final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
+        File resource = new File(root + target);
+        if (resource.exists() && resource.isFile()) {
+            return target;
+        }
+
+        return "/index.php";
     }
 }

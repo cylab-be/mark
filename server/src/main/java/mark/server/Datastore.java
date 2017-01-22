@@ -97,11 +97,11 @@ public class Datastore implements Runnable {
 
         ObjectMapper object_mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        //module.addSerializer(AnalysisUnit.class, new LinkSerializer());
         module.addDeserializer(Subject.class, adapter);
         object_mapper.registerModule(module);
 
-        JsonRpcServer jsonrpc_server = new JsonRpcServer(object_mapper, datastore_handler);
+        JsonRpcServer jsonrpc_server =
+                new JsonRpcServer(object_mapper, datastore_handler);
 
         QueuedThreadPool thread_pool = new QueuedThreadPool(
                 config.max_threads,

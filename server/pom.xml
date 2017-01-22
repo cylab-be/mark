@@ -172,12 +172,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.19</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.caucho</groupId>
             <artifactId>quercus</artifactId>
             <version>4.0.45</version>
@@ -192,6 +186,11 @@
             <groupId>org.apache.ignite</groupId>
             <artifactId>ignite-log4j</artifactId>
             <version>1.5.0.final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-rewrite</artifactId>
+            <version>9.0.2.v20130417</version>
         </dependency>
     </dependencies>
 </project>

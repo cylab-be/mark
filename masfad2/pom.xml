@@ -20,7 +20,7 @@
 
     <build>
         <plugins>
-            
+
         </plugins>
     </build>
 
@@ -42,6 +42,11 @@
             <artifactId>core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.13</version>
         </dependency>
     </dependencies>
 </project>
