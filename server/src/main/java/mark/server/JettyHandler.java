@@ -36,6 +36,8 @@ class JettyHandler extends AbstractHandler {
             final HttpServletResponse response)
             throws IOException, ServletException {
 
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
         jsonrpc_server.handle(request, response);
     }
 
