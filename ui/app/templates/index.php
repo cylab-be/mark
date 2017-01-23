@@ -12,13 +12,18 @@ $client = new MarkClient();
 $evidences = $client->findEvidence("detection.readwrite");
 ?>
 
-<table>
-<?php foreach ($evidences as $evidence) : ?>
+<table class="table">
+  <tr>
+    <th>Subject</th>
+    <th>Score</th>
+    <th>Time</th>
+  </tr>
 
+  <?php foreach ($evidences as $evidence) : ?>
   <tr>
     <td><?= $evidence->subject ?></td>
     <td><?= $evidence->score ?></td>
     <td><?= date("Y-m-d H:i:s", $evidence->time) ?></td>
   </tr>
-<?php endforeach; ?>
+  <?php endforeach; ?>
 </table>
