@@ -25,7 +25,6 @@ package mark.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
@@ -34,6 +33,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,8 +42,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
  */
 public class FileServer {
 
-    private static final Logger LOGGER
-            = Logger.getLogger(FileServer.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+            FileServer.class);
 
     private org.eclipse.jetty.server.Server server;
     private final Config config;

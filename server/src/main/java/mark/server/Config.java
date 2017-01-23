@@ -66,6 +66,8 @@ public class Config {
 
     public String adapter_class = DEFAULT_ADAPTER;
 
+    public String log_directory = null;
+
     // Datastore HTTP/JSON-RPC server parameters
     public int max_threads = DEFAULT_MAX_THREADS;
     public int min_threads = DEFAULT_MIN_THREADS;

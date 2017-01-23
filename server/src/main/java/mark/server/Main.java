@@ -13,6 +13,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.BasicConfigurator;
 
 
 /**
@@ -35,6 +36,7 @@ public final class Main {
     public static void main(final String[] args)
             throws ParseException, FileNotFoundException,
             InvalidProfileException, MalformedURLException, Exception {
+
         // Parse command line arguments
         Options options = new Options();
 

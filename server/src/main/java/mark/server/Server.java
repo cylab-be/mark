@@ -9,11 +9,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mark.activation.DetectionAgentProfile;
 import mark.client.Client;
 import mark.core.SubjectAdapter;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 
 /**
  * Represents a MARK server, composed of a datastore + some data agents + a
@@ -61,6 +64,7 @@ public class Server {
             throws MalformedURLException, Exception {
 
         parseConfig();
+        initializeLogging();
         parseModulesDirectory();
 
         // Now we can try to instantiate the adapter, according to config
@@ -236,8 +240,6 @@ public class Server {
                 try {
                     file_server.start();
                 } catch (Exception ex) {
-                    Logger.getLogger(Server.class.getName()).log(
-                            Level.SEVERE, null, ex);
                 }
             }
         }).start();
@@ -335,5 +337,41 @@ public class Server {
 
         server_url = new URL(
                 "http://" + config.server_host + ":" + config.server_port);
+    }
+
+    private void initializeLogging() {
+
+        Logger.getRootLogger().getLoggerRepository().resetConfiguration();
+
+        ConsoleAppender console = new ConsoleAppender(); //create appender
+        //configure the appender
+        String PATTERN = "%d [%p] [%t] %c %m%n";
+        console.setLayout(new PatternLayout(PATTERN));
+        console.setThreshold(Level.INFO);
+        console.activateOptions();
+        //add appender to any Logger (here is root)
+        Logger.getRootLogger().addAppender(console);
+
+        //add appender to any Logger (here is root)
+        Logger.getRootLogger().addAppender(
+                getFileAppender("mark-server.log", Level.INFO));
+        Logger.getLogger("org.apache.ignite").addAppender(
+                getFileAppender("mark-ignite.log", Level.INFO));
+        Logger.getLogger("org.eclipse.jetty").addAppender(
+                getFileAppender("mark-jetty.log", Level.INFO));
+
+
+    }
+
+    private FileAppender getFileAppender(String filename, Level level) {
+        FileAppender fa = new FileAppender();
+        fa.setName(filename);
+        fa.setFile(filename);
+        fa.setLayout(new PatternLayout("%d [%p] [%t] %c %m%n"));
+        fa.setThreshold(level);
+        fa.setAppend(true);
+        fa.activateOptions();
+
+        return fa;
     }
 }
