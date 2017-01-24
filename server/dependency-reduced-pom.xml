@@ -67,6 +67,28 @@
           <descriptor>src/assembly/dep.xml</descriptor>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.10</version>
+        <executions>
+          <execution>
+            <id>dependency-analyze</id>
+            <phase>test</phase>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <configuration>
+              <failOnWarning>true</failOnWarning>
+              <ignoredDependencies>
+                <ignoreDependency>javax.portlet:portlet-api:*</ignoreDependency>
+                <ignoreDependency>org.slf4j:slf4j-log4j12:*</ignoreDependency>
+                <ignoreDependency>org.apache.ignite:ignite-log4j:*</ignoreDependency>
+                <ignoreDependency>org.eclipse.jetty.orbit:javax.servlet:*</ignoreDependency>
+              </ignoredDependencies>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
