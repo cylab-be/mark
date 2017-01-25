@@ -6,7 +6,7 @@ jdk:
 services:
   - mongodb
 install: cd mark && mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
-script: export MAVEN_OPTS="-Xmx1000m" && mvn clean install
+script: mvn clean install
 
 #after_success:
 #  - mvn clean cobertura:cobertura coveralls:report

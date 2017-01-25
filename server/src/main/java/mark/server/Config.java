@@ -16,7 +16,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  */
 public class Config {
     private static final String DEFAULT_MONGO_DB = "MASFAD";
-    private static final int    DEFAULT_MAX_THREADS = 100;
+    private static final int    DEFAULT_MAX_THREADS = 20;
     private static final int    DEFAULT_MIN_THREADS = 10;
     private static final int    DEFAULT_IDLE_TIMEOUT = 60;
     private static final String DEFAULT_SERVER_HOST = "127.0.0.1";
