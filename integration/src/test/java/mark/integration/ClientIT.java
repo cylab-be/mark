@@ -54,28 +54,28 @@ public class ClientIT extends TestCase {
         System.out.println("====");
 
         startDummyServer();
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
         assertEquals("1", datastore.test());
     }
 
     /**
      *
      * @throws java.io.FileNotFoundException
-     * @throws mark.activation.InvalidProfileException
      */
     public final void testString() throws Throwable {
         System.out.println("testString");
         System.out.println("==========");
 
         startDummyServer();
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
         datastore.testString("My String");
     }
 
     /**
      * Test of Test method, of class DatastoreClient.
      * @throws java.io.FileNotFoundException
-     * @throws mark.activation.InvalidProfileException
      */
     public final void testAddRawData() throws Throwable {
         System.out.println("addRawData");
@@ -83,7 +83,8 @@ public class ClientIT extends TestCase {
 
         startDummyServer();
 
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData data = new RawData();
         data.label = "http";
         data.subject = new Link("1.2.3.4", "www.google.be");
@@ -92,6 +93,10 @@ public class ClientIT extends TestCase {
         datastore.addRawData(data);
     }
 
+    /**
+     *
+     * @throws Throwable
+     */
     public final void testAddFindRawData() throws Throwable {
         System.out.println("addRawData and findRawData");
         System.out.println("==========================");
@@ -101,7 +106,8 @@ public class ClientIT extends TestCase {
         String label = "http";
         Link link = new Link("1.2.3.4", "www.google.be");
 
-        Client<Link> datastore = new Client<Link>(new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client<Link> datastore = new Client<Link>(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData[] original_data = datastore.findRawData(label, link);
 
         RawData new_data = new RawData();
@@ -118,8 +124,7 @@ public class ClientIT extends TestCase {
 
     /**
      *
-     * @throws FileNotFoundException
-     * @throws InvalidProfileException
+     * @throws Throwable
      */
     public final void testReadWriteRawData() throws Throwable {
         System.out.println("addRawData, with a ReadWrite detection agent");
@@ -136,7 +141,8 @@ public class ClientIT extends TestCase {
                 DetectionAgentProfile.fromInputStream(activation_file));
         server.start();
 
-        Client datastore = new Client(new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData data = new RawData();
         data.label = "http";
         data.subject = new Link("1.2.3.4", "www.google.be");
@@ -150,9 +156,9 @@ public class ClientIT extends TestCase {
         System.out.println("=======================");
         startDummyServer();
 
-        Client datastore = null;
         try {
-            datastore = new Client(new URL("http://123.45.67.89:8082"), new LinkAdapter());
+            Client datastore = new Client(
+                    new URL("http://123.45.67.89:8082"), new LinkAdapter());
             datastore.test();
             fail("Should throw a SocketTimeoutException !");
             datastore.test();
