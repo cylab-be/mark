@@ -181,7 +181,8 @@ public class RequestHandler implements ServerInterface {
                 .append(LABEL, evidence.label)
                 .append(TIME, evidence.time)
                 .append(SCORE, evidence.score)
-                .append(TIME, evidence.time);
+                .append(TIME, evidence.time)
+                .append(REPORT, evidence.report);
 
         adapter.writeToMongo(evidence.subject, doc);
         return doc;
