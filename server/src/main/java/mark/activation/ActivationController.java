@@ -1,5 +1,6 @@
 package mark.activation;
 
+import java.net.MalformedURLException;
 import mark.server.InvalidProfileException;
 import mark.detection.DetectionAgentInterface;
 import java.util.Collections;
@@ -31,20 +32,30 @@ public class ActivationController<T extends Subject> extends SafeThread {
             LoggerFactory.getLogger(ActivationController.class);
 
     private final LinkedList<DetectionAgentProfile> profiles;
+    private final Ignite ignite;
     private final ExecutorService executor_service;
     private final Map<String, HashSet<T>> events;
     private final Config config;
-    private int task_count;
 
-    public ActivationController(Config config) throws InvalidProfileException {
+    /**
+     *
+     * @param config
+     * @throws InvalidProfileException
+     */
+    public ActivationController(final Config config)
+            throws InvalidProfileException {
+
         this.config = config;
         this.profiles = new LinkedList<DetectionAgentProfile>();
-        this.events = Collections.synchronizedMap(new HashMap<String, HashSet<T>>());
+
+        // Synchronized map has poor performance! should be replaced by
+        // a concurrent hashmpap...
+        this.events = Collections.synchronizedMap(
+                new HashMap<String, HashSet<T>>());
 
         testProfiles();
 
         // Start Ignite framework..
-        Ignite ignite;
         if (Ignition.state() == IgniteState.STARTED) {
             ignite = Ignition.ignite();
         } else {
@@ -54,7 +65,11 @@ public class ActivationController<T extends Subject> extends SafeThread {
         executor_service = ignite.executorService();
     }
 
-    public void awaitTermination() throws InterruptedException {
+    /**
+     * Ask ignite executor to shutdown then when for tasks to finish.
+     * @throws InterruptedException
+     */
+    public final void awaitTermination() throws InterruptedException {
         while (executor_service == null) {
             Thread.sleep(ACTIVATION_INTERVAL);
         }
@@ -64,7 +79,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
     }
 
     @Override
-    public void doRun() throws Throwable {
+    public final void doRun() throws Throwable {
 
         while (true) {
             Thread.sleep(ACTIVATION_INTERVAL);
@@ -74,7 +89,9 @@ public class ActivationController<T extends Subject> extends SafeThread {
             }
 
             // Clone the list of events and clear
-            HashSet<Map.Entry<String, HashSet<T>>> local_events = new HashSet<Map.Entry<String, HashSet<T>>>(events.entrySet());
+            HashSet<Map.Entry<String, HashSet<T>>> local_events =
+                    new HashSet<Map.Entry<String, HashSet<T>>>(
+                            events.entrySet());
             events.clear();
 
             for (Map.Entry<String, HashSet<T>> entry : local_events) {
@@ -84,23 +101,46 @@ public class ActivationController<T extends Subject> extends SafeThread {
                     if (profile.match(label)) {
                         for (T link : entry.getValue()) {
                             try {
-                                DetectionAgentInterface new_task = profile.getTaskFor(link);
-                                new_task.setDatastoreUrl(config.getDatastoreUrl());
-                                new_task.setSubjectAdapter(config.getSubjectAdapter());
-                                // new Client<T>(server_url, adapter)
+                                DetectionAgentInterface new_task =
+                                        profile.getTaskFor(link);
+                                new_task.setDatastoreUrl(
+                                        config.getDatastoreUrl());
+                                new_task.setSubjectAdapter(
+                                        config.getSubjectAdapter());
                                 executor_service.submit(new_task);
-                                task_count++;
 
-                            } catch (Exception ex) {
-                                System.err.println("Oups!");
-                                System.err.println(ex.getMessage());
+                            } catch (ClassNotFoundException ex) {
+                                LOGGER.error(
+                                        "Cannot start agent "
+                                                + profile.class_name,
+                                        ex);
+                            } catch (IllegalAccessException ex) {
+                                LOGGER.error(
+                                        "Cannot start agent "
+                                                + profile.class_name,
+                                        ex);
+                            } catch (InstantiationException ex) {
+                                LOGGER.error(
+                                        "Cannot start agent "
+                                                + profile.class_name,
+                                        ex);
+                            } catch (MalformedURLException ex) {
+                                LOGGER.error(
+                                        "Cannot start agent "
+                                                + profile.class_name,
+                                        ex);
+                            } catch (InvalidProfileException ex) {
+                                LOGGER.error(
+                                        "Cannot start agent "
+                                                + profile.class_name,
+                                        ex);
                             }
                         }
                     }
                 }
             }
 
-            LOGGER.debug("Executed " + task_count + " tasks");
+            LOGGER.debug("Executed " + getTaskCount() + " tasks");
         }
 
     }
@@ -110,7 +150,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * @return
      */
     public final int getTaskCount() {
-        return task_count;
+        return ignite.cluster().metrics().getTotalExecutedJobs();
     }
 
     /**
@@ -151,30 +191,21 @@ public class ActivationController<T extends Subject> extends SafeThread {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public final Iterable<DetectionAgentProfile> getProfiles() {
         return profiles;
     }
 
-    public void addAgent(DetectionAgentProfile profile) {
+    /**
+     *
+     * @param profile
+     */
+    public final void addAgent(final DetectionAgentProfile profile) {
         profiles.add(profile);
     }
-
-    /**
-     * Available collections: RAW_DATA and EVIDENCE.
-     */
-    public enum Collection {
-
-        /**
-         * for RawData.
-         */
-        RAW_DATA,
-
-        /**
-         * For Evidence.
-         */
-        EVIDENCE
-    }
-
 
     /**
      * Trigger required tasks for this new RawData.
@@ -192,7 +223,11 @@ public class ActivationController<T extends Subject> extends SafeThread {
         set.add(data.subject);
     }
 
-    public void notifyEvidence(Evidence<T> evidence) {
+    /**
+     *
+     * @param evidence
+     */
+    public final void notifyEvidence(final Evidence<T> evidence) {
         HashSet<T> set = events.get(evidence.label);
 
         if (set == null) {
