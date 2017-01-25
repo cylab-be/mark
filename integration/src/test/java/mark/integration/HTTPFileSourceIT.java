@@ -1,13 +1,10 @@
 package mark.integration;
 
-import java.net.URL;
 import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
-import mark.client.Client;
 import mark.data.DataAgentProfile;
 import mark.masfad2.FileSource;
-import mark.masfad2.Link;
 import mark.masfad2.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
@@ -25,6 +22,10 @@ public class HTTPFileSourceIT extends TestCase {
         super.tearDown();
     }
 
+    /**
+     *
+     * @throws Exception
+     */
     public final void testHTTPFileSource() throws Exception {
 
         System.out.println("Test with a HTTP file source");
@@ -48,18 +49,12 @@ public class HTTPFileSourceIT extends TestCase {
         // Activate the dummy activation profiles
         server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(
-                        getClass()
-                                .getResourceAsStream("/detection.readwrite.yml")));
+                getClass().getResourceAsStream("/detection.readwrite.yml")));
 
 
         server.start();
 
         // Wait for data sources and detection to finish...
         server.awaitTermination();
-
-        // Connect to server
-        Client<Link> datastore = new Client<Link>(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
-
     }
 }

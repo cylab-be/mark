@@ -39,15 +39,16 @@ public class ClientIT extends TestCase {
         config.adapter_class = LinkAdapter.class.getName();
         server = new Server(config);
 
-        // Activate the dummy activation profiles
-        InputStream activation_file = getClass()
-                .getResourceAsStream("/detection.dummy.yml");
-        server.addDetectionAgent(DetectionAgentProfile.fromInputStream(activation_file));
+        // Activate the dummy activation profile
+        server.addDetectionAgent(DetectionAgentProfile.fromInputStream(
+                getClass()
+                .getResourceAsStream("/detection.dummy.yml")));
         server.start();
     }
 
     /**
      * Test of Test method, of class DatastoreClient.
+     * @throws java.lang.Throwable
      */
     public final void testTest() throws Throwable {
         System.out.println("test");
@@ -61,7 +62,7 @@ public class ClientIT extends TestCase {
 
     /**
      *
-     * @throws java.io.FileNotFoundException
+     * @throws java.lang.Throwable
      */
     public final void testString() throws Throwable {
         System.out.println("testString");
@@ -75,7 +76,7 @@ public class ClientIT extends TestCase {
 
     /**
      * Test of Test method, of class DatastoreClient.
-     * @throws java.io.FileNotFoundException
+     * @throws java.lang.Throwable
      */
     public final void testAddRawData() throws Throwable {
         System.out.println("addRawData");
