@@ -5,6 +5,8 @@ package mark.core;
  * @author Thibault Debatty
  */
 public class Evidence<T extends Subject> {
+
+    public String id;
     public String label;
     public int time;
     public T subject;

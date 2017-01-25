@@ -150,6 +150,7 @@ public class RequestHandler implements ServerInterface {
         evidence.time = doc.getInteger(TIME);
         evidence.label = doc.getString(LABEL);
         evidence.report = doc.getString(REPORT);
+        evidence.id = doc.getObjectId("_id").toString();
 
         return evidence;
 
