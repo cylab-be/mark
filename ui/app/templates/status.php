@@ -60,9 +60,10 @@ $state = $client->status();
 
     var request = new XMLHttpRequest();
     request.open('POST', json_request_url, true);
-    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    request.setRequestHeader(
+            'Content-Type',
+            'application/x-www-form-urlencoded; charset=UTF-8');
     request.addEventListener('load', function() {
-
         if (request.readyState == 4 && request.status == 200) {
             // Request succeeded => draw graph
             var json_response = JSON.parse(request.responseText);
