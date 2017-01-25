@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package mark.agent.detection.dummy;
+package mark.detection;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,6 +32,7 @@ import mark.server.DummySuject;
 import mark.server.DummySubjectAdapter;
 import mark.core.Evidence;
 import mark.core.RawData;
+import mark.server.Config;
 import mark.server.Server;
 
 /**
@@ -55,7 +56,7 @@ public class ReadWriteTest extends TestCase {
         System.out.println("run Read Write detection agent");
 
         // Start a dummy server
-        server = new Server();
+        server = new Server(new Config());
         server.start();
 
         // create a connexion to the server
@@ -87,7 +88,7 @@ public class ReadWriteTest extends TestCase {
         instance.setInputLabel("manual.data");
         instance.setLabel("manual.detection");
         instance.setSubject(subject);
-        instance.setDatastoreUrl("http://127.0.0.1:8080");
+        instance.setDatastoreUrl(new URL("http://127.0.0.1:8080"));
         instance.setSubjectAdapter(new DummySubjectAdapter());
         instance.run();
 

@@ -1,6 +1,7 @@
-package mark.activation;
+package mark.detection;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import mark.core.Subject;
 import mark.core.Evidence;
@@ -33,7 +34,7 @@ public abstract class AbstractDetectionAgent<T extends Subject>
     private String input_label;
     private T subject;
     private Map<String, String> parameters;
-    private String datastore_url;
+    private URL datastore_url;
     private SubjectAdapter<T> subject_adapter;
 
     // Lazy instantiated fields:
@@ -88,7 +89,7 @@ public abstract class AbstractDetectionAgent<T extends Subject>
         return datastore;
     }
 
-    public final void setDatastoreUrl(final String datastore_url) {
+    public final void setDatastoreUrl(final URL datastore_url) {
         this.datastore_url = datastore_url;
     }
 

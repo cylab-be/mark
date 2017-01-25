@@ -1,51 +1,47 @@
 package mark.activation;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import mark.server.InvalidProfileException;
+import mark.detection.DetectionAgentInterface;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
-import mark.core.SubjectAdapter;
+import mark.server.Config;
+import mark.server.SafeThread;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class ActivationController<T extends Subject> {
-    /**
-     * Time to wait for the Ignite framework to start (in ms).
-     */
-    private static final int STARTUP_DELAY = 3000;
+public class ActivationController<T extends Subject> extends SafeThread {
 
-    private Iterable<DetectionAgentProfile> profiles;
+    private static final int ACTIVATION_INTERVAL = 1000;
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(ActivationController.class);
+
+    private final LinkedList<DetectionAgentProfile> profiles;
+    private final ExecutorService executor_service;
+    private final Map<String, HashSet<T>> events;
+    private final Config config;
     private int task_count;
 
-    /**
-     * The address on which the server is bound. Will be provided to every
-     * analysis task, as they will need it!
-     */
-    private URL server_url;
-    private ExecutorService executor_service;
-    private final Map<String, HashSet<T>> events;
-    private SubjectAdapter<T> adapter;
+    public ActivationController(Config config) throws InvalidProfileException {
+        this.config = config;
+        this.profiles = new LinkedList<DetectionAgentProfile>();
+        this.events = Collections.synchronizedMap(new HashMap<String, HashSet<T>>());
 
-    public ActivationController(SubjectAdapter<T> adapter) {
-        this.adapter = adapter;
-        events = Collections.synchronizedMap(new HashMap<String, HashSet<T>>());
-    }
-
-    public void start() {
+        testProfiles();
 
         // Start Ignite framework..
         Ignite ignite;
@@ -54,39 +50,28 @@ public class ActivationController<T extends Subject> {
         } else {
             ignite = Ignition.start();
         }
+
         executor_service = ignite.executorService();
-
-        // Wait for Ignite to start...
-        try {
-            Thread.sleep(STARTUP_DELAY);
-        } catch (InterruptedException ex) {
-            // Something is trying to stop this thread
-            // TODO: handle this correctly
-
-        }
-
-        // Start the scheduled activation task
-        Timer timer = new Timer();
-        timer.schedule(new ScheduledTask(), 1000, 1000);
-
-
     }
 
-    public void notifyEvidence(Evidence<T> evidence) {
-        HashSet<T> set = events.get(evidence.label);
-
-        if (set == null) {
-            set = new HashSet<T>();
-            events.put(evidence.label, set);
+    public void awaitTermination() throws InterruptedException {
+        while (executor_service == null) {
+            Thread.sleep(ACTIVATION_INTERVAL);
         }
 
-        set.add(evidence.subject);
+        executor_service.shutdown();
+        executor_service.awaitTermination(1, TimeUnit.DAYS);
     }
 
-    class ScheduledTask extends TimerTask {
+    @Override
+    public void doRun() throws Throwable {
 
-        @Override
-        public void run() {
+        while (true) {
+            Thread.sleep(ACTIVATION_INTERVAL);
+
+            if (isInterrupted()) {
+                return;
+            }
 
             // Clone the list of events and clear
             HashSet<Map.Entry<String, HashSet<T>>> local_events = new HashSet<Map.Entry<String, HashSet<T>>>(events.entrySet());
@@ -100,8 +85,8 @@ public class ActivationController<T extends Subject> {
                         for (T link : entry.getValue()) {
                             try {
                                 DetectionAgentInterface new_task = profile.getTaskFor(link);
-                                new_task.setDatastoreUrl(server_url.toString());
-                                new_task.setSubjectAdapter(adapter);
+                                new_task.setDatastoreUrl(config.getDatastoreUrl());
+                                new_task.setSubjectAdapter(config.getSubjectAdapter());
                                 // new Client<T>(server_url, adapter)
                                 executor_service.submit(new_task);
                                 task_count++;
@@ -115,13 +100,9 @@ public class ActivationController<T extends Subject> {
                 }
             }
 
-
+            LOGGER.debug("Executed " + task_count + " tasks");
         }
-    }
 
-    public final void setServerAddress(String server_address)
-            throws MalformedURLException {
-        this.server_url = new URL(server_address);
     }
 
     /**
@@ -133,31 +114,18 @@ public class ActivationController<T extends Subject> {
     }
 
     /**
-     * Set the activation profiles to be used by the ActivationController.
-     * @param profiles
-     * @throws InvalidProfileException if the profiles are not correct
-     */
-    public final void setProfiles(final Iterable<DetectionAgentProfile> profiles)
-            throws InvalidProfileException {
-
-        testProfiles(profiles);
-        this.profiles = profiles;
-    }
-
-    /**
      * Test the profiles: instantiate (without running) one of each task defined
      * in the profiles.
      * @param profiles
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
-    private void testProfiles(
-            final Iterable<DetectionAgentProfile> profiles)
+    private void testProfiles()
             throws InvalidProfileException {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
                 DetectionAgentInterface new_task = profile.getTaskFor(
-                        adapter.getInstance());
+                        config.getSubjectAdapter().getInstance());
 
             } catch (ClassNotFoundException ex) {
                 throw new InvalidProfileException(
@@ -185,6 +153,10 @@ public class ActivationController<T extends Subject> {
 
     public final Iterable<DetectionAgentProfile> getProfiles() {
         return profiles;
+    }
+
+    public void addAgent(DetectionAgentProfile profile) {
+        profiles.add(profile);
     }
 
     /**
@@ -220,14 +192,14 @@ public class ActivationController<T extends Subject> {
         set.add(data.subject);
     }
 
-    /**
-     * Wait for all pending analysis tasks to finish.
-     */
-    public final void awaitTermination() {
-        try {
-            executor_service.awaitTermination(1, TimeUnit.DAYS);
-        } catch (InterruptedException ex) {
-            System.err.println("Activation controller was interrupted!");
+    public void notifyEvidence(Evidence<T> evidence) {
+        HashSet<T> set = events.get(evidence.label);
+
+        if (set == null) {
+            set = new HashSet<T>();
+            events.put(evidence.label, set);
         }
+
+        set.add(evidence.subject);
     }
 }

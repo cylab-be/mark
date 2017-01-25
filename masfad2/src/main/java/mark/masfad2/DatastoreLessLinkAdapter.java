@@ -24,6 +24,7 @@
 
 package mark.masfad2;
 
+import java.net.URL;
 import mark.activation.DummyClient;
 import mark.core.ServerInterface;
 
@@ -34,7 +35,7 @@ import mark.core.ServerInterface;
  */
 public class DatastoreLessLinkAdapter extends LinkAdapter {
     @Override
-    public ServerInterface<Link> getDatastore(String url) {
+    public ServerInterface<Link> getDatastore(URL url) {
 
         return new DummyClient<Link>();
     }

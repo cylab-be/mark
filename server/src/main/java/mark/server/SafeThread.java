@@ -22,33 +22,38 @@
  * THE SOFTWARE.
  */
 
-package mark.agent.detection;
-
-import java.util.HashMap;
-import junit.framework.TestCase;
+package mark.server;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class RunTest extends TestCase {
+public abstract class SafeThread extends Thread {
 
+    private volatile Throwable thrown = null;
+
+    @Override
+    public final void run() {
+        try {
+            doRun();
+        } catch (Throwable ex) {
+            thrown = ex;
+        }
+    }
 
     /**
-     * Test of run method, of class Run.
+     *
+     * @throws Throwable
      */
-    public final void testRun() {
-        System.out.println("run");
+    public abstract void doRun() throws Throwable;
 
-        HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put(Run.KEY_COMMAND, "echo");
-        parameters.put(Run.KEY_WD, "/tmp");
-        parameters.put("param1", "value1");
-
-        Run run_external_detector = new Run();
-        run_external_detector.setDatastoreUrl("http://dummy.to.u:1234");
-        run_external_detector.setParameters(parameters);
-        run_external_detector.run();
+    /**
+     * Will be used by the server to check if the underlying thread has
+     * suffered an exception.
+     * @return
+     */
+    public final Throwable getThrown() {
+        return thrown;
     }
 
 }

@@ -26,6 +26,7 @@ package mark.core;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.net.URL;
 import org.bson.Document;
 
 /**
@@ -49,5 +50,5 @@ public abstract class SubjectAdapter<T extends Subject> extends JsonDeserializer
     public abstract T deserialize(JsonNode node);
 
     public abstract T getInstance();
-    public abstract ServerInterface<T> getDatastore(String url);
+    public abstract ServerInterface<T> getDatastore(URL url);
 }

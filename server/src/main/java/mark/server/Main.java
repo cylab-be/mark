@@ -6,7 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import mark.activation.InvalidProfileException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -30,7 +31,7 @@ public final class Main {
      * @param args
      * @throws org.apache.commons.cli.ParseException
      * @throws java.io.FileNotFoundException
-     * @throws mark.activation.InvalidProfileException
+     * @throws mark.server.InvalidProfileException
      * @throws java.net.MalformedURLException
      */
     public static void main(final String[] args)
@@ -53,11 +54,24 @@ public final class Main {
             return;
         }
 
-        Server server = new Server();
 
+        Config config = new Config();
         if (cmd.hasOption("c")) {
-            server.setConfiguration(Config.fromFile(new File(cmd.getOptionValue("c"))));
+            config = Config.fromFile(new File(cmd.getOptionValue("c")));
         }
+
+        final Server server = new Server(config);
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    server.stop();
+                } catch (Exception ex) {
+                    System.err.println(ex.getMessage());
+                }
+            }
+        });
 
         server.start();
 

@@ -3,6 +3,6 @@
 # for every new RAM_DATA.http entry
 
 ---
-class_name:     mark.agent.detection.dummy.ReadWrite
+class_name:     mark.detection.ReadWrite
 trigger_label:  data.http
 label:          detection.readwrite

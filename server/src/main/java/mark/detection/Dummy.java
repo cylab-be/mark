@@ -1,6 +1,4 @@
-package mark.agent.detection.dummy;
-
-import mark.activation.AbstractDetectionAgent;
+package mark.detection;
 
 /**
  * Dummy detection agent, which does not try to read or write to the datastore.

@@ -1,8 +1,8 @@
 # Activate the dummy analyzis module
 # (that does nothing)
-# for every new RAM_DATA.http entry
+# for every new detection.readwrite entry
 
 ---
-class_name:     mark.agent.detection.dummy.Dummy
+class_name:     mark.detection.Dummy
 trigger_label:  detection.readwrite
 label:          detection.dummy

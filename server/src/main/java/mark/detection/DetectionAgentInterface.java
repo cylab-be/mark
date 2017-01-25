@@ -1,5 +1,6 @@
-package mark.activation;
+package mark.detection;
 
+import java.net.URL;
 import java.util.Map;
 import mark.core.Subject;
 import mark.core.SubjectAdapter;
@@ -16,6 +17,6 @@ public interface DetectionAgentInterface extends Runnable {
     void setLabel(String label);
     void setInputLabel(String input_label);
     void setSubject(Subject subject);
-    void setDatastoreUrl(String datastore_url);
+    void setDatastoreUrl(URL datastore_url);
     void setSubjectAdapter(SubjectAdapter subject_adapter);
 }

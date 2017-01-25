@@ -76,13 +76,7 @@ public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
     }
 
     @Override
-    public ServerInterface<DummySuject> getDatastore(String url) {
-        try {
-            return new Client<DummySuject>(new URL(url), this);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(DummySubjectAdapter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
+    public ServerInterface<DummySuject> getDatastore(final URL url) {
+        return new Client<DummySuject>(url, this);
     }
 }

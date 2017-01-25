@@ -1,4 +1,4 @@
-package mark.server;
+package mark.datastore;
 
 import com.mongodb.client.FindIterable;
 import mark.core.ServerInterface;
@@ -16,7 +16,6 @@ import org.bson.Document;
 /**
  *
  * @author Thibault Debatty
- * @param <T> Type of subject that this server is dealing with
  */
 public class RequestHandler implements ServerInterface {
 

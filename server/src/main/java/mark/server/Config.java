@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import mark.core.SubjectAdapter;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -26,15 +31,6 @@ public class Config {
     private static final int    DEFAULT_WEB_PORT = 8000;
     private static final String DEFAULT_WEB_ROOT = "../ui";
 
-    // Server configuration
-
-    /**
-     * Instantiate a new defautl configuration.
-     */
-    public Config() {
-
-    }
-
     /**
      * Build a configuration from a file.
      * @param file
@@ -47,6 +43,12 @@ public class Config {
         return conf;
     }
 
+    /**
+     * Build configuration from input stream (usually a resource packed with
+     * the jar).
+     * @param input
+     * @return
+     */
     public static final Config fromInputStream(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
         return yaml.loadAs(input, Config.class);
@@ -85,6 +87,38 @@ public class Config {
     public int mongo_port = 27017;
     public String mongo_db = DEFAULT_MONGO_DB;
 
+    /**
+     * Instantiate a new default configuration.
+     */
+    public Config() {
+
+    }
+
+    /**
+     *
+     * @return
+     * @throws MalformedURLException
+     */
+    public final URL getDatastoreUrl() throws MalformedURLException {
+        return new URL("http", server_host, server_port, "");
+    }
+
+    /**
+     *
+     * @return
+     * @throws mark.server.InvalidProfileException
+     */
+    public SubjectAdapter getSubjectAdapter() throws InvalidProfileException {
+        try {
+            return (SubjectAdapter) Class.forName(adapter_class).newInstance();
+        } catch (ClassNotFoundException ex) {
+            throw new InvalidProfileException("Adapter class is invalid", ex);
+        } catch (InstantiationException ex) {
+            throw new InvalidProfileException("Adapter class is invalid", ex);
+        } catch (IllegalAccessException ex) {
+            throw new InvalidProfileException("Adapter class is invalid", ex);
+        }
+    }
 
     @Override
     public final String toString() {

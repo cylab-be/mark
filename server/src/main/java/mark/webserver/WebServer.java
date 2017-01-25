@@ -21,15 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.server;
+package mark.webserver;
 
 import java.io.File;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import mark.server.Config;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -40,26 +42,26 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thibault Debatty
  */
-public class FileServer {
+public class WebServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(
-            FileServer.class);
+            WebServer.class);
 
-    private org.eclipse.jetty.server.Server server;
+    private Server server;
     private final Config config;
 
     /**
      * Instantiate a web server with provided config.
      * @param config
      */
-    public FileServer(final Config config) {
+    public WebServer(final Config config) {
         this.config = config;
     }
 
     /**
-     * Start the file server (blocking).
+     * Start the file server.
      *
-     * @throws Exception if server cannot start
+     * @throws java.lang.Exception if jetty fails to start
      */
     public final void start() throws Exception {
         LOGGER.info("Starting web interface at port 8000");
@@ -89,14 +91,14 @@ public class FileServer {
         rewrite_handler.addRule(new RewriteIfNotExistsRule(config.web_root));
         rewrite_handler.setHandler(handler_list);
 
-        server = new org.eclipse.jetty.server.Server(config.web_port);
+        server = new Server(config.web_port);
         server.setHandler(rewrite_handler);
         server.start();
     }
 
     /**
-     * Wait for the server to stop.
-     * @throws Exception if Jetty goes wrong...
+     *
+     * @throws Exception
      */
     public final void stop() throws Exception {
         server.stop();

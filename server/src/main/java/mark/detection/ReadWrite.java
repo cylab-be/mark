@@ -1,9 +1,9 @@
-package mark.agent.detection.dummy;
+package mark.detection;
 
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import mark.activation.AbstractDetectionAgent;
+import mark.detection.AbstractDetectionAgent;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;

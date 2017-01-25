@@ -1,4 +1,4 @@
-package mark.server;
+package mark.datastore;
 
 import com.googlecode.jsonrpc4j.JsonRpcServer;
 import java.io.IOException;

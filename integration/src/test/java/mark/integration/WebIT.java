@@ -30,6 +30,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.io.IOException;
 import junit.framework.TestCase;
 import mark.masfad2.LinkAdapter;
+import mark.server.Config;
 import mark.server.Server;
 
 /**
@@ -46,8 +47,9 @@ public class WebIT extends TestCase {
         client = new WebClient();
         base_url = "http://127.0.0.1:8000/";
 
-        server = new Server();
-        server.setSubjectAdapter(new LinkAdapter());
+        Config config = new Config();
+        config.adapter_class = LinkAdapter.class.getName();
+        server = new Server(new Config());
         server.start();
     }
 

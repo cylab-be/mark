@@ -1,5 +1,9 @@
 package mark.server;
 
+import mark.datastore.Datastore;
+import mark.data.DataAgentProfile;
+import mark.data.AbstractDataAgent;
+import mark.webserver.WebServer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -9,46 +13,56 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
+import mark.activation.ActivationController;
 import mark.activation.DetectionAgentProfile;
-import mark.client.Client;
-import mark.core.SubjectAdapter;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.slf4j.LoggerFactory;
 
 /**
- * Represents a MARK server, composed of a datastore + some data agents + a
- * file server.
+ * Represents a MARK server.
+ * It is composed of:
+ * - a webserver
+ * - an activation controller
+ * - a datastore (json-rpc server)
+ * - optionally: some data agents
+ *
  * @author Thibault Debatty
  */
 public class Server {
 
-    private static final int START_WAIT_MS = 1000;
+    private static final org.slf4j.Logger LOGGER =
+            LoggerFactory.getLogger(Server.class);
 
-    private Config config;
-    private Datastore datastore;
-    private FileServer file_server;
+    private final Config config;
+    private final Datastore datastore;
+    private final WebServer web_server;
+    private final LinkedList<AbstractDataAgent> data_agents;
+    private final ActivationController activation_controller;
+
+    /*
     private URL server_url;
 
     private final LinkedList<DataAgentProfile> data_agent_profiles;
-    private LinkedList<DataAgentInterface> data_agents;
     private LinkedList<Thread> data_agent_threads;
 
     private final LinkedList<DetectionAgentProfile> detection_agent_profiles;
     private SubjectAdapter adapter;
-
+*/
 
     /**
      * Initialize a server with default configuration, dummy subject adapter,
      * no data agents and no detection agents.
      */
-    public Server() {
-
-        // Create an empty list of source profiles
-        data_agent_profiles = new LinkedList<DataAgentProfile>();
-        detection_agent_profiles = new LinkedList<DetectionAgentProfile>();
+    public Server(final Config config) throws InvalidProfileException {
+        this.config = config;
+        this.web_server = new WebServer(config);
+        this.activation_controller = new ActivationController(config);
+        this.datastore = new Datastore(config, activation_controller);
+        this.data_agents = new LinkedList<AbstractDataAgent>();
     }
 
     /**
@@ -63,100 +77,64 @@ public class Server {
     public final void start()
             throws MalformedURLException, Exception {
 
-        parseConfig();
-        initializeLogging();
-        parseModulesDirectory();
+        startLogging();
 
-        // Now we can try to instantiate the adapter, according to config
-        // No adapter has been provided programmatically => read from config
-        if (adapter == null) {
-            adapter = (SubjectAdapter) Class.forName(config.adapter_class)
-                    .newInstance();
+        LOGGER.info("Starting server...");
+        parseConfig();
+
+        // Start the web server...
+        web_server.start();
+
+        // Start the activation controller...
+        activation_controller.start();
+
+        // Start the datastore...
+        datastore.start();
+
+        // Start data agents...
+        for (AbstractDataAgent agent : data_agents) {
+            agent.start();
         }
 
-        startFileServer();
-        startDatastore();
-        startDataAgents();
-        System.out.println("Server started!");
+        LOGGER.info("Server started!");
     }
 
     /**
      * Stop the data agents, wait for all detection agents to complete and
      * eventually stop the datastore.
-     * @throws java.lang.Exception if stopping jetty caused an exception
      */
     public final void stop() throws Exception {
-        System.out.println("Stopping server...");
-        System.out.println("Ask data agents (sources) to finish");
-        for (DataAgentInterface source : data_agents) {
-            source.stop();
+        LOGGER.info("Stopping server...");
+        LOGGER.info("Ask data agents to stop...");
+        for (AbstractDataAgent agent : data_agents) {
+            agent.interrupt();
         }
 
-        System.out.println("Wait for data agents (sources) to finish");
-        // this cannot be interrupted...
-        boolean interrupted = false;
-        try {
-            for (Thread thread : data_agent_threads) {
-                while (thread.isAlive()) {
-                    try {
-                        thread.join();
-                    } catch (InterruptedException e) {
-                        interrupted = true;
-                        // fall through and retry
-                    }
-                }
-            }
-        } finally {
-            if (interrupted) {
-                Thread.currentThread().interrupt();
-            }
-        }
+        awaitTermination();
 
+        LOGGER.info("Ask activation controller to stop...");
+        activation_controller.interrupt();
+        activation_controller.join();
 
-        System.out.println("Wait for detection tasks to complete...");
+        LOGGER.info("Ask datastore to stop...");
         datastore.stop();
 
-        System.out.println("Stop file server...");
-        file_server.stop();
+        LOGGER.info("Ask webserver to stop...");
+        web_server.stop();
 
+        LOGGER.info("Server stopped!");
     }
 
-    /**
-     * Wait for data agents to complete, but does NOT stop the datastore.
-     * Attention: if your data agent is a network sink, it might never complete.
-     * This method is mainly useful for testing with file data sources.
-     * @throws InterruptedException if current thread gets en interruption
-     */
     public final void awaitTermination() throws InterruptedException {
-        System.out.println("Wait for data agents to finish...");
-        for (DataAgentInterface source : data_agents) {
-            source.stop();
+        LOGGER.info("Wait for data agents to finish...");
+        for (AbstractDataAgent agent : data_agents) {
+            agent.join();
         }
+
+        LOGGER.info("Wait for activation controller to finish running tasks...");
+        activation_controller.awaitTermination();
     }
 
-    /**
-     *
-     * @return
-     */
-    public final Config getConfiguration() {
-        return config;
-    }
-
-    /**
-     * Set configuration before starting the server.
-     * @param config
-     */
-    public final void setConfiguration(final Config config) {
-        this.config = config;
-    }
-
-    /**
-     * Add a data source before starting the server.
-     * @param profile
-     */
-    public final void addDataAgentProfile(final DataAgentProfile profile) {
-        data_agent_profiles.add(profile);
-    }
 
     /**
      * Analyze the module folder.
@@ -165,29 +143,29 @@ public class Server {
      * - parse detection agent profiles
      * @throws MalformedURLException
      */
-    private void parseModulesDirectory()
+    private void parseConfig()
             throws MalformedURLException, FileNotFoundException,
             ClassNotFoundException, InstantiationException,
             IllegalAccessException, NoSuchMethodException,
-            IllegalArgumentException, InvocationTargetException {
+            IllegalArgumentException, InvocationTargetException, InvalidProfileException {
 
 
         String modules_dir_path = config.getModulesDirectory();
         if (modules_dir_path == null) {
-            System.err.println("Modules directory is not valid, skipping...");
+            LOGGER.info("Modules directory is not valid, skipping...");
             return;
         }
 
         File modules_dir = new File(modules_dir_path);
-        System.out.println("Parsing modules directory "
+        LOGGER.info("Parsing modules directory "
                 + modules_dir.getAbsolutePath());
 
         if (!modules_dir.isDirectory()) {
-            System.err.println("Not a directory, skipping...");
+            LOGGER.info("Not a directory, skipping...");
             return;
         }
 
-        // Parse *.jar and update the class path
+        // List *.jar and update the class path
         // this is a hack that allows to modify the global (system) class
         // loader.
         URLClassLoader class_loader =
@@ -215,7 +193,7 @@ public class Server {
         });
 
         for (File file : data_agent_files) {
-            addDataAgentProfile(DataAgentProfile.fromFile(file));
+            data_agents.add(DataAgentProfile.fromFile(file).getInstance(config));
         }
 
         // Parse *.detection.yml files
@@ -227,119 +205,30 @@ public class Server {
         });
 
         for (File file : detection_agent_files) {
-            addDetectionAgentProfile(DetectionAgentProfile.fromFile(file));
-        }
-    }
-
-    private void startFileServer() {
-        file_server = new FileServer(config);
-
-        // Start the file server in a separate thread
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    file_server.start();
-                } catch (Exception ex) {
-                }
-            }
-        }).start();
-    }
-
-    private void startDatastore()
-            throws MalformedURLException, InterruptedException, Exception {
-
-        datastore = new Datastore(adapter);
-        datastore.setConfiguration(config);
-        datastore.setActivationProfiles(detection_agent_profiles);
-
-        // Start the datastore
-        new Thread(datastore).start();
-
-        // Wait for Jetty server to start...
-        while (!datastore.isStarted()) {
-
-            Thread.sleep(START_WAIT_MS);
-        }
-    }
-
-    private void startDataAgents() throws Exception {
-        // Start the data agents (sources)
-        data_agents = new LinkedList<DataAgentInterface>();
-        data_agent_threads = new LinkedList<Thread>();
-
-        for (DataAgentProfile profile : data_agent_profiles) {
-            try {
-                DataAgentInterface source = (DataAgentInterface)
-                        Class.forName(profile.class_name).newInstance();
-
-                source.setProfile(profile);
-                source.setDatastore(new Client(server_url, adapter));
-                Thread source_thread = new Thread(source);
-                source_thread.start();
-
-                data_agent_threads.add(source_thread);
-                data_agents.add(source);
-
-            } catch (ClassNotFoundException ex) {
-                // If any of the data agents fail to start,
-                // we stop the server in a correct way
-                System.err.println("Failed to initialize agent "
-                        + profile.class_name);
-                System.err.println(ex.getMessage());
-                stop();
-
-            } catch (IllegalAccessException ex) {
-                System.err.println("Failed to initialize agent "
-                        + profile.class_name);
-                System.err.println(ex.getMessage());
-                stop();
-
-            } catch (InstantiationException ex) {
-                System.err.println("Failed to initialize agent "
-                        + profile.class_name);
-                System.err.println(ex.getMessage());
-                stop();
-
-            } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-                stop();
-            }
+            activation_controller.addAgent(DetectionAgentProfile.fromFile(file));
         }
     }
 
     /**
      * Add the profile for a detection agent.
-     * @param detection_agent_profile
+     * @param profile
      */
-    public final void addDetectionAgentProfile(
-            final DetectionAgentProfile detection_agent_profile) {
-        detection_agent_profiles.add(detection_agent_profile);
+    public final void addDetectionAgent(final DetectionAgentProfile profile) {
+        activation_controller.addAgent(profile);
     }
 
     /**
-     * Set the subject adapter.
-     * Normally the subject adapter is defined in the configuration file. This
-     * method is useful for writing tests.
-     * @param adapter
+     *
+     * @param profile
+     * @throws InvalidProfileException
+     * @throws MalformedURLException
      */
-    public final void setSubjectAdapter(final SubjectAdapter adapter) {
-        this.adapter = adapter;
+    public final void addDataAgentProfile(final DataAgentProfile profile)
+            throws InvalidProfileException, MalformedURLException {
+        data_agents.add(profile.getInstance(config));
     }
 
-    private void parseConfig()
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException, MalformedURLException {
-
-        // No configuration has been provided => use default config.
-        if (config == null) {
-            config = new Config();
-        }
-
-        server_url = new URL(
-                "http://" + config.server_host + ":" + config.server_port);
-    }
-
-    private void initializeLogging() {
+    private void startLogging() {
 
         Logger.getRootLogger().getLoggerRepository().resetConfiguration();
 
@@ -347,10 +236,17 @@ public class Server {
         //configure the appender
         String PATTERN = "%d [%p] [%t] %c %m%n";
         console.setLayout(new PatternLayout(PATTERN));
-        console.setThreshold(Level.INFO);
+        console.setThreshold(Level.WARN);
         console.activateOptions();
         //add appender to any Logger (here is root)
         Logger.getRootLogger().addAppender(console);
+
+        console = new ConsoleAppender(); //create appender
+        //configure the appender
+        console.setLayout(new PatternLayout(PATTERN));
+        console.setThreshold(Level.INFO);
+        console.activateOptions();
+        Logger.getLogger("mark").addAppender(console);
 
         //add appender to any Logger (here is root)
         Logger.getRootLogger().addAppender(

@@ -7,11 +7,12 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
-import mark.activation.InvalidProfileException;
+import mark.server.InvalidProfileException;
 import mark.client.Client;
 import mark.masfad2.Link;
 import mark.core.RawData;
 import mark.masfad2.LinkAdapter;
+import mark.server.Config;
 import mark.server.Server;
 
 /**
@@ -25,7 +26,7 @@ public class ClientIT extends TestCase {
     private Server server;
 
     @Override
-    protected void tearDown() throws Exception {
+    protected final void tearDown() throws Exception {
         server.stop();
         super.tearDown();
     }
@@ -33,13 +34,15 @@ public class ClientIT extends TestCase {
     protected final void startDummyServer()
             throws FileNotFoundException, InvalidProfileException,
             MalformedURLException, Exception {
-        server = new Server();
-        server.setSubjectAdapter(new LinkAdapter());
+
+        Config config = new Config();
+        config.adapter_class = LinkAdapter.class.getName();
+        server = new Server(config);
 
         // Activate the dummy activation profiles
         InputStream activation_file = getClass()
                 .getResourceAsStream("/detection.dummy.yml");
-        server.addDetectionAgentProfile(DetectionAgentProfile.fromInputStream(activation_file));
+        server.addDetectionAgent(DetectionAgentProfile.fromInputStream(activation_file));
         server.start();
     }
 
@@ -123,12 +126,13 @@ public class ClientIT extends TestCase {
         System.out.println("============================================");
 
         // Start server with read-write activation profile
-        server = new Server();
-        server.setSubjectAdapter(new LinkAdapter());
+        Config config = new Config();
+        config.adapter_class = LinkAdapter.class.getName();
+        server = new Server(config);
 
         InputStream activation_file = getClass()
                 .getResourceAsStream("/detection.readwrite.yml");
-        server.addDetectionAgentProfile(
+        server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(activation_file));
         server.start();
 

@@ -3,6 +3,7 @@ package mark.masfad2;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,8 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import mark.server.DataAgentInterface;
-import mark.server.DataAgentProfile;
+import mark.data.AbstractDataAgent;
+import mark.data.DataAgentProfile;
 
 /**
  *
@@ -24,7 +25,7 @@ import mark.server.DataAgentProfile;
  * Hence it does simply print some stats at the end of execution...
  * @author Thibault Debatty
  */
-public class FileSource implements DataAgentInterface {
+public class FileSource extends AbstractDataAgent {
 
     private ServerInterface datastore;
     private final String regex =
@@ -49,8 +50,10 @@ public class FileSource implements DataAgentInterface {
 
     /**
      *
+     * @throws Throwable
      */
-    public final void run() {
+    @Override
+    public void doRun() throws Throwable {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(stream));
         String line = null;
@@ -120,31 +123,27 @@ public class FileSource implements DataAgentInterface {
         return data;
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    public final void stop() {
-        // Nothing to do here, just wait for the end of the file.
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public final void kill() {
-        run = false;
-    }
-
     public void setDatastore(ServerInterface datastore) {
         this.datastore = datastore;
     }
 
-    public void setProfile(DataAgentProfile profile) throws Exception {
-        File profile_file = new File(profile.path);
-        File data_file = new File(profile_file.toURI().resolve((String) profile.parameters.get("file")));
-        this.setInputStream(new FileInputStream(data_file));
+    public void setProfile(DataAgentProfile profile) {
+
+        File data_file;
+
+        if (profile.path == null) {
+            data_file = new File(profile.parameters.get("file"));
+
+        } else {
+            File profile_file = new File(profile.path);
+            data_file = new File(profile_file.toURI().resolve(profile.parameters.get("file")));
+        }
+
+        try {
+            this.setInputStream(new FileInputStream(data_file));
+        } catch (FileNotFoundException ex) {
+            throw new IllegalArgumentException("File does not exist", ex);
+        }
         this.label = profile.label;
     }
-
 }

@@ -1,4 +1,4 @@
-package mark.activation;
+package mark.server;
 
 /**
  *
@@ -10,7 +10,7 @@ public class InvalidProfileException extends Exception {
         super(message);
     }
 
-    InvalidProfileException(String message, Exception ex) {
+    public InvalidProfileException(String message, Exception ex) {
         super(message, ex);
     }
 }

@@ -81,13 +81,7 @@ public class LinkAdapter extends SubjectAdapter<Link> {
     }
 
     @Override
-    public ServerInterface<Link> getDatastore(String url) {
-        try {
-            return new Client<Link>(new URL(url), this);
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(LinkAdapter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
+    public ServerInterface<Link> getDatastore(URL url) {
+        return new Client<Link>(url, this);
     }
 }

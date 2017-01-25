@@ -22,19 +22,18 @@
  * THE SOFTWARE.
  */
 
-package mark.agent.detection;
+package mark.detection;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import mark.activation.DetectionAgentInterface;
-import mark.core.ServerInterface;
 import mark.core.Subject;
 import mark.core.SubjectAdapter;
 
@@ -55,7 +54,7 @@ public class Run implements DetectionAgentInterface {
     private String label;
     private String input_label;
     private Subject subject;
-    private String datastore_url;
+    private URL datastore_url;
 
     public void setParameters(Map parameters) {
         this.parameters = parameters;
@@ -78,7 +77,7 @@ public class Run implements DetectionAgentInterface {
         command.add(parameters.get(KEY_COMMAND));
 
         command.add("-d");
-        command.add(datastore_url);
+        command.add(datastore_url.toExternalForm());
 
         for (String key : parameters.keySet()) {
             if (key.equals(KEY_COMMAND) || key.equals(KEY_WD)) {
@@ -130,7 +129,7 @@ public class Run implements DetectionAgentInterface {
         return sb.toString();
     }
 
-    public void setDatastoreUrl(String datastore_url) {
+    public void setDatastoreUrl(URL datastore_url) {
         this.datastore_url = datastore_url;
     }
 
