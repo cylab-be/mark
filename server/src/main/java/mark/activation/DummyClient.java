@@ -90,4 +90,8 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     public Evidence<T>[] findEvidence(String label) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public Evidence<T> findEvidenceById(String id) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -31,12 +31,15 @@ Flight::map('render', function($template, $data){
 // Define app routes
 // http://flightphp.com/learn/#routing
 Flight::route('/', function(){
-    // Render a template
     Flight::render('index', []);
 });
 
 Flight::route('/status', function() {
     Flight::render('status', []);
+});
+
+Flight::route('/report/@id', function($id) {
+    Flight::render('report', ["evidence_id" => $id]);
 });
 
 // Start the framework and process the request...

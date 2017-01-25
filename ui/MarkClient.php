@@ -52,6 +52,16 @@ class MarkClient {
 
   /**
    *
+   * @param type $id
+   * @return Evidence
+   */
+  public function findEvidenceById($id) {
+    // current will return first element in the array
+    return $this->exec("findEvidenceById", array($id));
+  }
+
+  /**
+   *
    * @param String $method
    * @param [] $params
    * @return type
@@ -101,8 +111,10 @@ class Evidence {
   public $score;
   public $subject;
   public $report;
+  public $id;
 
   public function __construct(stdClass $obj) {
+    $this->id = $obj->id;
     $this->label = $obj->label;
     $this->time = $obj->time;
     $this->score = $obj->score;

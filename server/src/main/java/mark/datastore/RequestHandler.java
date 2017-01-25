@@ -12,6 +12,7 @@ import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.SubjectAdapter;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -247,5 +248,28 @@ public class RequestHandler implements ServerInterface {
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
+    }
+
+    /**
+     * Get a single evidence by id, or throw an exception if id is not valid.
+     *
+     * @param id
+     * @return
+     */
+    public final Evidence findEvidenceById(final String id) {
+        Document query = new Document();
+        query.append("_id", new ObjectId(id));
+
+        FindIterable<Document> documents = mongodb_database
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
+
+        Document document = documents.first();
+        
+        if (document == null) {
+            throw new IllegalArgumentException("Invalid id provided: " + id);
+        }
+
+        return convertEvidence(document);
     }
 }

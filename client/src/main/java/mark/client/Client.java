@@ -114,7 +114,20 @@ public class Client<T extends Subject> implements ServerInterface {
                 "findEvidence",
                 new Object[]{label, subject},
                 Evidence[].class);
+    }
 
+    /**
+     * Find a single evidence by id or throw an exception (if id is invalid).
+     * @param id
+     * @return
+     * @throws Throwable
+     */
+    public final Evidence findEvidenceById(final String id) throws Throwable {
+
+        return datastore.invoke(
+                "findEvidenceById",
+                new Object[]{id},
+                Evidence.class);
     }
 
     /**

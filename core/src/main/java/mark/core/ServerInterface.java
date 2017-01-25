@@ -66,4 +66,12 @@ public interface ServerInterface<T extends Subject> {
      * @throws java.lang.Throwable if request fails
      */
     Evidence<T>[] findEvidence(String label) throws Throwable;
+
+    /**
+     * Get a single evidence by id.
+     * @param id
+     * @return
+     * @throws Throwable if request fails
+     */
+    Evidence<T> findEvidenceById(String id) throws Throwable;
 }

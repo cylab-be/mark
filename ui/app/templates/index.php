@@ -21,7 +21,11 @@ $evidences = $client->findEvidence("detection.readwrite");
 
   <?php foreach ($evidences as $evidence) : ?>
   <tr>
-    <td><?= $evidence->subject ?></td>
+    <td>
+      <a href="/report/<?= $evidence->id ?>">
+        <?= $evidence->subject ?>
+      </a>
+    </td>
     <td><?= $evidence->score ?></td>
     <td><?= date("Y-m-d H:i:s", $evidence->time) ?></td>
   </tr>
