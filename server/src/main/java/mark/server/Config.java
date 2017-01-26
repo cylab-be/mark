@@ -16,7 +16,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  */
 public class Config {
     private static final String DEFAULT_MONGO_DB = "MASFAD";
-    private static final int    DEFAULT_MAX_THREADS = 40;
+    private static final int    DEFAULT_MAX_THREADS = 100;
     private static final int    DEFAULT_MIN_THREADS = 10;
     private static final int    DEFAULT_IDLE_TIMEOUT = 60;
     private static final String DEFAULT_SERVER_HOST = "127.0.0.1";
@@ -35,7 +35,8 @@ public class Config {
      * @return
      * @throws java.io.FileNotFoundException
      */
-    public final static Config fromFile(final File file) throws FileNotFoundException {
+    public static final Config fromFile(final File file)
+            throws FileNotFoundException {
         Config conf = Config.fromInputStream(new FileInputStream(file));
         conf.file = file;
         return conf;

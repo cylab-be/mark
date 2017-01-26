@@ -265,7 +265,7 @@ public class RequestHandler implements ServerInterface {
                 .find(query);
 
         Document document = documents.first();
-        
+
         if (document == null) {
             throw new IllegalArgumentException("Invalid id provided: " + id);
         }

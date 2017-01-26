@@ -90,5 +90,4 @@ public class DetectionAgentProfile {
     final boolean match(final String label) {
         return this.trigger_label.startsWith(label);
     }
-
 }
