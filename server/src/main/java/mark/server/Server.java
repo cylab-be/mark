@@ -91,6 +91,9 @@ public class Server {
         // Start the datastore...
         datastore.start();
 
+        // Wait a little to let the server start...
+        Thread.sleep(500);
+
         // Start data agents...
         for (AbstractDataAgent agent : data_agents) {
             agent.start();
