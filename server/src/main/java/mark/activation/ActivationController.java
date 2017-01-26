@@ -34,6 +34,8 @@ public class ActivationController<T extends Subject> extends SafeThread {
     private final LinkedList<DetectionAgentProfile> profiles;
     private final Ignite ignite;
     private final ExecutorService executor_service;
+
+    // events is a table of label => subjects
     private final Map<String, HashSet<T>> events;
     private final Config config;
 
@@ -94,6 +96,9 @@ public class ActivationController<T extends Subject> extends SafeThread {
                             events.entrySet());
             events.clear();
 
+            // process the events:
+            // for each received label find the agents that must be triggered
+            // then spawn one agent for each subject
             for (Map.Entry<String, HashSet<T>> entry : local_events) {
                 String label = entry.getKey();
 

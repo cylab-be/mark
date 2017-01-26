@@ -33,25 +33,39 @@ public class DetectionAgentProfile {
      */
     public String class_name;
 
-    private static final Yaml PARSER = new Yaml(new Constructor(DetectionAgentProfile.class));
+    private static final Yaml PARSER = new Yaml(
+            new Constructor(DetectionAgentProfile.class));
 
-    public final static DetectionAgentProfile fromFile(final File file) throws FileNotFoundException {
+    /**
+     * Read a detection agent profile from a YAML file.
+     * @param file
+     * @return
+     * @throws FileNotFoundException if the file does not exist
+     */
+    public static final DetectionAgentProfile fromFile(final File file)
+            throws FileNotFoundException {
         return DetectionAgentProfile.fromInputStream(new FileInputStream(file));
     }
 
-    public static final DetectionAgentProfile fromInputStream(final InputStream input) {
+    /**
+     * Read a detection agent profile from an input stream (a resource file).
+     * @param input
+     * @return
+     */
+    public static final DetectionAgentProfile fromInputStream(
+            final InputStream input) {
         return PARSER.loadAs(input, DetectionAgentProfile.class);
     }
 
     /**
-     *
+     * Instantiate a detection agent for the provided subject.
      * @param subject
      * @return
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    DetectionAgentInterface getTaskFor(final Subject subject)
+    final DetectionAgentInterface getTaskFor(final Subject subject)
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
         // Create analysis task
@@ -67,6 +81,12 @@ public class DetectionAgentProfile {
         return new_task;
     }
 
+    /**
+     * Test if the provided label should trigger this detection agent.
+     * return trigger_label.startsWith(label)
+     * @param label
+     * @return
+     */
     boolean match(String label) {
         return this.trigger_label.startsWith(label);
     }
