@@ -87,7 +87,7 @@ public class DetectionAgentProfile {
      * @param label
      * @return
      */
-    boolean match(final String label) {
+    final boolean match(final String label) {
         return this.trigger_label.startsWith(label);
     }
 
