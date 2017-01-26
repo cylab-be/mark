@@ -40,16 +40,17 @@ public class HTTPFrequencyIT extends TestCase {
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put(
                 "file",
-                getClass().getResource("/47k_http_requests_1client.txt")
+                getClass().getResource("/2k_http_requests_1client.txt")
                         .getPath());
 
         DataAgentProfile http_source = new DataAgentProfile();
         http_source.class_name = FileSource.class.getCanonicalName();
+        http_source.label = "data.http";
         http_source.parameters = parameters;
 
         server.addDataAgentProfile(http_source);
 
-        // Activate the dummy activation profiles
+        // Activate the dummy detection agent
         server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(
                         getClass()

@@ -48,6 +48,10 @@ public class Frequency extends AbstractDetectionAgent<Link> {
             return;
         }
 
+        if (raw_data.length < 20) {
+            return;
+        }
+
         FastFourierTransformer fft_transformer = new FastFourierTransformer(
                 DftNormalization.STANDARD);
 

@@ -91,6 +91,10 @@ public class Datastore {
      * @throws Exception if jetty fails to stop.
      */
     public final void stop() throws Exception {
+        if (server == null) {
+            return;
+        }
+
         server.stop();
     }
 }

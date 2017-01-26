@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ActivationController<T extends Subject> extends SafeThread {
 
-    private static final int ACTIVATION_INTERVAL = 1000;
+    private static final int ACTIVATION_INTERVAL = 2000;
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ActivationController.class);
 
@@ -36,7 +36,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
     private final ExecutorService executor_service;
 
     // events is a table of label => subjects
-    private final Map<String, HashSet<T>> events;
+    private Map<String, HashSet<T>> events;
     private final Config config;
 
     /**
@@ -49,13 +49,6 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
         this.config = config;
         this.profiles = new LinkedList<DetectionAgentProfile>();
-
-        // Synchronized map has poor performance! should be replaced by
-        // a concurrent hashmpap...
-        this.events = Collections.synchronizedMap(
-                new HashMap<String, HashSet<T>>());
-
-        testProfiles();
 
         // Start Ignite framework..
         if (Ignition.state() == IgniteState.STARTED) {
@@ -72,16 +65,17 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * @throws InterruptedException
      */
     public final void awaitTermination() throws InterruptedException {
-        while (executor_service == null) {
-            Thread.sleep(ACTIVATION_INTERVAL);
-        }
-
         executor_service.shutdown();
         executor_service.awaitTermination(1, TimeUnit.DAYS);
     }
 
     @Override
     public final void doRun() throws Throwable {
+
+        // Synchronized map has poor performance! should be replaced by
+        // a concurrent hashmpap...
+        this.events = Collections.synchronizedMap(
+                new HashMap<String, HashSet<T>>());
 
         while (true) {
             Thread.sleep(ACTIVATION_INTERVAL);
@@ -94,7 +88,8 @@ public class ActivationController<T extends Subject> extends SafeThread {
             HashSet<Map.Entry<String, HashSet<T>>> local_events =
                     new HashSet<Map.Entry<String, HashSet<T>>>(
                             events.entrySet());
-            events.clear();
+            this.events = Collections.synchronizedMap(
+                new HashMap<String, HashSet<T>>());
 
             // process the events:
             // for each received label find the agents that must be triggered
@@ -104,14 +99,20 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
                 for (DetectionAgentProfile profile : profiles) {
                     if (profile.match(label)) {
-                        for (T link : entry.getValue()) {
+                        for (T subject : entry.getValue()) {
                             try {
+                                LOGGER.debug(
+                                        "Trigger detector {} for subject {}",
+                                        profile.class_name,
+                                        subject.toString());
+
                                 DetectionAgentInterface new_task =
-                                        profile.getTaskFor(link);
+                                        profile.getTaskFor(subject);
                                 new_task.setDatastoreUrl(
                                         config.getDatastoreUrl());
                                 new_task.setSubjectAdapter(
                                         config.getSubjectAdapter());
+
                                 executor_service.submit(new_task);
 
                             } catch (ClassNotFoundException ex) {
@@ -164,7 +165,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * @param profiles
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
-    private void testProfiles()
+    public void testProfiles()
             throws InvalidProfileException {
 
         for (DetectionAgentProfile profile : profiles) {

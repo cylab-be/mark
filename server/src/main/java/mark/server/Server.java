@@ -86,6 +86,7 @@ public class Server {
         web_server.start();
 
         // Start the activation controller...
+        activation_controller.testProfiles();
         activation_controller.start();
 
         // Start the datastore...
@@ -255,7 +256,8 @@ public class Server {
                 getFileAppender("mark-ignite.log", Level.INFO));
         Logger.getLogger("org.eclipse.jetty").addAppender(
                 getFileAppender("mark-jetty.log", Level.INFO));
-
+        Logger.getLogger("mark.activation.ActivationController").addAppender(
+                getFileAppender("mark-activationctonroller.log", Level.DEBUG));
 
     }
 
