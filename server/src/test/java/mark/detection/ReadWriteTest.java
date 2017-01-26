@@ -24,7 +24,6 @@
 
 package mark.detection;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.TestCase;
 import mark.client.Client;
@@ -52,7 +51,7 @@ public class ReadWriteTest extends TestCase {
     /**
      * Test of run method, of class ReadWrite.
      */
-    public void testRun() throws MalformedURLException, Exception, Throwable {
+    public void testRun() throws Throwable  {
         System.out.println("run Read Write detection agent");
 
         // Start a dummy server
@@ -60,13 +59,16 @@ public class ReadWriteTest extends TestCase {
         server.start();
 
         // create a connexion to the server
-        Client<DummySuject> client = new Client<DummySuject>(new URL("http://127.0.0.1:8080"), new DummySubjectAdapter());
+        Client<DummySuject> client = new Client<DummySuject>(
+                new URL("http://127.0.0.1:8080"), new DummySubjectAdapter());
 
-        //
+        // What we will work with...
         DummySuject subject = new DummySuject();
         subject.name = "A person of interest";
 
-        RawData<DummySuject>[] original = client.findRawData("manual.data", subject);
+        // Search existing data with tag "manual.data"
+        RawData<DummySuject>[] original = client.findRawData(
+                "manual.data", subject);
 
         // Add a rawdata
         RawData<DummySuject> data = new RawData<DummySuject>();
@@ -76,14 +78,17 @@ public class ReadWriteTest extends TestCase {
         data.time = 123456789;
         client.addRawData(data);
 
-        RawData<DummySuject>[] after_insert = client.findRawData("manual.data", subject);
-        assertEquals(original.length +1, after_insert.length);
+        // Search data with same tag, there should be one additional entry
+        RawData<DummySuject>[] after_insert = client.findRawData(
+                "manual.data", subject);
+        assertEquals(original.length + 1, after_insert.length);
 
 
-        Evidence<DummySuject>[] evidence_original = client.findEvidence("manual.detection", subject);
+        Evidence<DummySuject>[] evidence_original = client.findEvidence(
+                "manual.detection", subject);
 
         // Manually run a readwrite detection task
-        // Should insert an evidence...
+        // Should insert two evidences...
         ReadWrite<DummySuject> instance = new ReadWrite<DummySuject>();
         instance.setInputLabel("manual.data");
         instance.setLabel("manual.detection");
@@ -92,9 +97,11 @@ public class ReadWriteTest extends TestCase {
         instance.setSubjectAdapter(new DummySubjectAdapter());
         instance.run();
 
-        Evidence<DummySuject>[] evidence_after_insert = client.findEvidence("manual.detection", subject);
+        Evidence<DummySuject>[] evidence_after_insert = client.findEvidence(
+                "manual.detection", subject);
 
-        assertEquals(evidence_original.length + 2, evidence_after_insert.length);
+        assertEquals(
+                evidence_original.length + 2, evidence_after_insert.length);
 
     }
 
