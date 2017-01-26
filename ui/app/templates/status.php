@@ -10,13 +10,15 @@ $state = $client->status();
 <p><?php echo date("Y-m-d", time()) ?></p>
 <p>Server state: <?= $state->state ?></p>
 
+<h2>Activation cascade</h2>
+<div id="activation-graph"></div>
+
+<h2>Server status dump</h2>
 <pre>
 <?php var_dump($state) ?>
 </pre>
 
 <script src="js/libs/viz.js"></script>
-<div id="activation-graph"></div>
-
 <script>
     function draw(detection_agents) {
 
@@ -26,15 +28,36 @@ $state = $client->status();
         // - class_name
 
         // Describe the graph using graphviz dot notation
-        var graph_src = 'digraph G { node [fontsize=10, shape=box]; ';
+        // 1. Add the nodes (the agents)
+        var graph_src = 'digraph G { rankdir=LR; node [fontsize=13, shape=box]; ';
         detection_agents.forEach(function(detection_agent){
             console.log(detection_agent);
-            graph_src += '"' + detection_agent.trigger_label + '" -> "'
-                    + detection_agent.label + '"; ';
             graph_src += '"' + detection_agent.label +  '" [label="'
                     + detection_agent.class_name + '\n'
                     + detection_agent.label + '"]; ';
         });
+
+        // 2. Add the edges
+        detection_agents.forEach(function(detection_agent){
+            var matches = 0;
+            detection_agents.forEach(function(other){
+                if (other.label.startsWith(detection_agent.trigger_label)) {
+                    graph_src += '"' + other.label + '" -> "'
+                        + detection_agent.label + '"; ';
+                    matches++;
+                }
+            });
+
+            // We found no agent that will trigger this detection agent
+            // => must be a data agent
+            // => draw manually...
+            if (matches === 0) {
+               graph_src += '"' + detection_agent.trigger_label + '" -> "'
+                    + detection_agent.label + '"; ';
+            }
+
+        });
+
 
         graph_src += '}';
 
