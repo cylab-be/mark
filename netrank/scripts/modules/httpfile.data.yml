@@ -2,7 +2,7 @@
 # from a file
 #
 ---
-class_name: mark.masfad2.FileSource
+class_name: netrank.FileSource
 label:      data.http
 parameters: {
   file:   ./httpfile.data.txt

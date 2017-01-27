@@ -1,4 +1,4 @@
-package mark.masfad2;
+package netrank;
 
 import java.io.BufferedReader;
 import java.io.File;

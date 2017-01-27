@@ -1,4 +1,4 @@
-package mark.masfad2;
+package netrank;
 
 import java.net.MalformedURLException;
 import java.util.logging.Level;

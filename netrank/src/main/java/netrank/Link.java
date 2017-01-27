@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package mark.masfad2;
+package netrank;
 
 import mark.core.Subject;
 

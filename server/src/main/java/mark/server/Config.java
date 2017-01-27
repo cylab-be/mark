@@ -15,7 +15,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  * @author Thibault Debatty
  */
 public class Config {
-    private static final String DEFAULT_MONGO_DB = "MASFAD";
+    private static final String DEFAULT_MONGO_DB = "MARK";
     private static final int    DEFAULT_MAX_THREADS = 100;
     private static final int    DEFAULT_MIN_THREADS = 10;
     private static final int    DEFAULT_IDLE_TIMEOUT = 60;

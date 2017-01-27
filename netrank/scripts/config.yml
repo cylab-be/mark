@@ -9,6 +9,6 @@ mongo_db:       MASFAD
 server_host:    192.168.56.1
 server_port:    8080
 
-adapter_class:  mark.masfad2.LinkAdapter  
+adapter_class:  netrank.LinkAdapter  
 
 modules:        ./modules
