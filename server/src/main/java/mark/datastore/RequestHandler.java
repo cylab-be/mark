@@ -11,6 +11,7 @@ import mark.core.Subject;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.SubjectAdapter;
+import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -271,5 +272,9 @@ public class RequestHandler implements ServerInterface {
         }
 
         return convertEvidence(document);
+    }
+
+    public final ClusterMetrics igniteStatus() {
+        return activation_controller.getIgniteMetrics();
     }
 }

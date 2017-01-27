@@ -8,6 +8,10 @@ class MarkClient {
     return $this->exec("status", array());
   }
 
+  public function url() {
+    return $this->url;
+  }
+
   /**
    *
    * @param String $label
@@ -58,6 +62,10 @@ class MarkClient {
   public function findEvidenceById($id) {
     // current will return first element in the array
     return $this->exec("findEvidenceById", array($id));
+  }
+
+  public function igniteStatus() {
+    return $this->exec("igniteStatus", array());
   }
 
   /**

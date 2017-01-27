@@ -2,14 +2,14 @@
 $this->layout('template', ['title' => 'Home']);
 
 require_once "MarkClient.php";
-$client = new MarkClient();
+$mark = new MarkClient();
 ?>
 
 <h1>Multi Agent Ranking Framework</h1>
 <p><?php echo date("Y-m-d H:i:s", time()) ?></p>
 
 <?php
-$evidences = $client->findEvidence("detection.readwrite");
+$evidences = $mark->findEvidence("detection.readwrite");
 ?>
 
 <table class="table">

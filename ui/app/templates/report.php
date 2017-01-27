@@ -3,8 +3,8 @@
 $this->layout('template', ['title' => 'Evidence report ' . $evidence_id]);
 
 require_once "MarkClient.php";
-$client = new MarkClient();
-$evidence = $client->findEvidenceById($evidence_id);
+$mark = new MarkClient();
+$evidence = $mark->findEvidenceById($evidence_id);
 
 ?>
 <h1><?= $evidence->subject->client ?></h1>

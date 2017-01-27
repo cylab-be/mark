@@ -18,6 +18,8 @@ import mark.server.SafeThread;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cluster.ClusterMetrics;
+import org.apache.ignite.configuration.IgniteConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +52,14 @@ public class ActivationController<T extends Subject> extends SafeThread {
         this.config = config;
         this.profiles = new LinkedList<DetectionAgentProfile>();
 
+        IgniteConfiguration ignite_config = new IgniteConfiguration();
+        ignite_config.setPeerClassLoadingEnabled(true);
+
         // Start Ignite framework..
         if (Ignition.state() == IgniteState.STARTED) {
             ignite = Ignition.ignite();
         } else {
-            ignite = Ignition.start();
+            ignite = Ignition.start(ignite_config);
         }
 
         executor_service = ignite.executorService();
@@ -243,4 +248,12 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
         set.add(evidence.subject);
     }
+
+    public ClusterMetrics getIgniteMetrics() {
+        ignite.cluster().nodes().iterator().next().addresses();
+        ignite.cluster().nodes().iterator().next().hostNames();
+        return ignite.cluster().metrics();
+    }
+
+
 }

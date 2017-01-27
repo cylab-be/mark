@@ -2,13 +2,32 @@
 $this->layout('template', ['title' => 'Status']);
 
 require_once "MarkClient.php";
-$client = new MarkClient();
-$state = $client->status();
+$mark = new MarkClient();
+$state = $mark->status();
 ?>
 
 <h1>Multi Agent Ranking Framework</h1>
 <p><?php echo date("Y-m-d", time()) ?></p>
 <p>Server state: <?= $state->state ?></p>
+
+<h2>Ignite cluster status</h2>
+
+<?php
+$igniteStatus = $mark->igniteStatus();
+?>
+
+<p>Nodes: <?= $igniteStatus->totalNodes ?></p>
+<p>CPUS: <?= $igniteStatus->totalCpus ?></p>
+<p>Average CPU load: <?= round(100 * $igniteStatus->averageCpuLoad, 2) ?>%</p>
+
+<h3>Job statistics</h3>
+<p>Current job wait time: <?= $igniteStatus->currentJobWaitTime ?></p>
+<p>Average job execute time: <?= round($igniteStatus->averageJobExecuteTime/1000, 2) ?> second</p>
+<p>Current active jobs: <?= $igniteStatus->currentActiveJobs ?></p>
+<p>Maximum waiting jobs: <?= $igniteStatus->maximumWaitingJobs ?></p>
+<p>Current waiting jobs: <?= $igniteStatus->currentWaitingJobs ?></p>
+<p>Total executed tasks: <?= $igniteStatus->totalExecutedTasks ?></p>
+
 
 <h2>Activation cascade</h2>
 <div id="activation-graph"></div>
@@ -20,6 +39,30 @@ $state = $client->status();
 
 <script src="js/libs/viz.js"></script>
 <script>
+    var mark_url = "<?= $mark->url() ?>";
+    var json_request_body = {"jsonrpc": "2.0",
+        "method": "status",
+        "params": {},
+        "id": 123
+    };
+
+    var request = new XMLHttpRequest();
+    request.open('POST', mark_url, true);
+    request.setRequestHeader(
+            'Content-Type',
+            'application/x-www-form-urlencoded; charset=UTF-8');
+    request.addEventListener('load', function() {
+        if (request.readyState == 4 && request.status == 200) {
+            // Request succeeded => draw graph
+            var json_response = JSON.parse(request.responseText);
+            draw(json_response.result.activation);
+        } else {
+
+        }
+    });
+
+    request.send(JSON.stringify(json_request_body));
+
     function draw(detection_agents) {
 
         // each detection agent has following attributes:
@@ -72,30 +115,5 @@ $state = $client->status();
         document.querySelector("#activation-graph")
                 .appendChild(graph_svg.documentElement);
     }
-
-    var json_request_body = {"jsonrpc": "2.0",
-        "method": "status",
-        "params": {},
-        "id": 123
-    };
-
-    var json_request_url = "http://127.0.0.1:8080";
-
-    var request = new XMLHttpRequest();
-    request.open('POST', json_request_url, true);
-    request.setRequestHeader(
-            'Content-Type',
-            'application/x-www-form-urlencoded; charset=UTF-8');
-    request.addEventListener('load', function() {
-        if (request.readyState == 4 && request.status == 200) {
-            // Request succeeded => draw graph
-            var json_response = JSON.parse(request.responseText);
-            draw(json_response.result.activation);
-        } else {
-
-        }
-    });
-
-    request.send(JSON.stringify(json_request_body));
 
 </script>
