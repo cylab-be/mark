@@ -81,14 +81,26 @@ public class Config {
     public int server_port = DEFAULT_SERVER_PORT;
     public int max_pending_requests = DEFAULT_MAX_PENDING_REQUESTS;
 
-    // Web server parameters
-    public int web_port = DEFAULT_WEB_PORT;
-    public String web_root = DEFAULT_WEB_ROOT;
+    /**
+     * Start (or not) the integrated webserver.
+     * Can be disabled for testing, for example...
+     */
+    public boolean start_webserver = true;
+
+    public int webserver_port = DEFAULT_WEB_PORT;
+    public String webserver_root = DEFAULT_WEB_ROOT;
 
     // MONGODB parameters
     public String mongo_host = "127.0.0.1";
     public int mongo_port = 27017;
     public String mongo_db = DEFAULT_MONGO_DB;
+
+    /**
+     * Start a local ignite server.
+     * Useful for testing or small installation, to execute the detection
+     * tasks on the same server.
+     */
+    public boolean start_ignite_server = true;
 
     /**
      * Instantiate a new default configuration.

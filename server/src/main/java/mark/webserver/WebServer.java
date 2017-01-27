@@ -64,18 +64,22 @@ public class WebServer {
      * @throws java.lang.Exception if jetty fails to start
      */
     public final void start() throws Exception {
+        if (!config.start_webserver) {
+            return;
+        }
+
         LOGGER.info("Starting web interface at port 8000");
 
         // Handle php files
         ServletContextHandler php_handler = new ServletContextHandler();
         php_handler.addServlet(
                 com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
-        php_handler.setResourceBase(config.web_root);
+        php_handler.setResourceBase(config.webserver_root);
 
         // Handle static files (if it's not php)
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(false);
-        resource_handler.setResourceBase(config.web_root);
+        resource_handler.setResourceBase(config.webserver_root);
 
         HandlerList handler_list = new HandlerList();
         handler_list.setHandlers(new Handler[]{
@@ -88,10 +92,10 @@ public class WebServer {
         rewrite_handler.setRewriteRequestURI(false);
         rewrite_handler.setRewritePathInfo(false);
         rewrite_handler.setOriginalPathAttribute("requestedPath");
-        rewrite_handler.addRule(new RewriteIfNotExistsRule(config.web_root));
+        rewrite_handler.addRule(new RewriteIfNotExistsRule(config.webserver_root));
         rewrite_handler.setHandler(handler_list);
 
-        server = new Server(config.web_port);
+        server = new Server(config.webserver_port);
         server.setHandler(rewrite_handler);
         server.start();
     }
@@ -101,6 +105,10 @@ public class WebServer {
      * @throws Exception
      */
     public final void stop() throws Exception {
+        if (server == null) {
+            return;
+        }
+        
         server.stop();
     }
 }

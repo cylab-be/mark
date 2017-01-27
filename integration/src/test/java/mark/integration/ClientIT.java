@@ -37,6 +37,7 @@ public class ClientIT extends TestCase {
 
         Config config = new Config();
         config.adapter_class = LinkAdapter.class.getName();
+        config.start_webserver = false;
         server = new Server(config);
 
         // Activate the dummy activation profile

@@ -56,6 +56,8 @@ public class Server {
     /**
      * Initialize a server with default configuration, dummy subject adapter,
      * no data agents and no detection agents.
+     * @param config
+     * @throws mark.server.InvalidProfileException
      */
     public Server(final Config config) throws InvalidProfileException {
         this.config = config;
