@@ -9,9 +9,9 @@ import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.server.InvalidProfileException;
 import mark.client.Client;
-import mark.masfad2.Link;
+import netrank.Link;
+import netrank.LinkAdapter;
 import mark.core.RawData;
-import mark.masfad2.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 

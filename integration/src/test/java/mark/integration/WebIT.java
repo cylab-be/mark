@@ -29,7 +29,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.io.IOException;
 import junit.framework.TestCase;
-import mark.masfad2.LinkAdapter;
+import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 

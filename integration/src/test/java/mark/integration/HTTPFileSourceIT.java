@@ -4,8 +4,8 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
 import mark.data.DataAgentProfile;
-import mark.masfad2.FileSource;
-import mark.masfad2.LinkAdapter;
+import netrank.FileSource;
+import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 
