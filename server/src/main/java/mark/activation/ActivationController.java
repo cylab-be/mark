@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ActivationController<T extends Subject> extends SafeThread {
 
-    private static final int ACTIVATION_INTERVAL = 2000;
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ActivationController.class);
 
@@ -83,7 +82,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
                 new HashMap<String, HashSet<T>>());
 
         while (true) {
-            Thread.sleep(ACTIVATION_INTERVAL);
+            Thread.sleep(1000 * config.update_interval);
 
             if (isInterrupted()) {
                 return;

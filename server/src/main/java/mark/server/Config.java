@@ -15,6 +15,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  * @author Thibault Debatty
  */
 public class Config {
+    private static final int    DEFAULT_UPDATE_INTERVAL = 10;
     private static final String DEFAULT_MONGO_DB = "MARK";
     private static final int    DEFAULT_MAX_THREADS = 100;
     private static final int    DEFAULT_MIN_THREADS = 10;
@@ -68,6 +69,9 @@ public class Config {
     public String adapter_class = DEFAULT_ADAPTER;
 
     public String log_directory = null;
+
+    //
+    public int update_interval = DEFAULT_UPDATE_INTERVAL;
 
     // Datastore HTTP/JSON-RPC server parameters
     public int max_threads = DEFAULT_MAX_THREADS;
