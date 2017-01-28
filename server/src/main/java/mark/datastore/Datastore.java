@@ -9,6 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import mark.activation.ActivationController;
 import mark.core.Subject;
 import mark.server.Config;
+import mark.server.InvalidProfileException;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -22,38 +23,31 @@ public class Datastore {
 
     private static final int STARTUP_DELAY = 100;
 
-    private final Config config;
-    private final ActivationController activation_controller;
-
-    private Server server;
+    private final Server server;
 
     /**
      *
      * @param config
      * @param activation_controller
+     * @throws mark.server.InvalidProfileException
      */
     public Datastore(
             final Config config,
-            final ActivationController activation_controller) {
-        this.config = config;
-        this.activation_controller = activation_controller;
-    }
+            final ActivationController activation_controller)
+            throws InvalidProfileException {
 
-    /**
-     * Start the datastore.
-     * This will start the json-rpc server in a separate thread and return
-     * when the server is ready.
-     * @throws Exception
-     */
-    public final void start() throws Exception  {
         // Connect to mongodb
-        MongoClient mongodb = new MongoClient(
+        MongoClient mongo = new MongoClient(
                 config.mongo_host, config.mongo_port);
-        MongoDatabase mongodb_database = mongodb.getDatabase(config.mongo_db);
+        MongoDatabase mongodb = mongo.getDatabase(config.mongo_db);
+
+        if (config.mongo_clean) {
+            mongodb.drop();
+        }
 
         // Create and run HTTP / JSON-RPC server
         RequestHandler datastore_handler = new RequestHandler(
-                mongodb_database,
+                mongodb,
                 activation_controller,
                 config.getSubjectAdapter());
 
@@ -79,6 +73,16 @@ public class Datastore {
 
         server.setConnectors(new Connector[]{http_connector});
         server.setHandler(new JettyHandler(jsonrpc_server));
+    }
+
+    /**
+     * Start the datastore.
+     * This will start the json-rpc server in a separate thread and return
+     * when the server is ready.
+     * @throws Exception
+     */
+    public final void start() throws Exception  {
+
         server.start();
 
         while (!server.isStarted()) {

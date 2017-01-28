@@ -96,6 +96,11 @@ public class Config {
     public String mongo_db = DEFAULT_MONGO_DB;
 
     /**
+     * Empty the MONGO database before starting (usefull for testing).
+     */
+    public boolean mongo_clean = false;
+
+    /**
      * Start a local ignite server.
      * Useful for testing or small installation, to execute the detection
      * tasks on the same server.
