@@ -138,8 +138,8 @@ public class Frequency extends AbstractDetectionAgent {
         }
 
         final XYPlot demo = new XYPlot("Request frequency", freqs, values);
-        demo.pack();
-        demo.setVisible(true);
+        // demo.pack();
+        // demo.setVisible(true);
     }
 }
 
