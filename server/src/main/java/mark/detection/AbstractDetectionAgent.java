@@ -1,12 +1,11 @@
 package mark.detection;
 
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
+import mark.activation.DetectionAgentProfile;
 import mark.core.Subject;
-import mark.core.Evidence;
 import mark.core.ServerInterface;
 import mark.core.SubjectAdapter;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a detection agent.
@@ -30,15 +29,12 @@ public abstract class AbstractDetectionAgent<T extends Subject>
         implements DetectionAgentInterface {
 
     // Things that are provided by the activation logic engine:
-    private String label;
-    private String input_label;
     private T subject;
-    private Map<String, String> parameters;
     private URL datastore_url;
     private SubjectAdapter<T> subject_adapter;
+    private String actual_trigger_label;
+    private DetectionAgentProfile profile;
 
-    // Lazy instantiated fields:
-    private transient ServerInterface<T> datastore;
 
     /**
      *
@@ -47,75 +43,55 @@ public abstract class AbstractDetectionAgent<T extends Subject>
 
     }
 
-    protected final String getInputLabel() {
-        return input_label;
-    }
-
-    public final void setInputLabel(final String input_label) {
-        this.input_label = input_label;
-    }
-
-    public final void setParameters(final Map<String, String> parameters) {
-        this.parameters = parameters;
-    }
-
-    protected final String getLabel() {
-        return label;
-    }
-
-    public final void setLabel(final String type) {
-        this.label = type;
+    public void setDetectionAgentProfile(DetectionAgentProfile profile) {
+        this.profile = profile;
     }
 
 
-    protected T getSubject() {
-        return subject;
+    public final void setActualTriggerLabel(final String actual_trigger_label) {
+        this.actual_trigger_label = actual_trigger_label;
     }
 
-    public void setSubject(Subject subject) {
+    /**
+     * Setters are used by the activation controller to configure the
+     * detection agent.
+     * @param subject
+     */
+    public void setSubject(final Subject subject) {
         this.subject = (T) subject;
     }
 
     /**
-     * Return a connection to the server.
-     * @return
+     * Setters are used by the activation controller to configure the
+     * detection agent.
+     * @param datastore_url
      */
-    protected final ServerInterface<T> getDatastore() throws MalformedURLException {
-        // Lazy initialization...
-        if (datastore == null) {
-            datastore = subject_adapter.getDatastore(datastore_url);
-        }
-
-        return datastore;
-    }
-
     public final void setDatastoreUrl(final URL datastore_url) {
         this.datastore_url = datastore_url;
     }
 
-    /**
-     * Get the value for parameter name, or null if this parameter was not
-     * provided.
-     * @param name
-     * @return
-     */
-    protected final String getParameter(final String name) {
-        return parameters.get(name);
-    }
-
-    /**
-     * Create the basic Evidence object, with fields that were provided by
-     * the activation logic: client, server and label.
-     * @return
-     */
-    protected Evidence createEvidenceTemplate() {
-        Evidence evidence = new Evidence();
-        evidence.subject = getSubject();
-        evidence.label = getLabel();
-        return evidence;
-    }
-
-    public void setSubjectAdapter(SubjectAdapter subject_adapter) {
+    public void setSubjectAdapter(final SubjectAdapter subject_adapter) {
         this.subject_adapter = subject_adapter;
     }
+
+    /**
+     *
+     */
+    public final void run() {
+        ServerInterface<T> datastore = subject_adapter.getDatastore(
+                datastore_url);
+
+        try {
+            analyze(subject, actual_trigger_label, profile, datastore);
+        } catch (Throwable ex) {
+            LoggerFactory.getLogger(this.getClass().getName()).error(
+                    "Detector failed with exception!", ex);
+        }
+    }
+
+    public abstract void analyze(
+            T subject,
+            String actual_trigger_label,
+            DetectionAgentProfile profile,
+            ServerInterface<T> datastore) throws Throwable;
 }

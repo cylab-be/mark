@@ -29,13 +29,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import mark.activation.DetectionAgentProfile;
+import mark.core.ServerInterface;
 import mark.core.Subject;
-import mark.core.SubjectAdapter;
 
 /**
  * Detection agent that runs an external command.
@@ -45,64 +42,10 @@ import mark.core.SubjectAdapter;
  * - any other parameter you provide will be transmitted to the command
  * @author Thibault Debatty
  */
-public class Run implements DetectionAgentInterface {
+public class Run extends AbstractDetectionAgent {
 
     static final String KEY_COMMAND = "command";
     static final String KEY_WD = "wd";
-
-    private Map<String, String> parameters;
-    private String label;
-    private String input_label;
-    private Subject subject;
-    private URL datastore_url;
-
-    public void setParameters(Map parameters) {
-        this.parameters = parameters;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public void setInputLabel(String input_label) {
-        this.input_label = input_label;
-    }
-
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
-
-    public final void run() {
-        LinkedList<String> command = new LinkedList<String>();
-        command.add(parameters.get(KEY_COMMAND));
-
-        command.add("-d");
-        command.add(datastore_url.toExternalForm());
-
-        for (String key : parameters.keySet()) {
-            if (key.equals(KEY_COMMAND) || key.equals(KEY_WD)) {
-                continue;
-            }
-
-            command.add("-" + key);
-            command.add(parameters.get(key));
-        }
-
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(new File(parameters.get(KEY_WD)));
-        try {
-            Process p = pb.start();
-            p.waitFor();
-            String out = readInputStream(p.getInputStream());
-            System.out.println(out);
-
-        } catch (IOException ex) {
-            Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Run.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
 
     private static String readInputStream(final InputStream is) {
         BufferedReader br = null;
@@ -129,11 +72,33 @@ public class Run implements DetectionAgentInterface {
         return sb.toString();
     }
 
-    public void setDatastoreUrl(URL datastore_url) {
-        this.datastore_url = datastore_url;
-    }
+    @Override
+    public final void analyze(
+            final Subject subject,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface datastore) throws Throwable {
 
-    public void setSubjectAdapter(SubjectAdapter subject_adapter) {
-        // not needed...
+        LinkedList<String> command = new LinkedList<String>();
+        command.add(profile.parameters.get(KEY_COMMAND));
+
+        command.add("-d");
+        command.add(datastore.getURL().toExternalForm());
+
+        for (String key : profile.parameters.keySet()) {
+            if (key.equals(KEY_COMMAND) || key.equals(KEY_WD)) {
+                continue;
+            }
+
+            command.add("-" + key);
+            command.add(profile.parameters.get(key));
+        }
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.directory(new File(profile.parameters.get(KEY_WD)));
+        Process p = pb.start();
+        p.waitFor();
+        String out = readInputStream(p.getInputStream());
+        System.out.println(out);
     }
 }

@@ -1,5 +1,9 @@
 package mark.detection;
 
+import mark.activation.DetectionAgentProfile;
+import mark.core.ServerInterface;
+import mark.core.Subject;
+
 /**
  * Dummy detection agent, which does not try to read or write to the datastore.
  * Can be used to test activation, without starting a complete server.
@@ -9,15 +13,14 @@ public class Dummy extends AbstractDetectionAgent {
 
     private static final int SLEEP_TIME = 500;
 
-    /**
-     * {@inheritDoc}
-     */
-    public final void run() {
 
-        try {
-            Thread.sleep(SLEEP_TIME);
-        } catch (InterruptedException ex) {
+    @Override
+    public void analyze(
+            final Subject subject,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface datastore) throws Throwable {
 
-        }
+        Thread.sleep(SLEEP_TIME);
     }
 }

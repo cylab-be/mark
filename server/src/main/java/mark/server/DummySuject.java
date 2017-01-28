@@ -34,6 +34,13 @@ public class DummySuject implements Subject {
 
     public String name = "";
 
+    public DummySuject() {
+    }
+
+    public DummySuject(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
         return name;

@@ -23,7 +23,11 @@
  */
 package mark.activation;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.core.Subject;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -93,5 +97,15 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
     public Evidence<T> findEvidenceById(String id) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public URL getURL() {
+        try {
+            return new URL("http://dummy.to.u:155");
+        } catch (MalformedURLException ex) {
+            
+        }
+
+        return null;
     }
 }

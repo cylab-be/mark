@@ -1,5 +1,7 @@
 package mark.core;
 
+import java.net.URL;
+
 /**
  * Interface defining all methods provided by the server.
  * These are implemented by the client and server packages.
@@ -74,4 +76,6 @@ public interface ServerInterface<T extends Subject> {
      * @throws Throwable if request fails
      */
     Evidence<T> findEvidenceById(String id) throws Throwable;
+
+    URL getURL();
 }

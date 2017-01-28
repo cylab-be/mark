@@ -27,6 +27,7 @@ public class Client<T extends Subject> implements ServerInterface {
     private static final int CONNECTION_TIMEOUT = 5000;
 
     private final JsonRpcHttpClient datastore;
+    private URL server_url;
 
     /**
      * Create a connection to server with provided URL, and test the connection.
@@ -36,6 +37,8 @@ public class Client<T extends Subject> implements ServerInterface {
      * @param adapter
      */
     public Client(final URL server_url, final SubjectAdapter adapter) {
+
+        this.server_url = server_url;
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
@@ -146,6 +149,10 @@ public class Client<T extends Subject> implements ServerInterface {
                 "findEvidence",
                 new Object[]{label},
                 Evidence[].class);
+    }
+
+    public final URL getURL() {
+        return this.server_url;
     }
 
     /**

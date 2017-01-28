@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
 import mark.core.Subject;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -32,6 +33,8 @@ public class DetectionAgentProfile {
      * The class of the detection agent to trigger.
      */
     public String class_name;
+
+    public HashMap<String, String> parameters;
 
     private static final Yaml PARSER = new Yaml(
             new Constructor(DetectionAgentProfile.class));
@@ -75,8 +78,7 @@ public class DetectionAgentProfile {
                 .newInstance();
 
         new_task.setSubject(subject);
-        new_task.setLabel(label);
-        new_task.setInputLabel(trigger_label);
+        new_task.setDetectionAgentProfile(this);
 
         return new_task;
     }

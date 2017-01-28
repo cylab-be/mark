@@ -111,14 +111,15 @@ public class ActivationController<T extends Subject> extends SafeThread {
                                         profile.class_name,
                                         subject.toString());
 
-                                DetectionAgentInterface new_task =
+                                DetectionAgentInterface task =
                                         profile.getTaskFor(subject);
-                                new_task.setDatastoreUrl(
+                                task.setDatastoreUrl(
                                         config.getDatastoreUrl());
-                                new_task.setSubjectAdapter(
+                                task.setSubjectAdapter(
                                         config.getSubjectAdapter());
+                                task.setActualTriggerLabel(label);
 
-                                executor_service.submit(new_task);
+                                executor_service.submit(task);
 
                             } catch (ClassNotFoundException ex) {
                                 LOGGER.error(

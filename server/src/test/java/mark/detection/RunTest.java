@@ -24,10 +24,10 @@
 
 package mark.detection;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
 import junit.framework.TestCase;
+import mark.activation.DetectionAgentProfile;
+import mark.activation.DummyClient;
+import mark.server.DummySuject;
 
 /**
  *
@@ -37,20 +37,18 @@ public class RunTest extends TestCase {
 
 
     /**
-     * Test of run method, of class Run.
+     * Test of analyze method, of class Run.
      */
-    public final void testRun() throws MalformedURLException {
+    public final void testAnalyze() throws Throwable {
         System.out.println("run");
 
-        HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put(Run.KEY_COMMAND, "echo");
-        parameters.put(Run.KEY_WD, "/tmp");
-        parameters.put("param1", "value1");
-
-        Run run_external_detector = new Run();
-        run_external_detector.setDatastoreUrl(new URL("http://dummy.to.u:1234"));
-        run_external_detector.setParameters(parameters);
-        run_external_detector.run();
+        Run run_detector = new Run();
+        run_detector.analyze(
+                new DummySuject("Tibo"),
+                "actual.trigger",
+                DetectionAgentProfile.fromInputStream(getClass()
+                    .getResourceAsStream("/detection.run.yml")),
+                new DummyClient());
     }
 
 }

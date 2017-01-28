@@ -1,0 +1,5 @@
+---
+class_name:     netrank.Frequency
+label:          detection.frequency.1w
+trigger_label:  data.http
+

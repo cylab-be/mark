@@ -1,12 +1,11 @@
 package netrank;
 
-import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import mark.activation.DetectionAgentProfile;
 import mark.detection.AbstractDetectionAgent;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
+import mark.core.Subject;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -23,7 +22,7 @@ import org.jfree.ui.ApplicationFrame;
  *
  * @author Thibault Debatty
  */
-public class Frequency extends AbstractDetectionAgent<Link> {
+public class Frequency extends AbstractDetectionAgent {
 
     /**
      * Sampling interval (in second).
@@ -31,22 +30,49 @@ public class Frequency extends AbstractDetectionAgent<Link> {
     public static final int SAMPLING_INTERVAL = 2; // in seconds
     public static final double DETECTION_THRESHOLD = 10.0;
 
-    public final void run() {
-        ServerInterface datastore;
-        try {
-            datastore = getDatastore();
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Frequency.class.getName()).log(Level.SEVERE, null, ex);
-            return;
+    static int pow2gt(final int value) {
+        int result = 1;
+
+        while (result < value) {
+            result <<= 1;
         }
-        RawData[] raw_data;
-        try {
-            raw_data = datastore.findRawData(getLabel(), getSubject());
-        } catch (Throwable ex) {
-            System.err.println("Could not connect!");
-            System.err.println(ex.getMessage());
-            return;
+        return result;
+    }
+
+    static int min(final int[] values) {
+        int result = Integer.MAX_VALUE;
+        for (int value : values) {
+            if (value < result) {
+                result = value;
+            }
         }
+        return result;
+    }
+
+    static int max(final int[] values) {
+        int result = Integer.MIN_VALUE;
+        for (int value : values) {
+            if (value > result) {
+                result = value;
+            }
+        }
+        return result;
+    }
+
+    private double average(double[] values) {
+        double result = 0;
+        for (double value : values) {
+            result += value;
+        }
+
+        return result / values.length;
+    }
+
+    @Override
+    public void analyze(Subject subject, String actual_trigger_label, DetectionAgentProfile profile, ServerInterface datastore) throws Throwable {
+
+        RawData[] raw_data = datastore.findRawData(
+                actual_trigger_label, subject);
 
         if (raw_data.length < 20) {
             return;
@@ -100,63 +126,21 @@ public class Frequency extends AbstractDetectionAgent<Link> {
                 continue;
             }
 
-            Evidence evidence = createEvidenceTemplate();
+            Evidence evidence = new Evidence();
+            evidence.score = 0.9;
+            evidence.subject = subject;
+            evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found peak for frequency " + freqs[i] + "\n"
                     + "= " + (1/freqs[i]) + " seconds\n";
 
-            try {
-                datastore.addEvidence(evidence);
-                return;
-            } catch (Throwable ex) {
-                Logger.getLogger(Frequency.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+            datastore.addEvidence(evidence);
         }
 
         final XYPlot demo = new XYPlot("Request frequency", freqs, values);
         demo.pack();
         demo.setVisible(true);
     }
-
-    static int pow2gt(final int value) {
-        int result = 1;
-
-        while (result < value) {
-            result <<= 1;
-        }
-        return result;
-    }
-
-    static int min(final int[] values) {
-        int result = Integer.MAX_VALUE;
-        for (int value : values) {
-            if (value < result) {
-                result = value;
-            }
-        }
-        return result;
-    }
-
-    static int max(final int[] values) {
-        int result = Integer.MIN_VALUE;
-        for (int value : values) {
-            if (value > result) {
-                result = value;
-            }
-        }
-        return result;
-    }
-
-    private double average(double[] values) {
-        double result = 0;
-        for (double value : values) {
-            result += value;
-        }
-
-        return result / values.length;
-    }
-
 }
 
 class XYPlot extends ApplicationFrame {

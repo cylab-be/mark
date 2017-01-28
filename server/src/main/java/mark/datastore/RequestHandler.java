@@ -3,6 +3,7 @@ package mark.datastore;
 import com.mongodb.client.FindIterable;
 import mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ import org.bson.types.ObjectId;
  */
 public class RequestHandler implements ServerInterface {
 
-    private static final String COLLECTION_RAW_DATA = "RAW_DATA";
+    private static final String COLLECTION_RAW_DATA = "DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
 
     private final MongoDatabase mongodb_database;
@@ -41,7 +42,6 @@ public class RequestHandler implements ServerInterface {
         this.mongodb_database = mongodb_database;
         this.activation_controller = activation_controller;
         this.adapter = adapter;
-
     }
 
     /**
@@ -119,6 +119,13 @@ public class RequestHandler implements ServerInterface {
         status.put("activation", activation_controller.getProfiles());
         status.put("executed", activation_controller.getTaskCount());
         return status;
+    }
+
+    public final Document mongoStatus() {
+        return mongodb_database.runCommand(
+                new Document("serverStatus", 1)
+                        .append("shardConnPoolStats", 1)
+                        .append("dbStats", 1));
     }
 
     private static final String LABEL = "LABEL";
@@ -276,5 +283,9 @@ public class RequestHandler implements ServerInterface {
 
     public final ClusterMetrics igniteStatus() {
         return activation_controller.getIgniteMetrics();
+    }
+
+    public URL getURL() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

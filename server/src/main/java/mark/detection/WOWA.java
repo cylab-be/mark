@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Thibault Debatty.
+ * Copyright 2017 Thibault Debatty.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,32 +21,45 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package netrank;
 
-import junit.framework.TestCase;
+package mark.detection;
+
 import mark.activation.DetectionAgentProfile;
-import mark.activation.DummyClient;
+import mark.core.Evidence;
+import mark.core.ServerInterface;
+import mark.core.Subject;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class FrequencyTest extends TestCase {
+public class WOWA extends AbstractDetectionAgent {
 
-    /**
-     * Test of run method, of class Frequency.
-     */
-    public void testAnalyze() throws Throwable {
-        System.out.println("analyze");
+    @Override
+    public void analyze(
+            final Subject subject,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface datastore) throws Throwable {
 
-        Frequency agent = new Frequency();
-        agent.analyze(
-                new Link("192.168.2.3", "www.google.com"),
-                "actual.trigger",
-                DetectionAgentProfile.fromInputStream(
-                        getClass().getResourceAsStream(
-                                "/detection.frequency.yaml")),
-                new DummyClient());
+        Evidence[] evidences = datastore.findEvidence(
+                profile.trigger_label, subject);
+
+        // Each detector has the same weight
+        double[] weights = new double[evidences.length];
+        for (int i = 0; i < evidences.length; i++) {
+            weights[i] = 1.0 / evidences.length;
+        }
+
+        //
+        double[] ordered_weights = new double[evidences.length];
+        ordered_weights[0] = 0.5;
+        ordered_weights[1] = 0.5;
+
+        info.debatty.java.aggregation.WOWA wowa =
+                new info.debatty.java.aggregation.WOWA(
+                        weights, ordered_weights);
+
     }
 
 }
