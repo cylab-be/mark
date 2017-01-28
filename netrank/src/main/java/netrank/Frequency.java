@@ -1,5 +1,6 @@
 package netrank;
 
+import java.io.File;
 import mark.activation.DetectionAgentProfile;
 import mark.detection.AbstractDetectionAgent;
 import mark.core.Evidence;
@@ -12,6 +13,7 @@ import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
@@ -137,25 +139,9 @@ public class Frequency extends AbstractDetectionAgent {
             datastore.addEvidence(evidence);
         }
 
-        final XYPlot demo = new XYPlot("Request frequency", freqs, values);
-        // demo.pack();
-        // demo.setVisible(true);
-    }
-}
-
-class XYPlot extends ApplicationFrame {
-
-    /**
-     * A demonstration application showing an XY series containing a null value.
-     *
-     * @param title the frame title.
-     */
-    public XYPlot(final String title, double[] x, double[] y) {
-
-        super(title);
         final XYSeries series = new XYSeries("Data");
-        for (int i = 0; i < x.length; i++) {
-            series.add(x[i], y[i]);
+        for (int i = 0; i < freqs.length; i++) {
+            series.add(freqs[i], values[i]);
         }
         final XYSeriesCollection data = new XYSeriesCollection(series);
         final JFreeChart chart = ChartFactory.createXYLineChart(
@@ -169,8 +155,8 @@ class XYPlot extends ApplicationFrame {
                 false
         );
 
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(1024, 768));
-        setContentPane(chartPanel);
+        ChartUtilities.saveChartAsPNG(
+                File.createTempFile("frequency_chart", ".png"),
+                chart, 1600, 1200);
     }
 }
