@@ -1,6 +1,12 @@
 <?php
 $this->layout('template', ['title' => 'Home']);
 
+/*
+import netrank.LinkAdapter;
+$linkadapter = new LinkAdapter();
+echo $linkadapter->getInstance()->getClass();
+*/
+
 require_once "MarkClient.php";
 $mark = new MarkClient();
 ?>
