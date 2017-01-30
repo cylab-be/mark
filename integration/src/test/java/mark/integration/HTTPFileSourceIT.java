@@ -2,7 +2,6 @@ package mark.integration;
 
 import java.util.HashMap;
 import junit.framework.TestCase;
-import mark.activation.DetectionAgentProfile;
 import mark.client.Client;
 import mark.core.RawData;
 import mark.data.DataAgentProfile;

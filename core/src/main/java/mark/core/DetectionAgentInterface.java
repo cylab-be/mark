@@ -22,45 +22,26 @@
  * THE SOFTWARE.
  */
 
-package mark.detection;
-
-import mark.core.DetectionAgentInterface;
-import mark.core.DetectionAgentProfile;
-import mark.core.Evidence;
-import mark.core.ServerInterface;
-import mark.core.Subject;
+package mark.core;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class WOWA implements DetectionAgentInterface {
+public interface DetectionAgentInterface<T extends Subject> {
 
-    @Override
+    /**
+     * Perform the analysis.
+     * @param subject
+     * @param actual_trigger_label
+     * @param profile
+     * @param datastore
+     * @throws Throwable
+     */
     public void analyze(
-            final Subject subject,
-            final String actual_trigger_label,
-            final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
-
-        Evidence[] evidences = datastore.findEvidence(
-                profile.trigger_label, subject);
-
-        // Each detector has the same weight
-        double[] weights = new double[evidences.length];
-        for (int i = 0; i < evidences.length; i++) {
-            weights[i] = 1.0 / evidences.length;
-        }
-
-        //
-        double[] ordered_weights = new double[evidences.length];
-        ordered_weights[0] = 0.5;
-        ordered_weights[1] = 0.5;
-
-        info.debatty.java.aggregation.WOWA wowa =
-                new info.debatty.java.aggregation.WOWA(
-                        weights, ordered_weights);
-
-    }
+            T subject,
+            String actual_trigger_label,
+            DetectionAgentProfile profile,
+            ServerInterface<T> datastore) throws Throwable;
 
 }

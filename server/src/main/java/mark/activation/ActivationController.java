@@ -1,8 +1,9 @@
 package mark.activation;
 
+import mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
 import mark.server.InvalidProfileException;
-import mark.detection.DetectionAgentInterface;
+import mark.core.DetectionAgentInterface;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,15 +113,14 @@ public class ActivationController<T extends Subject> extends SafeThread {
                                         profile.class_name,
                                         subject.toString());
 
-                                DetectionAgentInterface task =
-                                        profile.getTaskFor(subject);
-                                task.setDatastoreUrl(
-                                        config.getDatastoreUrl());
-                                task.setSubjectAdapter(
-                                        config.getSubjectAdapter());
-                                task.setActualTriggerLabel(label);
-
-                                executor_service.submit(task);
+                                executor_service.submit(
+                                        new DetectionAgentContainer(
+                                                subject,
+                                                config.getDatastoreUrl(),
+                                                config.getSubjectAdapter(),
+                                                label,
+                                                profile,
+                                                profile.getTask()));
 
                             } catch (ClassNotFoundException ex) {
                                 LOGGER.error(
@@ -177,8 +177,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
-                DetectionAgentInterface new_task = profile.getTaskFor(
-                        config.getSubjectAdapter().getInstance());
+                DetectionAgentInterface new_task = profile.getTask();
 
             } catch (ClassNotFoundException ex) {
                 throw new InvalidProfileException(

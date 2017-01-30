@@ -1,6 +1,7 @@
 package mark.detection;
 
-import mark.activation.DetectionAgentProfile;
+import mark.core.DetectionAgentInterface;
+import mark.core.DetectionAgentProfile;
 import mark.core.ServerInterface;
 import mark.core.Subject;
 
@@ -9,7 +10,7 @@ import mark.core.Subject;
  * Can be used to test activation, without starting a complete server.
  * @author Thibault Debatty
  */
-public class Dummy extends AbstractDetectionAgent {
+public class Dummy implements DetectionAgentInterface {
 
     private static final int SLEEP_TIME = 500;
 

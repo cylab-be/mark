@@ -1,7 +1,8 @@
 package mark.detection;
 
 import java.util.Random;
-import mark.activation.DetectionAgentProfile;
+import mark.core.DetectionAgentInterface;
+import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
@@ -12,7 +13,7 @@ import mark.core.Subject;
  * two evidences. Requires a running server.
  * @author Thibault Debatty
  */
-public class ReadWrite<T extends Subject> extends AbstractDetectionAgent<T> {
+public class ReadWrite<T extends Subject> implements DetectionAgentInterface<T> {
 
 
     @Override

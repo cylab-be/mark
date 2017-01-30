@@ -14,7 +14,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
 import mark.activation.ActivationController;
-import mark.activation.DetectionAgentProfile;
+import mark.core.DetectionAgentProfile;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;

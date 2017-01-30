@@ -1,8 +1,8 @@
 package netrank;
 
 import java.io.File;
-import mark.activation.DetectionAgentProfile;
-import mark.detection.AbstractDetectionAgent;
+import mark.core.DetectionAgentInterface;
+import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
@@ -22,7 +22,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author Thibault Debatty
  */
-public class Frequency extends AbstractDetectionAgent {
+public class Frequency implements DetectionAgentInterface {
 
     /**
      * Sampling interval (in second).

@@ -1,12 +1,10 @@
-package mark.activation;
+package mark.core;
 
-import mark.detection.DetectionAgentInterface;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
-import mark.core.Subject;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -68,17 +66,15 @@ public class DetectionAgentProfile {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    final DetectionAgentInterface getTaskFor(final Subject subject)
+    public final DetectionAgentInterface getTask()
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
+
         // Create analysis task
         DetectionAgentInterface new_task =
                 (DetectionAgentInterface)
                 Class.forName(class_name)
                 .newInstance();
-
-        new_task.setSubject(subject);
-        new_task.setDetectionAgentProfile(this);
 
         return new_task;
     }
@@ -89,7 +85,7 @@ public class DetectionAgentProfile {
      * @param label
      * @return
      */
-    final boolean match(final String label) {
+    public final boolean match(final String label) {
         return this.trigger_label.startsWith(label);
     }
 }

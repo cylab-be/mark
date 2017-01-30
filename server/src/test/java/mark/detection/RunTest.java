@@ -25,7 +25,7 @@
 package mark.detection;
 
 import junit.framework.TestCase;
-import mark.activation.DetectionAgentProfile;
+import mark.core.DetectionAgentProfile;
 import mark.activation.DummyClient;
 import mark.server.DummySuject;
 

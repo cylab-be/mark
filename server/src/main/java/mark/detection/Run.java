@@ -30,7 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import mark.activation.DetectionAgentProfile;
+import mark.core.DetectionAgentInterface;
+import mark.core.DetectionAgentProfile;
 import mark.core.ServerInterface;
 import mark.core.Subject;
 
@@ -42,7 +43,7 @@ import mark.core.Subject;
  * - any other parameter you provide will be transmitted to the command
  * @author Thibault Debatty
  */
-public class Run extends AbstractDetectionAgent {
+public class Run implements DetectionAgentInterface {
 
     static final String KEY_COMMAND = "command";
     static final String KEY_WD = "wd";

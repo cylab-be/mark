@@ -3,7 +3,7 @@ package mark.integration;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import junit.framework.TestCase;
-import mark.activation.DetectionAgentProfile;
+import mark.core.DetectionAgentProfile;
 import mark.client.Client;
 import netrank.Link;
 import netrank.LinkAdapter;
