@@ -59,12 +59,54 @@ public class Server {
      * @param config
      * @throws mark.server.InvalidProfileException
      */
-    public Server(final Config config) throws InvalidProfileException {
+    public Server(final Config config) throws Throwable {
         this.config = config;
+
+        startLogging();
+        parseConfig();
+
         this.web_server = new WebServer(config);
         this.activation_controller = new ActivationController(config);
         this.datastore = new Datastore(config, activation_controller);
         this.data_agents = new LinkedList<AbstractDataAgent>();
+
+        String modules_dir_path = config.getModulesDirectory();
+        if (modules_dir_path == null) {
+            LOGGER.info("Modules directory is not valid, skipping...");
+            return;
+        }
+
+        File modules_dir = new File(modules_dir_path);
+        LOGGER.info("Parsing modules directory "
+                + modules_dir.getAbsolutePath());
+
+        if (!modules_dir.isDirectory()) {
+            LOGGER.info("Not a directory, skipping...");
+            return;
+        }
+
+        // Parse *.data.yml files
+        File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".data.yml");
+            }
+        });
+
+        for (File file : data_agent_files) {
+            data_agents.add(DataAgentProfile.fromFile(file).getInstance(config));
+        }
+
+        // Parse *.detection.yml files
+        File[] detection_agent_files =
+                modules_dir.listFiles(new FilenameFilter() {
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".detection.yml");
+            }
+        });
+
+        for (File file : detection_agent_files) {
+            activation_controller.addAgent(DetectionAgentProfile.fromFile(file));
+        }
     }
 
     /**
@@ -79,10 +121,7 @@ public class Server {
     public final void start()
             throws MalformedURLException, Exception {
 
-        startLogging();
-
         LOGGER.info("Starting server...");
-        parseConfig();
 
         // Start the web server...
         web_server.start();
@@ -150,7 +189,8 @@ public class Server {
             throws MalformedURLException, FileNotFoundException,
             ClassNotFoundException, InstantiationException,
             IllegalAccessException, NoSuchMethodException,
-            IllegalArgumentException, InvocationTargetException, InvalidProfileException {
+            IllegalArgumentException, InvocationTargetException,
+            InvalidProfileException {
 
 
         String modules_dir_path = config.getModulesDirectory();
@@ -185,30 +225,6 @@ public class Server {
 
         for (File jar_file : jar_files) {
             method.invoke(class_loader, jar_file.toURI().toURL());
-        }
-
-
-        // Parse *.data.yml files
-        File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".data.yml");
-            }
-        });
-
-        for (File file : data_agent_files) {
-            data_agents.add(DataAgentProfile.fromFile(file).getInstance(config));
-        }
-
-        // Parse *.detection.yml files
-        File[] detection_agent_files =
-                modules_dir.listFiles(new FilenameFilter() {
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".detection.yml");
-            }
-        });
-
-        for (File file : detection_agent_files) {
-            activation_controller.addAgent(DetectionAgentProfile.fromFile(file));
         }
     }
 

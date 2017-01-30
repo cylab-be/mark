@@ -1,11 +1,8 @@
 package mark.integration;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
-import mark.server.InvalidProfileException;
 import netrank.FileSource;
 import netrank.LinkAdapter;
 import mark.server.Config;
@@ -26,7 +23,7 @@ public class HTTPFrequencyIT extends TestCase {
     }
 
     public final void testFrequencyAgent()
-            throws FileNotFoundException, InvalidProfileException, MalformedURLException, Exception {
+            throws Throwable {
 
 
         System.out.println("test frequency agent");

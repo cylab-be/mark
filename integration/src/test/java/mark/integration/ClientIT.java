@@ -1,12 +1,9 @@
 package mark.integration;
 
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
-import mark.server.InvalidProfileException;
 import mark.client.Client;
 import netrank.Link;
 import netrank.LinkAdapter;
@@ -31,8 +28,7 @@ public class ClientIT extends TestCase {
     }
 
     protected final void startDummyServer()
-            throws FileNotFoundException, InvalidProfileException,
-            MalformedURLException, Exception {
+            throws Throwable {
 
 
         Config config = Config.getTestConfig();

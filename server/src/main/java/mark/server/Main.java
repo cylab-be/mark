@@ -6,15 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.log4j.BasicConfigurator;
 
 
 /**
@@ -35,8 +32,7 @@ public final class Main {
      * @throws java.net.MalformedURLException
      */
     public static void main(final String[] args)
-            throws ParseException, FileNotFoundException,
-            InvalidProfileException, MalformedURLException, Exception {
+            throws Throwable {
 
         // Parse command line arguments
         Options options = new Options();

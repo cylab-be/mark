@@ -24,15 +24,12 @@
 
 package mark.integration;
 
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import java.io.IOException;
 import junit.framework.TestCase;
 import netrank.LinkAdapter;
 import mark.server.Config;
-import mark.server.InvalidProfileException;
 import mark.server.Server;
 
 /**
@@ -55,7 +52,7 @@ public class WebIT extends TestCase {
      * Tests for the homepage.
      * - title is "Multi Agent..."
      */
-    public final void testHomepage() throws Exception {
+    public final void testHomepage() throws Throwable {
         System.out.println("Test Homepage");
         System.out.println("=============");
 
