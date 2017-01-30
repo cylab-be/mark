@@ -12,13 +12,11 @@ import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.ApplicationFrame;
 
 /**
  *
@@ -71,12 +69,16 @@ public class Frequency extends AbstractDetectionAgent {
     }
 
     @Override
-    public void analyze(Subject subject, String actual_trigger_label, DetectionAgentProfile profile, ServerInterface datastore) throws Throwable {
+    public void analyze(
+            Subject subject,
+            String actual_trigger_label,
+            DetectionAgentProfile profile,
+            ServerInterface datastore) throws Throwable {
 
         RawData[] raw_data = datastore.findRawData(
                 actual_trigger_label, subject);
 
-        if (raw_data.length < 20) {
+        if (raw_data.length < 50) {
             return;
         }
 
@@ -96,6 +98,7 @@ public class Frequency extends AbstractDetectionAgent {
         double[] counts = new double[size];
         for (int time : times) {
             int position = (time - min) / SAMPLING_INTERVAL;
+            position = Math.min(position, counts.length - 1);
             counts[position]++;
         }
 
@@ -113,6 +116,10 @@ public class Frequency extends AbstractDetectionAgent {
             values[i] = transform[i].multiply(transform[i].conjugate()).abs();
             //        / (raw_data.length * transform.length);
             //System.out.println(values[i]);
+        }
+
+        if (values.length < 10) {
+            return;
         }
 
         // Remove DC component

@@ -70,6 +70,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * @throws InterruptedException
      */
     public final void awaitTermination() throws InterruptedException {
+        Thread.sleep(2 * 1000 * config.update_interval);
         executor_service.shutdown();
         executor_service.awaitTermination(1, TimeUnit.DAYS);
     }

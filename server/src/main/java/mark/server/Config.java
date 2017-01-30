@@ -54,6 +54,20 @@ public class Config {
         return yaml.loadAs(input, Config.class);
     }
 
+    /**
+     * Instantiate a config for tests: no webserver, updated interval = 1s,
+     * clean db at startup.
+     * @return
+     */
+    public static final Config getTestConfig() {
+        Config conf = new Config();
+        conf.start_webserver = false;
+        conf.update_interval = 1;
+        conf.mongo_clean = true;
+
+        return conf;
+    }
+
 
     /**
      * The path to this actual configuration file. Useful as some path are
@@ -96,7 +110,7 @@ public class Config {
     public String mongo_db = DEFAULT_MONGO_DB;
 
     /**
-     * Empty the MONGO database before starting (usefull for testing).
+     * Empty the MONGO database before starting (useful for testing).
      */
     public boolean mongo_clean = false;
 

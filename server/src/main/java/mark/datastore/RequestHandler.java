@@ -22,10 +22,10 @@ import org.bson.types.ObjectId;
  */
 public class RequestHandler implements ServerInterface {
 
-    private static final String COLLECTION_RAW_DATA = "DATA";
+    private static final String COLLECTION_DATA = "DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
 
-    private final MongoDatabase mongodb_database;
+    private final MongoDatabase mongodb;
     private final ActivationController activation_controller;
     private final SubjectAdapter adapter;
 
@@ -35,13 +35,22 @@ public class RequestHandler implements ServerInterface {
      * @param mqclient
      */
     RequestHandler(
-            final MongoDatabase mongodb_database,
+            final MongoDatabase mongodb,
             final ActivationController activation_controller,
             final SubjectAdapter adapter) {
 
-        this.mongodb_database = mongodb_database;
+        this.mongodb = mongodb;
         this.activation_controller = activation_controller;
         this.adapter = adapter;
+
+        // Create indexes for LABEL and TIME
+        Document index = new Document(LABEL, 1);
+        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
+        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
+
+        index = new Document(TIME, 1);
+        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
+        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
     }
 
     /**
@@ -68,7 +77,7 @@ public class RequestHandler implements ServerInterface {
      */
     public final void addRawData(final RawData data) {
 
-        mongodb_database.getCollection(COLLECTION_RAW_DATA)
+        mongodb.getCollection(COLLECTION_DATA)
                 .insertOne(convert(data));
 
         activation_controller.notifyRawData(data);
@@ -87,8 +96,8 @@ public class RequestHandler implements ServerInterface {
         query.append(LABEL, label);
         adapter.writeToMongo(subject, query);
 
-        FindIterable<Document> documents = mongodb_database
-                .getCollection(COLLECTION_RAW_DATA)
+        FindIterable<Document> documents = mongodb
+                .getCollection(COLLECTION_DATA)
                 .find(query);
 
         ArrayList<RawData> results = new ArrayList<RawData>();
@@ -103,7 +112,7 @@ public class RequestHandler implements ServerInterface {
      * @param evidence
      */
     public final void addEvidence(final Evidence evidence) {
-        mongodb_database.getCollection(COLLECTION_EVIDENCE)
+        mongodb.getCollection(COLLECTION_EVIDENCE)
                 .insertOne(convert(evidence));
 
         activation_controller.notifyEvidence(evidence);
@@ -122,7 +131,7 @@ public class RequestHandler implements ServerInterface {
     }
 
     public final Document mongoStatus() {
-        return mongodb_database.runCommand(
+        return mongodb.runCommand(
                 new Document("serverStatus", 1)
                         .append("shardConnPoolStats", 1)
                         .append("dbStats", 1));
@@ -213,7 +222,7 @@ public class RequestHandler implements ServerInterface {
         query.append(LABEL, label);
         adapter.writeToMongo(subject, query);
 
-        FindIterable<Document> documents = mongodb_database
+        FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
@@ -237,7 +246,7 @@ public class RequestHandler implements ServerInterface {
         Document query = new Document();
         query.append(LABEL, label);
 
-        FindIterable<Document> documents = mongodb_database
+        FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
@@ -268,7 +277,7 @@ public class RequestHandler implements ServerInterface {
         Document query = new Document();
         query.append("_id", new ObjectId(id));
 
-        FindIterable<Document> documents = mongodb_database
+        FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
@@ -286,6 +295,6 @@ public class RequestHandler implements ServerInterface {
     }
 
     public URL getURL() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

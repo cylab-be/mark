@@ -24,6 +24,7 @@
 
 package mark.integration;
 
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 import netrank.LinkAdapter;
 import mark.server.Config;
+import mark.server.InvalidProfileException;
 import mark.server.Server;
 
 /**
@@ -42,34 +44,47 @@ public class WebIT extends TestCase {
     private String base_url;
     private Server server;
 
-    @Override
-    public final void setUp() throws Exception {
-        client = new WebClient();
-        base_url = "http://127.0.0.1:8000/";
-
-        Config config = new Config();
-        config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(new Config());
-        server.start();
-    }
 
     @Override
     public final void tearDown() throws Exception {
         server.stop();
+        super.tearDown();
     }
 
     /**
      * Tests for the homepage.
      * - title is "Multi Agent..."
      */
-    public final void testHomepage() throws IOException {
+    public final void testHomepage() throws Exception {
         System.out.println("Test Homepage");
         System.out.println("=============");
+
+        client = new WebClient();
+        base_url = "http://127.0.0.1:8000/";
+
+        Config config = Config.getTestConfig();
+        config.start_webserver = true;
+        config.adapter_class = LinkAdapter.class.getName();
+        server = new Server(new Config());
+        server.start();
+
+        client.getCache().clear();
         HtmlPage page = client.getPage(base_url);
-        System.out.println(page.getByXPath("//h1").get(0));
-        HtmlHeading1 h1 = (HtmlHeading1) page.getByXPath("//h1").get(0);
-        //assertEquals(
-        //        "Multi Agent Ranking Framework",
-        //        h1.getTextContent());
+        System.out.println(((HtmlHeading1) page.getByXPath("//h1").get(0)).getTextContent());
+
+        client.getCache().clear();
+        HtmlPage page3 = client.getPage(base_url);
+        System.out.println(((HtmlHeading1) page3.getByXPath("//h1").get(0)).getTextContent());
+
+        client.getCache().clear();
+        HtmlPage page4 = client.getPage(base_url);
+        System.out.println(((HtmlHeading1) page4.getByXPath("//h1").get(0)).getTextContent());
+
+        client.getCache().clear();
+        HtmlPage page2 = client.getPage(base_url);
+        HtmlHeading1 h1 = (HtmlHeading1) page2.getByXPath("//h1").get(0);
+        assertEquals(
+                "Multi Agent Ranking Framework",
+                h1.getTextContent());
     }
 }

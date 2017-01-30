@@ -3,11 +3,14 @@ package mark.integration;
 import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.activation.DetectionAgentProfile;
+import mark.client.Client;
+import mark.core.RawData;
 import mark.data.DataAgentProfile;
 import netrank.FileSource;
 import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
+import netrank.Link;
 
 /**
  *
@@ -26,12 +29,12 @@ public class HTTPFileSourceIT extends TestCase {
      *
      * @throws Exception
      */
-    public final void testHTTPFileSource() throws Exception {
+    public final void testHTTPFileSource() throws Throwable {
 
         System.out.println("Test with a HTTP file source");
         System.out.println("============================");
 
-        Config config = new Config();
+        Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
         server = new Server(config);
 
@@ -44,17 +47,20 @@ public class HTTPFileSourceIT extends TestCase {
         DataAgentProfile http_1000_source = new DataAgentProfile();
         http_1000_source.class_name = FileSource.class.getCanonicalName();
         http_1000_source.parameters = parameters;
+        http_1000_source.label = "data.http";
         server.addDataAgentProfile(http_1000_source);
-
-        // Activate the dummy activation profiles
-        server.addDetectionAgent(
-                DetectionAgentProfile.fromInputStream(
-                getClass().getResourceAsStream("/detection.readwrite.yml")));
-
 
         server.start();
 
         // Wait for data sources and detection to finish...
         server.awaitTermination();
+
+        Client client = new Client(
+                config.getDatastoreUrl(), config.getSubjectAdapter());
+
+        RawData[] data = client.findRawData(
+                "data.http", new Link("198.36.158.8", "rkfko.apyeqwrqg.cm"));
+
+        assertEquals(11, data.length);
     }
 }

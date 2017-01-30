@@ -32,11 +32,11 @@ public class HTTPFrequencyIT extends TestCase {
         System.out.println("test frequency agent");
         System.out.println("====================");
 
-        Config config = new Config();
+        Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
         server = new Server(config);
 
-        // Configure a single data source (HTTP, Regex, file with 47k reqs)
+        // Configure a single data source (HTTP, Regex, file with 2k reqs)
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put(
                 "file",
