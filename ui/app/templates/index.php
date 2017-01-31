@@ -7,6 +7,13 @@ $linkadapter = new LinkAdapter();
 echo $linkadapter->getInstance()->getClass();
 */
 
+$agents = array("detection.readwrite", "detection.dummy");
+$agent = $agents[0];
+
+if(isset($_GET["agent"])) {
+  $agent = $_GET["agent"];
+}
+
 require_once "MarkClient.php";
 $mark = new MarkClient();
 ?>
@@ -14,8 +21,20 @@ $mark = new MarkClient();
 <h1>Multi Agent Ranking Framework</h1>
 <p><?php echo date("Y-m-d H:i:s", time()) ?></p>
 
+<form style="margin-bottom: 10px" method="GET" class="form-inline">
+  <div class="form-group">
+    <label for="agent">Detection agent: </label>
+    <select class="form-control" id="agent" name="agent">
+      <?php foreach ($agents as $cur_agent) : ?>
+      <option <?= ($agent == $cur_agent) ? "selected" : "" ?> ><?= $cur_agent ?></option>
+      <?php endforeach ?>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Apply</button>
+</form>
+
 <?php
-$evidences = $mark->findEvidence("detection.readwrite");
+$evidences = $mark->findEvidence($agent);
 ?>
 
 <table class="table">

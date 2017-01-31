@@ -66,7 +66,7 @@ public class DetectionAgentProfile {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public final DetectionAgentInterface getTask()
+    public final DetectionAgentInterface createDetectionTask()
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException {
 

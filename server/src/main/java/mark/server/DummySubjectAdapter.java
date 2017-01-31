@@ -29,10 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mark.client.Client;
 import mark.core.ServerInterface;
 import mark.core.SubjectAdapter;
@@ -54,11 +51,6 @@ public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
         DummySuject ds = new DummySuject();
         ds.name = doc.getString("name");
         return ds;
-    }
-
-    @Override
-    public DummySuject getInstance() {
-        return new DummySuject();
     }
 
     @Override

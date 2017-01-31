@@ -49,6 +49,5 @@ public abstract class SubjectAdapter<T extends Subject> extends JsonDeserializer
     public abstract T readFromMongo(Document doc);
     public abstract T deserialize(JsonNode node);
 
-    public abstract T getInstance();
     public abstract ServerInterface<T> getDatastore(URL url);
 }

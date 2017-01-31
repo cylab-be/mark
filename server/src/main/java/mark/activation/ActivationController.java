@@ -120,7 +120,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
                                                 config.getSubjectAdapter(),
                                                 label,
                                                 profile,
-                                                profile.getTask()));
+                                                profile.createDetectionTask()));
 
                             } catch (ClassNotFoundException ex) {
                                 LOGGER.error(
@@ -177,7 +177,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
-                DetectionAgentInterface new_task = profile.getTask();
+                DetectionAgentInterface new_task = profile.createDetectionTask();
 
             } catch (ClassNotFoundException ex) {
                 throw new InvalidProfileException(

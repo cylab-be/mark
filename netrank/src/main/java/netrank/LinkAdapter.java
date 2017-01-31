@@ -66,10 +66,6 @@ public class LinkAdapter extends SubjectAdapter<Link> {
                 doc.getString(FIELD_SERVER));
     }
 
-    public Link getInstance() {
-        return new Link();
-    }
-
 
     public Link deserialize(JsonNode node) {
         return new Link(
