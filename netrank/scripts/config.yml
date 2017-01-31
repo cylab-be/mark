@@ -5,6 +5,9 @@
 mongo_host:     127.0.0.1
 mongo_port:     27017
 mongo_db:       MASFAD
+mongo_clean:    true
+
+update_interval:  3
 
 server_host:    127.0.0.1
 server_port:    8080

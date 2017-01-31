@@ -9,19 +9,21 @@ import mark.core.ServerInterface;
 import mark.core.Subject;
 
 /**
- * Dummy detection agent that reads some raw data from datastore and writes
- * two evidences. Requires a running server.
+ * Dummy detection agent that reads some data from datastore and writes
+ * two evidences.
  * @author Thibault Debatty
+ * @param <T> The type of subject we deal with
  */
-public class ReadWrite<T extends Subject> implements DetectionAgentInterface<T> {
+public class ReadWrite<T extends Subject>
+        implements DetectionAgentInterface<T> {
 
 
     @Override
-    public void analyze(
-            T subject,
-            String actual_trigger_label,
-            DetectionAgentProfile profile,
-            ServerInterface<T> datastore) throws Throwable {
+    public final void analyze(
+            final T subject,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface<T> datastore) throws Throwable {
 
         RawData[] data = datastore.findRawData(actual_trigger_label, subject);
 

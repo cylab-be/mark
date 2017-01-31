@@ -3,6 +3,6 @@
 # for every new detection.readwrite entry
 
 ---
-class_name:     mark.detection.Dummy
+class_name:     mark.detection.WOWA
 trigger_label:  detection.readwrite
-label:          detection.dummy
+label:          detection.WOWA
