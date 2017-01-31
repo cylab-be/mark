@@ -22,6 +22,12 @@ A MARK **server** consists of:
 
 The server is independant of the data that will be analyzed (the subject). Hence the actual implementation must provide a SubjectAdapter...
 
+## Requirements
+
+To build and run the MARK server, you will need:
+- java 7 or newer
+- maven
+- a mongo server
 
 ## Maven modules
 - **core:** contains core interface definitions (Evidence, RawData, ServerInterface)
