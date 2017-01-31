@@ -4,12 +4,27 @@ class MarkClient {
   private $url = "http://127.0.0.1:8080/";
 
   public function status() {
-
     return $this->exec("status", array());
   }
 
   public function url() {
     return $this->url;
+  }
+
+  /**
+   *
+   * @return String[]
+   */
+  public function getLabels() {
+    $status = $this->status();
+    $activation = $status->activation;
+
+    $labels = array();
+    foreach ($activation as $agent) {
+      $labels[] = $agent->label;
+    }
+
+    return $labels;
   }
 
   /**

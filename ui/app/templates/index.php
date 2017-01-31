@@ -7,15 +7,15 @@ $linkadapter = new LinkAdapter();
 echo $linkadapter->getInstance()->getClass();
 */
 
-$agents = array("detection.readwrite", "detection.dummy");
+require_once "MarkClient.php";
+$mark = new MarkClient();
+
+$agents = $mark->getLabels();
 $agent = $agents[0];
 
 if(isset($_GET["agent"])) {
   $agent = $_GET["agent"];
 }
-
-require_once "MarkClient.php";
-$mark = new MarkClient();
 ?>
 
 <h1>Multi Agent Ranking Framework</h1>
