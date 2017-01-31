@@ -48,7 +48,7 @@ public class RunTest extends TestCase {
         File temp = File.createTempFile("temp-file-name", ".tmp");
         String absolute_path = temp.getAbsolutePath();
         String temp_directory = absolute_path.
-    		    substring(0,absolute_path.lastIndexOf(File.separator));
+                substring(0, absolute_path.lastIndexOf(File.separator));
 
 
         DetectionAgentProfile agent =
