@@ -18,7 +18,7 @@ A MARK **server** consists of:
   - A **web server** (also based on Jetty) to serve the web interface. This web interface is implemented using PHP and JavaScript.
   - Optionaly: **data agents** to push data to the datastore. Data agents can be
     - **file based**: they read a file containing the data and push the content to the datastore
-    - **network based**: they open a tcp server that receives data (e.g. syslog) which is pushed to the dataster
+    - **network based**: they open a tcp server that receives data (e.g. syslog) which is pushed to the datastore
 
 The server is independant of the data that will be analyzed (the subject). Hence the actual implementation must provide a SubjectAdapter...
 
