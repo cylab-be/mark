@@ -24,6 +24,7 @@
 
 package mark.detection;
 
+import java.io.File;
 import junit.framework.TestCase;
 import mark.core.DetectionAgentProfile;
 import mark.activation.DummyClient;
@@ -43,11 +44,23 @@ public class RunTest extends TestCase {
         System.out.println("run");
 
         Run run_detector = new Run();
+
+        File temp = File.createTempFile("temp-file-name", ".tmp");
+        String absolute_path = temp.getAbsolutePath();
+        String temp_directory = absolute_path.
+    		    substring(0,absolute_path.lastIndexOf(File.separator));
+
+
+        DetectionAgentProfile agent =
+                DetectionAgentProfile.fromInputStream(getClass()
+                .getResourceAsStream("/detection.run.yml"));
+
+        agent.parameters.put(Run.KEY_WD, temp_directory);
+
         run_detector.analyze(
                 new DummySuject("Tibo"),
                 "actual.trigger",
-                DetectionAgentProfile.fromInputStream(getClass()
-                    .getResourceAsStream("/detection.run.yml")),
+                agent,
                 new DummyClient());
     }
 
