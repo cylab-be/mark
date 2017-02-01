@@ -22,10 +22,12 @@ import mark.core.ServerInterface;
  */
 public class FileSource implements DataAgentInterface {
 
+    public static final String SPEEDUP_KEY = "speedup";
+    public static final double DEFAULT_SPEEDUP = Double.MAX_VALUE;
+
     private final String regex =
             "^(\\d{10})\\..*\\s(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s"
             + "(\\S+)\\s(\\S+)\\s(\\S+)\\s(\\S+)\\s.*$";
-
 
     public final void run(
             final DataAgentProfile profile, final ServerInterface datastore)
@@ -33,13 +35,25 @@ public class FileSource implements DataAgentInterface {
 
         int line_count = 0;
 
+        double speedup = DEFAULT_SPEEDUP;
+        String speedup_string = profile.parameters.get(SPEEDUP_KEY);
+        if (speedup_string != null) {
+            try {
+                speedup = Double.valueOf(speedup_string);
+            } catch (NumberFormatException ex) {
+            }
+        }
+
+        int start_time = 0;
+        int first_data_time = 0;
+
+
         File data_file = new File(profile.parameters.get("file"));
         if (profile.path != null) {
             File profile_file = new File(profile.path);
             data_file = new File(profile_file.toURI().resolve(
                     profile.parameters.get("file")));
         }
-
         FileInputStream stream = new FileInputStream(data_file);
         BufferedReader in = new BufferedReader(new InputStreamReader(stream));
         String line = null;
@@ -53,6 +67,18 @@ public class FileSource implements DataAgentInterface {
             line_count++;
             RawData rd = parse(line);
             rd.label = profile.label;
+
+            if (start_time == 0) {
+                start_time = (int) (System.currentTimeMillis() / 1000);
+                first_data_time = rd.time;
+            }
+
+            // Simulated time for this new data
+            rd.time = rd.time - first_data_time + start_time;
+
+            long wait_time = (long) (1000 * (rd.time - start_time) / speedup);
+            Thread.sleep(wait_time);
+
             datastore.addRawData(rd);
         }
 
