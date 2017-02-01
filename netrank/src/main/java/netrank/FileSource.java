@@ -28,6 +28,7 @@ public class FileSource implements DataAgentInterface {
     private final String regex =
             "^(\\d{10})\\..*\\s(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s"
             + "(\\S+)\\s(\\S+)\\s(\\S+)\\s(\\S+)\\s.*$";
+    private Pattern pattern;
 
     public final void run(
             final DataAgentProfile profile, final ServerInterface datastore)
@@ -47,6 +48,7 @@ public class FileSource implements DataAgentInterface {
         int start_time = 0;
         int first_data_time = 0;
 
+        pattern = Pattern.compile(regex);
 
         File data_file = new File(profile.parameters.get("file"));
         if (profile.path != null) {
@@ -94,8 +96,8 @@ public class FileSource implements DataAgentInterface {
      * @throws Exception
      */
     protected final RawData parse(final String line) throws Exception {
-        Pattern p = Pattern.compile(regex);
-        Matcher match = p.matcher(line);
+
+        Matcher match = pattern.matcher(line);
 
         if (!match.matches()) {
             throw new Exception("Regex did not match line " + line);
