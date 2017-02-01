@@ -32,10 +32,13 @@ public class DetectionAgentProfile {
      */
     public String class_name;
 
+    /**
+     * The parameters that will be provided to the detector.
+     */
     public HashMap<String, String> parameters;
 
-    private static final Yaml PARSER = new Yaml(
-            new Constructor(DetectionAgentProfile.class));
+    private static final Yaml PARSER =
+            new Yaml(new Constructor(DetectionAgentProfile.class));
 
     /**
      * Read a detection agent profile from a YAML file.
@@ -60,23 +63,29 @@ public class DetectionAgentProfile {
 
     /**
      * Instantiate a detection agent for the provided subject.
-     * @param subject
      * @return
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @throws mark.core.InvalidProfileException if the profile is incorrect
+     * (generally due to an invalid class name).
      */
-    public final DetectionAgentInterface createDetectionTask()
-            throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException {
+    public final DetectionAgentInterface createInstance()
+            throws InvalidProfileException {
 
-        // Create analysis task
-        DetectionAgentInterface new_task =
-                (DetectionAgentInterface)
-                Class.forName(class_name)
-                .newInstance();
-
-        return new_task;
+        try {
+            return (DetectionAgentInterface)
+                    Class.forName(class_name).newInstance();
+        } catch (ClassNotFoundException ex) {
+            throw new InvalidProfileException(
+                    "Cannot instantiate data agent " + class_name,
+                    ex);
+        } catch (InstantiationException ex) {
+            throw new InvalidProfileException(
+                    "Cannot instantiate data agent " + class_name,
+                    ex);
+        } catch (IllegalAccessException ex) {
+            throw new InvalidProfileException(
+                    "Cannot instantiate data agent " + class_name,
+                    ex);
+        }
     }
 
     /**

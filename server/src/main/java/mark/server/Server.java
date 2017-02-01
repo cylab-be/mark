@@ -1,8 +1,8 @@
 package mark.server;
 
+import mark.core.InvalidProfileException;
 import mark.datastore.Datastore;
-import mark.data.DataAgentProfile;
-import mark.data.AbstractDataAgent;
+import mark.core.DataAgentProfile;
 import mark.webserver.WebServer;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +15,7 @@ import java.net.URLClassLoader;
 import java.util.LinkedList;
 import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
+import mark.data.DataAgentContainer;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -40,7 +41,7 @@ public class Server {
     private final Config config;
     private final Datastore datastore;
     private final WebServer web_server;
-    private final LinkedList<AbstractDataAgent> data_agents;
+    private final LinkedList<DataAgentContainer> data_agents;
     private final ActivationController activation_controller;
 
     /*
@@ -68,7 +69,7 @@ public class Server {
         this.web_server = new WebServer(config);
         this.activation_controller = new ActivationController(config);
         this.datastore = new Datastore(config, activation_controller);
-        this.data_agents = new LinkedList<AbstractDataAgent>();
+        this.data_agents = new LinkedList<DataAgentContainer>();
 
         String modules_dir_path = config.getModulesDirectory();
         if (modules_dir_path == null) {
@@ -93,7 +94,10 @@ public class Server {
         });
 
         for (File file : data_agent_files) {
-            data_agents.add(DataAgentProfile.fromFile(file).getInstance(config));
+            data_agents.add(
+                    new DataAgentContainer(
+                            DataAgentProfile.fromFile(file),
+                            config));
         }
 
         // Parse *.detection.yml files
@@ -134,7 +138,7 @@ public class Server {
         datastore.start();
 
         // Start data agents...
-        for (AbstractDataAgent agent : data_agents) {
+        for (DataAgentContainer agent : data_agents) {
             agent.start();
         }
 
@@ -148,7 +152,7 @@ public class Server {
     public final void stop() throws Exception {
         LOGGER.info("Stopping server...");
         LOGGER.info("Ask data agents to stop...");
-        for (AbstractDataAgent agent : data_agents) {
+        for (DataAgentContainer agent : data_agents) {
             agent.interrupt();
         }
 
@@ -169,7 +173,7 @@ public class Server {
 
     public final void awaitTermination() throws InterruptedException {
         LOGGER.info("Wait for data agents to finish...");
-        for (AbstractDataAgent agent : data_agents) {
+        for (DataAgentContainer agent : data_agents) {
             agent.join();
         }
 
@@ -244,7 +248,7 @@ public class Server {
      */
     public final void addDataAgentProfile(final DataAgentProfile profile)
             throws InvalidProfileException, MalformedURLException {
-        data_agents.add(profile.getInstance(config));
+        data_agents.add(new DataAgentContainer(profile, config));
     }
 
     private void startLogging() {

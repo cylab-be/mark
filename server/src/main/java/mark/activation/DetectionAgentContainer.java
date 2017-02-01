@@ -10,19 +10,7 @@ import mark.core.SubjectAdapter;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract implementation of a detection agent.
- * It implements the DetectionAgentInterface so it can be instantiated and
- * started by the server.
- *
- * The datastore field is lazy instantiated and transient such that, if we run
- * over an Ignite cluster, the field is not serialized and it will be
- * instantiated when it is run on the distant compute node.
- *
- * The datastore_factory is responsible for instantiating the correct
- * datastore implementation (real datastore or dummy datastore for testing).
- *
- * Some detection agents may be generic, or they can be designed for one type
- * of Subject, hence they should extend AbstractDetectionAgent<RealSubject>.
+ * Container for running a detection agent.
  *
  * @author Thibault Debatty
  * @param <T> The type of Subject that this detection agent can deal with
@@ -41,17 +29,27 @@ public class DetectionAgentContainer <T extends Subject>
 
     /**
      *
+     * @param subject
+     * @param datastore_url
+     * @param subject_adapter
+     * @param actual_trigger_label
+     * @param profile
+     * @param agent
      */
-    public DetectionAgentContainer(T subject, URL datastore_url,
-            SubjectAdapter<T> subject_adapter, String actual_trigger_label,
-            DetectionAgentProfile profile, DetectionAgentInterface<T> agent) {
+    public DetectionAgentContainer(
+            final T subject,
+            final URL datastore_url,
+            final SubjectAdapter<T> subject_adapter,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final DetectionAgentInterface<T> agent) {
+
         this.profile = profile;
         this.agent = agent;
         this.subject_adapter = subject_adapter;
         this.actual_trigger_label = actual_trigger_label;
         this.subject = subject;
         this.datastore_url = datastore_url;
-
     }
 
     /**

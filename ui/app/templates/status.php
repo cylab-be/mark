@@ -77,7 +77,7 @@ $igniteStatus = $mark->igniteStatus();
             console.log(detection_agent);
             graph_src += '"' + detection_agent.label +  '" [label="'
                     + detection_agent.class_name + '\n'
-                    + detection_agent.label + '"]; ';
+                    + detection_agent.label + '"];\n';
         });
 
         // 2. Add the edges

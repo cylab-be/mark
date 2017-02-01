@@ -7,7 +7,7 @@ import netrank.FileSource;
 import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
-import mark.data.DataAgentProfile;
+import mark.core.DataAgentProfile;
 
 /**
  *

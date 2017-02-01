@@ -2,7 +2,7 @@ package mark.activation;
 
 import mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
-import mark.server.InvalidProfileException;
+import mark.core.InvalidProfileException;
 import mark.core.DetectionAgentInterface;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,23 +120,8 @@ public class ActivationController<T extends Subject> extends SafeThread {
                                                 config.getSubjectAdapter(),
                                                 label,
                                                 profile,
-                                                profile.createDetectionTask()));
+                                                profile.createInstance()));
 
-                            } catch (ClassNotFoundException ex) {
-                                LOGGER.error(
-                                        "Cannot start agent "
-                                                + profile.class_name,
-                                        ex);
-                            } catch (IllegalAccessException ex) {
-                                LOGGER.error(
-                                        "Cannot start agent "
-                                                + profile.class_name,
-                                        ex);
-                            } catch (InstantiationException ex) {
-                                LOGGER.error(
-                                        "Cannot start agent "
-                                                + profile.class_name,
-                                        ex);
                             } catch (MalformedURLException ex) {
                                 LOGGER.error(
                                         "Cannot start agent "
@@ -177,21 +162,9 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
-                DetectionAgentInterface new_task = profile.createDetectionTask();
+                DetectionAgentInterface new_task = profile.createInstance();
 
-            } catch (ClassNotFoundException ex) {
-                throw new InvalidProfileException(
-                        "Invalid profile: " + profile.toString()
-                        + " : " + ex.getMessage(), ex);
-            } catch (IllegalAccessException ex) {
-                throw new InvalidProfileException(
-                        "Invalid profile: " + profile.toString()
-                                + " : " + ex.getMessage(), ex);
             } catch (IllegalArgumentException ex) {
-                throw new InvalidProfileException(
-                        "Invalid profile: " + profile.toString()
-                                + " : " + ex.getMessage(), ex);
-            } catch (InstantiationException ex) {
                 throw new InvalidProfileException(
                         "Invalid profile: " + profile.toString()
                                 + " : " + ex.getMessage(), ex);

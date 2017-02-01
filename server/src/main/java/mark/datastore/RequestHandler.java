@@ -305,7 +305,8 @@ public class RequestHandler implements ServerInterface {
      * @param subject
      * @return
      */
-    public Evidence[] findLastEvidences(String label, Subject subject) {
+    public final Evidence[] findLastEvidences(
+            final String label, final Subject subject) {
         Document query = new Document();
         // Find everything that starts with "label"
         Pattern regex = Pattern.compile("^" + label);

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.client.Client;
 import mark.core.RawData;
-import mark.data.DataAgentProfile;
+import mark.core.DataAgentProfile;
 import netrank.FileSource;
 import netrank.LinkAdapter;
 import mark.server.Config;

@@ -1,5 +1,6 @@
 package mark.server;
 
+import mark.core.InvalidProfileException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
