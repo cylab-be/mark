@@ -4,7 +4,7 @@
 ---
 mongo_host:     127.0.0.1
 mongo_port:     27017
-mongo_db:       MASFAD
+mongo_db:       MARK
 mongo_clean:    true
 
 update_interval:  3

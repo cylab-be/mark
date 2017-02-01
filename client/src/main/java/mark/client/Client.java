@@ -151,9 +151,20 @@ public class Client<T extends Subject> implements ServerInterface {
                 Evidence[].class);
     }
 
+    public Evidence[] findLastEvidences(
+            final String label, final Subject subject)
+            throws Throwable {
+        return datastore.invoke(
+                "findLastEvidences",
+                new Object[]{label, subject},
+                Evidence[].class);
+    }
+
     public final URL getURL() {
         return this.server_url;
     }
+
+
 
     /**
      * Helper class to deserialize raw data, using the subject adapter.

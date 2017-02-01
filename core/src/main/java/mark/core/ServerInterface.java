@@ -78,4 +78,16 @@ public interface ServerInterface<T extends Subject> {
     Evidence<T> findEvidenceById(String id) throws Throwable;
 
     URL getURL();
+
+    /**
+     * Find the evidences according to a pattern (that start with provided
+     * pattern), and if multiple evidences are found with same label, return
+     * the most recent one.
+     *
+     * @param trigger_label
+     * @param subject
+     * @return
+     */
+    public Evidence<T>[] findLastEvidences(String label, T subject)
+            throws Throwable;
 }

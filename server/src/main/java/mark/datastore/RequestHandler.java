@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import mark.activation.ActivationController;
 import mark.core.Subject;
 import mark.core.Evidence;
@@ -296,5 +297,41 @@ public class RequestHandler implements ServerInterface {
 
     public URL getURL() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param label
+     * @param subject
+     * @return
+     */
+    public Evidence[] findLastEvidences(String label, Subject subject) {
+        Document query = new Document();
+        // Find everything that starts with "label"
+        Pattern regex = Pattern.compile("^" + label);
+        query.append(LABEL, regex);
+
+        // ... corresponding to subject
+        adapter.writeToMongo(subject, query);
+
+        FindIterable<Document> documents = mongodb
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
+
+        HashMap<String, Evidence> evidences = new HashMap<String, Evidence>();
+        for (Document doc : documents) {
+            Evidence evidence = convertEvidence(doc);
+
+            Evidence inmap = evidences.get(evidence.label);
+            if (inmap == null) {
+                evidences.put(evidence.label, evidence);
+                continue;
+            }
+
+            if (evidence.time > inmap.time) {
+                evidences.put(evidence.label, evidence);
+            }
+        }
+        return evidences.values().toArray(new Evidence[evidences.size()]);
     }
 }
