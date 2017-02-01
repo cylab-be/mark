@@ -35,6 +35,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.ini4j.Wini;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +70,14 @@ public class WebServer {
         }
 
         LOGGER.info("Starting web interface at port 8000");
+
+        // Write config.ini file for PHP framework...
+        Wini wini = new Wini();
+        wini.put("config", "server_host", config.server_host);
+        wini.put("config", "server_port", config.server_port);
+        wini.put("config", "update_interval", config.update_interval);
+        wini.put("config", "adapter_class", config.adapter_class);
+        wini.store(new File(config.webserver_root, "config.ini"));
 
         // Handle php files
         ServletContextHandler php_handler = new ServletContextHandler();
@@ -108,7 +117,7 @@ public class WebServer {
         if (server == null) {
             return;
         }
-        
+
         server.stop();
     }
 }

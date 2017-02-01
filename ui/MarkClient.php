@@ -1,7 +1,20 @@
 <?php
 
 class MarkClient {
+
+  private $config = array();
   private $url = "http://127.0.0.1:8080/";
+  public $update_interval;
+  public $adapter_class;
+
+  public function __construct() {
+    $config = parse_ini_file("./config.ini");
+    $this->config = $config;
+
+    $this->url = "http://" . $config["server_host"] . ":" . $config["server_port"];
+    $this->update_interval = $config["update_interval"];
+    $this->adapter_class = $config["adapter_class"];
+  }
 
   public function status() {
     return $this->exec("status", array());
