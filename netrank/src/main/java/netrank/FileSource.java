@@ -14,22 +14,33 @@ import mark.core.ServerInterface;
 
 /**
  *
- * A generic data agent that reads a file as fast as possible, and parse it
- * line by line using a regular expression.
- * This data agent is usually used for testing detection agents or a log file.
- * Hence it does simply print some stats at the end of execution...
+ * A generic data agent that reads a file and parse it line by line using a
+ * regular expression.
+ * This data agent is usually used for testing detection agents, or to run a
+ * demo.
  * @author Thibault Debatty
  */
 public class FileSource implements DataAgentInterface {
 
+    /**
+     * Use this key in the parameters map to set the speedup for reading the
+     * file.
+     */
     public static final String SPEEDUP_KEY = "speedup";
-    public static final double DEFAULT_SPEEDUP = Double.MAX_VALUE;
+
+    private static final double DEFAULT_SPEEDUP = Double.MAX_VALUE;
 
     private final String regex =
             "^(\\d{10})\\..*\\s(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s"
             + "(\\S+)\\s(\\S+)\\s(\\S+)\\s(\\S+)\\s.*$";
     private Pattern pattern;
 
+    /**
+     *
+     * @param profile
+     * @param datastore
+     * @throws Throwable
+     */
     public final void run(
             final DataAgentProfile profile, final ServerInterface datastore)
             throws Throwable {
@@ -108,12 +119,8 @@ public class FileSource implements DataAgentInterface {
         RawData data = new RawData();
         data.time = Integer.valueOf(match.group(1));
         link.client = match.group(2);
-
-        URI uri = new URI(match.group(6));
-        String domain = uri.getHost();
-        link.server = domain;
+        link.server = new URI(match.group(6)).getHost();
         data.subject = link;
-
         data.data = line;
         return data;
     }
