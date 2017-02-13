@@ -28,6 +28,10 @@ public class Frequency implements DetectionAgentInterface {
      * Sampling interval (in second).
      */
     public static final int SAMPLING_INTERVAL = 2; // in seconds
+
+    /**
+     * Minimum peak to generate an evidence.
+     */
     public static final double DETECTION_THRESHOLD = 10.0;
 
     static int pow2gt(final int value) {
@@ -59,7 +63,7 @@ public class Frequency implements DetectionAgentInterface {
         return result;
     }
 
-    private double average(double[] values) {
+    private double average(final double[] values) {
         double result = 0;
         for (double value : values) {
             result += value;
@@ -69,11 +73,11 @@ public class Frequency implements DetectionAgentInterface {
     }
 
     @Override
-    public void analyze(
-            Subject subject,
-            String actual_trigger_label,
-            DetectionAgentProfile profile,
-            ServerInterface datastore) throws Throwable {
+    public final void analyze(
+            final Subject subject,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface datastore) throws Throwable {
 
         RawData[] raw_data = datastore.findRawData(
                 actual_trigger_label, subject);
@@ -141,7 +145,7 @@ public class Frequency implements DetectionAgentInterface {
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found peak for frequency " + freqs[i] + "\n"
-                    + "= " + (1/freqs[i]) + " seconds\n";
+                    + "= " + (1 / freqs[i]) + " seconds\n";
 
             datastore.addEvidence(evidence);
         }

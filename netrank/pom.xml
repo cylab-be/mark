@@ -38,6 +38,28 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.16</version>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>verify</phase>
+                        <configuration>
+                            <configLocation>../mark/checkstyle.xml</configLocation>
+                            <cacheFile>../netrank/target/checkstyle_cache</cacheFile>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <linkXRef>false</linkXRef>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -46,7 +68,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>server</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -66,6 +88,11 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-proxy</artifactId>
+            <version>9.0.2.v20130417</version>
         </dependency>
     </dependencies>
 </project>

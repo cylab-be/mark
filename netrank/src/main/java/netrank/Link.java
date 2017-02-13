@@ -32,32 +32,47 @@ import mark.core.Subject;
  */
 public class Link implements Subject {
 
-    public String client;
-    public String server;
+    private String client;
+    private String server;
 
+    /**
+     * Undefined link.
+     */
     public Link() {
     }
 
-    public Link(String client, String server) {
+    /**
+     *
+     * @param client
+     * @param server
+     */
+    public Link(final String client, final String server) {
         this.client = client;
         this.server = server;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return client + " : " + server;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int hash = 3;
-        hash = 59 * hash + (this.client != null ? this.client.hashCode() : 0);
-        hash = 59 * hash + (this.server != null ? this.server.hashCode() : 0);
+        hash = 59 * hash;
+        if (this.client != null) {
+            hash += this.client.hashCode();
+        }
+        hash = 59 * hash;
+
+        if (this.server != null) {
+            hash += this.server.hashCode();
+        }
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -65,12 +80,25 @@ public class Link implements Subject {
             return false;
         }
         final Link other = (Link) obj;
-        if ((this.client == null) ? (other.client != null) : !this.client.equals(other.client)) {
-            return false;
-        }
-        if ((this.server == null) ? (other.server != null) : !this.server.equals(other.server)) {
-            return false;
-        }
-        return true;
+
+        return this.client.equals(other.client)
+                && this.server.equals(other.client);
+
+    }
+
+    /**
+     * Get client IP.
+     * @return
+     */
+    public final String getClient() {
+        return client;
+    }
+
+    /**
+     * Get server name.
+     * @return
+     */
+    public final String getServer() {
+        return server;
     }
 }

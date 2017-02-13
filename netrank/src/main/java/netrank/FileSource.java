@@ -39,7 +39,7 @@ public class FileSource implements DataAgentInterface {
      *
      * @param profile
      * @param datastore
-     * @throws Throwable
+     * @throws Throwable if something went wrong...
      */
     public final void run(
             final DataAgentProfile profile, final ServerInterface datastore)
@@ -53,6 +53,7 @@ public class FileSource implements DataAgentInterface {
             try {
                 speedup = Double.valueOf(speedup_string);
             } catch (NumberFormatException ex) {
+                speedup = DEFAULT_SPEEDUP;
             }
         }
 
@@ -114,13 +115,13 @@ public class FileSource implements DataAgentInterface {
             throw new Exception("Regex did not match line " + line);
         }
 
-        Link link = new Link();
+
 
         RawData data = new RawData();
         data.time = Integer.valueOf(match.group(1));
-        link.client = match.group(2);
-        link.server = new URI(match.group(6)).getHost();
-        data.subject = link;
+        data.subject = new Link(
+                match.group(2),
+                new URI(match.group(6)).getHost());
         data.data = line;
         return data;
     }

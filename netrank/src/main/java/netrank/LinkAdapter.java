@@ -55,26 +55,40 @@ public class LinkAdapter extends SubjectAdapter<Link> {
 
     }
 
-    public void writeToMongo(Link link, Document doc) {
-        doc.append(FIELD_CLIENT, link.client);
-        doc.append(FIELD_SERVER, link.server);
+    /**
+     *
+     * @param link
+     * @param doc
+     */
+    public final void writeToMongo(final Link link, final Document doc) {
+        doc.append(FIELD_CLIENT, link.getClient());
+        doc.append(FIELD_SERVER, link.getServer());
     }
 
-    public Link readFromMongo(Document doc) {
+    /**
+     *
+     * @param doc
+     * @return
+     */
+    public final Link readFromMongo(final Document doc) {
         return new Link(
                 doc.getString(FIELD_CLIENT),
                 doc.getString(FIELD_SERVER));
     }
 
-
-    public Link deserialize(JsonNode node) {
+    /**
+     *
+     * @param node
+     * @return
+     */
+    public final Link deserialize(final JsonNode node) {
         return new Link(
                 node.get("client").textValue(),
                 node.get("server").textValue());
     }
 
     @Override
-    public ServerInterface<Link> getDatastore(URL url) {
+    public final ServerInterface<Link> getDatastore(final URL url) {
         return new Client<Link>(url, this);
     }
 }
