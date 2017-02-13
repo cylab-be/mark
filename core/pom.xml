@@ -15,6 +15,15 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Thibault Debatty</name>
+            <email>thibault.debatty@rma.ac.be</email>
+            <organization>cylab.be</organization>
+            <organizationUrl>http://cylab.be</organizationUrl>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
