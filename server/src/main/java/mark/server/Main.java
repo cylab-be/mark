@@ -2,16 +2,13 @@ package mark.server;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 
 /**
@@ -28,7 +25,6 @@ public final class Main {
      * @param args
      * @throws org.apache.commons.cli.ParseException
      * @throws java.io.FileNotFoundException
-     * @throws mark.server.InvalidProfileException
      * @throws java.net.MalformedURLException
      */
     public static void main(final String[] args)

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>mark</groupId>
+        <groupId>info.debatty.mark</groupId>
         <artifactId>mark</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>../mark/pom.xml</relativePath>
@@ -68,7 +68,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>server</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>

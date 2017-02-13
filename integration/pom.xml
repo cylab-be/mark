@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>mark</groupId>
+        <groupId>info.debatty.mark</groupId>
         <artifactId>mark</artifactId>
         <version>0.1-SNAPSHOT</version>
         <relativePath>../mark/pom.xml</relativePath>
@@ -71,7 +71,13 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>netrank</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>server</artifactId>
@@ -84,13 +90,6 @@
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
             <version>2.24</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>netrank</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

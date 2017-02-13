@@ -24,8 +24,8 @@
 package netrank;
 
 import junit.framework.TestCase;
-import mark.core.DetectionAgentProfile;
 import mark.activation.DummyClient;
+import mark.core.DetectionAgentProfile;
 
 /**
  *
