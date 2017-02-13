@@ -6,6 +6,7 @@
     <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>core</name>
+    <description>Core interfaces for the MARK server.</description>
     <url>https://github.com/RUCD/mark</url>
 
     <licenses>
