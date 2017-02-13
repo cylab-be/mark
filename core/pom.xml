@@ -3,7 +3,7 @@
 
     <groupId>info.debatty.mark</groupId>
     <artifactId>core</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>core</name>
     <description>Core interfaces for the MARK server.</description>
@@ -33,7 +33,7 @@
         <connection>scm:git:git@github.com:RUCD/mark.git</connection>
         <developerConnection>scm:git:git@github.com:RUCD/mark.git</developerConnection>
         <url>git@github.com:RUCD/mark.git</url>
-        <tag>v0.0.2</tag>
+        <tag>v0.1</tag>
     </scm>
 
     <distributionManagement>
