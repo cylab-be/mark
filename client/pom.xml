@@ -5,38 +5,18 @@
     <parent>
         <groupId>info.debatty.mark</groupId>
         <artifactId>mark</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>../mark/pom.xml</relativePath>
+        <version>0.0.3-SNAPSHOT</version>
+        <relativePath>../mark</relativePath>
     </parent>
 
     <artifactId>client</artifactId>
     <packaging>jar</packaging>
     <name>client</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                        <id>dependency-analyze</id>
-                        <phase>test</phase>
-                        <configuration>
-                            <failOnWarning>true</failOnWarning>
-                            <ignoredDependencies>
-                            </ignoredDependencies>
-                        </configuration>
-                        <goals>
-                            <goal>analyze-only</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -59,11 +39,13 @@
             <artifactId>jsonrpc4j</artifactId>
             <version>1.4.2</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.7.2</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>

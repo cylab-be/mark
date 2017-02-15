@@ -5,8 +5,8 @@
     <parent>
         <groupId>info.debatty.mark</groupId>
         <artifactId>mark</artifactId>
-        <version>0.1-SNAPSHOT</version>
-        <relativePath>../mark/pom.xml</relativePath>
+        <version>0.0.3-SNAPSHOT</version>
+        <relativePath>../mark</relativePath>
     </parent>
 
 
@@ -14,31 +14,9 @@
     <packaging>jar</packaging>
     <name>netrank</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                    <execution>
-                      <id>dependency-analyze</id>
-                      <phase>test</phase>
-                      <configuration>
-                          <failOnWarning>true</failOnWarning>
-                          <ignoredDependencies>
-                          </ignoredDependencies>
-                      </configuration>
-                      <goals>
-                        <goal>analyze-only</goal>
-                      </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -88,6 +66,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-proxy</artifactId>
