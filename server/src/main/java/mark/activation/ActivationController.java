@@ -21,6 +21,8 @@ import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
+import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,16 @@ public class ActivationController<T extends Subject> extends SafeThread {
 
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
-        ignite_config.setClientMode(!config.start_ignite_server);
+        ignite_config.setClientMode(!config.ignite_start_server);
+
+        if (!config.ignite_autodiscovery) {
+            // Disable autodiscovery
+            TcpDiscoverySpi spi = new TcpDiscoverySpi();
+            TcpDiscoveryVmIpFinder ip_finder = new TcpDiscoveryVmIpFinder();
+            ip_finder.setAddresses(new LinkedList<String>());
+            spi.setIpFinder(ip_finder);
+            ignite_config.setDiscoverySpi(spi);
+        }
 
         // Start Ignite framework..
         if (Ignition.state() == IgniteState.STARTED) {

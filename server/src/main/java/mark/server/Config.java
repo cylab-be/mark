@@ -65,6 +65,7 @@ public class Config {
         conf.start_webserver = false;
         conf.update_interval = 1;
         conf.mongo_clean = true;
+        conf.ignite_autodiscovery = false;
 
         return conf;
     }
@@ -120,7 +121,13 @@ public class Config {
      * Useful for testing or small installation, to execute the detection
      * tasks on the same server.
      */
-    public boolean start_ignite_server = true;
+    public boolean ignite_start_server = true;
+
+    /**
+     * Enable ignite autodiscovery.
+     * Disabling is useful for testing or small setups.
+     */
+    public boolean ignite_autodiscovery = true;
 
     /**
      * Instantiate a new default configuration.
