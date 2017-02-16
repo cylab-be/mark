@@ -2,6 +2,7 @@ package mark.activation;
 
 import mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import mark.core.InvalidProfileException;
 import mark.core.DetectionAgentInterface;
 import java.util.Collections;
@@ -62,7 +63,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
             // Disable autodiscovery
             TcpDiscoverySpi spi = new TcpDiscoverySpi();
             TcpDiscoveryVmIpFinder ip_finder = new TcpDiscoveryVmIpFinder();
-            ip_finder.setAddresses(new LinkedList<String>());
+            ip_finder.setAddresses(Arrays.asList("127.0.0.1"));
             spi.setIpFinder(ip_finder);
             ignite_config.setDiscoverySpi(spi);
         }
