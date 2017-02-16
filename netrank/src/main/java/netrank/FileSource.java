@@ -62,12 +62,7 @@ public class FileSource implements DataAgentInterface {
 
         pattern = Pattern.compile(regex);
 
-        File data_file = new File(profile.parameters.get("file"));
-        if (profile.path != null) {
-            File profile_file = new File(profile.path);
-            data_file = new File(profile_file.toURI().resolve(
-                    profile.parameters.get("file")));
-        }
+        File data_file = profile.getPath(profile.parameters.get("file"));
         FileInputStream stream = new FileInputStream(data_file);
         BufferedReader in = new BufferedReader(new InputStreamReader(stream));
         String line = null;
