@@ -8,5 +8,8 @@ services:
 install: cd mark && mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
 script: mvn clean install -Dgpg.skip=true
 
+notifications:
+  slack: cylab-be:KwlOCPIsQYUW0bmZsVBrrQnP
+
 #after_success:
 #  - mvn clean cobertura:cobertura coveralls:report
