@@ -3,9 +3,13 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
+
+NETRANK=`ls "$bin/../target/netrank-"*".jar" | sort -n | head -1`
+SERVER=`ls "$bin/../../server/target/server-"*".jar" | sort -n | head -1`
+
 # copy masfad2.jar to the modules directory, so the server can find it use the
 # masfad2 agents
-cp "$bin/../target/netrank-0.1-SNAPSHOT.jar" "$bin/modules/"
+cp "$NETRANK" "$bin/modules/"
 
 # start the server with appropriate config file
-java -Xms1024m -jar "$bin/../../server/target/server-0.1-SNAPSHOT.jar" -c "$bin/config.yml"
+java -Xms1024m -jar "$SERVER" -c "$bin/config.yml"

@@ -1,3 +1,6 @@
+# Is written by the server at each start...
+ui/config.ini
+
 *.class
 *.log
 
