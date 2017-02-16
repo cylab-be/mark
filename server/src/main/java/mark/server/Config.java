@@ -40,7 +40,7 @@ public class Config {
     public static final Config fromFile(final File file)
             throws FileNotFoundException {
         Config conf = Config.fromInputStream(new FileInputStream(file));
-        conf.file = file;
+        conf.path = file;
         return conf;
     }
 
@@ -75,7 +75,7 @@ public class Config {
      * The path to this actual configuration file. Useful as some path are
      * relative to this config file...
      */
-    private File file;
+    private File path;
 
     /**
      * Folder containing modules: jar files (if any) and activation files.
@@ -148,16 +148,15 @@ public class Config {
     /**
      *
      * @return
-     * @throws mark.server.InvalidProfileException
+     * @throws InvalidProfileException
      */
-    public SubjectAdapter getSubjectAdapter() throws InvalidProfileException {
+    public final SubjectAdapter getSubjectAdapter()
+            throws InvalidProfileException {
         try {
             return (SubjectAdapter) Class.forName(adapter_class).newInstance();
-        } catch (ClassNotFoundException ex) {
-            throw new InvalidProfileException("Adapter class is invalid", ex);
-        } catch (InstantiationException ex) {
-            throw new InvalidProfileException("Adapter class is invalid", ex);
-        } catch (IllegalAccessException ex) {
+        } catch (ClassNotFoundException
+                | InstantiationException
+                | IllegalAccessException ex) {
             throw new InvalidProfileException("Adapter class is invalid", ex);
         }
     }
@@ -171,11 +170,26 @@ public class Config {
      *
      * @return null if the path is incorrect.
      */
-    final String getModulesDirectory() {
-        if (file == null) {
-            return null;
+    final File getModulesDirectory() throws FileNotFoundException {
+
+        File modules_file = new File(modules);
+
+        if (!modules_file.isAbsolute()) {
+            // modules is a relative path...
+            if (path == null) {
+                throw new FileNotFoundException(
+                    "provided modules directory is not valid (not a directory "
+                            + "or no a valid path)");
+            }
+            modules_file = new File(path.toURI().resolve(modules));
         }
 
-        return file.toURI().resolve(modules).getPath();
+        if (!modules_file.isDirectory()) {
+            throw new FileNotFoundException(
+                    "provided modules directory is not valid (not a directory "
+                            + "or no a valid path)");
+        }
+
+        return modules_file;
     }
 }

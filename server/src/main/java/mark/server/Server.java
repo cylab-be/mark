@@ -71,20 +71,17 @@ public class Server {
         this.datastore = new Datastore(config, activation_controller);
         this.data_agents = new LinkedList<DataAgentContainer>();
 
-        String modules_dir_path = config.getModulesDirectory();
-        if (modules_dir_path == null) {
-            LOGGER.info("Modules directory is not valid, skipping...");
+
+        File modules_dir;
+        try {
+            modules_dir = config.getModulesDirectory();
+        } catch (FileNotFoundException ex) {
+            LOGGER.warn(ex.getMessage());
             return;
         }
 
-        File modules_dir = new File(modules_dir_path);
         LOGGER.info("Parsing modules directory "
                 + modules_dir.getAbsolutePath());
-
-        if (!modules_dir.isDirectory()) {
-            LOGGER.info("Not a directory, skipping...");
-            return;
-        }
 
         // Parse *.data.yml files
         File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
@@ -197,18 +194,11 @@ public class Server {
             InvalidProfileException {
 
 
-        String modules_dir_path = config.getModulesDirectory();
-        if (modules_dir_path == null) {
-            LOGGER.info("Modules directory is not valid, skipping...");
-            return;
-        }
-
-        File modules_dir = new File(modules_dir_path);
-        LOGGER.info("Parsing modules directory "
-                + modules_dir.getAbsolutePath());
-
-        if (!modules_dir.isDirectory()) {
-            LOGGER.info("Not a directory, skipping...");
+        File modules_dir;
+        try {
+            modules_dir = config.getModulesDirectory();
+        } catch (FileNotFoundException ex) {
+            LOGGER.warn(ex.getMessage());
             return;
         }
 

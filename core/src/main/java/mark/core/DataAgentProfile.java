@@ -1,12 +1,10 @@
 package mark.core;
 
-import mark.core.DataAgentInterface;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
-import mark.core.InvalidProfileException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -31,7 +29,10 @@ public class DataAgentProfile {
      */
     public Map<String, String> parameters;
 
-    public String path;
+    /**
+     * The path to the profile file, can be used to compute relative paths.
+     */
+    public File path;
 
     private static final Yaml PARSER =
             new Yaml(new Constructor(DataAgentProfile.class));
@@ -46,7 +47,7 @@ public class DataAgentProfile {
             throws FileNotFoundException {
         DataAgentProfile profile =
                 DataAgentProfile.fromInputStream(new FileInputStream(file));
-        profile.path = file.getAbsolutePath();
+        profile.path = file;
         return profile;
     }
 
@@ -83,5 +84,29 @@ public class DataAgentProfile {
                     "Cannot instantiate data agent " + class_name,
                     ex);
         }
+    }
+
+    /**
+     * Compute the File corresponding to this filename, which can be an
+     * absolute path, or a relative path to this data agent profile file.
+     * @param filename
+     * @return
+     * @throws FileNotFoundException
+     */
+    public final File getPath(final String filename)
+            throws FileNotFoundException {
+        File file = new File(filename);
+
+        if (!file.isAbsolute()) {
+            // modules is a relative path...
+            if (path == null) {
+                throw new FileNotFoundException(
+                    "provided modules directory is not valid (not a directory "
+                            + "or no a valid path)");
+            }
+            file = new File(path.toURI().resolve(filename));
+        }
+
+        return file;
     }
 }
