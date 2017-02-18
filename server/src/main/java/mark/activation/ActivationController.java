@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import mark.core.Evidence;
@@ -41,7 +42,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
     private final ExecutorService executor_service;
 
     // events is a table of label => subjects
-    private Map<String, HashSet<T>> events;
+    private volatile Map<String, Set<T>> events;
     private final Config config;
 
     /**
@@ -91,12 +92,8 @@ public class ActivationController<T extends Subject> extends SafeThread {
     @Override
     public final void doRun() throws Throwable {
 
-        Map<String, HashSet<T>> local_events = this.events;
-
-        // Synchronized map has poor performance! should be replaced by
-        // a concurrent hashmpap...
-        this.events = Collections.synchronizedMap(
-                new HashMap<String, HashSet<T>>());
+        Map<String, Set<T>> local_events;
+        this.events = new HashMap<>();
 
         while (true) {
             Thread.sleep(1000 * config.update_interval);
@@ -106,45 +103,48 @@ public class ActivationController<T extends Subject> extends SafeThread {
             }
 
             // Clone the list of events and clear
-             local_events = this.events;
-            this.events = Collections.synchronizedMap(
-                new HashMap<String, HashSet<T>>());
+            synchronized (this) {
+                local_events = this.events;
+                this.events = new HashMap<>();
+            }
 
             // process the events:
             // for each received label find the agents that must be triggered
             // then spawn one agent for each subject
-            for (Map.Entry<String, HashSet<T>> entry : local_events.entrySet()) {
+            for (Map.Entry<String, Set<T>> entry : local_events.entrySet()) {
                 String label = entry.getKey();
 
                 for (DetectionAgentProfile profile : profiles) {
-                    if (profile.match(label)) {
-                        for (T subject : entry.getValue()) {
-                            try {
-                                LOGGER.debug(
-                                        "Trigger detector {} for subject {}",
-                                        profile.class_name,
-                                        subject.toString());
+                    if (!profile.match(label)) {
+                        continue;
+                    }
 
-                                executor_service.submit(
-                                        new DetectionAgentContainer(
-                                                subject,
-                                                config.getDatastoreUrl(),
-                                                config.getSubjectAdapter(),
-                                                label,
-                                                profile,
-                                                profile.createInstance()));
+                    for (T subject : entry.getValue()) {
+                        try {
+                            LOGGER.debug(
+                                    "Trigger detector {} for subject {}",
+                                    profile.class_name,
+                                    subject.toString());
 
-                            } catch (MalformedURLException ex) {
-                                LOGGER.error(
-                                        "Cannot start agent "
-                                                + profile.class_name,
-                                        ex);
-                            } catch (InvalidProfileException ex) {
-                                LOGGER.error(
-                                        "Cannot start agent "
-                                                + profile.class_name,
-                                        ex);
-                            }
+                            executor_service.submit(
+                                    new DetectionAgentContainer(
+                                            subject,
+                                            config.getDatastoreUrl(),
+                                            config.getSubjectAdapter(),
+                                            label,
+                                            profile,
+                                            profile.createInstance()));
+
+                        } catch (MalformedURLException ex) {
+                            LOGGER.error(
+                                    "Cannot start agent "
+                                            + profile.class_name,
+                                    ex);
+                        } catch (InvalidProfileException ex) {
+                            LOGGER.error(
+                                    "Cannot start agent "
+                                            + profile.class_name,
+                                    ex);
                         }
                     }
                 }
@@ -208,12 +208,12 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * Trigger required tasks for this new RawData.
      * @param data
      */
-    public final void notifyRawData(final RawData<T> data) {
+    public final synchronized void notifyRawData(final RawData<T> data) {
 
-        HashSet<T> set = events.get(data.label);
+        Set<T> set = events.get(data.label);
 
         if (set == null) {
-            set = new HashSet<T>();
+            set = new HashSet<>();
             events.put(data.label, set);
         }
 
@@ -224,11 +224,11 @@ public class ActivationController<T extends Subject> extends SafeThread {
      *
      * @param evidence
      */
-    public final void notifyEvidence(final Evidence<T> evidence) {
-        HashSet<T> set = events.get(evidence.label);
+    public final synchronized void notifyEvidence(final Evidence<T> evidence) {
+        Set<T> set = events.get(evidence.label);
 
         if (set == null) {
-            set = new HashSet<T>();
+            set = new HashSet<>();
             events.put(evidence.label, set);
         }
 
