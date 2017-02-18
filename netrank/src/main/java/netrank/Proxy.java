@@ -29,18 +29,24 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.core.DataAgentInterface;
 import mark.core.DataAgentProfile;
+import mark.core.RawData;
 import mark.core.ServerInterface;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.proxy.ConnectHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.proxy.ProxyServlet;
-import org.eclipse.jetty.server.AbstractNCSARequestLog;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.RequestLog;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
@@ -66,17 +72,20 @@ public class Proxy implements DataAgentInterface {
      * @param datastore
      * @throws Throwable if something went wrong...
      */
+    @Override
     public final void run(
             final DataAgentProfile profile, final ServerInterface datastore)
             throws Throwable {
-        Server server = new Server(8080);
+        Server server = new Server(3128);
 
         HandlerCollection handlers = new HandlerCollection();
         server.setHandler(handlers);
 
+        ServletHolder servlet_holder = new ServletHolder(new MyProxyServlet());
+        servlet_holder.setInitParameter("maxThreads", "8");
+
         ServletHandler servlet_handler = new ServletHandler();
-        servlet_handler.addServletWithMapping(
-                new ServletHolder(new MyProxyServlet(datastore)), "/*");
+        servlet_handler.addServletWithMapping(servlet_holder, "/*");
         handlers.addHandler(servlet_handler);
 
         // Setup proxy handler to handle CONNECT methods
@@ -84,29 +93,22 @@ public class Proxy implements DataAgentInterface {
         handlers.addHandler(proxy);
 
         RequestLogHandler log_handler = new RequestLogHandler();
-        log_handler.setRequestLog(new MyLogger());
+        log_handler.setRequestLog(new MyLogger(profile, datastore));
         handlers.addHandler(log_handler);
 
         //server.setHandler(servletHandler);
         server.start();
         server.join();
-
     }
 
     /**
      * Proxies the received requests.
      */
     public static final class MyProxyServlet extends ProxyServlet {
-        private final ServerInterface datastore;
-
-        private MyProxyServlet(final ServerInterface datastore) {
-            this.datastore = datastore;
-        }
 
         @Override
         public void init(final ServletConfig config) throws ServletException {
             super.init(config);
-            System.out.println(">> init done !");
         }
 
         @Override
@@ -124,22 +126,144 @@ public class Proxy implements DataAgentInterface {
     /**
      * Special logger that will write requests to Datastore.
      */
-    private static class MyLogger extends AbstractNCSARequestLog {
+    private static final class MyLogger extends AbstractLifeCycle
+            implements RequestLog {
 
-        MyLogger() {
-            setExtended(true);
-            setLogLatency(true);
+        private final ServerInterface datastore;
+        private DataAgentProfile profile;
+
+        private MyLogger(
+                final DataAgentProfile profile,
+                final ServerInterface datastore) {
+            this.datastore = datastore;
+            this.profile = profile;
         }
 
         @Override
-        protected boolean isEnabled() {
-            return true;
-        }
+        public void log(final Request request, final Response response) {
+            HTTPLogLine log_line = new HTTPLogLine(request, response);
 
-        @Override
-        public void write(final String string) throws IOException {
-            System.out.println(string);
+            RawData<Link> data = new RawData<>();
+            data.label = profile.label;
+            data.subject = new Link(
+                    log_line.getRemoteAddress(),
+                    log_line.getServerName());
+            data.time = (int) (log_line.getTime() / 1000);
+            data.data = log_line.toString();
+            try {
+                datastore.addRawData(data);
+            } catch (Throwable ex) {
+                Logger.getLogger(
+                        Proxy.class.getName()).log(
+                                Level.SEVERE, ex.getMessage(), ex);
+            }
         }
+    }
+}
+
+/**
+ * Represents a single line in a http request log file.
+ * @author Thibault Debatty
+ */
+class HTTPLogLine {
+    private final String server_name;
+    private final int status;
+    private final long content_length;
+    private final String protocol;
+    private final String uri;
+    private final String method;
+    private final long time;
+    private final String remote_address;
+
+    HTTPLogLine(final Request request, final Response response) {
+        this.server_name = request.getServerName();
+        this.remote_address = request.getRemoteAddr();
+        this.time = request.getTimeStamp();
+        this.method = request.getMethod();
+        this.uri = request.getUri().toString();
+        this.protocol = request.getProtocol();
+        this.content_length = response.getContentLength();
+        this.status = response.getStatus();
+        //System.out.println(response.getHeaderNames());
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getServerName() {
+        return server_name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int getStatus() {
+        return status;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public long getContentLength() {
+        return content_length;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getUri() {
+        return uri;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getMethod() {
+        return method;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public long getTime() {
+        return time;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getRemoteAddress() {
+        return remote_address;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String toString() {
+        return ""
+                + this.time / 1000
+                + " - "
+                + remote_address + " "
+                + status + " "
+                + content_length + " "
+                + method + " "
+                + uri;
 
     }
 }

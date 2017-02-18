@@ -91,6 +91,8 @@ public class ActivationController<T extends Subject> extends SafeThread {
     @Override
     public final void doRun() throws Throwable {
 
+        Map<String, HashSet<T>> local_events = this.events;
+
         // Synchronized map has poor performance! should be replaced by
         // a concurrent hashmpap...
         this.events = Collections.synchronizedMap(
@@ -104,16 +106,14 @@ public class ActivationController<T extends Subject> extends SafeThread {
             }
 
             // Clone the list of events and clear
-            HashSet<Map.Entry<String, HashSet<T>>> local_events =
-                    new HashSet<Map.Entry<String, HashSet<T>>>(
-                            events.entrySet());
+             local_events = this.events;
             this.events = Collections.synchronizedMap(
                 new HashMap<String, HashSet<T>>());
 
             // process the events:
             // for each received label find the agents that must be triggered
             // then spawn one agent for each subject
-            for (Map.Entry<String, HashSet<T>> entry : local_events) {
+            for (Map.Entry<String, HashSet<T>> entry : local_events.entrySet()) {
                 String label = entry.getKey();
 
                 for (DetectionAgentProfile profile : profiles) {

@@ -28,6 +28,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jetty.version>9.2.20.v20161216</jetty.version>
     </properties>
 
         <scm>
@@ -71,6 +72,7 @@
                         <phase>test</phase>
                         <configuration>
                             <failOnWarning>true</failOnWarning>
+                            <ignoreNonCompile>true</ignoreNonCompile>
                             <ignoredDependencies>
                                 <ignoreDependency>javax.portlet:portlet-api:*</ignoreDependency>
                                 <ignoreDependency>org.slf4j:slf4j-log4j12:*</ignoreDependency>
