@@ -56,6 +56,8 @@
                                     <mainClass>mark.server.Main</mainClass>
                                 </transformer>
                             </transformers>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>standalone</shadedClassifierName>
                         </configuration>
                     </execution>
                 </executions>

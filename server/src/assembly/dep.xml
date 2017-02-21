@@ -31,7 +31,7 @@
       <directory>${project.build.directory}</directory>
       <outputDirectory>target</outputDirectory>
       <includes>
-        <include>${project.build.finalName}.jar</include>
+        <include>${project.build.finalName}-standalone.jar</include>
       </includes>
     </fileSet>
   </fileSets>
