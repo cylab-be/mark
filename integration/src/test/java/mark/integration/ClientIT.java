@@ -6,6 +6,7 @@ import java.net.URL;
 import junit.framework.TestCase;
 import mark.core.DetectionAgentProfile;
 import mark.client.Client;
+import mark.core.Evidence;
 import netrank.Link;
 import netrank.LinkAdapter;
 import mark.core.RawData;
@@ -135,6 +136,10 @@ public class ClientIT extends TestCase {
         data.data = "A proxy log line...";
         datastore.addRawData(data);
 
+        // Add it twice... detector should be triggered only once...
+        data.time = 1234567;
+        datastore.addRawData(data);
+
         server.awaitTermination();
 
         int final_count = datastore
@@ -143,6 +148,45 @@ public class ClientIT extends TestCase {
                 .length;
 
         assertEquals(original_count + 2, final_count);
+    }
+
+    public final void testFindEvidence() throws Throwable {
+        System.out.println("findEvidence, test we get the most recent");
+        System.out.println("=========================================");
+
+        Config config = Config.getTestConfig();
+        config.adapter_class = LinkAdapter.class.getName();
+        server = new Server(config);
+        server.start();
+
+        // Count the original number of evidences
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
+        String label = "my.test";
+        assertEquals(0, datastore.findEvidence(label).length);
+
+        Evidence<Link> evidence = new Evidence<>();
+        Link subject = new Link("1.2.3.4", "test.me");
+        evidence.label = label;
+        evidence.score = 0.9;
+        evidence.time = 1234;
+        evidence.subject = subject;
+        datastore.addEvidence(evidence);
+
+        // After some time, score decreases
+        evidence.score = 0.8;
+        evidence.time = 2345;
+        datastore.addEvidence(evidence);
+
+        // Ask for last evidences
+        Evidence[] evidences = datastore.findEvidence(label);
+        assertEquals(1, evidences.length);
+
+        // Check it is indeed the most recent report
+        assertEquals(2345, evidences[0].time);
+
+
     }
 
     /**

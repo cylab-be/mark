@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.util.Arrays;
 import mark.core.InvalidProfileException;
 import mark.core.DetectionAgentInterface;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -54,7 +53,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
             throws InvalidProfileException {
 
         this.config = config;
-        this.profiles = new LinkedList<DetectionAgentProfile>();
+        this.profiles = new LinkedList<>();
 
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
@@ -108,6 +107,10 @@ public class ActivationController<T extends Subject> extends SafeThread {
                 this.events = new HashMap<>();
             }
 
+            // Keep track of triggered detectors, to avoid triggering
+            // same detector multiple times
+            Map<String, Set<T>> triggered_detectors = new HashMap<>();
+
             // process the events:
             // for each received label find the agents that must be triggered
             // then spawn one agent for each subject
@@ -120,10 +123,25 @@ public class ActivationController<T extends Subject> extends SafeThread {
                     }
 
                     for (T subject : entry.getValue()) {
+                        String detector_label = profile.label;
+                        Set<T> triggered_subjects = triggered_detectors.get(
+                                detector_label);
+                        if (triggered_subjects == null) {
+                            triggered_subjects = new HashSet<>();
+                            triggered_detectors.put(
+                                    detector_label, triggered_subjects);
+                        }
+
+                        if (triggered_subjects.contains(subject)) {
+                            continue;
+                        }
+
+                        triggered_subjects.add(subject);
+
                         try {
                             LOGGER.debug(
                                     "Trigger detector {} for subject {}",
-                                    profile.class_name,
+                                    detector_label,
                                     subject.toString());
 
                             executor_service.submit(
@@ -135,12 +153,8 @@ public class ActivationController<T extends Subject> extends SafeThread {
                                             profile,
                                             profile.createInstance()));
 
-                        } catch (MalformedURLException ex) {
-                            LOGGER.error(
-                                    "Cannot start agent "
-                                            + profile.class_name,
-                                    ex);
-                        } catch (InvalidProfileException ex) {
+                        } catch (MalformedURLException
+                                | InvalidProfileException ex) {
                             LOGGER.error(
                                     "Cannot start agent "
                                             + profile.class_name,
@@ -169,18 +183,15 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * @param profiles
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
-    public void testProfiles()
+    public final void testProfiles()
             throws InvalidProfileException {
 
         for (DetectionAgentProfile profile : profiles) {
             try {
                 DetectionAgentInterface new_task = profile.createInstance();
 
-            } catch (IllegalArgumentException ex) {
-                throw new InvalidProfileException(
-                        "Invalid profile: " + profile.toString()
-                                + " : " + ex.getMessage(), ex);
-            } catch (SecurityException ex) {
+            } catch (IllegalArgumentException
+                    | SecurityException ex) {
                 throw new InvalidProfileException(
                         "Invalid profile: " + profile.toString()
                                 + " : " + ex.getMessage(), ex);
