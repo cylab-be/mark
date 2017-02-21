@@ -20,7 +20,7 @@
     
     <fileSet>
       <directory>${project.basedir}/scripts</directory>
-      <outputDirectory>scripts</outputDirectory>
+      <outputDirectory>bin</outputDirectory>
       <includes>
         <include>*.sh</include>
         <include>*.yml</include>
@@ -29,9 +29,17 @@
     
     <fileSet>
       <directory>${project.build.directory}</directory>
-      <outputDirectory>target</outputDirectory>
+      <outputDirectory>bin</outputDirectory>
       <includes>
-        <include>${project.build.finalName}-standalone.jar</include>
+        <include>${project.build.finalName}.jar</include>
+      </includes>
+    </fileSet>
+    
+    <fileSet>
+      <directory>${project.build.directory}/libs</directory>
+      <outputDirectory>libs</outputDirectory>
+      <includes>
+        <include>*.jar</include>
       </includes>
     </fileSet>
   </fileSets>
