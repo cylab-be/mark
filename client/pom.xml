@@ -3,19 +3,21 @@
 
     <parent>
         <groupId>info.debatty.mark</groupId>
-        <artifactId>mark</artifactId>
+        <artifactId>root</artifactId>
         <version>0.0.3</version>
-        <relativePath>../mark</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>client</artifactId>
     <packaging>jar</packaging>
     <name>client</name>
 
-    <build>
-        <plugins>
-        </plugins>
-    </build>
+    <scm>
+        <connection>scm:git:git@github.com:RUCD/mark.git</connection>
+        <developerConnection>scm:git:git@github.com:RUCD/mark.git</developerConnection>
+        <url>git@github.com:RUCD/mark.git</url>
+        <tag>v0.0.3</tag>
+    </scm>
 
     <dependencies>
         <dependency>

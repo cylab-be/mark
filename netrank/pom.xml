@@ -3,16 +3,15 @@
 
     <parent>
         <groupId>info.debatty.mark</groupId>
-        <artifactId>mark</artifactId>
+        <artifactId>root</artifactId>
         <version>0.0.3</version>
-        <relativePath>../mark</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
 
     <artifactId>netrank</artifactId>
     <packaging>jar</packaging>
     <name>netrank</name>
-
 
     <build>
         <plugins>

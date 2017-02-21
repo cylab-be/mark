@@ -30,13 +30,6 @@
         <jetty.version>9.2.20.v20161216</jetty.version>
     </properties>
 
-    <scm>
-        <connection>scm:git:git@github.com:RUCD/mark.git</connection>
-        <developerConnection>scm:git:git@github.com:RUCD/mark.git</developerConnection>
-        <url>git@github.com:RUCD/mark.git</url>
-        <tag>v0.0.3</tag>
-    </scm>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>

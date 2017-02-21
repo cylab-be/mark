@@ -3,15 +3,19 @@
 
     <parent>
         <groupId>info.debatty.mark</groupId>
-        <artifactId>root</artifactId>
-        <version>0.0.3</version>
-        <relativePath>../pom.xml</relativePath>
+        <artifactId>mark</artifactId>
+        <version>0.0.3-SNAPSHOT</version>
+        <relativePath>../mark</relativePath>
     </parent>
 
-    <artifactId>core</artifactId>
+    <artifactId>client</artifactId>
     <packaging>jar</packaging>
-    <name>core</name>
-    <description>Core interfaces for the MARK server.</description>
+    <name>client</name>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -22,23 +26,27 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.0.4</version>
-            <type>jar</type>
+            <groupId>info.debatty.mark</groupId>
+            <artifactId>core</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.briandilley.jsonrpc4j</groupId>
+            <artifactId>jsonrpc4j</artifactId>
+            <version>1.4.2</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.7.2</version>
-            <type>jar</type>
         </dependency>
 
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.17</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.7.2</version>
         </dependency>
     </dependencies>
 </project>
