@@ -85,7 +85,6 @@
                                 <ignoreDependency>javax.portlet:portlet-api:*</ignoreDependency>
                                 <ignoreDependency>org.slf4j:slf4j-log4j12:*</ignoreDependency>
                                 <ignoreDependency>org.apache.ignite:ignite-log4j:*</ignoreDependency>
-                                <ignoreDependency>org.eclipse.jetty.orbit:javax.servlet:*</ignoreDependency>
                             </ignoredDependencies>
                         </configuration>
                         <goals>
