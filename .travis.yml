@@ -5,7 +5,7 @@ jdk:
   - openjdk7
 services:
   - mongodb
-install: cd mark && mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
+install: mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
 script: mvn clean install -Dgpg.skip=true
 
 notifications:

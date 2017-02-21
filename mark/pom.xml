@@ -164,12 +164,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <modules>
-        <module>../core</module>
-        <module>../client</module>
-        <module>../server</module>
-        <module>../integration</module>
-        <module>../netrank</module>
-    </modules>
 </project>

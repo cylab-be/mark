@@ -43,7 +43,6 @@ To run the system, you need a MongoDB server running.
 
 To build the complete system:
 ```
-cd mark
 mvn clean install
 ```
 
