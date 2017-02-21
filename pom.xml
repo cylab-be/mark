@@ -3,7 +3,7 @@
 
     <groupId>info.debatty.mark</groupId>
     <artifactId>root</artifactId>
-    <version>0.0.5-SNAPSHOT</version>
+    <version>0.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>root</name>
     <description>Parent module for MARK project</description>
@@ -56,6 +56,18 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>java8-doclint-disabled</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <javadoc.opts>-Xdoclint:none</javadoc.opts>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
@@ -130,6 +142,7 @@
                 <version>2.9.1</version>
                 <executions>
                     <execution>
+                        <phase>install</phase>
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
