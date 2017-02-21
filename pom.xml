@@ -3,7 +3,7 @@
 
     <groupId>info.debatty.mark</groupId>
     <artifactId>root</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.3</version>
     <packaging>pom</packaging>
     <name>root</name>
     
