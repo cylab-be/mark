@@ -57,18 +57,6 @@
         </repository>
     </distributionManagement>
 
-    <profiles>
-        <profile>
-            <id>java8-doclint-disabled</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.opts>-Xdoclint:none</javadoc.opts>
-            </properties>
-        </profile>
-    </profiles>
-
     <build>
         <plugins>
             <plugin>
@@ -142,7 +130,6 @@
                 <version>2.9.1</version>
                 <executions>
                     <execution>
-                        <phase>install</phase>
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
