@@ -24,7 +24,7 @@
                         <id>validate</id>
                         <phase>verify</phase>
                         <configuration>
-                            <configLocation>../mark/checkstyle.xml</configLocation>
+                            <configLocation>../checkstyle.xml</configLocation>
                             <cacheFile>../netrank/target/checkstyle_cache</cacheFile>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>

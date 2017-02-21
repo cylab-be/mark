@@ -6,6 +6,7 @@
     <version>0.0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>root</name>
+    <description>Parent module for MARK project</description>
     
     <modules>
         <module>core</module>
@@ -141,7 +142,7 @@
                 <version>2.9.1</version>
                 <executions>
                     <execution>
-                        <phase>deploy</phase>
+                        <phase>install</phase>
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
