@@ -12,8 +12,6 @@
     <packaging>jar</packaging>
     <name>client</name>
 
-
-
     <build>
         <plugins>
         </plugins>
