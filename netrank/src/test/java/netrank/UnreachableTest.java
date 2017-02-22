@@ -47,5 +47,6 @@ public class UnreachableTest {
                         getClass().getResourceAsStream(
                                 "/detection.frequency.yaml")),
                 new DummyClient());
+    }
     
 }
