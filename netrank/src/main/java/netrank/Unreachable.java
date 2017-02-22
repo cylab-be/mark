@@ -57,7 +57,7 @@ public class Unreachable implements DetectionAgentInterface {
 
         return result / values.length;
     }
-    
+
     private int checkPeriodicity(final int[][] values) {
         int result = 0;
         return result;
@@ -92,14 +92,14 @@ public class Unreachable implements DetectionAgentInterface {
             times_status[i] = time_status;
             status_array[i] = status;
         }
-        
+
         int good_connections = 0;
-        for (int n= 0; n < status_array.length; n++) {
+        for (int n = 0; n < status_array.length; n++) {
             if (status_array[n] == 200) {
                 good_connections = good_connections + 1;
             }
         }
-        
+
         float good_connection_percentage = 0;
         if (good_connections == 0) {
             return;
@@ -107,9 +107,9 @@ public class Unreachable implements DetectionAgentInterface {
             good_connection_percentage = (good_connections / 
                     status_array.length) * 100;
         }
-        
+
         int unreachable_periodicity = checkPeriodicity(times_status);
-        
+
         if (unreachable_periodicity > 0.5) {
             Evidence evidence = new Evidence();
             evidence.score = 0.9;
