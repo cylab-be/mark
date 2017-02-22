@@ -17,7 +17,8 @@ import mark.core.Subject;
 //import org.jfree.chart.plot.PlotOrientation;
 //import org.jfree.data.xy.XYSeries;
 //import org.jfree.data.xy.XYSeriesCollection;
-import java.util.regex.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  *
@@ -69,7 +70,7 @@ public class Unreachable implements DetectionAgentInterface {
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
-              
+
         RawData[] raw_data = datastore.findRawData(
                 actual_trigger_label, subject);
 
@@ -104,8 +105,8 @@ public class Unreachable implements DetectionAgentInterface {
         if (good_connections == 0) {
             return;
         } else {
-            good_connection_percentage = (good_connections / 
-                    status_array.length) * 100;
+            good_connection_percentage = (good_connections
+                    / status_array.length) * 100;
         }
 
         int unreachable_periodicity = checkPeriodicity(times_status);
