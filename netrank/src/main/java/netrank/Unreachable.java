@@ -1,22 +1,22 @@
 package netrank;
 
-import java.io.File;
+//import java.io.File;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.core.Subject;
-import org.apache.commons.math3.complex.Complex;
-import org.apache.commons.math3.transform.DftNormalization;
-import org.apache.commons.math3.transform.FastFourierTransformer;
-import org.apache.commons.math3.transform.TransformType;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+//import org.apache.commons.math3.complex.Complex;
+//import org.apache.commons.math3.transform.DftNormalization;
+//import org.apache.commons.math3.transform.FastFourierTransformer;
+//import org.apache.commons.math3.transform.TransformType;
+//import org.jfree.chart.ChartFactory;
+//import org.jfree.chart.ChartUtilities;
+//import org.jfree.chart.JFreeChart;
+//import org.jfree.chart.plot.PlotOrientation;
+//import org.jfree.data.xy.XYSeries;
+//import org.jfree.data.xy.XYSeriesCollection;
 import java.util.regex.*;
 
 /**
@@ -26,10 +26,9 @@ import java.util.regex.*;
 public class Unreachable implements DetectionAgentInterface {
 
     /**
-     * Maybe add Sampling, not sure if needed or not
+     * Maybe add Sampling, not sure if needed or not.
      */
 
-    
     static int min(final int[] values) {
         int result = Integer.MAX_VALUE;
         for (int value : values) {
@@ -59,11 +58,10 @@ public class Unreachable implements DetectionAgentInterface {
         return result / values.length;
     }
     
-    private int check_periodicity(final int[][] values){
+    private int checkPeriodicity(final int[][] values) {
         int result = 0;
         return result;
     }
-
 
     @Override
     public final void analyze(
@@ -87,8 +85,7 @@ public class Unreachable implements DetectionAgentInterface {
  //           times_status[i] = raw_data[i].time;
             Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
             Matcher matcher = pattern.matcher(raw_data[i].data);
-            if (matcher.find())
-            {
+            if (matcher.find()) {
                 status = Integer.parseInt(matcher.group(1));
             }
             int[] time_status = {timestamp, status};
@@ -98,7 +95,7 @@ public class Unreachable implements DetectionAgentInterface {
         
         int good_connections = 0;
         for (int n= 0; n < status_array.length; n++) {
-            if (status_array[n] == 200){
+            if (status_array[n] == 200) {
                 good_connections = good_connections + 1;
             }
         }
@@ -107,25 +104,23 @@ public class Unreachable implements DetectionAgentInterface {
         if (good_connections == 0) {
             return;
         } else {
-            good_connection_percentage = (good_connections/status_array.length)*100;
+            good_connection_percentage = (good_connections / 
+                    status_array.length) * 100;
         }
         
-        int unreachable_periodicity = check_periodicity(times_status);
+        int unreachable_periodicity = checkPeriodicity(times_status);
         
         if (unreachable_periodicity > 0.5) {
-
             Evidence evidence = new Evidence();
             evidence.score = 0.9;
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found a periodicity in the unreachable percentage: "
+            evidence.report = "Found a periodicity in the "
+                    + "unreachable percentage: "
                     + unreachable_periodicity + "\n";
 
             datastore.addEvidence(evidence);
         }
-        
-           
-    
-  }
+    }
 }
