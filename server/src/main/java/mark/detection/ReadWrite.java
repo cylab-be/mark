@@ -27,6 +27,10 @@ public class ReadWrite<T extends Subject>
 
         RawData[] data = datastore.findRawData(actual_trigger_label, subject);
 
+        if (data.length < 1) {
+            return;
+        }
+
         // Process data
         Random rand = new Random();
 
@@ -36,7 +40,7 @@ public class ReadWrite<T extends Subject>
         evidence.subject = subject;
         evidence.report = "Some report...";
         evidence.score = rand.nextDouble();
-        evidence.time = data[0].time;
+        evidence.time = data[data.length - 1].time;
         datastore.addEvidence(evidence);
 
         evidence.score = rand.nextDouble();

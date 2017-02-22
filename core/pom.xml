@@ -3,34 +3,15 @@
 
     <parent>
         <groupId>info.debatty.mark</groupId>
-        <artifactId>mark</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
-        <relativePath>../mark</relativePath>
+        <artifactId>root</artifactId>
+        <version>0.0.6-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>core</artifactId>
     <packaging>jar</packaging>
     <name>core</name>
     <description>Core interfaces for the MARK server.</description>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>

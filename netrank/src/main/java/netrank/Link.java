@@ -79,10 +79,11 @@ public class Link implements Subject {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Link other = (Link) obj;
+
+        Link other = (Link) obj;
 
         return this.client.equals(other.client)
-                && this.server.equals(other.client);
+                && this.server.equals(other.server);
 
     }
 

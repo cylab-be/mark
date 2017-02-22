@@ -44,7 +44,7 @@ public class WOWA implements DetectionAgentInterface {
             final ServerInterface datastore) throws Throwable {
 
         Evidence[] evidences = datastore.findEvidence(
-                profile.trigger_label, subject);
+                actual_trigger_label, subject);
 
         // Each detector has the same weight
         double[] weights = new double[evidences.length];

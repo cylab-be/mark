@@ -31,5 +31,10 @@ import java.io.Serializable;
  * @author Thibault Debatty
  */
 public interface Subject extends Serializable {
+    @Override
+    public boolean equals(Object other);
+
+    @Override
+    public int hashCode();
 
 }

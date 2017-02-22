@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>info.debatty.mark</groupId>
-        <artifactId>mark</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
-        <relativePath>../mark</relativePath>
+        <artifactId>root</artifactId>
+        <version>0.0.6-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>server</artifactId>
@@ -30,6 +29,7 @@
             </plugin>
 
             <!-- To build an uber jar -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -41,7 +41,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!-- exclude original manifest -->
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -57,9 +56,33 @@
                                     <mainClass>mark.server.Main</mainClass>
                                 </transformer>
                             </transformers>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedArtifactId>${project.artifactId}-standalone</shadedArtifactId>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            -->
+            
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>3.0.0</version>
+              <executions>
+                <execution>
+                  <id>copy-dependencies</id>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>copy-dependencies</goal>
+                  </goals>
+                  <configuration>
+                    <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                  </configuration>
+                </execution>
+              </executions>
             </plugin>
 
             <!-- To build a distribution zip -->
@@ -69,6 +92,7 @@
 
                 <configuration>
                     <descriptor>src/assembly/dep.xml</descriptor>
+                    <attach>false</attach>
                 </configuration>
 
                 <executions>
@@ -101,7 +125,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.0.6-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -119,31 +143,37 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.0.2.v20130417</version>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>9.0.2.v20130417</version>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-rewrite</artifactId>
-            <version>9.0.2.v20130417</version>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>9.0.2.v20130417</version>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>javax.portlet</groupId>
             <artifactId>portlet-api</artifactId>
             <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
         </dependency>
 
         <dependency>

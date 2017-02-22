@@ -44,7 +44,7 @@ public class Average implements DetectionAgentInterface {
             final ServerInterface datastore) throws Throwable {
 
         Evidence[] evidences = datastore.findLastEvidences(
-                profile.trigger_label, subject);
+                actual_trigger_label, subject);
 
         double score = 0;
         int last_time = 0;

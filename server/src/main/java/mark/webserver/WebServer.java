@@ -25,12 +25,14 @@ package mark.webserver;
 
 import java.io.File;
 import java.io.IOException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import mark.server.Config;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
@@ -86,14 +88,31 @@ public class WebServer {
         php_handler.setResourceBase(config.webserver_root);
 
         // Handle static files (if it's not php)
-        ResourceHandler resource_handler = new ResourceHandler();
+        ResourceHandler resource_handler = new ResourceHandler() {
+
+            @Override
+            public void handle(
+                    final String target,
+                    final Request base_request,
+                    final HttpServletRequest request,
+                    final HttpServletResponse response)
+                    throws IOException, ServletException {
+
+                if (target.endsWith(".php")) {
+                    return;
+                }
+
+                super.handle(target, base_request, request, response);
+            }
+
+        };
         resource_handler.setDirectoriesListed(false);
         resource_handler.setResourceBase(config.webserver_root);
 
         HandlerList handler_list = new HandlerList();
         handler_list.setHandlers(new Handler[]{
-            php_handler,
-            resource_handler
+            resource_handler,
+            php_handler
         });
 
         // First of all, redirect to index.php if file does not exist
@@ -101,7 +120,8 @@ public class WebServer {
         rewrite_handler.setRewriteRequestURI(false);
         rewrite_handler.setRewritePathInfo(false);
         rewrite_handler.setOriginalPathAttribute("requestedPath");
-        rewrite_handler.addRule(new RewriteIfNotExistsRule(config.webserver_root));
+        rewrite_handler.addRule(new RewriteIfNotExistsRule(
+                config.webserver_root));
         rewrite_handler.setHandler(handler_list);
 
         server = new Server(config.webserver_port);
@@ -152,6 +172,7 @@ class RewriteIfNotExistsRule extends Rule {
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
         File resource = new File(root + target);
+        //System.out.println(resource.getAbsolutePath());
         if (resource.exists() && resource.isFile()) {
             return target;
         }

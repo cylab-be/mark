@@ -1,3 +1,7 @@
+**/*.releaseBackup
+**/dependency-reduced-pom.xml
+release.properties
+
 # Is written by the server at each start...
 ui/config.ini
 
