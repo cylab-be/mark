@@ -80,11 +80,16 @@ public class Unreachable implements DetectionAgentInterface {
 
         int[][] times_status = new int[raw_data.length][2];
         int[] status_array = new int[raw_data.length];
+        System.out.println("DEBUG");
+        System.out.println(raw_data.length);
+        System.out.println(raw_data[1000].data);
         for (int i = 0; i < raw_data.length; i++) {
             int timestamp = raw_data[i].time;
             int status = 0;
  //           times_status[i] = raw_data[i].time;
             Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
+            System.out.println("DEBUG: " + i);
+            System.out.println(raw_data[i].data);
             Matcher matcher = pattern.matcher(raw_data[i].data);
             if (matcher.find()) {
                 status = Integer.parseInt(matcher.group(1));

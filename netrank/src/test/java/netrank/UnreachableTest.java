@@ -45,7 +45,7 @@ public class UnreachableTest {
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.frequency.yaml")),
+                                "/detection.unreachable.yaml")),
                 new DummyClient());
     }
     
