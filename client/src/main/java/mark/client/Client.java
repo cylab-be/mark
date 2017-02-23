@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.NumericNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
 import java.io.IOException;
 import java.net.URL;
@@ -186,11 +188,11 @@ public class Client<T extends Subject> implements ServerInterface {
                 throws IOException, JsonProcessingException {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
-            RawData<T> data = new RawData<T>();
-            data.data = tree.get("data").toString();
-            data.label = tree.get("label").toString();
+            RawData<T> data = new RawData<>();
+            data.data = ((TextNode) tree.get("data")).asText();
+            data.label = ((TextNode) tree.get("label")).asText();
+            data.time = ((NumericNode) tree.get("time")).asInt();
             data.subject = adapter.deserialize((JsonNode) tree.get("subject"));
-            data.time = Integer.valueOf(tree.get("time").toString());
 
             return data;
         }
@@ -217,11 +219,11 @@ public class Client<T extends Subject> implements ServerInterface {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
             Evidence data = new Evidence();
-            data.report = tree.get("report").toString();
-            data.score = Double.valueOf(tree.get("score").toString());
-            data.label = tree.get("label").toString();
+            data.report = ((TextNode) tree.get("report")).asText();
+            data.label = ((TextNode) tree.get("label")).asText();
+            data.score = ((NumericNode) tree.get("score")).asDouble();
+            data.time = ((NumericNode) tree.get("time")).asInt();
             data.subject = adapter.deserialize((JsonNode) tree.get("subject"));
-            data.time = Integer.valueOf(tree.get("time").toString());
 
             return data;
         }
