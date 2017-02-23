@@ -60,6 +60,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>client</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/net.sourceforge.htmlunit/htmlunit -->
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>

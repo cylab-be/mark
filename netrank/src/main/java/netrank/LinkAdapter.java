@@ -24,14 +24,7 @@
 
 package netrank;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
-import java.net.URL;
-import mark.client.Client;
-import mark.core.ServerInterface;
 import mark.core.SubjectAdapter;
 import org.bson.Document;
 
@@ -39,37 +32,28 @@ import org.bson.Document;
  *
  * @author Thibault Debatty
  */
-public class LinkAdapter extends SubjectAdapter<Link> {
+public class LinkAdapter implements SubjectAdapter<Link> {
 
     private static final String FIELD_CLIENT = "CLIENT";
     private static final String FIELD_SERVER = "SERVER";
 
-    @Override
-    public final Link deserialize(
-            final JsonParser jparser,
-            final DeserializationContext context)
-            throws IOException, JsonProcessingException {
-
-        JsonNode tree = jparser.getCodec().readTree(jparser);
-        return deserialize(tree);
-
-    }
-
     /**
-     *
+     * {@inheritDoc}
      * @param link
      * @param doc
      */
+    @Override
     public final void writeToMongo(final Link link, final Document doc) {
         doc.append(FIELD_CLIENT, link.getClient());
         doc.append(FIELD_SERVER, link.getServer());
     }
 
     /**
-     *
+     * {@inheritDoc}
      * @param doc
      * @return
      */
+    @Override
     public final Link readFromMongo(final Document doc) {
         return new Link(
                 doc.getString(FIELD_CLIENT),
@@ -77,18 +61,14 @@ public class LinkAdapter extends SubjectAdapter<Link> {
     }
 
     /**
-     *
+     * {@inheritDoc}
      * @param node
      * @return
      */
+    @Override
     public final Link deserialize(final JsonNode node) {
         return new Link(
                 node.get("client").textValue(),
                 node.get("server").textValue());
-    }
-
-    @Override
-    public final ServerInterface<Link> getDatastore(final URL url) {
-        return new Client<Link>(url, this);
     }
 }

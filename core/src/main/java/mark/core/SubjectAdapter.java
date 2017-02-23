@@ -42,12 +42,30 @@ import org.bson.Document;
  * - Provide a single instance of the subject, which will be used to test the
  *   detection agent profiles before the server starts.
  * @author Thibault Debatty
+ * @param <T> The type of data this adapter will be used for
  */
-public abstract class SubjectAdapter<T extends Subject> extends JsonDeserializer<T> {
+public interface SubjectAdapter<T extends Subject>  {
 
-    public abstract void writeToMongo(T subject, Document doc);
-    public abstract T readFromMongo(Document doc);
-    public abstract T deserialize(JsonNode node);
+    /**
+     * How should the server write this Subject to a Mongo document.
+     * @param subject
+     * @param doc
+     */
+    void writeToMongo(T subject, Document doc);
 
-    public abstract ServerInterface<T> getDatastore(URL url);
+
+    /**
+     * How should the server read this Subject from a Mongo Document.
+     * @param doc
+     * @return
+     */
+    T readFromMongo(Document doc);
+
+    /**
+     * How should the client deserialize a Json response from the datastore
+     * server.
+     * @param node
+     * @return
+     */
+    T deserialize(JsonNode node);
 }

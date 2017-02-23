@@ -2,6 +2,7 @@ package mark.activation;
 
 import java.io.Serializable;
 import java.net.URL;
+import mark.client.Client;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Subject;
@@ -55,9 +56,10 @@ public class DetectionAgentContainer <T extends Subject>
     /**
      *
      */
+    @Override
     public final void run() {
-        ServerInterface<T> datastore = subject_adapter.getDatastore(
-                datastore_url);
+        ServerInterface<T> datastore = new Client<T>(
+                datastore_url, subject_adapter);
 
         try {
             agent.analyze(subject, actual_trigger_label, profile, datastore);

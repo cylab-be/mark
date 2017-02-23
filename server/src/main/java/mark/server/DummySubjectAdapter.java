@@ -39,7 +39,7 @@ import org.bson.Document;
  *
  * @author Thibault Debatty
  */
-public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
+public class DummySubjectAdapter implements SubjectAdapter<DummySuject> {
 
     @Override
     public void writeToMongo(DummySuject subject, Document doc) {
@@ -58,17 +58,5 @@ public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
         DummySuject ds = new DummySuject();
         ds.name = node.get("name").toString();
         return ds;
-    }
-
-    @Override
-    public DummySuject deserialize(
-            final JsonParser jparser,final DeserializationContext ctx)
-            throws IOException, JsonProcessingException {
-        return deserialize((JsonNode) jparser.getCodec().readTree(jparser));
-    }
-
-    @Override
-    public ServerInterface<DummySuject> getDatastore(final URL url) {
-        return new Client<DummySuject>(url, this);
     }
 }
