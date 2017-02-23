@@ -37,7 +37,7 @@ public class UnreachableTest {
      * Test of run method, of class Frequency.
      */
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze");
+        System.out.println("analyze Unreachable");
 
         Unreachable agent = new Unreachable();
         agent.analyze(

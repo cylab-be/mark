@@ -72,6 +72,14 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
             data[i].subject = subject;
             data[i].label = type;
             data[i].time = start + APT_INTERVAL * i;
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "400"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + "175.193.216.231 text/html";
         }
 
         // Add a few random requests
@@ -80,6 +88,14 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
             data[i].subject = subject;
             data[i].label = type;
             data[i].time = start + rand.nextInt(N_APT * APT_INTERVAL);
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "200"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + "175.193.216.231 text/html";
         }
 
         return data;
