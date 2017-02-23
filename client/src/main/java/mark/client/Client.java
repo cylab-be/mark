@@ -141,12 +141,22 @@ public class Client<T extends Subject> implements ServerInterface {
      * @param evidence
      * @throws Throwable
      */
+    @Override
     public final void addEvidence(final Evidence evidence) throws Throwable {
 
         datastore.invoke("addEvidence", new Object[]{evidence});
     }
 
-    public Evidence[] findEvidence(String label) throws Throwable {
+    /**
+     * {@inheritDoc}
+     * @param label
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public final Evidence[] findEvidence(final String label)
+            throws Throwable {
+
         return datastore.invoke(
                 "findEvidence",
                 new Object[]{label},

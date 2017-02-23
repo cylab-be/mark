@@ -16,6 +16,8 @@ import mark.core.SubjectAdapter;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,6 +27,9 @@ public class RequestHandler implements ServerInterface {
 
     private static final String COLLECTION_DATA = "DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(RequestHandler.class);
 
     private final MongoDatabase mongodb;
     private final ActivationController activation_controller;
@@ -241,31 +246,44 @@ public class RequestHandler implements ServerInterface {
      * @return
      * @throws Throwable if request fails
      */
+    @Override
     public final Evidence[] findEvidence(final String label)
             throws Throwable {
 
-        Document query = new Document();
-        query.append(LABEL, label);
+        LOGGER.debug("findEvidence : " + label);
 
-        FindIterable<Document> documents = mongodb
-                .getCollection(COLLECTION_EVIDENCE)
-                .find(query);
+        try {
+            Document query = new Document();
+            query.append(LABEL, label);
 
-        HashMap<Subject, Evidence> evidences = new HashMap<Subject, Evidence>();
-        for (Document doc : documents) {
-            Evidence evidence = convertEvidence(doc);
+            FindIterable<Document> documents = mongodb
+                    .getCollection(COLLECTION_EVIDENCE)
+                    .find(query);
 
-            Evidence inmap = evidences.get(evidence.subject);
-            if (inmap == null) {
-                evidences.put(evidence.subject, evidence);
-                continue;
+            HashMap<Subject, Evidence> evidences =
+                    new HashMap<Subject, Evidence>();
+            for (Document doc : documents) {
+                Evidence evidence = convertEvidence(doc);
+
+                Evidence inmap = evidences.get(evidence.subject);
+                if (inmap == null) {
+                    evidences.put(evidence.subject, evidence);
+                    continue;
+                }
+
+                if (evidence.time > inmap.time) {
+                    evidences.put(evidence.subject, evidence);
+                }
             }
 
-            if (evidence.time > inmap.time) {
-                evidences.put(evidence.subject, evidence);
-            }
+            Evidence[] evidences_array = evidences.values()
+                    .toArray(new Evidence[evidences.size()]);
+
+            return evidences_array;
+        } catch (Throwable ex) {
+            LOGGER.error("findEvidence : " + label, ex);
+            throw ex;
         }
-        return evidences.values().toArray(new Evidence[evidences.size()]);
     }
 
     /**
