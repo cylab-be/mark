@@ -63,7 +63,7 @@
                 </executions>
             </plugin>
             -->
-            
+
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-dependency-plugin</artifactId>
@@ -136,8 +136,15 @@
 
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.0.4</version>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.4.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>3.4.2</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>

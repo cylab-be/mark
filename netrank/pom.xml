@@ -161,9 +161,16 @@
 
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.0.4</version>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.4.2</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>3.4.2</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>
