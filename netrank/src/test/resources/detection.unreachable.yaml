@@ -1,0 +1,5 @@
+---
+class_name:     netrank.Unreachable
+label:          detection.unreachable.1w
+trigger_label:  data.http
+
