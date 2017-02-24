@@ -71,6 +71,7 @@ public class Unreachable implements DetectionAgentInterface {
                     result = result - 0.1;
                 }
             }
+            previous_status = status;
         }
         if (result < 0) {
             result = 0;
