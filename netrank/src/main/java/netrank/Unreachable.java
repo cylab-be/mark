@@ -59,8 +59,22 @@ public class Unreachable implements DetectionAgentInterface {
         return result / values.length;
     }
 
-    private int checkPeriodicity(final int[][] values) {
-        int result = 0;
+    private double checkPeriodicity(final int[] values) {
+        double result = 1;
+        int previous_status = 0;
+        for (int i = 0; i < values.length; i++) {
+            int status = values[i];
+            if (previous_status == 0) {
+                previous_status = status;
+            } else {
+                if (previous_status == status) {
+                    result = result - 0.1;
+                }
+            }
+        }
+        if (result < 0) {
+            result = 0;
+        }
         return result;
     }
 
@@ -80,11 +94,11 @@ public class Unreachable implements DetectionAgentInterface {
 
         int[][] times_status = new int[raw_data.length][2];
         int[] status_array = new int[raw_data.length];
+        Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
         for (int i = 0; i < raw_data.length; i++) {
             int timestamp = raw_data[i].time;
             int status = 0;
  //           times_status[i] = raw_data[i].time;
-            Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
             Matcher matcher = pattern.matcher(raw_data[i].data);
             if (matcher.find()) {
                 status = Integer.parseInt(matcher.group(1));
@@ -109,8 +123,8 @@ public class Unreachable implements DetectionAgentInterface {
                     / status_array.length) * 100;
         }
 
-        int unreachable_periodicity = checkPeriodicity(times_status);
-
+        double unreachable_periodicity = checkPeriodicity(status_array);
+        System.out.println(unreachable_periodicity);
         if (unreachable_periodicity > 0.5) {
             Evidence evidence = new Evidence();
             evidence.score = 0.9;
