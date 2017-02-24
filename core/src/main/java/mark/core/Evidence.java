@@ -6,12 +6,12 @@ package mark.core;
  */
 public class Evidence<T extends Subject> {
 
-    public String id;
-    public String label;
+    public String id = "";
+    public String label = "";
     public int time;
     public T subject;
     public double score;
-    public String report;
+    public String report = "";
 
     @Override
     public String toString() {

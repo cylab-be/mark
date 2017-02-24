@@ -5,9 +5,9 @@ package mark.core;
  * @author Thibault Debatty
  */
 public class RawData<T extends Subject> {
-    public String label;
+    public String label = "";
     public int time;
     public T subject;
-    public String data;
+    public String data = "";
 
 }

@@ -1,15 +1,22 @@
 package mark.datastore;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.googlecode.jsonrpc4j.JsonRpcServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import mark.activation.ActivationController;
 import mark.core.Subject;
 import mark.server.Config;
 import mark.core.InvalidProfileException;
+import mark.core.SubjectAdapter;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -53,7 +60,9 @@ public class Datastore {
 
         ObjectMapper object_mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(Subject.class, config.getSubjectAdapter());
+        module.addDeserializer(
+                Subject.class,
+                new SubjectDeserializer<>(config.getSubjectAdapter()));
         object_mapper.registerModule(module);
 
         JsonRpcServer jsonrpc_server =
@@ -101,4 +110,30 @@ public class Datastore {
 
         server.stop();
     }
+}
+
+/**
+ * JSON Deserializer that can be provided to the JSON-RPC server.
+ * @author Thibault Debatty
+ * @param <T>
+ */
+class SubjectDeserializer<T extends Subject> extends JsonDeserializer<T> {
+
+    private final SubjectAdapter<T> adapter;
+
+    SubjectDeserializer(final SubjectAdapter<T> adapter) {
+        super();
+        this.adapter = adapter;
+    }
+
+    @Override
+    public T deserialize(
+            final JsonParser jparser,
+            final DeserializationContext context)
+            throws IOException, JsonProcessingException {
+
+        JsonNode tree = jparser.getCodec().readTree(jparser);
+        return adapter.deserialize(tree);
+    }
+
 }

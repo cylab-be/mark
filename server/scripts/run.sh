@@ -3,4 +3,7 @@
 bin=`dirname "$0"`
 bin=`cd "$bin"; pwd`
 
-java -Xms1024m -jar "$bin/../target/server-0.1-SNAPSHOT.jar" -c "$bin/config.yml"
+SERVER=`ls "$bin/../target/server-"*".jar" | sort -n | head -1`
+LIBS="$bin/../target/libs/"*
+
+java -Xms1024m -cp "$LIBS:$SERVER" mark.server.Main -c "$bin/config.yml"

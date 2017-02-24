@@ -29,6 +29,7 @@ import mark.core.DataAgentInterface;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mark.client.Client;
 import mark.core.InvalidProfileException;
 import mark.server.Config;
 import org.slf4j.LoggerFactory;
@@ -53,8 +54,9 @@ public class DataAgentContainer extends Thread {
             DataAgentInterface source = profile.createInstance();
             source.run(
                     profile,
-                    config.getSubjectAdapter().getDatastore(
-                            config.getDatastoreUrl()));
+                    new Client(
+                            config.getDatastoreUrl(),
+                            config.getSubjectAdapter()));
 
         } catch (Throwable ex) {
             LoggerFactory.getLogger(

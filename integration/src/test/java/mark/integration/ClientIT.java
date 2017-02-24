@@ -96,9 +96,20 @@ public class ClientIT extends TestCase {
         new_data.data = "A proxy log line...";
         datastore.addRawData(new_data);
 
+        RawData[] final_data = datastore.findRawData(label, link);
+
         assertEquals(
                 original_data.length + 1,
-                datastore.findRawData(label, link).length);
+                final_data.length);
+
+        System.out.println(final_data[0].label);
+        assertEquals(label,
+                final_data[0].label);
+
+        assertEquals(
+                "A proxy log line...",
+                final_data[0].data);
+
     }
 
     /**

@@ -24,14 +24,7 @@
 
 package mark.server;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
-import java.net.URL;
-import mark.client.Client;
-import mark.core.ServerInterface;
 import mark.core.SubjectAdapter;
 import org.bson.Document;
 
@@ -39,7 +32,7 @@ import org.bson.Document;
  *
  * @author Thibault Debatty
  */
-public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
+public class DummySubjectAdapter implements SubjectAdapter<DummySuject> {
 
     @Override
     public void writeToMongo(DummySuject subject, Document doc) {
@@ -58,17 +51,5 @@ public class DummySubjectAdapter extends SubjectAdapter<DummySuject> {
         DummySuject ds = new DummySuject();
         ds.name = node.get("name").toString();
         return ds;
-    }
-
-    @Override
-    public DummySuject deserialize(
-            final JsonParser jparser,final DeserializationContext ctx)
-            throws IOException, JsonProcessingException {
-        return deserialize((JsonNode) jparser.getCodec().readTree(jparser));
-    }
-
-    @Override
-    public ServerInterface<DummySuject> getDatastore(final URL url) {
-        return new Client<DummySuject>(url, this);
     }
 }

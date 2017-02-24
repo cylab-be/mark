@@ -4,7 +4,7 @@
     <parent>
         <groupId>info.debatty.mark</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.6-SNAPSHOT</version>
+        <version>0.0.7-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -15,6 +15,14 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -77,12 +85,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>server</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -106,7 +108,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -118,13 +120,13 @@
             <artifactId>jetty-client</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
@@ -153,9 +155,16 @@
 
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.0.4</version>
+            <artifactId>mongodb-driver</artifactId>
+            <version>3.4.2</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>3.4.2</version>
+            <type>jar</type>
         </dependency>
 
         <dependency>
