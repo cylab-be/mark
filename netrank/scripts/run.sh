@@ -3,8 +3,7 @@
 ROOT=`dirname "$0"`
 ROOT=`cd "$ROOT"; pwd`
 
-# copy netrank.jar to the modules directory, so the server can find it use the
-# masfad2 agents
+# copy netrank.jar to the modules directory, so the server can find it
 NETRANK=`ls "$ROOT/../target/netrank-"*".jar" | sort -n | head -1`
 rm "$ROOT/modules/"*".jar"
 cp "$NETRANK" "$ROOT/modules/"
