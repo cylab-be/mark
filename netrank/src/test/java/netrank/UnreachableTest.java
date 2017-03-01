@@ -24,6 +24,7 @@
 package netrank;
 
 import junit.framework.TestCase;
+import mark.activation.DummyClient;
 import mark.core.DetectionAgentProfile;
 
 /**
@@ -36,7 +37,7 @@ public class UnreachableTest {
      * Test of run method, of class Frequency.
      */
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze Unreachable \n");
+        System.out.println("analyze Unreachable test with APT\n");
 
         Unreachable agent = new Unreachable();
         DummyClientSpecific client = new DummyClientSpecific();
@@ -47,7 +48,9 @@ public class UnreachableTest {
                         getClass().getResourceAsStream(
                                 "/detection.unreachable.yaml")),
                 client);
-        
+
+        System.out.println("analyze Unreachable test with empty data\n");
+
         agent.analyze(
                 new Link(" ", " "),
                 "actual.trigger",
@@ -55,6 +58,16 @@ public class UnreachableTest {
                         getClass().getResourceAsStream(
                                 "/detection.unreachable.yaml")),
                 client);
+
+        System.out.println("analyze Unreachable test with no APT\n");
+
+        agent.analyze(
+                new Link(" ", " "),
+                "actual.trigger",
+                DetectionAgentProfile.fromInputStream(
+                        getClass().getResourceAsStream(
+                                "/detection.unreachable.yaml")),
+                new DummyClient());
     }
     
 }
