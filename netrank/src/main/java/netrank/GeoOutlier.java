@@ -25,7 +25,7 @@ package netrank;
 
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
-import mark.core.Evidence;
+//import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.core.Subject;
@@ -39,15 +39,14 @@ import mark.core.Subject;
 //import org.jfree.chart.plot.PlotOrientation;
 //import org.jfree.data.xy.XYSeries;
 //import org.jfree.data.xy.XYSeriesCollection;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+
 
 /**
  *
  * @author Georgi Nikolov
  */
-public class GeoOutlier {
-    
+public class GeoOutlier implements DetectionAgentInterface {
+
     @Override
     public final void analyze(
             final Subject subject,

@@ -7,16 +7,6 @@ import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.core.Subject;
-//import org.apache.commons.math3.complex.Complex;
-//import org.apache.commons.math3.transform.DftNormalization;
-//import org.apache.commons.math3.transform.FastFourierTransformer;
-//import org.apache.commons.math3.transform.TransformType;
-//import org.jfree.chart.ChartFactory;
-//import org.jfree.chart.ChartUtilities;
-//import org.jfree.chart.JFreeChart;
-//import org.jfree.chart.plot.PlotOrientation;
-//import org.jfree.data.xy.XYSeries;
-//import org.jfree.data.xy.XYSeriesCollection;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -30,48 +20,44 @@ public class Unreachable implements DetectionAgentInterface {
      * Maybe add Sampling, not sure if needed or not.
      */
 
-    static int min(final int[] values) {
-        int result = Integer.MAX_VALUE;
-        for (int value : values) {
-            if (value < result) {
-                result = value;
-            }
-        }
-        return result;
-    }
-
-    static int max(final int[] values) {
-        int result = Integer.MIN_VALUE;
-        for (int value : values) {
-            if (value > result) {
-                result = value;
-            }
-        }
-        return result;
-    }
-
-    private double average(final double[] values) {
-        double result = 0;
-        for (double value : values) {
-            result += value;
-        }
-
-        return result / values.length;
-    }
-
     private double checkPeriodicity(final int[] values) {
+        //Check the percentage of unreachable connections
+        int nmb_unreachable_connections = 0;
+        int percentage_unreachable_connections = 0;
         double result = 1;
-        int previous_status = 0;
-        for (int i = 0; i < values.length; i++) {
-            int status = values[i];
-            if (previous_status == 0) {
-                previous_status = status;
-            } else {
-                if (previous_status == status) {
-                    result = result - 0.1;
-                }
+        for (int n = 0; n < values.length; n++) {
+            int status = values[n];
+            if (status == 400) {
+                nmb_unreachable_connections = nmb_unreachable_connections + 1;
             }
-            previous_status = status;
+        }
+
+        if (nmb_unreachable_connections == 0) {
+            return 0;
+        } else {
+            percentage_unreachable_connections = 1
+                    - (nmb_unreachable_connections / values.length);
+        }
+        //If more than half the connections are unreachable check how the
+        //connection statuses follow each other
+        if (percentage_unreachable_connections > 0.4) {
+
+        //Check how the statuses follow each other, is it a constant switch
+        //between a reachable and unreachable status or a large time periods
+        //with connection to the server followed by an unreachable period
+
+            int previous_status = 0;
+            for (int i = 0; i < values.length; i++) {
+                int status = values[i];
+                if (previous_status == 0) {
+                    previous_status = status;
+                } else {
+                    if (previous_status == status) {
+                        result = result - 0.1;
+                    }
+                }
+                previous_status = status;
+            }
         }
         if (result < 0) {
             result = 0;
@@ -90,6 +76,7 @@ public class Unreachable implements DetectionAgentInterface {
                 actual_trigger_label, subject);
 
         if (raw_data.length < 50) {
+            System.out.println("No Raw Data Given \n");
             return;
         }
 
@@ -109,23 +96,8 @@ public class Unreachable implements DetectionAgentInterface {
             status_array[i] = status;
         }
 
-        int good_connections = 0;
-        for (int n = 0; n < status_array.length; n++) {
-            if (status_array[n] == 200) {
-                good_connections = good_connections + 1;
-            }
-        }
-
-        float good_connection_percentage = 0;
-        if (good_connections == 0) {
-            return;
-        } else {
-            good_connection_percentage = (good_connections
-                    / status_array.length) * 100;
-        }
-
         double unreachable_periodicity = checkPeriodicity(status_array);
-        System.out.println(unreachable_periodicity);
+
         if (unreachable_periodicity > 0.5) {
             Evidence evidence = new Evidence();
             evidence.score = 0.9;
@@ -133,7 +105,7 @@ public class Unreachable implements DetectionAgentInterface {
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found a periodicity in the "
-                    + "unreachable percentage: "
+                    + "with unreachable periodicity: "
                     + unreachable_periodicity + "\n";
 
             datastore.addEvidence(evidence);
