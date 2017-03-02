@@ -48,6 +48,9 @@ public class UnreachableTest {
                         getClass().getResourceAsStream(
                                 "/detection.unreachable.yaml")),
                 client);
+        
+        System.out.println("Check for correctly saved evidence:\n");
+        client.getEvidence();
 
         System.out.println("analyze Unreachable test with empty data\n");
 

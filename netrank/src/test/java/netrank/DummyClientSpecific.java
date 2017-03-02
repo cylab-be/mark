@@ -24,6 +24,7 @@
 package netrank;
 
 import mark.activation.DummyClient;
+import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
 
@@ -34,6 +35,7 @@ public class DummyClientSpecific<T extends Subject> extends DummyClient<T> {
     private static final int N_NOISE = 5500;
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
+    private Evidence[] evidence_array = new Evidence[1];
 
     @Override
     public RawData[] findRawData(String type, T subject)
@@ -78,5 +80,16 @@ public class DummyClientSpecific<T extends Subject> extends DummyClient<T> {
         }
 
         return data;
+    }
+
+    public void addEvidence(Evidence evidence) throws Throwable {
+        System.out.println(evidence);
+        evidence_array[0] = evidence;
+    }
+
+    public void getEvidence() throws Throwable {
+        for (int i = 0; i < evidence_array.length; i++){
+            System.out.println(evidence_array[i]);
+        }
     }
 }
