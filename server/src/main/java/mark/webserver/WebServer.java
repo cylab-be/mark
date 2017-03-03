@@ -25,6 +25,7 @@ package mark.webserver;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,13 +80,15 @@ public class WebServer {
         wini.put("config", "server_port", config.server_port);
         wini.put("config", "update_interval", config.update_interval);
         wini.put("config", "adapter_class", config.adapter_class);
-        wini.store(new File(config.webserver_root, "config.ini"));
+        wini.store(config.getWebserverRoot().toPath()
+                        .resolve("config.ini").toFile());
 
         // Handle php files
         ServletContextHandler php_handler = new ServletContextHandler();
         php_handler.addServlet(
                 com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
-        php_handler.setResourceBase(config.webserver_root);
+        php_handler.setResourceBase(
+                config.getWebserverRoot().getAbsolutePath());
 
         // Handle static files (if it's not php)
         ResourceHandler resource_handler = new ResourceHandler() {
@@ -107,7 +110,8 @@ public class WebServer {
 
         };
         resource_handler.setDirectoriesListed(false);
-        resource_handler.setResourceBase(config.webserver_root);
+        resource_handler.setResourceBase(
+                config.getWebserverRoot().getAbsolutePath());
 
         HandlerList handler_list = new HandlerList();
         handler_list.setHandlers(new Handler[]{
@@ -121,7 +125,7 @@ public class WebServer {
         rewrite_handler.setRewritePathInfo(false);
         rewrite_handler.setOriginalPathAttribute("requestedPath");
         rewrite_handler.addRule(new RewriteIfNotExistsRule(
-                config.webserver_root));
+                config.getWebserverRoot()));
         rewrite_handler.setHandler(handler_list);
 
         server = new Server(config.webserver_port);
@@ -158,10 +162,10 @@ public class WebServer {
  * @author Thibault Debatty
  */
 class RewriteIfNotExistsRule extends Rule {
-    private final String root;
+    private final Path root;
 
-    RewriteIfNotExistsRule(final String root) {
-        this.root = root;
+    RewriteIfNotExistsRule(final File root) {
+        this.root = root.toPath();
         _terminating = false;
         _handling = false;
     }
@@ -171,8 +175,9 @@ class RewriteIfNotExistsRule extends Rule {
             final String target,
             final HttpServletRequest request,
             final HttpServletResponse response) throws IOException {
-        File resource = new File(root + target);
-        //System.out.println(resource.getAbsolutePath());
+
+        // Remove the leading / from the request path
+        File resource = root.resolve(target.substring(1)).toFile();
         if (resource.exists() && resource.isFile()) {
             return target;
         }

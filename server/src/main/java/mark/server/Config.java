@@ -170,7 +170,7 @@ public class Config {
      *
      * @return null if the path is incorrect.
      */
-    final File getModulesDirectory() throws FileNotFoundException {
+    public final File getModulesDirectory() throws FileNotFoundException {
 
         File modules_file = new File(modules);
 
@@ -178,18 +178,55 @@ public class Config {
             // modules is a relative path...
             if (path == null) {
                 throw new FileNotFoundException(
-                    "provided modules directory is not valid (not a directory "
-                            + "or no a valid path)");
+                    "modules directory is not valid (not a directory "
+                            + "or not a valid path)");
             }
             modules_file = new File(path.toURI().resolve(modules));
         }
 
         if (!modules_file.isDirectory()) {
             throw new FileNotFoundException(
-                    "provided modules directory is not valid (not a directory "
-                            + "or no a valid path)");
+                    "modules directory is not valid (not a directory "
+                            + "or not a valid path)");
         }
 
         return modules_file;
+    }
+
+    /**
+     *
+     * @param webserver_root
+     */
+    public final void setWebserverRoot(final String webserver_root) {
+        this.webserver_root = webserver_root;
+    }
+
+    /**
+     *
+     * @return
+     * @throws FileNotFoundException
+     */
+    public final File getWebserverRoot() throws FileNotFoundException {
+        File webroot_file = new File(webserver_root);
+
+        if (!webroot_file.isAbsolute()) {
+            // web root is a relative path...
+            if (path == null) {
+                throw new FileNotFoundException(
+                    "webserver root is not valid: "
+                            + webserver_root
+                            + " (not a directory or not a valid path)");
+            }
+            webroot_file = new File(path.toURI().resolve(webserver_root));
+        }
+
+        if (!webroot_file.isDirectory()) {
+            throw new FileNotFoundException(
+                    "webserver root is not valid: "
+                            + webserver_root
+                            + " (not a directory or not a valid path)");
+        }
+
+        return webroot_file;
     }
 }

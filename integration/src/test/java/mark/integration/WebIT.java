@@ -27,6 +27,7 @@ package mark.integration;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import java.nio.file.Paths;
 import junit.framework.TestCase;
 import netrank.LinkAdapter;
 import mark.server.Config;
@@ -61,8 +62,11 @@ public class WebIT extends TestCase {
 
         Config config = Config.getTestConfig();
         config.start_webserver = true;
+        config.setWebserverRoot(
+                Paths.get("").toAbsolutePath().getParent().resolve("ui")
+                        .toString());
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(new Config());
+        server = new Server(config);
         server.start();
 
         client.getCache().clear();
