@@ -10,60 +10,31 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
- *
+ * Agent responsible for analyzing the connection status to a server.
+ * Determines the # of bad connections compared to the # good connections.
  * @author Georgi Nikolov
  */
 public class Unreachable implements DetectionAgentInterface {
 
-    /**
-     * Maybe add Sampling, not sure if needed or not.
-     */
+    private final int[] bad_server_status = {500, 501, 502, 503, 504};
 
-    private double checkPeriodicity(final int[] values) {
-        //Check the percentage of unreachable connections
-        int nmb_unreachable_connections = 0;
-        int percentage_unreachable_connections = 0;
-        double result = 1;
-        for (int n = 0; n < values.length; n++) {
-            int status = values[n];
-            if (status == 400) {
-                nmb_unreachable_connections = nmb_unreachable_connections + 1;
+    //Private function to determine if a status shows a bad connection
+    //to the server
+    private boolean doesContain(final int status) {
+        boolean result = false;
+        for (int i = 0; i < bad_server_status.length; i++) {
+            if (status == bad_server_status[i]) {
+                result = true;
             }
-        }
-
-        if (nmb_unreachable_connections == 0) {
-            return 0;
-        } else {
-            percentage_unreachable_connections = 1
-                    - (nmb_unreachable_connections / values.length);
-        }
-        //If more than half the connections are unreachable check how the
-        //connection statuses follow each other
-        if (percentage_unreachable_connections > 0.4) {
-
-        //Check how the statuses follow each other, is it a constant switch
-        //between a reachable and unreachable status or a large time periods
-        //with connection to the server followed by an unreachable period
-
-            int previous_status = 0;
-            for (int i = 0; i < values.length; i++) {
-                int status = values[i];
-                if (previous_status == 0) {
-                    previous_status = status;
-                } else {
-                    if (previous_status == status) {
-                        result = result - 0.1;
-                    }
-                }
-                previous_status = status;
-            }
-        }
-        if (result < 0) {
-            result = 0;
         }
         return result;
     }
 
+    // Analyze function inherited from the DetectionAgentInterface
+    // accepts the subject to analyze
+    // trigger of the agent
+    // the profile used to load the agent
+    // the database to which to connect to gather RawData
     @Override
     public final void analyze(
             final Subject subject,
@@ -94,17 +65,31 @@ public class Unreachable implements DetectionAgentInterface {
             status_array[i] = status;
         }
 
-        double unreachable_periodicity = checkPeriodicity(status_array);
+        int number_of_unreachable = 0;
+        float unreachable_percentage = 0;
 
-        if (unreachable_periodicity > 0.5) {
+        for (int u = 0; u < status_array.length; u++) {
+            if (doesContain(status_array[u])) {
+                number_of_unreachable = number_of_unreachable + 1;
+            }
+        }
+
+        if (number_of_unreachable != 0) {
+            unreachable_percentage = (float) number_of_unreachable
+                    / status_array.length;
+        } else {
+            unreachable_percentage = 0;
+        }
+
+        if (unreachable_percentage > 0.2) {
             Evidence evidence = new Evidence();
-            evidence.score = 0.9;
+            evidence.score = unreachable_percentage;
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found a periodicity in the "
                     + "with unreachable periodicity: "
-                    + unreachable_periodicity + "\n";
+                    + unreachable_percentage + "\n";
 
             datastore.addEvidence(evidence);
         }

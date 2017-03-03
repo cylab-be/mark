@@ -53,8 +53,8 @@ public class UnreachableTest extends TestCase {
                 client);
 
         LinkedList<Evidence> evidences = client.getEvidences();
-        //assertEquals(1, evidences.size());
-        //assertEquals(ratio, evidences.getLast().score, 0.0001);
+        assertEquals(1, evidences.size());
+//        assertEquals(ratio, evidences.getLast().score, 0.01);
 
         System.out.println("analyze Unreachable test with empty data\n");
 
@@ -64,17 +64,17 @@ public class UnreachableTest extends TestCase {
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
                                 "/detection.unreachable.yaml")),
-                client);
+                new UnreachableTestClient(0));
 
         System.out.println("analyze Unreachable test with no APT\n");
 
         agent.analyze(
-                new Link(" ", " "),
+                new Link("192.168.2.3", "www.google.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
                                 "/detection.unreachable.yaml")),
-                new DummyClient());
+                new UnreachableTestClient(0.1));
     }
 
 }

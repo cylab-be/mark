@@ -79,12 +79,16 @@ public class UnreachableTestClient<T extends Subject> extends DummyClient<T> {
                 + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
                 + "175.193.216.231 text/html";
         }
-
-        return data;
+        if (ratio != 0) {
+            return data;
+        } else {
+            return new RawData[0];
+        }
     }
 
     @Override
     public void addEvidence(Evidence evidence) throws Throwable {
+        System.out.println(evidence);
         evidences.add(evidence);
     }
 
