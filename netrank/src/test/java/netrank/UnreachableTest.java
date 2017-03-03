@@ -23,24 +23,27 @@
  */
 package netrank;
 
+import java.util.LinkedList;
 import junit.framework.TestCase;
 import mark.activation.DummyClient;
 import mark.core.DetectionAgentProfile;
+import mark.core.Evidence;
 
 /**
  *
  * @author Georgi Nikolov
  */
-public class UnreachableTest {
-    
+public class UnreachableTest extends TestCase {
+
     /**
      * Test of run method, of class Frequency.
      */
     public void testAnalyze() throws Throwable {
         System.out.println("analyze Unreachable test with APT\n");
 
+        double ratio = 0.9;
+        UnreachableTestClient client = new UnreachableTestClient(ratio);
         Unreachable agent = new Unreachable();
-        DummyClientSpecific client = new DummyClientSpecific();
         agent.analyze(
                 new Link("192.168.2.3", "www.uneachable.com"),
                 "actual.trigger",
@@ -48,9 +51,10 @@ public class UnreachableTest {
                         getClass().getResourceAsStream(
                                 "/detection.unreachable.yaml")),
                 client);
-        
-        System.out.println("Check for correctly saved evidence:\n");
-        client.getEvidence();
+
+        LinkedList<Evidence> evidences = client.getEvidences();
+        assertEquals(1, evidences.size());
+        assertEquals(ratio, evidences.getLast().score, 0.0001);
 
         System.out.println("analyze Unreachable test with empty data\n");
 
@@ -72,5 +76,5 @@ public class UnreachableTest {
                                 "/detection.unreachable.yaml")),
                 new DummyClient());
     }
-    
+
 }
