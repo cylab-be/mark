@@ -1,6 +1,5 @@
 package netrank;
 
-//import java.io.File;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -86,7 +85,6 @@ public class Unreachable implements DetectionAgentInterface {
         for (int i = 0; i < raw_data.length; i++) {
             int timestamp = raw_data[i].time;
             int status = 0;
- //           times_status[i] = raw_data[i].time;
             Matcher matcher = pattern.matcher(raw_data[i].data);
             if (matcher.find()) {
                 status = Integer.parseInt(matcher.group(1));
