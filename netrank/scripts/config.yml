@@ -15,3 +15,5 @@ server_port:    8080
 adapter_class:  netrank.LinkAdapter  
 
 modules:        ./modules
+
+webserver_root: ../../ui
