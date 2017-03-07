@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 /**
  * Agent responsible for analyzing the connection status to a server.
  * Determines the # of bad connections compared to the # good connections.
- * Bad connections are of the type [50*] 
+ * Bad connections are of the type [50*].
  * @author Georgi Nikolov
  */
 public class Unreachable implements DetectionAgentInterface {
@@ -50,7 +50,7 @@ public class Unreachable implements DetectionAgentInterface {
             System.out.println("No Raw Data Given \n");
             return;
         }
-        
+
         int number_of_connections = 0;
         int number_of_unreachable = 0;
         Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
