@@ -3,7 +3,7 @@
 
     <groupId>info.debatty.mark</groupId>
     <artifactId>root</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>root</name>
     <description>Parent module for MARK project</description>
@@ -38,7 +38,7 @@
         <connection>scm:git:git@github.com:RUCD/mark.git</connection>
         <developerConnection>scm:git:git@github.com:RUCD/mark.git</developerConnection>
         <url>git@github.com:RUCD/mark.git</url>
-        <tag>v0.0.8</tag>
+        <tag>v0.0.3</tag>
     </scm>
 
     <properties>
