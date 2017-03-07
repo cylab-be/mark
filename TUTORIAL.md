@@ -1,6 +1,6 @@
 # Tutorial
 
-This tutorial will show you how install the MARK server and implement algorithms for your own application.
+This tutorial will show you how to install the MARK server and implement algorithms for your own application.
 
 For this example, we will suppose you care for a large group of say... cats. You would like to know which one of your cats needs attention, using some very serious algorithms. This tutorial will show you how to:
 * Install and run the MARK server

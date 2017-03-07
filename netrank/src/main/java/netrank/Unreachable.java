@@ -51,7 +51,6 @@ public class Unreachable implements DetectionAgentInterface {
             return;
         }
 
-        int number_of_connections = 0;
         int number_of_unreachable = 0;
         Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
         for (int i = 0; i < raw_data.length; i++) {
@@ -63,13 +62,12 @@ public class Unreachable implements DetectionAgentInterface {
             if (doesContain(status)) {
                 number_of_unreachable = number_of_unreachable + 1;
             }
-            number_of_connections = number_of_connections + 1;
         }
 
         float unreachable_percentage = 0;
 
         unreachable_percentage = (float) number_of_unreachable
-                / number_of_connections;
+                / raw_data.length;
 
         if (unreachable_percentage > 0) {
             Evidence evidence = new Evidence();
