@@ -1,14 +1,16 @@
 # Tutorial
 
-This tutorial will show you how to implement algorithms for your own application.
+This tutorial will show you how install the MARK server and implement algorithms for your own application.
 
-For this example, we will suppose you care for a large group of say... cats. Now you would like to know which one of your cats need attention, using some very serious algorithms. This tutorial will show you how to:
+For this example, we will suppose you care for a large group of say... cats. You would like to know which one of your cats needs attention, using some very serious algorithms. This tutorial will show you how to:
 * Install and run the MARK server
 * Create a maven project
 * Define your subject (for our example, a Cat)
 * Create your connector to feed information about your cats in the server
 * Use profiles
 * Implement and combine your detection algorithms
+
+All source files and configuration files are available on a dedicated git repository https://github.com/RUCD/mark-tutorial
 
 ## Installation and run
 
@@ -443,6 +445,4 @@ If you restart the server and head to the status page, it will show you have thr
 
 On the homepage you can choose which ranking you wish to visualize.
 
-All source files and configuration files are available on a dedicated git repository:
 
-https://github.com/RUCD/mark-tutorial

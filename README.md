@@ -12,9 +12,6 @@ The **Multi Agent Ranking Framework** allows to easily implement large scale det
 ![](./MARK   Evidence report 58904c452d8441264e0cc1bf.png)
 
 
-## Requirements
+## Getting started
 
-To run the MARK server, you will need:
-- java 7 or newer
-- a mongo server
-
+To get started with installation and to implement your own detection algorithms, check our [tutorial](./TUTORIAL.md)
