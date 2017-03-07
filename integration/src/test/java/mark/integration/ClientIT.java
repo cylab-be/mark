@@ -211,7 +211,7 @@ public class ClientIT extends TestCase {
 
         try {
             Client datastore = new Client(
-                    new URL("http://123.45.67.89:8082"), new LinkAdapter());
+                    new URL("http://127.0.0.1:1555"), new LinkAdapter());
             datastore.test();
             fail("Should throw a SocketTimeoutException !");
             datastore.test();
