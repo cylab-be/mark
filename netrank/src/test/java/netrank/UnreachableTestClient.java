@@ -33,7 +33,7 @@ import mark.core.Subject;
 
 public class UnreachableTestClient<T extends Subject> extends DummyClient<T> {
 
-    private static final int N = 1000;
+    private static final int N = 10000;
 
     private final double ratio;
     private final LinkedList<Evidence> evidences = new LinkedList<>();
