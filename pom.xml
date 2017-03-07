@@ -3,7 +3,7 @@
 
     <groupId>info.debatty.mark</groupId>
     <artifactId>root</artifactId>
-    <version>0.0.7-SNAPSHOT</version>
+    <version>0.0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>root</name>
     <description>Parent module for MARK project</description>

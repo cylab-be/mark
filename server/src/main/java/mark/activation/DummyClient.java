@@ -32,7 +32,7 @@ import mark.core.RawData;
 import mark.core.ServerInterface;
 
 /**
- * A fake connection to MASFAD server, can be used for testing and debugging.
+ * A fake connection to MARK server, can be used for testing and debugging.
  * It will simply return fake data, and write out what it receives...
  * @author Thibault Debatty
  */

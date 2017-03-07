@@ -70,14 +70,24 @@ class MarkClient {
       }
      */
 
-    $evidences = array();
-    foreach ($results as $line) {
-      $evidences[] = new Evidence($line);
-    }
+    $evidences = $this->parseEvidences($results);
 
     usort($evidences, function(Evidence $e1, Evidence $e2) {
       return $e1->score < $e2->score ? 1 : -1;
     });
+
+    return $evidences;
+  }
+
+  /**
+   * Convert an array of stdObjec into an array of Evidence.
+   * @param Evidence[] $results
+   */
+  public function parseEvidences($results){
+    $evidences = array();
+    foreach ($results as $line) {
+      $evidences[] = new Evidence($line);
+    }
 
     return $evidences;
   }
@@ -89,7 +99,7 @@ class MarkClient {
    */
   public function findEvidenceById($id) {
     // current will return first element in the array
-    return $this->exec("findEvidenceById", array($id));
+    return new Evidence($this->exec("findEvidenceById", array($id)));
   }
 
   public function igniteStatus() {
@@ -137,7 +147,6 @@ class MarkClient {
     }
 
     return json_decode($response)->result;
-
   }
 }
 
@@ -154,21 +163,7 @@ class Evidence {
     $this->label = $obj->label;
     $this->time = $obj->time;
     $this->score = $obj->score;
-    $this->subject = new Link($obj->subject);
+    $this->subject = $this->subject = print_r($obj->subject, true);
     $this->report = $obj->report;
-  }
-}
-
-class Link {
-  public $client;
-  public $server;
-
-  public function __construct(stdClass $obj) {
-    $this->client = $obj->client;
-    $this->server = $obj->server;
-  }
-
-  public function __toString() {
-    return $this->client . " <=> " . $this->server;
   }
 }
