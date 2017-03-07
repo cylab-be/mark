@@ -18,7 +18,7 @@ To run a MARK server, you will need:
 
 Download the server-VERSION-standalone.zip from the release page
 ```
-wget https://github.com/blah/server-0.0.7-standalone.zip
+wget https://github.com/blah/server-0.0.8-standalone.zip
 ```
 
 Extract the archive
@@ -73,21 +73,21 @@ In your pom.xml, add the required dependencies:
   <dependency>
       <groupId>info.debatty.mark</groupId>
       <artifactId>core</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <scope>provided</scope>
   </dependency>
 
   <dependency>
       <groupId>info.debatty.mark</groupId>
       <artifactId>client</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <scope>provided</scope>
   </dependency>
 
   <dependency>
       <groupId>info.debatty.mark</groupId>
       <artifactId>server</artifactId>
-      <version>0.0.7</version>
+      <version>0.0.8</version>
       <scope>test</scope>
   </dependency>
 </dependencies>
@@ -214,16 +214,13 @@ import mark.core.ServerInterface;
 
 public class Sink implements DataAgentInterface {
 
-    public void run(DataAgentProfile profile, ServerInterface datastore)
+        public void run(DataAgentProfile profile, ServerInterface datastore)
             throws Throwable {
 
-		// The datastore is the connection to the server, which will be used to save data.
-        // The profile represents the configuration that was provided for this data agent
-        // (we will use it later).
         ServerSocket serverSocket = new ServerSocket(1555);
+
         Socket clientSocket = serverSocket.accept();
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
         out.println("Welcome to Cat Rank! Tell me what's wrong?");
 
         BufferedReader in = new BufferedReader(
@@ -239,7 +236,7 @@ public class Sink implements DataAgentInterface {
             data.subject = cat;
             data.data = parts[1].trim();
             data.time = (int) (System.currentTimeMillis() / 1000);
-            data.label = "data.cat.sink";
+            data.label = "data.cat.server";
 
             datastore.addRawData(data);
         }
@@ -339,19 +336,19 @@ Then we have to create a configuration file for the detection algorithm, and put
 ```
 ---
 class_name:     cat.rank.Counter
-trigger_label:  data.cat
+trigger_label:  data.cat.sink
 label:          detection.counter
 ```
 
 ## Visualizing results
 
-We can now start the server:
+We can now start the server in one terminal:
 
 ```
 ./run.sh
 ```
 
-To test the data source, open a terminal and use netcat to connect to port 1555:
+To test the data source, open another terminal and use netcat to connect to port 1555:
 
 ![](./netcat.png)
 
@@ -359,9 +356,11 @@ Now if you use your browser to look at the interface, located at http://127.0.0.
 
 ![](./home.png)
 
-If you look at the status page, it will confirm that 2 or 3 detection tasks have been executed. It also shows that you have one detection algorithm configured (cat.rank.Counter), that will produce reports with the label "detection.counter". This detection is triggered when new data arrives with the label "data.cat".
+If you look at the status page, it will confirm that 2 or 3 detection tasks have been executed. It also shows that you have one detection algorithm configured (cat.rank.Counter), that will produce reports with the label "detection.counter". This detection is triggered when new data arrives with the label "data.cat.sink".
 
 ![](./status.png)
+
+To stop the server, close the connection in netcat hitting ```ctrl + c``` then stop the server by hitting ```ctrl + c```.
 
 ## Combining detectors
 
