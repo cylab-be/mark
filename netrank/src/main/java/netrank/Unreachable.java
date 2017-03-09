@@ -56,9 +56,9 @@ public class Unreachable implements DetectionAgentInterface {
         //the server status 50*
         int number_of_unreachable = 0;
         Pattern pattern = Pattern.compile("/" + "([0-9]{3})\\s");
-        for (int i = 0; i < raw_data.length; i++) {
+        for (RawData raw_data1 : raw_data) {
             int status = 0;
-            Matcher matcher = pattern.matcher(raw_data[i].data);
+            Matcher matcher = pattern.matcher(raw_data1.data);
             if (matcher.find()) {
                 status = Integer.parseInt(matcher.group(1));
             }
