@@ -51,8 +51,11 @@ public class Unreachable implements DetectionAgentInterface {
             return;
         }
 
+        //Count the # of unreachable connections discovered.
+        //Discovering unreachable connections by checking a pattern looking for
+        //the server status 50*
         int number_of_unreachable = 0;
-        Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
+        Pattern pattern = Pattern.compile("/" + "([0-9]{3})\\s");
         for (int i = 0; i < raw_data.length; i++) {
             int status = 0;
             Matcher matcher = pattern.matcher(raw_data[i].data);

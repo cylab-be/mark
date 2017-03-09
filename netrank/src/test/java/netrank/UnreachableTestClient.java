@@ -75,7 +75,7 @@ public class UnreachableTestClient<T extends Subject> extends DummyClient<T> {
                 + "126 "
                 + "198.36.158.8 "
                 + status
-                + "918 GET "
+                + " 918 GET "
                 + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
                 + "175.193.216.231 text/html";
         }
