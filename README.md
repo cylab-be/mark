@@ -1,9 +1,9 @@
-# MARK
+# MARK - Easy BigData Ranking
 [![Build Status](https://travis-ci.org/RUCD/mark.svg?branch=master)](https://travis-ci.org/RUCD/mark)
 
-BigData ranking, made easy!
+The **Multi Agent Ranking Framework** allows to easily implement large scale detection and ranking systems. It provides you with all necessary mechanisms: **storage, visualization and triggering**, such that you can focus on the real important stuff: detection algorithms.
 
-The **Multi Agent Ranking Framework** allows to easily implement large scale detection and ranking systems. It provides you with all necessary storage, visualization and activation mechanisms, such that you can focus on the real important stuff: detection algorithms.
+![](./architecture.png)
 
 ![](./MARK   Home.png)
 
