@@ -137,6 +137,14 @@ public class Config {
     }
 
     /**
+     * Set the path of this configuration file (only used for testing).
+     * @param path
+     */
+    final void setPath(File path) {
+        this.path = path;
+    }
+
+    /**
      *
      * @return
      * @throws MalformedURLException
@@ -228,5 +236,33 @@ public class Config {
         }
 
         return webroot_file;
+    }
+
+    public final File getLogDiretory() throws FileNotFoundException {
+        if (log_directory == null) {
+            throw new FileNotFoundException("Log dir is null (undefined)");
+        }
+
+        File logdir_file = new File(log_directory);
+
+        if (!logdir_file.isAbsolute()) {
+            // it's a relative file
+            if (path == null) {
+                throw new FileNotFoundException(
+                    "log directory is not valid: "
+                        + log_directory
+                        + " (not a directory or not a valid path)");
+            }
+            logdir_file = new File(path.toURI().resolve(log_directory));
+        }
+
+        if(!logdir_file.isDirectory()) {
+            throw new FileNotFoundException(
+                "log directory is not valid: "
+                    + log_directory
+                    + " (not a directory or not a valid path)");
+        }
+
+        return logdir_file;
     }
 }

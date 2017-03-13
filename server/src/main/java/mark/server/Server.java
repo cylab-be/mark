@@ -245,38 +245,42 @@ public class Server {
 
         Logger.getRootLogger().getLoggerRepository().resetConfiguration();
 
-        ConsoleAppender console = new ConsoleAppender(); //create appender
-        //configure the appender
+        ConsoleAppender console = new ConsoleAppender();
         String PATTERN = "%d [%p] [%t] %c %m%n";
         console.setLayout(new PatternLayout(PATTERN));
-        console.setThreshold(Level.WARN);
+        console.setThreshold(Level.ERROR);
         console.activateOptions();
-        //add appender to any Logger (here is root)
         Logger.getRootLogger().addAppender(console);
 
-        console = new ConsoleAppender(); //create appender
-        //configure the appender
+        console = new ConsoleAppender();
         console.setLayout(new PatternLayout(PATTERN));
         console.setThreshold(Level.INFO);
         console.activateOptions();
         Logger.getLogger("mark").addAppender(console);
 
-        //add appender to any Logger (here is root)
-        Logger.getRootLogger().addAppender(
-                getFileAppender("mark-server.log", Level.INFO));
-        Logger.getLogger("org.apache.ignite").addAppender(
-                getFileAppender("mark-ignite.log", Level.INFO));
-        Logger.getLogger("org.eclipse.jetty").addAppender(
-                getFileAppender("mark-jetty.log", Level.INFO));
-        Logger.getLogger("mark.activation.ActivationController").addAppender(
-                getFileAppender("mark-activationctonroller.log", Level.DEBUG));
+        try {
+            Logger.getRootLogger().addAppender(
+                    getFileAppender("mark-server.log", Level.INFO));
+            Logger.getLogger("org.apache.ignite").addAppender(
+                    getFileAppender("mark-ignite.log", Level.INFO));
+            Logger.getLogger("org.eclipse.jetty").addAppender(
+                    getFileAppender("mark-jetty.log", Level.INFO));
+            Logger.getLogger("mark.activation.ActivationController").addAppender(
+                    getFileAppender("mark-activationctonroller.log", Level.DEBUG));
+
+        } catch (FileNotFoundException ex) {
+            System.err.println(
+                    "Logs will not be written to files: " + ex.getMessage());
+        }
 
     }
 
-    private FileAppender getFileAppender(String filename, Level level) {
+    private FileAppender getFileAppender(String filename, Level level)
+            throws FileNotFoundException {
         FileAppender fa = new FileAppender();
         fa.setName(filename);
-        fa.setFile(filename);
+        fa.setFile(
+                config.getLogDiretory().getPath() + File.separator + filename);
         fa.setLayout(new PatternLayout("%d [%p] [%t] %c %m%n"));
         fa.setThreshold(level);
         fa.setAppend(true);
