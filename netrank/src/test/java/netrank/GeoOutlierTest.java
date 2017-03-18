@@ -41,6 +41,8 @@ public class GeoOutlierTest extends TestCase{
     public void testAnalyze() throws Throwable {
         System.out.println("analyze GeoOutlier test");
 
+        int n_outliers = 1;
+        GeoOutlierTestClient client = new GeoOutlierTestClient(n_outliers);
         GeoOutlier agent = new GeoOutlier();
         agent.analyze(
                 new Link("192.168.2.3", "www.google.com"),
@@ -48,7 +50,10 @@ public class GeoOutlierTest extends TestCase{
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
                                 "/detection.geooutlier.yaml")),
-                new DummyClient());
-    }  
+                client);
+ 
+        LinkedList<Evidence> evidences = client.getEvidences();
+        assertEquals(1, evidences.size());
+    }
 
 }

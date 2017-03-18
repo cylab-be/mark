@@ -32,21 +32,9 @@ import java.util.ArrayList;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
-//import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.core.Subject;
-//import org.apache.commons.math3.complex.Complex;
-//import org.apache.commons.math3.transform.DftNormalization;
-//import org.apache.commons.math3.transform.FastFourierTransformer;
-//import org.apache.commons.math3.transform.TransformType;
-//import org.jfree.chart.ChartFactory;
-//import org.jfree.chart.ChartUtilities;
-//import org.jfree.chart.JFreeChart;
-//import org.jfree.chart.plot.PlotOrientation;
-//import org.jfree.data.xy.XYSeries;
-//import org.jfree.data.xy.XYSeriesCollection;
-
 
 /**
  *
@@ -130,22 +118,39 @@ public class GeoOutlier implements DetectionAgentInterface {
             if (prev_location_holder == null) {
                 prev_location_holder = current_location;
             } else {
-                if (distance(prev_location_holder.latitude,
+                //Check that we are not comparing a good connection to a
+                //previously determined outlier connection.
+                //check the distance between the previous and current locations
+                //using the latitude and longitude. If the Distance is bigger
+                //than 500 is considered an outlier.
+                if (!outliers.contains(prev_location_holder)
+                        && distance(prev_location_holder.latitude,
                         prev_location_holder.longitude,
                         current_location.latitude,
                         current_location.longitude) > 500) {
                     outliers.add(current_location);
                 }
+                prev_location_holder = current_location;
             }
         }
 
+        //If there are any outliers create an evidence.
         if (outliers.size() > 0) {
             Evidence evidence = new Evidence();
-            evidence.score = 0.9;
+            //If there are 10 or fewer outliers bigger chance of a malicious
+            //connection
+            if (outliers.size() <= 10) {
+                evidence.score = 1;
+            //The bigger number of outliers the smaller chance of a malicious
+            //connection
+            } else {
+                evidence.score = 1 - outliers.size() / 100;
+            }
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found an outlier in the connections with"
+            evidence.report = "Found " + outliers.size()
+                    + " outlier in the connections with"
                     + " distance between the servers bigger than 500 kilometers"
                     + "\n";
 
