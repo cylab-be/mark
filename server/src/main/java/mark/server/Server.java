@@ -44,21 +44,11 @@ public class Server {
     private final LinkedList<DataAgentContainer> data_agents;
     private final ActivationController activation_controller;
 
-    /*
-    private URL server_url;
-
-    private final LinkedList<DataAgentProfile> data_agent_profiles;
-    private LinkedList<Thread> data_agent_threads;
-
-    private final LinkedList<DetectionAgentProfile> detection_agent_profiles;
-    private SubjectAdapter adapter;
-*/
-
     /**
      * Initialize a server with default configuration, dummy subject adapter,
      * no data agents and no detection agents.
      * @param config
-     * @throws mark.server.InvalidProfileException
+     * @throws java.lang.Throwable
      */
     public Server(final Config config) throws Throwable {
         this.config = config;
@@ -69,7 +59,7 @@ public class Server {
         this.web_server = new WebServer(config);
         this.activation_controller = new ActivationController(config);
         this.datastore = new Datastore(config, activation_controller);
-        this.data_agents = new LinkedList<DataAgentContainer>();
+        this.data_agents = new LinkedList<>();
 
 
         File modules_dir;
@@ -85,6 +75,7 @@ public class Server {
 
         // Parse *.data.yml files
         File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
+            @Override
             public boolean accept(final File dir, final String name) {
                 return name.endsWith(".data.yml");
             }
@@ -100,13 +91,15 @@ public class Server {
         // Parse *.detection.yml files
         File[] detection_agent_files =
                 modules_dir.listFiles(new FilenameFilter() {
+            @Override
             public boolean accept(final File dir, final String name) {
                 return name.endsWith(".detection.yml");
             }
         });
 
         for (File file : detection_agent_files) {
-            activation_controller.addAgent(DetectionAgentProfile.fromFile(file));
+            activation_controller.addAgent(
+                    DetectionAgentProfile.fromFile(file));
         }
     }
 

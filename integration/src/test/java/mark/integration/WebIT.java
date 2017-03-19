@@ -70,18 +70,6 @@ public class WebIT extends TestCase {
         server.start();
 
         client.getCache().clear();
-        HtmlPage page = client.getPage(base_url);
-        System.out.println(((HtmlHeading1) page.getByXPath("//h1").get(0)).getTextContent());
-
-        client.getCache().clear();
-        HtmlPage page3 = client.getPage(base_url);
-        System.out.println(((HtmlHeading1) page3.getByXPath("//h1").get(0)).getTextContent());
-
-        client.getCache().clear();
-        HtmlPage page4 = client.getPage(base_url);
-        System.out.println(((HtmlHeading1) page4.getByXPath("//h1").get(0)).getTextContent());
-
-        client.getCache().clear();
         HtmlPage page2 = client.getPage(base_url);
         HtmlHeading1 h1 = (HtmlHeading1) page2.getByXPath("//h1").get(0);
         assertEquals(
