@@ -180,7 +180,6 @@ public class ActivationController<T extends Subject> extends SafeThread {
     /**
      * Test the profiles: instantiate (without running) one of each task defined
      * in the profiles.
-     * @param profiles
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
     public final void testProfiles()

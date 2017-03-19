@@ -241,7 +241,7 @@ public class Server {
         ConsoleAppender console = new ConsoleAppender();
         String PATTERN = "%d [%p] [%t] %c %m%n";
         console.setLayout(new PatternLayout(PATTERN));
-        console.setThreshold(Level.ERROR);
+        console.setThreshold(Level.FATAL);
         console.activateOptions();
         Logger.getRootLogger().addAppender(console);
 
