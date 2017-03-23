@@ -3,9 +3,11 @@
 # => no data or detection agent
 #    server uses the DummySubjectAdapter
 ---
-mongo_host:   127.0.0.1
-mongo_port:   27017
-mongo_db:     MARK
+mongo_host:     127.0.0.1
+mongo_port:     27017
+mongo_db:       MARK
 
-server_host:  127.0.0.1
-server_port:  8080
+server_host:    127.0.0.1
+server_port:    8080
+
+webserver_root: ../../ui
