@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
@@ -90,16 +89,16 @@ public class GeoOutlier implements DetectionAgentInterface {
             }
         }
 
-        List<LocationWrapper> clusterInput = new ArrayList<>(locations.size());
+        List<LocationWrapper> cluster_input = new ArrayList<>(locations.size());
         for (Location location : locations) {
-            clusterInput.add(new LocationWrapper(location));
+            cluster_input.add(new LocationWrapper(location));
         }
 
         //Initialize a new cluster algorithm.
         //We use DBSCANCluster to determine locations close to each other
         //and outliers that don't belong to any cluster.
         DBSCANClusterer dbscan = new DBSCANClusterer(20, 1);
-        List<Cluster<LocationWrapper>> clusters = dbscan.cluster(clusterInput);
+        List<Cluster<LocationWrapper>> clusters = dbscan.cluster(cluster_input);
 
         //If there are any outliers create an evidence.
         if (clusters.size() > 1) {
@@ -118,12 +117,18 @@ public class GeoOutlier implements DetectionAgentInterface {
         }
 
     }
-    
-    private static class LocationWrapper implements Clusterable {
+
+/**
+ *
+ * @author Georgi Nikolov
+ * Helper class for wrapping the locations to be passed as Clusterables to the
+ * DBSCANClusterer algorithm.
+ */
+    private class LocationWrapper implements Clusterable {
         private final double[] points;
         private final Location location;
 
-        public LocationWrapper(Location location) {
+        public LocationWrapper(final Location location) {
             this.location = location;
             this.points = new double[] {location.latitude, location.longitude};
         }
