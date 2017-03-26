@@ -80,7 +80,7 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
             data[i] = new RawData();
             data[i].subject = subject;
             data[i].label = type;
-            data[i].time = start + rand.nextInt(N_APT * APT_INTERVAL);
+            data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
             data[i].data = data[i].time + "    "
                     + "126 "
                     + "198.36.158.8 "

@@ -41,7 +41,7 @@ public class GeoOutlierTest extends TestCase{
     public void testAnalyze() throws Throwable {
         System.out.println("analyze GeoOutlier test");
 
-        int n_outliers = 1;
+        int n_outliers = 2;
         GeoOutlierTestClient client = new GeoOutlierTestClient(n_outliers);
         GeoOutlier agent = new GeoOutlier();
         agent.analyze(

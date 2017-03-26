@@ -29,12 +29,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import mark.core.Subject;
+import org.apache.commons.math3.ml.clustering.Cluster;
+import org.apache.commons.math3.ml.clustering.Clusterable;
+import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
 
 /**
  *
@@ -44,29 +48,6 @@ import mark.core.Subject;
  * They are outliers and may be malicious.
  */
 public class GeoOutlier implements DetectionAgentInterface {
-
-    //Helper function to determine the distance between two locations
-    //based on their longitude and latitude
-    private double distance(final double lat1, final double lng1
-            , final double lat2, final double lng2) {
-
-        double earth_radius = 6371; // in kilometer
-
-        double d_lat = Math.toRadians(lat2 - lat1);
-        double d_lng = Math.toRadians(lng2 - lng1);
-
-        double sind_lat = Math.sin(d_lat / 2);
-        double sind_lng = Math.sin(d_lng / 2);
-
-        double a = Math.pow(sind_lat, 2) + Math.pow(sind_lng, 2)
-            * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        double dist = earth_radius * c;
-
-        return dist; // output distance in kilometer
-    }
 
     // Analyze function inherited from the DetectionAgentInterface
     // accepts the subject to analyze
@@ -108,53 +89,57 @@ public class GeoOutlier implements DetectionAgentInterface {
             }
         }
 
-         //Run through the List of Locations and determine if there are outliers
-         //that lie outside of the determined acceptable limits for longitude
-         //and latitude.
-        ArrayList<Location> outliers = new ArrayList<>();
-        Location prev_location_holder = null;
-        for (int counter = 0; counter < locations.size(); counter++) {
-            Location current_location = locations.get(counter);
-            if (prev_location_holder == null) {
-                prev_location_holder = current_location;
-            } else {
-                //Check that we are not comparing a good connection to a
-                //previously determined outlier connection.
-                //check the distance between the previous and current locations
-                //using the latitude and longitude. If the Distance is bigger
-                //than 500 is considered an outlier.
-                if (!outliers.contains(prev_location_holder)
-                        && distance(prev_location_holder.latitude,
-                        prev_location_holder.longitude,
-                        current_location.latitude,
-                        current_location.longitude) > 500) {
-                    outliers.add(current_location);
-                }
-                prev_location_holder = current_location;
-            }
+        List<LocationWrapper> cluster_input = new ArrayList<>(locations.size());
+        for (Location location : locations) {
+            cluster_input.add(new LocationWrapper(location));
         }
 
+        //Initialize a new cluster algorithm.
+        //We use DBSCANCluster to determine locations close to each other
+        //and outliers that don't belong to any cluster.
+        DBSCANClusterer dbscan = new DBSCANClusterer(20, 1);
+        List<Cluster<LocationWrapper>> clusters = dbscan.cluster(cluster_input);
+
         //If there are any outliers create an evidence.
-        if (outliers.size() > 0) {
+        if (clusters.size() > 1) {
             Evidence evidence = new Evidence();
-            //If there are 10 or fewer outliers bigger chance of a malicious
-            //connection
-            if (outliers.size() <= 10) {
-                evidence.score = 1;
-            //The bigger number of outliers the smaller chance of a malicious
-            //connection
-            } else {
-                evidence.score = 1 - outliers.size() / 100;
-            }
+
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found " + outliers.size()
-                    + " outlier in the connections with"
-                    + " distance between the servers bigger than 500 kilometers"
+            evidence.report = "Found"
+                    + " outliers in the connections with"
+                    + " distance between the servers bigger than the"
+                    + " expected distance between serivers"
                     + "\n";
 
             datastore.addEvidence(evidence);
+        }
+
+    }
+
+/**
+ *
+ * @author Georgi Nikolov
+ * Helper class for wrapping the locations to be passed as Clusterables to the
+ * DBSCANClusterer algorithm.
+ */
+    private class LocationWrapper implements Clusterable {
+        private final double[] points;
+        private final Location location;
+
+        public LocationWrapper(final Location location) {
+            this.location = location;
+            this.points = new double[] {location.latitude, location.longitude};
+        }
+
+        public Location getLocation() {
+            return this.location;
+        }
+
+        @Override
+        public double[] getPoint() {
+            return this.points;
         }
 
     }
