@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import mark.activation.ActivationController;
+import mark.activation.ActivationControllerInterface;
 import mark.core.Subject;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -32,7 +32,7 @@ public class RequestHandler implements ServerInterface {
             LoggerFactory.getLogger(RequestHandler.class);
 
     private final MongoDatabase mongodb;
-    private final ActivationController activation_controller;
+    private final ActivationControllerInterface activation_controller;
     private final SubjectAdapter adapter;
 
     /**
@@ -42,7 +42,7 @@ public class RequestHandler implements ServerInterface {
      */
     RequestHandler(
             final MongoDatabase mongodb,
-            final ActivationController activation_controller,
+            final ActivationControllerInterface activation_controller,
             final SubjectAdapter adapter) {
 
         this.mongodb = mongodb;
@@ -87,6 +87,18 @@ public class RequestHandler implements ServerInterface {
                 .insertOne(convert(data));
 
         activation_controller.notifyRawData(data);
+    }
+
+    public final RawData[] findData(Document query) {
+        FindIterable<Document> documents = mongodb
+                .getCollection(COLLECTION_DATA)
+                .find(query);
+
+        ArrayList<RawData> results = new ArrayList<>();
+        for (Document doc : documents) {
+            results.add(convert(doc));
+        }
+        return results.toArray(new RawData[results.size()]);
     }
 
     /**

@@ -30,6 +30,7 @@ import mark.core.Subject;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
+import org.bson.Document;
 
 /**
  * A fake connection to MARK server, can be used for testing and debugging.
@@ -124,6 +125,11 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     }
 
     public Evidence<T>[] findLastEvidences(String label, T subject) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RawData[] findData(Document query) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thibault Debatty
  */
-public class ActivationController<T extends Subject> extends SafeThread {
+public class ActivationController<T extends Subject> extends SafeThread implements ActivationControllerInterface<T> {
 
     private static final Logger LOGGER =
             LoggerFactory.getLogger(ActivationController.class);
@@ -218,6 +218,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
      * Trigger required tasks for this new RawData.
      * @param data
      */
+    @Override
     public final synchronized void notifyRawData(final RawData<T> data) {
 
         Set<T> set = events.get(data.label);
@@ -234,6 +235,7 @@ public class ActivationController<T extends Subject> extends SafeThread {
      *
      * @param evidence
      */
+    @Override
     public final synchronized void notifyEvidence(final Evidence<T> evidence) {
         Set<T> set = events.get(evidence.label);
 

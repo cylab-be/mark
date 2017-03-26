@@ -1,6 +1,7 @@
 package mark.core;
 
 import java.net.URL;
+import org.bson.Document;
 
 /**
  * Interface defining all methods provided by the server.
@@ -91,8 +92,17 @@ public interface ServerInterface<T extends Subject> {
      * @param label
      * @param subject
      * @return
-     * @throws java.lang.Throwable
+     * @throws Throwable if an error occured
      */
-    public Evidence<T>[] findLastEvidences(String label, T subject)
+    Evidence<T>[] findLastEvidences(String label, T subject)
             throws Throwable;
+
+    /**
+     * Search for data with a custom filter (don't forget to mention a label,
+     * for example).
+     * @param query
+     * @return
+     * @throws Throwable if an error occured
+     */
+    RawData[] findData(Document query) throws Throwable;
 }

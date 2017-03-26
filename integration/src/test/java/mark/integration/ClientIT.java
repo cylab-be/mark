@@ -12,6 +12,7 @@ import netrank.LinkAdapter;
 import mark.core.RawData;
 import mark.server.Config;
 import mark.server.Server;
+import org.bson.Document;
 
 /**
  * The server must be compiled and started before we can run this
@@ -161,6 +162,34 @@ public class ClientIT extends TestCase {
         assertEquals(original_count + 2, final_count);
     }
 
+    /**
+     * Test findRawData(Document).
+     */
+    public final void testFindDataWithBson() throws Throwable {
+        System.out.println("findRawData(Bson.Document)");
+        System.out.println("==========================");
+
+        Config config = Config.getTestConfig();
+        config.adapter_class = LinkAdapter.class.getName();
+        server = new Server(config);
+        server.start();
+
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
+        RawData<Link> data = new RawData();
+        data.subject = new Link("1.2.3.4", "some.server");
+        datastore.addRawData(data);
+
+        data.subject = new Link("1.2.3.4", "some.other.server");
+        datastore.addRawData(data);
+
+        Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
+        RawData[] result = datastore.findData(query);
+        assertEquals(2, result.length);
+
+    }
+
     public final void testFindEvidence() throws Throwable {
         System.out.println("findEvidence, test we get the most recent");
         System.out.println("=========================================");
@@ -196,8 +225,6 @@ public class ClientIT extends TestCase {
 
         // Check it is indeed the most recent report
         assertEquals(2345, evidences[0].time);
-
-
     }
 
     /**

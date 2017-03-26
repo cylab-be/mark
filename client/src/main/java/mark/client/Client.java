@@ -19,6 +19,7 @@ import mark.core.ServerInterface;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.SubjectAdapter;
+import org.bson.Document;
 
 /**
  *
@@ -83,6 +84,13 @@ public class Client<T extends Subject> implements ServerInterface {
     public final void testString(final String data) throws Throwable {
 
         datastore.invoke("testString", new Object[]{data});
+    }
+
+    public final RawData[] findData(final Document query) throws Throwable {
+        return datastore.invoke(
+                "findData",
+                new Object[]{query},
+                RawData[].class);
     }
 
     /**
