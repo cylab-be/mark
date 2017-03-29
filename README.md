@@ -5,11 +5,11 @@ The **Multi Agent Ranking Framework** allows to easily implement large scale det
 
 ![](./architecture.png)
 
-![](./MARK   Home.png)
+![](./home.png)
 
-![](./MARK   Status.png)
+![](./status.png)
 
-![](./MARK   Evidence report 58904c452d8441264e0cc1bf.png)
+![](./report.png)
 
 
 ## Getting started
