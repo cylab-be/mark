@@ -39,6 +39,7 @@ import mark.core.Subject;
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.Clusterable;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
+import org.bson.Document;
 
 /**
  *
@@ -61,8 +62,10 @@ public class GeoOutlier implements DetectionAgentInterface {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
-        RawData[] raw_data = datastore.findRawData(
-                actual_trigger_label, subject);
+        Document query = new Document(LinkAdapter.CLIENT, subject);
+//        RawData[] raw_data = datastore.findRawData(
+//                actual_trigger_label, subject);
+        RawData[] raw_data = datastore.findData(query);
 
         //Code for Accessing the local GeoLocation File consisting of the
         //information per IP Address.
