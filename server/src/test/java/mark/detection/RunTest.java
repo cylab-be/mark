@@ -28,7 +28,7 @@ import java.io.File;
 import junit.framework.TestCase;
 import mark.core.DetectionAgentProfile;
 import mark.activation.DummyClient;
-import mark.server.DummySuject;
+import mark.server.DummySubject;
 
 /**
  *
@@ -57,8 +57,7 @@ public class RunTest extends TestCase {
 
         agent.parameters.put(Run.KEY_WD, temp_directory);
 
-        run_detector.analyze(
-                new DummySuject("Tibo"),
+        run_detector.analyze(new DummySubject("Tibo"),
                 "actual.trigger",
                 agent,
                 new DummyClient());

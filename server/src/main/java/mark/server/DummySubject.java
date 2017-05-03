@@ -30,14 +30,14 @@ import mark.core.Subject;
  *
  * @author Thibault Debatty
  */
-public class DummySuject implements Subject {
+public class DummySubject implements Subject {
 
     public String name = "";
 
-    public DummySuject() {
+    public DummySubject() {
     }
 
-    public DummySuject(String name) {
+    public DummySubject(String name) {
         this.name = name;
     }
 

@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 import mark.core.RawData;
 import mark.server.Config;
 import mark.server.DummySubjectAdapter;
-import mark.server.DummySuject;
+import mark.server.DummySubject;
 import org.bson.Document;
 
 /**
@@ -53,9 +53,9 @@ public class RequestHandlerTest extends TestCase {
                 new DummyActivationContoller(),
                 new DummySubjectAdapter());
 
-        RawData<DummySuject> data = new RawData<>();
+        RawData<DummySubject> data = new RawData<>();
         data.data = "1234";
-        data.subject = new DummySuject("test");
+        data.subject = new DummySubject("test");
         handler.addRawData(data);
         handler.addRawData(data);
 
