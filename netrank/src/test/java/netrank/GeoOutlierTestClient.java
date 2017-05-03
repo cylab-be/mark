@@ -29,6 +29,9 @@ import mark.activation.DummyClient;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
+import org.bson.Document;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 /**
  *
@@ -80,6 +83,51 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
             data[i] = new RawData();
             data[i].subject = subject;
             data[i].label = type;
+            data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "200"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + SERVER
+                    + " text/html";
+        }
+
+        return data;
+    }
+
+    @Override
+        public RawData[] findData(Document query)
+            throws Throwable {
+
+        int start = 123456;
+        Random rand = new Random();
+
+        RawData[] data = new RawData[N_APT + N];
+
+        for (int i = 0; i < N_APT; i++) {
+            data[i] = new RawData();
+            data[i].subject = null;
+            data[i].label = "";
+            data[i].time = start + APT_INTERVAL * i;
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "400"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + APT_SERVER
+                    + " text/html";
+        }
+
+        // Add a few random requests
+        for (int i = N_APT; i < N_APT + N; i++) {
+            data[i] = new RawData();
+            data[i].subject = null;
+            data[i].label = "";
             data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
             data[i].data = data[i].time + "    "
                     + "126 "

@@ -35,7 +35,6 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import mark.core.Subject;
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.Clusterable;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
@@ -48,7 +47,7 @@ import org.bson.Document;
  * the normal servers the clients has been connected to.
  * They are outliers and may be malicious.
  */
-public class GeoOutlier implements DetectionAgentInterface {
+public class GeoOutlier implements DetectionAgentInterface<Link> {
 
     // Analyze function inherited from the DetectionAgentInterface
     // accepts the subject to analyze
@@ -57,12 +56,16 @@ public class GeoOutlier implements DetectionAgentInterface {
     // the database to which to connect to gather RawData
     @Override
     public final void analyze(
-            final Subject subject,
+            final Link subject,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
-        Document query = new Document(LinkAdapter.CLIENT, subject);
+        Document query = new Document(LinkAdapter.CLIENT, subject.getClient())
+                            .append("LABEL", actual_trigger_label);
+        System.out.println("CLIENT: " + LinkAdapter.CLIENT + "\n");
+        System.out.println("Subject: " + subject.getClient() + "\n");
+        System.out.println("Query: " + query + "\n");
 //        RawData[] raw_data = datastore.findRawData(
 //                actual_trigger_label, subject);
         RawData[] raw_data = datastore.findData(query);

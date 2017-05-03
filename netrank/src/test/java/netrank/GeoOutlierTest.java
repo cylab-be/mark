@@ -45,7 +45,7 @@ public class GeoOutlierTest extends TestCase{
         GeoOutlierTestClient client = new GeoOutlierTestClient(n_outliers);
         GeoOutlier agent = new GeoOutlier();
         agent.analyze(
-                new Link("192.168.2.3", "www.google.com"),
+                new Link("192.168.2.3", " "),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
