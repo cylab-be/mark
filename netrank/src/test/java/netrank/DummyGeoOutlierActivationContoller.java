@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Georgi Nikolov.
+ * Copyright 2017 Thibault Debatty.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,38 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package netrank;
 
-import junit.framework.TestCase;
-import mark.core.DetectionAgentProfile;
+import mark.activation.ActivationControllerInterface;
 import mark.core.Evidence;
+import mark.core.RawData;
+import org.apache.ignite.cluster.ClusterMetrics;
 
 /**
  *
- * @author Georgi Nikolov
+ * @author Thibault Debatty
  */
-public class GeoOutlierTest extends TestCase{
+public class DummyGeoOutlierActivationContoller implements ActivationControllerInterface {
 
-    /**
-     * Test of run method, of class GeoOutlier.
-     * @throws java.lang.Throwable
-     */
-    public void testAnalyze() throws Throwable {
-        System.out.println("analyze GeoOutlier test");
+    @Override
+    public void notifyEvidence(Evidence evidence) {
 
-        int n_outliers = 1;
-        GeoOutlierTestClient client = new GeoOutlierTestClient(n_outliers);
-        GeoOutlier agent = new GeoOutlier();
-        agent.analyze(
-                new Link("192.168.2.3", " "),
-                "data.http",
-                DetectionAgentProfile.fromInputStream(
-                        getClass().getResourceAsStream(
-                                "/detection.geooutlier.yaml")),
-                client);
- 
-        Evidence[] evidences = client.getEvidences();
-        assertEquals(1, evidences.length);
     }
+
+    @Override
+    public void notifyRawData(RawData data) {
+
+    }
+
+    @Override
+    public ClusterMetrics getIgniteMetrics() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getTaskCount() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Iterable getProfiles() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 
 }

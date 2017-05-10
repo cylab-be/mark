@@ -35,9 +35,11 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
+import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.Clusterable;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
+import org.apache.commons.math3.ml.distance.DistanceMeasure;
 import org.bson.Document;
 
 /**
@@ -63,11 +65,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
 
         Document query = new Document(LinkAdapter.CLIENT, subject.getClient())
                             .append("LABEL", actual_trigger_label);
-        System.out.println("CLIENT: " + LinkAdapter.CLIENT + "\n");
-        System.out.println("Subject: " + subject.getClient() + "\n");
-        System.out.println("Query: " + query + "\n");
-//        RawData[] raw_data = datastore.findRawData(
-//                actual_trigger_label, subject);
+
         RawData[] raw_data = datastore.findData(query);
 
         //Code for Accessing the local GeoLocation File consisting of the
@@ -103,10 +101,10 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         //Initialize a new cluster algorithm.
         //We use DBSCANCluster to determine locations close to each other
         //and outliers that don't belong to any cluster.
-        DBSCANClusterer dbscan = new DBSCANClusterer(20, 1);
+        DBSCANClusterer dbscan = new DBSCANClusterer(500, 0,
+                                                    new EarthDistance());
         List<Cluster<LocationWrapper>> clusters = dbscan.cluster(cluster_input);
 
-        //If there are any outliers create an evidence.
         if (clusters.size() > 1) {
             Evidence evidence = new Evidence();
 
@@ -116,7 +114,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
             evidence.report = "Found"
                     + " outliers in the connections with"
                     + " distance between the servers bigger than the"
-                    + " expected distance between serivers"
+                    + " expected distance between servers"
                     + "\n";
 
             datastore.addEvidence(evidence);
@@ -149,4 +147,36 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         }
 
     }
+
+/**
+ * Calculates the Canberra distance between two points.
+ *
+ * @since 3.2
+ */
+public class EarthDistance implements DistanceMeasure {
+
+    /* function for computing the distance */
+    @Override
+    public final double compute(final double[] point1, final double[] point2)
+    throws DimensionMismatchException {
+        double earth_radius = 6371; // in kilometer
+
+        double d_lat = Math.toRadians(point2[0] - point1[0]);
+        double d_lng = Math.toRadians(point2[1] - point1[1]);
+
+        double sind_lat = Math.sin(d_lat / 2);
+        double sind_lng = Math.sin(d_lng / 2);
+
+        double a = Math.pow(sind_lat, 2) + Math.pow(sind_lng, 2)
+            * Math.cos(Math.toRadians(point1[0]))
+            * Math.cos(Math.toRadians(point2[0]));
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double dist = earth_radius * c;
+
+        return dist; // output distance in kilometer
+        }
+    }
+
 }

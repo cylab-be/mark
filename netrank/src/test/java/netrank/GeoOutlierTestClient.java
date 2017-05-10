@@ -32,6 +32,7 @@ import mark.core.Subject;
 import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import mark.datastore.RequestHandler;
 
 /**
  *
@@ -40,116 +41,101 @@ import com.mongodb.client.MongoDatabase;
  */
 public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
 
-        private static final int N = 10000;
+    private static final int N = 10000;
+    RequestHandler handler;
 
     private final int N_APT;
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
     private static final String APT_SERVER = "105.244.103.0";
     private static final String SERVER = "175.193.216.231";
-    private final LinkedList<Evidence> evidences = new LinkedList<>();
 
-    public GeoOutlierTestClient(final int nmbr_outliers) {
-        this.N_APT = nmbr_outliers;
+    public GeoOutlierTestClient(final int nmb_outliers) {
+        this.N_APT = nmb_outliers;
+        MongoClient mongo = new MongoClient();
+        MongoDatabase mongodb = mongo.getDatabase("MARK");
+        mongodb.drop();
+
+        handler = new RequestHandler(
+                mongodb,
+                new DummyGeoOutlierActivationContoller(),
+                new LinkAdapter());
+    }
+    
+    private RawData[] generateData(String type, Link subject)
+    {
+        int start = 123456;
+        Random rand = new Random();
+
+        RawData[] data = new RawData[N_APT + N];
+
+        for (int i = 0; i < N_APT; i++) {
+            data[i] = new RawData();
+            data[i].subject = subject;
+            data[i].label = type;
+            data[i].time = start + APT_INTERVAL * i;
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "400"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + APT_SERVER
+                    + " text/html";
+        }
+
+        // Add a few random requests
+        for (int i = N_APT; i < N_APT + N; i++) {
+            data[i] = new RawData();
+            data[i].subject = subject;
+            data[i].label = type;
+            data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "200"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + SERVER
+                    + " text/html";
+        }
+
+        return data;  
     }
 
     @Override
         public RawData[] findRawData(String type, T subject)
             throws Throwable {
 
-        int start = 123456;
-        Random rand = new Random();
-
-        RawData[] data = new RawData[N_APT + N];
-
-        for (int i = 0; i < N_APT; i++) {
-            data[i] = new RawData();
-            data[i].subject = subject;
-            data[i].label = type;
-            data[i].time = start + APT_INTERVAL * i;
-            data[i].data = data[i].time + "    "
-                    + "126 "
-                    + "198.36.158.8 "
-                    + "TCP_MISS/"
-                    + "400"
-                    + "918 GET "
-                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + APT_SERVER
-                    + " text/html";
-        }
-
-        // Add a few random requests
-        for (int i = N_APT; i < N_APT + N; i++) {
-            data[i] = new RawData();
-            data[i].subject = subject;
-            data[i].label = type;
-            data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
-            data[i].data = data[i].time + "    "
-                    + "126 "
-                    + "198.36.158.8 "
-                    + "TCP_MISS/"
-                    + "200"
-                    + "918 GET "
-                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + SERVER
-                    + " text/html";
-        }
-
-        return data;
+        RawData[] result = generateData(type,(Link) subject);
+        //System.out.println("DEBUG: " + result.length);
+        return result;
     }
 
     @Override
         public RawData[] findData(Document query)
             throws Throwable {
 
-        int start = 123456;
-        Random rand = new Random();
-
-        RawData[] data = new RawData[N_APT + N];
-
-        for (int i = 0; i < N_APT; i++) {
-            data[i] = new RawData();
-            data[i].subject = null;
-            data[i].label = "";
-            data[i].time = start + APT_INTERVAL * i;
-            data[i].data = data[i].time + "    "
-                    + "126 "
-                    + "198.36.158.8 "
-                    + "TCP_MISS/"
-                    + "400"
-                    + "918 GET "
-                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + APT_SERVER
-                    + " text/html";
+        RawData[] data = generateData("data.http"
+                , new Link("192.168.2.3", " "));
+        for(int i=0; i < data.length; i++){
+            handler.addRawData(data[i]);
         }
-
-        // Add a few random requests
-        for (int i = N_APT; i < N_APT + N; i++) {
-            data[i] = new RawData();
-            data[i].subject = null;
-            data[i].label = "";
-            data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
-            data[i].data = data[i].time + "    "
-                    + "126 "
-                    + "198.36.158.8 "
-                    + "TCP_MISS/"
-                    + "200"
-                    + "918 GET "
-                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + SERVER
-                    + " text/html";
-        }
-
-        return data;
+        RawData[] result = handler.findData(query);
+        //System.out.println("DEBUG: " + result.length);
+        return result;
     }
 
     @Override
     public void addEvidence(Evidence evidence) throws Throwable {
         System.out.println(evidence);
-        evidences.add(evidence);
+        handler.addEvidence(evidence);
     }
 
-    public LinkedList<Evidence> getEvidences() throws Throwable {
+    public Evidence[] getEvidences() throws Throwable {
+        Evidence[] evidences = handler.findEvidence("detection.geooutlier.1w");
         return evidences;
     }
 }

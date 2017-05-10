@@ -40,7 +40,7 @@ public class RequestHandler implements ServerInterface {
      * @param mongodb
      * @param mqclient
      */
-    RequestHandler(
+    public RequestHandler(
             final MongoDatabase mongodb,
             final ActivationControllerInterface activation_controller,
             final SubjectAdapter adapter) {
