@@ -1,0 +1,4 @@
+---
+class_name:     netrank.GeoOutlier
+label:          detection.http.geooutlier
+trigger_label:  data.http

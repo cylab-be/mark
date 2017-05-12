@@ -23,7 +23,6 @@
  */
 package netrank;
 
-import java.util.LinkedList;
 import java.util.Random;
 import mark.activation.DummyClient;
 import mark.core.Evidence;
@@ -32,6 +31,7 @@ import mark.core.Subject;
 import org.bson.Document;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import java.util.LinkedList;
 import mark.datastore.RequestHandler;
 
 /**
@@ -42,26 +42,18 @@ import mark.datastore.RequestHandler;
 public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
 
     private static final int N = 10000;
-    RequestHandler handler;
+    private LinkedList<Evidence> evidence = new LinkedList<>();
 
     private final int N_APT;
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
     private static final String APT_SERVER = "105.244.103.0";
-    private static final String SERVER = "175.193.216.231";
+    private static final String SERVER = "175.193.216.";
 
     public GeoOutlierTestClient(final int nmb_outliers) {
         this.N_APT = nmb_outliers;
-        MongoClient mongo = new MongoClient();
-        MongoDatabase mongodb = mongo.getDatabase("MARK");
-        mongodb.drop();
-
-        handler = new RequestHandler(
-                mongodb,
-                new DummyGeoOutlierActivationContoller(),
-                new LinkAdapter());
     }
-    
+
     private RawData[] generateData(String type, Link subject)
     {
         int start = 123456;
@@ -98,7 +90,7 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
                     + "200"
                     + "918 GET "
                     + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + SERVER
+                    + SERVER + Integer.toString(rand.nextInt(255))
                     + " text/html";
         }
 
@@ -120,22 +112,22 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
 
         RawData[] data = generateData("data.http"
                 , new Link("192.168.2.3", " "));
-        for(int i=0; i < data.length; i++){
-            handler.addRawData(data[i]);
-        }
-        RawData[] result = handler.findData(query);
         //System.out.println("DEBUG: " + result.length);
-        return result;
+        return data;
     }
 
     @Override
     public void addEvidence(Evidence evidence) throws Throwable {
         System.out.println(evidence);
-        handler.addEvidence(evidence);
+        this.evidence.add(evidence);
+    }
+    
+    @Override
+    public Evidence[] findEvidence(String label){
+        return new Evidence[1];
     }
 
-    public Evidence[] getEvidences() throws Throwable {
-        Evidence[] evidences = handler.findEvidence("detection.geooutlier.1w");
-        return evidences;
+    public LinkedList<Evidence> getEvidences() throws Throwable {
+        return this.evidence;
     }
 }

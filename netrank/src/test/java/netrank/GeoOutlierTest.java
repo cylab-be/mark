@@ -23,6 +23,7 @@
  */
 package netrank;
 
+import java.util.LinkedList;
 import junit.framework.TestCase;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -51,8 +52,8 @@ public class GeoOutlierTest extends TestCase{
                                 "/detection.geooutlier.yaml")),
                 client);
  
-        Evidence[] evidences = client.getEvidences();
-        assertEquals(1, evidences.length);
+        LinkedList<Evidence> evidences = client.getEvidences();
+        assertEquals(1, evidences.size());
     }
 
 }

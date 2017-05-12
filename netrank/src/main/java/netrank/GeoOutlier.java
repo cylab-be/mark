@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -50,6 +51,41 @@ import org.bson.Document;
  * They are outliers and may be malicious.
  */
 public class GeoOutlier implements DetectionAgentInterface<Link> {
+
+    //maximum radius of the neighbourhood to be considered by clustering,
+    //metric dependant on the DistanceMeasure used for the clustering algorithm
+    private final int max_radius = 500;
+    //minimum number of points needed for a cluster
+    private final int min_points = 0;
+    //minimum accepted quantity of points in a cluster
+    private final int min_cluster_size = 3;
+
+    private ArrayList<LocationWrapper> getLocations(final LookupService cl
+                                                , final RawData[] raw_data) {
+        ArrayList<LocationWrapper> locations = new ArrayList<>();
+        //regex pattern for extracting the server IP the client connected to
+        Pattern pattern = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
+                + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
+                + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
+        for (RawData raw_data1 : raw_data) {
+            String server_ip;
+            Matcher matcher = pattern.matcher(raw_data1.data);
+            if (matcher.find()) {
+                server_ip = matcher.group(1);
+                Location location = cl.getLocation(server_ip);
+                if (location != null) {
+                    //create a wrapper for the different locations
+                    LocationWrapper locwrapper = new LocationWrapper(server_ip
+                                                                    , location);
+                    //check if its already a saved server location
+                    if (!locations.contains(locwrapper)) {
+                        locations.add(locwrapper);
+                    }
+                }
+            }
+        }
+        return locations;
+    }
 
     // Analyze function inherited from the DetectionAgentInterface
     // accepts the subject to analyze
@@ -77,49 +113,30 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
                     LookupService.GEOIP_MEMORY_CACHE
                             | LookupService.GEOIP_CHECK_CACHE);
 
-        ArrayList<Location> locations = new ArrayList<>();
-        Pattern pattern = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
-                + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
-                + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
-        for (RawData raw_data1 : raw_data) {
-            String server_ip = null;
-            Matcher matcher = pattern.matcher(raw_data1.data);
-            if (matcher.find()) {
-                server_ip = matcher.group(1);
-            }
-            if (server_ip != null) {
-                Location location = cl.getLocation(server_ip);
-                locations.add(location);
-            }
-        }
-
-        List<LocationWrapper> cluster_input = new ArrayList<>(locations.size());
-        for (Location location : locations) {
-            cluster_input.add(new LocationWrapper(location));
-        }
-
+        //get the filtered locations already wrapped without duplicates
+        ArrayList<LocationWrapper> locations = getLocations(cl, raw_data);
         //Initialize a new cluster algorithm.
         //We use DBSCANCluster to determine locations close to each other
         //and outliers that don't belong to any cluster.
-        DBSCANClusterer dbscan = new DBSCANClusterer(500, 0,
+        DBSCANClusterer dbscan = new DBSCANClusterer(max_radius, min_points,
                                                     new EarthDistance());
-        List<Cluster<LocationWrapper>> clusters = dbscan.cluster(cluster_input);
+        List<Cluster<LocationWrapper>> clusters = dbscan.cluster(locations);
 
-        if (clusters.size() > 1) {
-            Evidence evidence = new Evidence();
+        for (Cluster cluster: clusters) {
+            if (cluster.getPoints().size() < min_cluster_size) {
+                Evidence evidence = new Evidence();
 
-            evidence.subject = subject;
-            evidence.label = profile.label;
-            evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found"
-                    + " outliers in the connections with"
-                    + " distance between the servers bigger than the"
-                    + " expected distance between servers"
-                    + "\n";
-
-            datastore.addEvidence(evidence);
+                evidence.subject = subject;
+                evidence.label = profile.label;
+                evidence.time = raw_data[raw_data.length - 1].time;
+                evidence.report = "Found"
+                        + " outliers in the connections with"
+                        + " distance between the servers bigger than the"
+                        + " expected distance between servers"
+                        + "\n";
+                datastore.addEvidence(evidence);
+            }
         }
-
     }
 
 /**
@@ -131,8 +148,10 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
     private class LocationWrapper implements Clusterable {
         private final double[] points;
         private final Location location;
+        private final String server_ip;
 
-        public LocationWrapper(final Location location) {
+        public LocationWrapper(final String serverip, final Location location) {
+            this.server_ip = serverip;
             this.location = location;
             this.points = new double[] {location.latitude, location.longitude};
         }
@@ -146,12 +165,32 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
             return this.points;
         }
 
+        public String getServerIp() {
+            return this.server_ip;
+        }
+
+        @Override
+        public boolean equals(final Object object) {
+            boolean same = false;
+            if (object != null && object instanceof LocationWrapper) {
+                same = this.server_ip.equals(
+                        ((LocationWrapper) object).server_ip);
+            }
+            return same;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 53 * hash + Objects.hashCode(this.server_ip);
+            return hash;
+        }
+
     }
 
 /**
- * Calculates the Canberra distance between two points.
- *
- * @since 3.2
+ * Calculates the Earth distance between two GPS points.
+ * Returns the distance in kilometers
  */
 public class EarthDistance implements DistanceMeasure {
 
