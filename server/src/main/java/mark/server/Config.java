@@ -19,6 +19,7 @@ public class Config {
     private static final int    DEFAULT_UPDATE_INTERVAL = 10;
     private static final String DEFAULT_MONGO_DB = "MARK";
     private static final int    DEFAULT_MAX_THREADS = 100;
+    private static final int    TEST_MAX_THREADS = 40;
     private static final int    DEFAULT_MIN_THREADS = 10;
     private static final int    DEFAULT_IDLE_TIMEOUT = 60;
     private static final String DEFAULT_SERVER_HOST = "127.0.0.1";
@@ -66,6 +67,7 @@ public class Config {
         conf.update_interval = 1;
         conf.mongo_clean = true;
         conf.ignite_autodiscovery = false;
+        conf.max_threads = TEST_MAX_THREADS;
 
         return conf;
     }
