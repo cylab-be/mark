@@ -58,6 +58,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
         ignite_config.setClientMode(!config.ignite_start_server);
+        ignite_config.setPublicThreadPoolSize(4);
 
         if (!config.ignite_autodiscovery) {
             // Disable autodiscovery
