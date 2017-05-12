@@ -6,7 +6,7 @@ jdk:
 services:
   - mongodb
 install: mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
-script: mvn --quiet clean install -Dgpg.skip=true
+script: mvn clean install -Dgpg.skip=true
 
 notifications:
   slack: cylab-be:KwlOCPIsQYUW0bmZsVBrrQnP
