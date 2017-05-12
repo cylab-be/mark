@@ -71,10 +71,10 @@ public class HTTPGeoOutlierIT extends TestCase {
         server.addDataAgentProfile(http_source);
 
         // Activate the dummy detection agent
-        server.addDetectionAgent(
-                DetectionAgentProfile.fromInputStream(
-                    getClass()
-                    .getResourceAsStream("/detection.http.geooutlier.yml")));
+        //server.addDetectionAgent(
+        //        DetectionAgentProfile.fromInputStream(
+        //            getClass()
+        //            .getResourceAsStream("/detection.http.geooutlier.yml")));
         server.start();
         server.awaitTermination();
     }
