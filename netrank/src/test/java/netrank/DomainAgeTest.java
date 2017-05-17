@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Georgi Nikolov.
+ * Copyright 2017 georgi.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,59 +23,57 @@
  */
 package netrank;
 
-import java.util.LinkedList;
 import junit.framework.TestCase;
 import mark.activation.DummyClient;
 import mark.core.DetectionAgentProfile;
-import mark.core.Evidence;
 
 /**
  *
- * @author Georgi Nikolov
+ * @author georgi
  */
-public class UnreachableTest extends TestCase {
+public class DomainAgeTest extends TestCase {
 
-    /**
-     * Test of run method, of class Unreachable.
-     * @throws java.lang.Throwable
-     */
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze Unreachable test with APT\n");
+        System.out.println("analyze DomainAge test" + "\n");
 
-        double ratio = 0.9;
-        UnreachableTestClient client = new UnreachableTestClient(ratio);
-        Unreachable agent = new Unreachable();
+        DomainAge agent = new DomainAge();
+        System.out.println("Test DomainAge with a rescently created domain");
         agent.analyze(
-                new Link("192.168.2.3", "www.uneachable.com"),
+                new Link("192.168.2.3", "dq46.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.unreachable.yaml")),
-                client);
+                                "/detection.domainage.yaml")),
+                new DummyClient());
 
-        LinkedList<Evidence> evidences = client.getEvidences();
-        assertEquals(1, evidences.size());
-//        assertEquals(ratio, evidences.getLast().score, 0.01);
-
-        System.out.println("analyze Unreachable test with empty data\n");
-
+        System.out.println("Test DomainAge with an old domain");
         agent.analyze(
-                new Link(" ", " "),
+                new Link("192.168.2.3", "google.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.unreachable.yaml")),
-                new UnreachableTestClient(0));
+                                "/detection.domainage.yaml")),
+                new DummyClient());
 
-        System.out.println("analyze Unreachable test with no APT\n");
-
+        System.out.println("Test DomainAge with an unknown IP address");
         agent.analyze(
-                new Link("192.168.2.3", "www.google.com"),
+                new Link("192.168.2.3", "151.101.1.34"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.unreachable.yaml")),
-                new UnreachableTestClient(0.1));
+                                "/detection.domainage.yaml")),
+                new DummyClient());
+
+        System.out.println("Test DomainAge with a domain name not ending in"
+                + " .com/.edu/.net");
+        agent.analyze(
+                new Link("192.168.2.3", "bongonbongo.it"),
+                "actual.trigger",
+                DetectionAgentProfile.fromInputStream(
+                        getClass().getResourceAsStream(
+                                "/detection.domainage.yaml")),
+                new DummyClient());
     }
 
+    
 }

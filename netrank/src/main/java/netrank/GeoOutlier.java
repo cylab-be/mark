@@ -28,6 +28,9 @@ import com.maxmind.geoip.LookupService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -112,7 +115,19 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         LookupService cl = new LookupService(geo_file,
                     LookupService.GEOIP_MEMORY_CACHE
                             | LookupService.GEOIP_CHECK_CACHE);
-
+//        ClassLoader class_loader = getClass().getClassLoader();
+//        InputStream initial_stream = class_loader
+//                .getResourceAsStream("GeoLiteCity.dat");
+//        byte[] buffer = new byte[initial_stream.available()];
+//        initial_stream.read(buffer);
+//        File temp_file = new File("/tmp/temp_file.dat");
+//        OutputStream out_stream = new FileOutputStream(temp_file);
+//        out_stream.write(buffer);
+//        out_stream.flush();
+//        //System.out.println(temp_file == null);
+//        LookupService cl = new LookupService(temp_file,
+//                    LookupService.GEOIP_MEMORY_CACHE
+//                            | LookupService.GEOIP_CHECK_CACHE);
         //get the filtered locations already wrapped without duplicates
         ArrayList<LocationWrapper> locations = getLocations(cl, raw_data);
         //Initialize a new cluster algorithm.
@@ -125,7 +140,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         for (Cluster cluster: clusters) {
             if (cluster.getPoints().size() < min_cluster_size) {
                 Evidence evidence = new Evidence();
-
+                evidence.score = 1;
                 evidence.subject = subject;
                 evidence.label = profile.label;
                 evidence.time = raw_data[raw_data.length - 1].time;
