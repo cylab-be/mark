@@ -1,8 +1,8 @@
 language: java
+sudo: required
 jdk:
   - oraclejdk8
-  #- oraclejdk7
-  - openjdk7
+  - oraclejdk7
 services:
   - mongodb
 install: mvn --quiet install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true

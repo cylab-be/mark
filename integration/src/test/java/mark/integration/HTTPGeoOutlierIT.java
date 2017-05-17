@@ -50,7 +50,7 @@ public class HTTPGeoOutlierIT extends TestCase {
 
 
         System.out.println("test geo-outlier agent");
-        System.out.println("====================");
+        System.out.println("======================");
 
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
