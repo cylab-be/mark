@@ -28,7 +28,10 @@ import com.maxmind.geoip.LookupService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -59,6 +62,8 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
     private final int min_points = 0;
     //minimum accepted quantity of points in a cluster
     private final int min_cluster_size = 3;
+
+    private static final String GEOIP_DB = "/tmp/NETRANK_GEOIP_DB.dat";
 
     private ArrayList<LocationWrapper> getLocations(
             final LookupService cl, final RawData[] raw_data) {
@@ -141,20 +146,31 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
 
     /**
      * Load GeoIP database file from JAR.
+     * The lookup service requires a real file, hence we first extract the file
+     * from the JAR and copy it to /tmp/NETRANK_GEOIP_DB.dat
      * @return
      * @throws IOException if we cannot load the DB
      */
     public final LookupService loadGeoIP() throws IOException {
-        //Code for Accessing the local GeoLocation File consisting of the
-        //information per IP Address.
-        ClassLoader class_loader = getClass().getClassLoader();
-        File geo_file = new File(class_loader
-                .getResource("GeoLiteCity.dat").getFile());
-        LookupService cl = new LookupService(geo_file,
+
+        File geoip_file = new File(GEOIP_DB);
+        if (!geoip_file.isFile()) {
+            InputStream geo_resource =
+                    getClass().getResourceAsStream("/GeoLiteCity.dat");
+
+            OutputStream os = new FileOutputStream(geoip_file);
+            byte[] buffer = new byte[4096];
+            int bytes_read;
+            while ((bytes_read = geo_resource.read(buffer)) != -1) {
+                os.write(buffer, 0, bytes_read);
+            }
+            os.close();
+
+        }
+
+        return new LookupService(geoip_file,
                 LookupService.GEOIP_MEMORY_CACHE
                 | LookupService.GEOIP_CHECK_CACHE);
-
-        return cl;
     }
 }
 

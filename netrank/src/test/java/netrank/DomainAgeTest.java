@@ -37,7 +37,7 @@ public class DomainAgeTest extends TestCase {
         System.out.println("analyze DomainAge test" + "\n");
 
         DomainAge agent = new DomainAge();
-        System.out.println("Test DomainAge with a rescently created domain");
+        System.out.println("Test DomainAge with a recently created domain");
         agent.analyze(
                 new Link("192.168.2.3", "dq46.com"),
                 "actual.trigger",
@@ -74,6 +74,4 @@ public class DomainAgeTest extends TestCase {
                                 "/detection.domainage.yaml")),
                 new DummyClient());
     }
-
-    
 }
