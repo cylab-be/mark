@@ -112,6 +112,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
 
         LookupService cl = loadGeoIP();
 
+
         //get the filtered locations already wrapped without duplicates
         ArrayList<LocationWrapper> locations = getLocations(cl, data);
         //Initialize a new cluster algorithm.
@@ -124,7 +125,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         for (Cluster cluster : clusters) {
             if (cluster.getPoints().size() < min_cluster_size) {
                 Evidence evidence = new Evidence();
-
+                evidence.score = 1;
                 evidence.subject = subject;
                 evidence.label = profile.label;
                 evidence.time = data[data.length - 1].time;

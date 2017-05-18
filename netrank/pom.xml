@@ -188,10 +188,10 @@
 	      </dependency>
 
         <dependency>
-            <groupId>org.apache.ignite</groupId>
-            <artifactId>ignite-core</artifactId>
-            <version>1.8.0</version>
-            <scope>test</scope>
+	        <groupId>commons-net</groupId>
+	        <artifactId>commons-net</artifactId>
+	        <version>3.3</version>
         </dependency>
+
     </dependencies>
 </project>
