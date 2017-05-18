@@ -32,8 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mark.core.DetectionAgentInterface;
@@ -52,26 +50,28 @@ import org.apache.commons.net.whois.WhoisClient;
  */
 public class DomainAge implements DetectionAgentInterface<Link> {
 
-    // creating the WHOIS client. To be initialised in the correct method
-    private WhoisClient whois_client;
-    private String domain_name;
+    /**
+     * creating the WHOIS client. To be initialized in the correct method
+    */
     private static final String CREATION_DATE = "   Creation Date";
     private static final String EXPIRATION_DATE = "   Expiration Date";
     private static final String UPDATED_DATE = "   Updated Date";
     private static final long TIME_THRESHOLD = 30;
 
-    // initiate the WHOIS client
-    private void initWhois() {
-        whois_client = new WhoisClient();
-        try {
-            whois_client.connect(WhoisClient.DEFAULT_HOST);
-        } catch (IOException ex) {
-            Logger.getLogger(DomainAge.class.getName())
-                    .log(Level.SEVERE, null, ex);
-        }
+    /**
+     * initiate the WHOIS client.
+     */
+    private WhoisClient initWhois() throws IOException {
+        WhoisClient whois_client = new WhoisClient();
+
+        whois_client.connect(WhoisClient.DEFAULT_HOST);
+
+        return whois_client;
     }
 
-    // check if a string is an ip or text
+    /**
+     * check if a string is an ip or text.
+     */
     private static boolean isIp(final String text) {
         Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]"
                         + "|[01]?[0-9][0-9]?)"
@@ -80,19 +80,23 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         return m.find();
     }
 
-    //check if the hostname end with ".com"/".net"/".edu"
+    /**
+     * check if the hostname end with ".com"/".net"/".edu".
+     */
     private static boolean validHostname(final String text) {
-        boolean result = false;
         if (text.endsWith(".com") || text.endsWith(".net")
                 || text.endsWith(".edu")) {
-            result = true;
-        } else {
-            result = false;
+            return true;
         }
-        return result;
+        return false;
     }
 
-    // method for extracting attributes from the whois data
+    /**
+     * method for extracting attributes from the whois data.
+     *
+     * @param whois_data
+     * @return
+     */
     private Map<String, String> getAttributes(final String whois_data) {
         Pattern p = Pattern.compile("^(.*?): (.*)$");
         Map<String, String> attributes = new HashMap<>();
@@ -107,11 +111,13 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         return attributes;
     }
 
-    // Analyze function inherited from the DetectionAgentInterface
-    // accepts the subject to analyze
-    // trigger of the agent
-    // the profile used to load the agent
-    // the database to which to connect to gather RawData
+    /**
+     * Analyze function inherited from the DetectionAgentInterface.
+     * accepts the subject to analyze
+     * trigger of the agent
+     * the profile used to load the agent
+     * the database to which to connect to gather RawData
+     */
     @Override
     public final void analyze(
             final Link subject,
@@ -122,10 +128,7 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
-        initWhois();
-        StringBuilder whois_result = new StringBuilder("");
-        String server = subject.getServer();
-        domain_name = server;
+        String domain_name = subject.getServer();
 
         if (!validHostname(domain_name) && !isIp(domain_name)) {
            System.out.println("The Registry database contains ONLY .COM, .NET,"
@@ -133,16 +136,23 @@ public class DomainAge implements DetectionAgentInterface<Link> {
            return;
         }
 
-        String whois_data = whois_client.query("=" + domain_name);
-        whois_result.append(whois_data);
+        WhoisClient whois_client;
+        try {
+            whois_client = initWhois();
+        } catch (IOException ex) {
+            System.out.println("Could not establish connection to server");
+            return;
+        }
+
+        String whois_result = whois_client.query("=" + domain_name);
         whois_client.disconnect();
 
-        if (whois_result.toString().contains("No match for ")) {
+        if (whois_result.contains("No match for ")) {
             System.out.println("No data found about the server" + "\n");
             return;
         }
 
-        Map<String, String> attributes = getAttributes(whois_result.toString());
+        Map<String, String> attributes = getAttributes(whois_result);
         String creation_date = attributes.get(CREATION_DATE);
         //String updated_date = attributes.get(UPDATED_DATE);
         //String expiration_date = attributes.get(EXPIRATION_DATE);
