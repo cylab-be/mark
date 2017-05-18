@@ -23,6 +23,8 @@
  */
 package mark.integration;
 
+import com.maxmind.geoip.LookupService;
+import java.io.IOException;
 import java.util.HashMap;
 import junit.framework.TestCase;
 import mark.core.DetectionAgentProfile;
@@ -31,23 +33,34 @@ import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 import mark.core.DataAgentProfile;
+import netrank.GeoOutlier;
 
 /**
  *
  * @author georgi
  */
 public class HTTPGeoOutlierIT extends TestCase {
+
     private Server server;
 
     @Override
     protected final void tearDown() throws Exception {
-        server.stop();
+        if (server != null) {
+            server.stop();
+        }
         super.tearDown();
+    }
+    
+    public final void testLoadGeoIP() throws IOException {
+        System.out.println("test we can load the GeoIP DB from JAR");
+        System.out.println("======================================");
+        GeoOutlier detector = new GeoOutlier();
+        LookupService cl = detector.loadGeoIP();
+        assertNotNull(cl);
     }
 
     public final void testFrequencyAgent()
             throws Throwable {
-
 
         System.out.println("test geo-outlier agent");
         System.out.println("======================");
@@ -73,10 +86,10 @@ public class HTTPGeoOutlierIT extends TestCase {
         // Activate the dummy detection agent
         server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(
-                    getClass()
-                    .getResourceAsStream("/detection.http.geooutlier.yml")));
+                        getClass()
+                                .getResourceAsStream("/detection.http.geooutlier.yml")));
         server.start();
         server.awaitTermination();
     }
-    
+
 }

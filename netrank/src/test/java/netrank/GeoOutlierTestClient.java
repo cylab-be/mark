@@ -29,10 +29,7 @@ import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
 import org.bson.Document;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import java.util.LinkedList;
-import mark.datastore.RequestHandler;
 
 /**
  *
@@ -54,8 +51,7 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
         this.N_APT = nmb_outliers;
     }
 
-    private RawData[] generateData(String type, Link subject)
-    {
+    private RawData[] generateData(String type, Link subject) {
         int start = 123456;
         Random rand = new Random();
 
@@ -94,24 +90,24 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
                     + " text/html";
         }
 
-        return data;  
+        return data;
     }
 
     @Override
-        public RawData[] findRawData(String type, T subject)
+    public RawData[] findRawData(String type, T subject)
             throws Throwable {
 
-        RawData[] result = generateData(type,(Link) subject);
+        RawData[] result = generateData(type, (Link) subject);
         //System.out.println("DEBUG: " + result.length);
         return result;
     }
 
     @Override
-        public RawData[] findData(Document query)
+    public RawData[] findData(Document query)
             throws Throwable {
 
-        RawData[] data = generateData("data.http"
-                , new Link("192.168.2.3", " "));
+        RawData[] data = generateData("data.http",
+                 new Link("192.168.2.3", " "));
         //System.out.println("DEBUG: " + result.length);
         return data;
     }
@@ -121,9 +117,9 @@ public class GeoOutlierTestClient<T extends Subject> extends DummyClient<T> {
         System.out.println(evidence);
         this.evidence.add(evidence);
     }
-    
+
     @Override
-    public Evidence[] findEvidence(String label){
+    public Evidence[] findEvidence(String label) {
         return new Evidence[1];
     }
 

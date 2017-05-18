@@ -28,9 +28,7 @@ import com.maxmind.geoip.LookupService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
-//import java.io.FileOutputStream;
-//import java.io.InputStream;
-//import java.io.OutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,9 +46,8 @@ import org.bson.Document;
 
 /**
  *
- * @author Georgi Nikolov
- * Agent class for determining servers whose coordinates are too far away from
- * the normal servers the clients has been connected to.
+ * @author Georgi Nikolov Agent class for determining servers whose coordinates
+ * are too far away from the normal servers the clients has been connected to.
  * They are outliers and may be malicious.
  */
 public class GeoOutlier implements DetectionAgentInterface<Link> {
@@ -63,29 +60,36 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
     //minimum accepted quantity of points in a cluster
     private final int min_cluster_size = 3;
 
-    private ArrayList<LocationWrapper> getLocations(final LookupService cl
-                                                , final RawData[] raw_data) {
+    private ArrayList<LocationWrapper> getLocations(
+            final LookupService cl, final RawData[] raw_data) {
+
         ArrayList<LocationWrapper> locations = new ArrayList<>();
         //regex pattern for extracting the server IP the client connected to
         Pattern pattern = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
                 + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
                 + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
-        for (RawData raw_data1 : raw_data) {
-            String server_ip;
-            Matcher matcher = pattern.matcher(raw_data1.data);
-            if (matcher.find()) {
-                server_ip = matcher.group(1);
-                Location location = cl.getLocation(server_ip);
-                if (location != null) {
-                    //create a wrapper for the different locations
-                    LocationWrapper locwrapper = new LocationWrapper(server_ip
-                                                                    , location);
-                    //check if its already a saved server location
-                    if (!locations.contains(locwrapper)) {
-                        locations.add(locwrapper);
-                    }
-                }
+        for (RawData line : raw_data) {
+
+            Matcher matcher = pattern.matcher(line.data);
+            if (!matcher.find()) {
+                continue;
             }
+
+            String server_ip = matcher.group(1);
+            Location location = cl.getLocation(server_ip);
+            if (location == null) {
+                continue;
+            }
+
+            //create a wrapper for the different locations
+            LocationWrapper locwrapper = new LocationWrapper(
+                    server_ip, location);
+            //check if its already a saved server location
+            if (locations.contains(locwrapper)) {
+                continue;
+            }
+
+            locations.add(locwrapper);
         }
         return locations;
     }
@@ -103,47 +107,28 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
             final ServerInterface datastore) throws Throwable {
 
         Document query = new Document(LinkAdapter.CLIENT, subject.getClient())
-                            .append("LABEL", actual_trigger_label);
+                .append("LABEL", actual_trigger_label);
+        RawData[] data = datastore.findData(query);
 
-        RawData[] raw_data = datastore.findData(query);
+        LookupService cl = loadGeoIP();
 
-        //Code for Accessing the local GeoLocation File consisting of the
-        //information per IP Address.
-        ClassLoader class_loader = getClass().getClassLoader();
-        File geo_file = new File(class_loader
-                .getResource("GeoLiteCity.dat").getFile());
-        LookupService cl = new LookupService(geo_file,
-                    LookupService.GEOIP_MEMORY_CACHE
-                            | LookupService.GEOIP_CHECK_CACHE);
-//        ClassLoader class_loader = getClass().getClassLoader();
-//        InputStream initial_stream = class_loader
-//                .getResourceAsStream("GeoLiteCity.dat");
-//        byte[] buffer = new byte[initial_stream.available()];
-//        initial_stream.read(buffer);
-//        File temp_file = new File("/tmp/temp_file.dat");
-//        OutputStream out_stream = new FileOutputStream(temp_file);
-//        out_stream.write(buffer);
-//        out_stream.flush();
-//        //System.out.println(temp_file == null);
-//        LookupService cl = new LookupService(temp_file,
-//                    LookupService.GEOIP_MEMORY_CACHE
-//                            | LookupService.GEOIP_CHECK_CACHE);
+
         //get the filtered locations already wrapped without duplicates
-        ArrayList<LocationWrapper> locations = getLocations(cl, raw_data);
+        ArrayList<LocationWrapper> locations = getLocations(cl, data);
         //Initialize a new cluster algorithm.
         //We use DBSCANCluster to determine locations close to each other
         //and outliers that don't belong to any cluster.
-        DBSCANClusterer dbscan = new DBSCANClusterer(max_radius, min_points,
-                                                    new EarthDistance());
+        DBSCANClusterer dbscan = new DBSCANClusterer(
+                max_radius, min_points, new EarthDistance());
         List<Cluster<LocationWrapper>> clusters = dbscan.cluster(locations);
 
-        for (Cluster cluster: clusters) {
+        for (Cluster cluster : clusters) {
             if (cluster.getPoints().size() < min_cluster_size) {
                 Evidence evidence = new Evidence();
                 evidence.score = 1;
                 evidence.subject = subject;
                 evidence.label = profile.label;
-                evidence.time = raw_data[raw_data.length - 1].time;
+                evidence.time = data[data.length - 1].time;
                 evidence.report = "Found"
                         + " outliers in the connections with"
                         + " distance between the servers bigger than the"
@@ -154,65 +139,84 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         }
     }
 
+    /**
+     * Load GeoIP database file from JAR.
+     * @return
+     * @throws IOException if we cannot load the DB
+     */
+    public final LookupService loadGeoIP() throws IOException {
+        //Code for Accessing the local GeoLocation File consisting of the
+        //information per IP Address.
+        ClassLoader class_loader = getClass().getClassLoader();
+        File geo_file = new File(class_loader
+                .getResource("GeoLiteCity.dat").getFile());
+        LookupService cl = new LookupService(geo_file,
+                LookupService.GEOIP_MEMORY_CACHE
+                | LookupService.GEOIP_CHECK_CACHE);
+
+        return cl;
+    }
+}
+
 /**
  *
- * @author Georgi Nikolov
- * Helper class for wrapping the locations to be passed as Clusterables to the
- * DBSCANClusterer algorithm.
+ * @author Georgi Nikolov Helper class for wrapping the locations to be passed
+ * as Clusterables to the DBSCANClusterer algorithm.
  */
-    private class LocationWrapper implements Clusterable {
-        private final double[] points;
-        private final Location location;
-        private final String server_ip;
+class LocationWrapper implements Clusterable {
 
-        public LocationWrapper(final String serverip, final Location location) {
-            this.server_ip = serverip;
-            this.location = location;
-            this.points = new double[] {location.latitude, location.longitude};
-        }
+    private final double[] points;
+    private final Location location;
+    private final String server_ip;
 
-        public Location getLocation() {
-            return this.location;
-        }
-
-        @Override
-        public double[] getPoint() {
-            return this.points;
-        }
-
-        public String getServerIp() {
-            return this.server_ip;
-        }
-
-        @Override
-        public boolean equals(final Object object) {
-            boolean same = false;
-            if (object != null && object instanceof LocationWrapper) {
-                same = this.server_ip.equals(
-                        ((LocationWrapper) object).server_ip);
-            }
-            return same;
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 53 * hash + Objects.hashCode(this.server_ip);
-            return hash;
-        }
-
+    public LocationWrapper(final String serverip, final Location location) {
+        this.server_ip = serverip;
+        this.location = location;
+        this.points = new double[]{location.latitude, location.longitude};
     }
 
+    public Location getLocation() {
+        return this.location;
+    }
+
+    @Override
+    public double[] getPoint() {
+        return this.points;
+    }
+
+    public String getServerIp() {
+        return this.server_ip;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        boolean same = false;
+        if (object != null && object instanceof LocationWrapper) {
+            same = this.server_ip.equals(
+                    ((LocationWrapper) object).server_ip);
+        }
+        return same;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.server_ip);
+        return hash;
+    }
+
+}
+
 /**
- * Calculates the Earth distance between two GPS points.
- * Returns the distance in kilometers
+ * Calculates the Earth distance between two GPS points. Returns the distance in
+ * kilometers
  */
-public class EarthDistance implements DistanceMeasure {
+class EarthDistance implements DistanceMeasure {
 
     /* function for computing the distance */
     @Override
     public final double compute(final double[] point1, final double[] point2)
-    throws DimensionMismatchException {
+            throws DimensionMismatchException {
         double earth_radius = 6371; // in kilometer
 
         double d_lat = Math.toRadians(point2[0] - point1[0]);
@@ -222,15 +226,13 @@ public class EarthDistance implements DistanceMeasure {
         double sind_lng = Math.sin(d_lng / 2);
 
         double a = Math.pow(sind_lat, 2) + Math.pow(sind_lng, 2)
-            * Math.cos(Math.toRadians(point1[0]))
-            * Math.cos(Math.toRadians(point2[0]));
+                * Math.cos(Math.toRadians(point1[0]))
+                * Math.cos(Math.toRadians(point2[0]));
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         double dist = earth_radius * c;
 
         return dist; // output distance in kilometer
-        }
     }
-
 }
