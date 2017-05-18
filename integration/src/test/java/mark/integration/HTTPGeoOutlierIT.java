@@ -59,7 +59,7 @@ public class HTTPGeoOutlierIT extends TestCase {
         assertNotNull(cl);
     }
 
-    public final void testFrequencyAgent()
+    public final void testGeoOutlierAgent()
             throws Throwable {
 
         System.out.println("test geo-outlier agent");

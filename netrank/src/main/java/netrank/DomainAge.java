@@ -64,6 +64,8 @@ public class DomainAge implements DetectionAgentInterface<Link> {
     private WhoisClient initWhois() throws IOException {
         WhoisClient whois_client = new WhoisClient();
 
+        whois_client.setDefaultTimeout(10000);
+        whois_client.setConnectTimeout(5000);
         whois_client.connect(WhoisClient.DEFAULT_HOST);
 
         return whois_client;
