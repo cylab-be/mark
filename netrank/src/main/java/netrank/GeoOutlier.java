@@ -99,11 +99,13 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         return locations;
     }
 
-    // Analyze function inherited from the DetectionAgentInterface
-    // accepts the subject to analyze
-    // trigger of the agent
-    // the profile used to load the agent
-    // the database to which to connect to gather RawData
+    /** 
+     * Analyze function inherited from the DetectionAgentInterface.
+     * accepts the subject to analyze
+     * trigger of the agent
+     * the profile used to load the agent
+     * the database to which to connect to gather RawData
+     */
     @Override
     public final void analyze(
             final Link subject,
