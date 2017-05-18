@@ -32,10 +32,11 @@ import mark.core.Evidence;
  *
  * @author Georgi Nikolov
  */
-public class GeoOutlierTest extends TestCase{
+public class GeoOutlierTest extends TestCase {
 
     /**
      * Test of run method, of class GeoOutlier.
+     *
      * @throws java.lang.Throwable
      */
     public void testAnalyze() throws Throwable {
@@ -51,7 +52,7 @@ public class GeoOutlierTest extends TestCase{
                         getClass().getResourceAsStream(
                                 "/detection.geooutlier.yaml")),
                 client);
- 
+
         LinkedList<Evidence> evidences = client.getEvidences();
         assertEquals(1, evidences.size());
     }
