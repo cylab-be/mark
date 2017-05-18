@@ -99,7 +99,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
         return locations;
     }
 
-    /** 
+    /**
      * Analyze function inherited from the DetectionAgentInterface.
      * accepts the subject to analyze
      * trigger of the agent
