@@ -78,7 +78,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
                     + "198.36.158.8 "
                     + "TCP_MISS/"
                     + "400"
-                    + "918 GET "
+                    + " 918 GET "
                     + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
                     + "175.193.216.231 text/html";
         }
@@ -94,7 +94,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
                     + "198.36.158.8 "
                     + "TCP_MISS/"
                     + "200"
-                    + "918 GET "
+                    + " 918 GET "
                     + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
                     + "175.193.216.231 text/html";
         }

@@ -79,6 +79,7 @@ public class Unreachable implements DetectionAgentInterface {
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found a periodicity in the "
+                    + "connection "
                     + "with unreachable periodicity: "
                     + unreachable_percentage + "\n";
 

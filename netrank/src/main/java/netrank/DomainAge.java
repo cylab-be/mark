@@ -119,6 +119,7 @@ public class DomainAge implements DetectionAgentInterface<Link> {
      * trigger of the agent
      * the profile used to load the agent
      * the database to which to connect to gather RawData
+     * @throws java.lang.Throwable
      */
     @Override
     public final void analyze(
