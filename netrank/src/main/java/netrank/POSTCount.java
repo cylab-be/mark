@@ -57,6 +57,10 @@ public class POSTCount implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
+        if (raw_data.length == 0) {
+            return;
+        }
+
         int number_of_post = 0;
         for (RawData raw_data1 : raw_data) {
             String data = raw_data1.data;
@@ -65,9 +69,9 @@ public class POSTCount implements DetectionAgentInterface<Link> {
             }
         }
 
-        float post_percentage = 0;
+        double post_percentage = 0;
 
-        post_percentage = (float) number_of_post
+        post_percentage = (double) number_of_post
                 / raw_data.length;
 
         if (post_percentage > UPLOAD_THRESHOLD) {
