@@ -43,7 +43,7 @@ public class Upload implements DetectionAgentInterface<Link> {
 
     /**
      * method for calculating the ratio between the bytes sent via POST method.
-     * and the total amount of bytes Sent/Recieved
+     * and the total amount of bytes Sent/Received
      * during a client-server connection
      * @param rawdata
      * @return post_bytes_ratio
