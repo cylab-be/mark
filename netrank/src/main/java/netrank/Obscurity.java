@@ -59,12 +59,12 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         if (matcher.find()) {
             if (matcher.group(1).contains("&nbsp;")) {
                 result = matcher.group(1).replaceAll("&nbsp;", "");
-            }
-            if (matcher.group(1).contains(",")) {
+            } else if (matcher.group(1).contains(",")) {
                 result = matcher.group(1).replaceAll(",", "");
-            }
-            if (matcher.group(1).contains(".")) {
+            } else if (matcher.group(1).contains(".")) {
                 result = matcher.group(1).replaceAll(".", "");
+            } else {
+                result = matcher.group(1);
             }
         }
         return result;
@@ -82,6 +82,9 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         //extract the number and transform it to int from String
         System.out.println(result_element.html());
         String results = extractResultNumber(result_element.html());
+        if (results.equals("")) {
+            return 0;
+        }
         int number_of_results = Integer.parseInt(results);
         return number_of_results;
 
