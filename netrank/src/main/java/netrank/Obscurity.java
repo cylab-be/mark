@@ -72,6 +72,7 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         //search for the span DOM element that holds the # of results
         Elements result_element = doc.select("span.sb_count");
         //extract the number and transform it to int from String
+        System.out.println(result_element.html());
         String results = extractResultNumber(result_element.html());
         int number_of_results = Integer.parseInt(results);
         return number_of_results;
