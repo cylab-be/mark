@@ -54,10 +54,13 @@ public class Obscurity implements DetectionAgentInterface<Link> {
 
     private String extractResultNumber(final String string) {
         String result = "";
-        Pattern pattern = Pattern.compile("(.*?) R");
+        Pattern pattern = Pattern.compile("(.*?) (?i)r");
         Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
-            result = matcher.group(1).replaceAll("&nbsp;", "");
+            if (matcher.group(1).contains("&nbsp;"))
+                result = matcher.group(1).replaceAll("&nbsp;", "");
+            if (matcher.group(1).contains(","))
+                result = matcher.group(1).replaceAll(",", "");
         }
         return result;
     }
