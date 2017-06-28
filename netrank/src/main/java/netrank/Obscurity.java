@@ -57,10 +57,15 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         Pattern pattern = Pattern.compile("(.*?) (?i)r");
         Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
-            if (matcher.group(1).contains("&nbsp;"))
+            if (matcher.group(1).contains("&nbsp;")) {
                 result = matcher.group(1).replaceAll("&nbsp;", "");
-            if (matcher.group(1).contains(","))
+            }
+            if (matcher.group(1).contains(",")) {
                 result = matcher.group(1).replaceAll(",", "");
+            }
+            if (matcher.group(1).contains(".")) {
+                result = matcher.group(1).replaceAll(".", "");
+            }
         }
         return result;
     }
