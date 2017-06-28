@@ -23,55 +23,44 @@
  */
 package netrank;
 
+import java.util.LinkedList;
+import static junit.framework.Assert.assertEquals;
 import junit.framework.TestCase;
-import mark.activation.DummyClient;
 import mark.core.DetectionAgentProfile;
+import mark.core.Evidence;
 
 /**
  *
  * @author georgi
  */
-public class DomainAgeTest extends TestCase {
+public class ObscurityTest extends TestCase{
 
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze DomainAge test" + "\n");
+        System.out.println("analyze Obscurity test" + "\n");
 
-        DomainAge agent = new DomainAge();
-        System.out.println("Test DomainAge with a recently created domain");
+        Obscurity agent = new Obscurity();
+        ExtendedDummyClient client = new ExtendedDummyClient();
+        System.out.println("Test Obscurity Agent with low Obscurity domain");
         agent.analyze(
-                new Link("192.168.2.3", "wn74.com"),
+                new Link("192.168.2.3", "github.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.domainage.yaml")),
-                new DummyClient());
+                                "/detection.obscurity.yaml")),
+                client);
 
-        System.out.println("Test DomainAge with an old domain");
+        System.out.println("Test Obscurity Agent with high Obscurity domain");
         agent.analyze(
-                new Link("192.168.2.3", "google.com"),
+                new Link("192.168.2.3", "attack.cnc"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.domainage.yaml")),
-                new DummyClient());
+                                "/detection.obscurity.yaml")),
+                client);
 
-        System.out.println("Test DomainAge with an unknown IP address");
-        agent.analyze(
-                new Link("192.168.2.3", "151.101.1.34"),
-                "actual.trigger",
-                DetectionAgentProfile.fromInputStream(
-                        getClass().getResourceAsStream(
-                                "/detection.domainage.yaml")),
-                new DummyClient());
+        LinkedList<Evidence> evidences = client.getEvidences();
+        assertEquals(1, evidences.size());
 
-        System.out.println("Test DomainAge with a domain name not ending in"
-                + " .com/.edu/.net");
-        agent.analyze(
-                new Link("192.168.2.3", "bongonbongo.it"),
-                "actual.trigger",
-                DetectionAgentProfile.fromInputStream(
-                        getClass().getResourceAsStream(
-                                "/detection.domainage.yaml")),
-                new DummyClient());
     }
+    
 }

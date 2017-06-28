@@ -165,17 +165,17 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         long time_difference = TimeUnit.MILLISECONDS.toDays(
                 current_date.getTime() - formated_creation_date.getTime());
 
-            if (time_difference < TIME_THRESHOLD) {
-                Evidence evidence = new Evidence();
-                evidence.score = 1;
-                evidence.subject = subject;
-                evidence.label = profile.label;
-                evidence.time = raw_data[raw_data.length - 1].time;
-                evidence.report = "Found a domain:"
-                        + " " + domain_name
-                        + " that was created less than a month ago."
-                        + " Created: " + time_difference + " days ago.";
-                datastore.addEvidence(evidence);
-            }
+        if (time_difference < TIME_THRESHOLD) {
+            Evidence evidence = new Evidence();
+            evidence.score = 1;
+            evidence.subject = subject;
+            evidence.label = profile.label;
+            evidence.time = raw_data[raw_data.length - 1].time;
+            evidence.report = "Found a domain:"
+                    + " " + domain_name
+                    + " that was created less than a month ago."
+                    + " Created: " + time_difference + " days ago.";
+            datastore.addEvidence(evidence);
+        }
     }
 }

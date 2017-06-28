@@ -1,0 +1,4 @@
+---
+class_name:     netrank.Obscurity
+label:          detection.obscurity.1w
+trigger_label:  data.http
