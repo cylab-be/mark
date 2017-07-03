@@ -33,7 +33,6 @@ import mark.core.RawData;
 import mark.core.ServerInterface;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-//import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
@@ -54,8 +53,11 @@ public class Obscurity implements DetectionAgentInterface<Link> {
 
     private String extractResultNumber(final String string) {
         String result = "";
+        //use regex pattern to extract the numbers from the result string.
         Pattern pattern = Pattern.compile("(.*?) (?i)r");
         Matcher matcher = pattern.matcher(string);
+        //if a pattern is found replace the symbols delimiting the numbers
+        //with nothing so we can transform the String numbers to Integer.
         if (matcher.find()) {
             if (matcher.group(1).contains("&nbsp;")) {
                 result = matcher.group(1).replaceAll("&nbsp;", "");
@@ -69,13 +71,16 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         }
         return result;
     }
-
+/**
+ * 
+ * @param word parameters is the domain we are passing to the Bing search.
+ * @return returns the number of results given for the given domain.
+ * @throws IOException 
+ */
     private int connectToBing(final String word) throws IOException {
         String search_url = BING_SEARCH_URL + "?q=" + word;
-        Document doc = Jsoup.connect(search_url)
+        Document doc = Jsoup.connect(search_url).timeout(5000)
                 .userAgent(BING_SEARCH_AGENT).get();
-
-        //Elements result = doc.select("li.b_algo h2 a");
 
         //search for the span DOM element that holds the # of results
         Elements result_element = doc.select("span.sb_count");
@@ -88,13 +93,6 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         int number_of_results = Integer.parseInt(results);
         return number_of_results;
 
-        //code for iterating over the results found in the search
-//        for (Element res : result) {
-//            String linkHref = res.attr("href");
-//            System.out.println("<a href=" + linkHref + ">"
-//                                                      + linkHref + "</a>");
-//            counter = counter + 1;
-//        }
     }
 
     @Override
@@ -108,8 +106,15 @@ public class Obscurity implements DetectionAgentInterface<Link> {
             actual_trigger_label, subject);
 
         String domain_name = subject.getServer();
+        int number_of_results = 0;
+        try {
+            number_of_results = connectToBing(domain_name);            
+        } catch (IOException ex) {
+            System.out.println("Could not establish connection to server");
+            return;
+            
+        }
 
-        int number_of_results = connectToBing(domain_name);
 
         if (number_of_results < OBSCURITY_THRESHOLD) {
             Evidence evidence = new Evidence();
