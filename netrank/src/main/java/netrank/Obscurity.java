@@ -63,8 +63,6 @@ public class Obscurity implements DetectionAgentInterface<Link> {
                 result = matcher.group(1).replaceAll("&nbsp;", "");
             } else if (matcher.group(1).contains(",")) {
                 result = matcher.group(1).replaceAll(",", "");
-            } else if (matcher.group(1).contains(".")) {
-                result = matcher.group(1).replaceAll(".", "");
             } else {
                 result = matcher.group(1);
             }
@@ -87,7 +85,6 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         //search for the span DOM element that holds the # of results
         Elements result_element = doc.select("span.sb_count");
         //extract the number and transform it to int from String
-        System.out.println(result_element.html());
         String results = extractResultNumber(result_element.html());
         if (results.equals("")) {
             return 0;
