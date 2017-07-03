@@ -72,10 +72,10 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         return result;
     }
 /**
- * 
+ *
  * @param word parameters is the domain we are passing to the Bing search.
  * @return returns the number of results given for the given domain.
- * @throws IOException 
+ * @throws IOException
  */
     private int connectToBing(final String word) throws IOException {
         String search_url = BING_SEARCH_URL + "?q=" + word;
@@ -108,11 +108,10 @@ public class Obscurity implements DetectionAgentInterface<Link> {
         String domain_name = subject.getServer();
         int number_of_results = 0;
         try {
-            number_of_results = connectToBing(domain_name);            
+            number_of_results = connectToBing(domain_name);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;
-            
         }
 
 
