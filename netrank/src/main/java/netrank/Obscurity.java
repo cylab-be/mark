@@ -78,7 +78,9 @@ public class Obscurity implements DetectionAgentInterface<Link> {
  * @throws IOException
  */
     private int connectToBing(final String word) throws IOException {
-        String search_url = BING_SEARCH_URL + "?q=" + word;
+        //constructs the Search Query to be used and sets the language
+        //to use to display the results to English.
+        String search_url = BING_SEARCH_URL + "?q=" + word + "&setlang=en-gb";
         Document doc = Jsoup.connect(search_url).timeout(5000)
                 .userAgent(BING_SEARCH_AGENT).get();
 
