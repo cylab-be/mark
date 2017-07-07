@@ -33,34 +33,25 @@ import mark.core.Evidence;
  *
  * @author georgi
  */
-public class ObscurityTest extends TestCase{
+public class ReputationTest extends TestCase{
 
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze Obscurity test" + "\n");
+        System.out.println("analyze Reputation test" + "\n");
 
-        Obscurity agent = new Obscurity();
+        Reputation agent = new Reputation();
         ExtendedDummyClient client = new ExtendedDummyClient();
-        System.out.println("Test Obscurity Agent with low Obscurity domain");
         agent.analyze(
                 new Link("192.168.2.3", "github.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.obscurity.yaml")),
-                client);
-
-        System.out.println("Test Obscurity Agent with high Obscurity domain");
-        agent.analyze(
-                new Link("192.168.2.3", "attack.cnc"),
-                "actual.trigger",
-                DetectionAgentProfile.fromInputStream(
-                        getClass().getResourceAsStream(
-                                "/detection.obscurity.yaml")),
+                                "/detection.reputation.yaml")),
                 client);
 
         LinkedList<Evidence> evidences = client.getEvidences();
         //assertEquals(1, evidences.size());
 
     }
+    
     
 }

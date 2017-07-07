@@ -1,0 +1,4 @@
+---
+class_name:     netrank.Reputation
+label:          detection.reputation.1w
+trigger_label:  data.http
