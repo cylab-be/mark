@@ -51,7 +51,7 @@ public class ObscurityTest extends TestCase{
 
         System.out.println("Test Obscurity Agent with high Obscurity domain");
         agent.analyze(
-                new Link("192.168.2.3", "attack.cnc"),
+                new Link("192.168.2.3", "attack.cnc.be"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(

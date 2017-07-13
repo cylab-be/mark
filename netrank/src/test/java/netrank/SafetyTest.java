@@ -33,35 +33,32 @@ import mark.core.Evidence;
  *
  * @author georgi
  */
-public class ReputationTest extends TestCase{
+public class SafetyTest extends TestCase{
 
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze Reputation test" + "\n");
+        System.out.println("analyze Safety test" + "\n");
 
-        Reputation agent = new Reputation();
+        Safety agent = new Safety();
         ExtendedDummyClient client = new ExtendedDummyClient();
-        System.out.println("test Reputation agent with a domain with high"
-                            + " reputation");
+        System.out.println("Test Safety Agent with a domain with high Safety");
         agent.analyze(
                 new Link("192.168.2.3", "github.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.reputation.yaml")),
+                                "/detection.safety.yaml")),
                 client);
 
-        System.out.println("test Reputation agent with a domain with low"
-                            + " reputation");
+        System.out.println("Test Safety Agent with an unknown domain");
         agent.analyze(
                 new Link("192.168.2.3", "attack.cnc.be"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.reputation.yaml")),
+                                "/detection.safety.yaml")),
                 client);
 
         LinkedList<Evidence> evidences = client.getEvidences();
         assertEquals(1, evidences.size());
-
-    }
+    }   
 }

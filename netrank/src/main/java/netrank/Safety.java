@@ -24,6 +24,8 @@
 package netrank;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -36,53 +38,53 @@ import org.jsoup.select.Elements;
 /**
  *
  * @author georgi
- * The Reputation agent scraps two websites and composes a Reputation Index
- * based on the scores given by those two websites. If the Reputation Index
- * is below a predetermined threshold, evidence is created.
+ * The Safety Reputation agent scraps URLVOID website which tests the given
+ * domain with different online tools to detect threats.
  */
-public class Reputation implements DetectionAgentInterface<Link> {
+public class Safety implements DetectionAgentInterface<Link> {
 
-    private static final String WOT_URL = "https://www.mywot.com";
+    private static final String URLVOID_URL = "http://www.urlvoid.com/scan/";
     private static final String SEARCH_AGENT = "Mozilla/5.0 "
             + "(Windows NT 6.2; WOW64) AppleWebKit/537.15 "
             + "(KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15";
-    private static final int REPUTATION_THRESHOLD = 50;
+    private static final int SAFETY_THRESHOLD = 7;
 
 /**
  *
- * @param word parameters is the domain we are passing to the WebOfTrust search.
- * @return returns an estimation if the domain we pass has malicious code
- * attached to it. The "www.mywot.com" website checks the reputation of all IP
- * addresses related to a domain. This reputation is computed by users that
- * submit their information about the domain so its a crowdfunded website.
+ * @param word parameters is the domain we are passing to the URLVOID search.
+ * @return returns the Safety Reputation given by URLVOID. THe safety reputation
+ * is between 0 and 34 where each point means one of the 34 detector agents have
+ * discovered something malicious in the domain. A safety reputation of 0 is
+ * good, anything above is suspicious.
  * @throws IOException
  */
-    private int connectToWOT(final String word) throws IOException {
-        String search_url = WOT_URL + "/en/scorecard/" + word;
+    private int connectToURLVOID(final String word) throws IOException {
+        String search_url = URLVOID_URL + word + "/";
+        int safety_reputation = 0;
         Document doc = Jsoup.connect(search_url).timeout(5000)
                 .userAgent(SEARCH_AGENT).get();
 
         //search for the span DOM element that holds the # of results
-        Elements result_element = doc
-                .select("div.score-board-ratings__index.r1");
-        return parseWOTdata(result_element.html());
+        Elements result_element = doc.select("span.label.label-danger");
+        safety_reputation = parseURLVOIDresult(result_element.html());
+        return safety_reputation;
     }
 
-/**
- *
- * @param data parameters is the result retrieved from the WebOfTrust search.
- * @return returns the reputation that WOT gives the domain in integer
- * WOT has two parameters: "Trustworthiness" and "Child Safety". For this agent
- * we just consider the trustworthiness of the domain.
- */
-    private int parseWOTdata(final String data) {
-        int reputation = 0;
+    private int parseURLVOIDresult(final String data) {
+        //set the default safety vaule above the threshold.
+        //if the domain is unknown it wont return a value so it will be
+        //considered unsafe.
+        int parsed_int = 8;
         if (data != null && !data.isEmpty()) {
-            String[] lines = data.split("\\r?\\n");
-            String trustworthiness = lines[0];
-            reputation = Integer.parseInt(trustworthiness);
+            Pattern pattern = Pattern.compile("^(\\d+)/");
+            Matcher matcher = pattern.matcher(data);
+            //if a pattern is found replace the symbols delimiting the numbers
+            //with nothing so we can transform the String numbers to Integer.
+            if (matcher.find()) {
+                parsed_int = Integer.parseInt(matcher.group(1));
+            }
         }
-        return reputation;
+        return parsed_int;
     }
 
     @Override
@@ -96,15 +98,15 @@ public class Reputation implements DetectionAgentInterface<Link> {
             actual_trigger_label, subject);
 
         String domain_name = subject.getServer();
-        int reputation = 0;
+        int safety_reputation = 0;
         try {
-            reputation = connectToWOT(domain_name);
+            safety_reputation = connectToURLVOID(domain_name);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;
         }
 
-        if (reputation < REPUTATION_THRESHOLD) {
+        if (safety_reputation > SAFETY_THRESHOLD) {
             Evidence evidence = new Evidence();
             evidence.score = 1;
             evidence.subject = subject;
@@ -112,8 +114,11 @@ public class Reputation implements DetectionAgentInterface<Link> {
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found a domain:"
                     + " " + domain_name
-                    + " " + "with suspiciously low Reputation of "
-                    + reputation;
+                    + " that has suspiciosly low Safety Reputation value."
+                    + " http://www.urlvoid.com has found that the domain"
+                    + " has a very low Safety Reputation of "
+                    + safety_reputation + "/34 " + "where " + safety_reputation
+                    + " detectors out of the 34 found something suspicious.";
             datastore.addEvidence(evidence);
         }
     }
