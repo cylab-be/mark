@@ -26,14 +26,10 @@ package netrank;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 /**
  *
@@ -41,42 +37,21 @@ import org.jsoup.select.Elements;
  * The Safety Reputation agent scraps URLVOID website which tests the given
  * domain with different online tools to detect threats.
  */
-public class Safety implements DetectionAgentInterface<Link> {
+public class Safety extends WebsiteParser {
 
-    private static final String URLVOID_URL = "http://www.urlvoid.com/scan/";
-    private static final String SEARCH_AGENT = "Mozilla/5.0 "
-            + "(Windows NT 6.2; WOW64) AppleWebKit/537.15 "
-            + "(KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15";
+    private static final String DEFAULT_URL = "http://www.urlvoid.com/scan/";
+    private static final String DEFAULT_PATTERN = "^(\\d+)/";
+    private static final String DEFAULT_ELEMENT = "span.label.label-danger";
     private static final int SAFETY_THRESHOLD = 7;
 
-/**
- *
- * @param word parameters is the domain we are passing to the URLVOID search.
- * @return returns the Safety Reputation given by URLVOID. THe safety reputation
- * is between 0 and 34 where each point means one of the 34 detector agents have
- * discovered something malicious in the domain. A safety reputation of 0 is
- * good, anything above is suspicious.
- * @throws IOException
- */
-    private int connectToURLVOID(final String word) throws IOException {
-        String search_url = URLVOID_URL + word + "/";
-        int safety_reputation = 0;
-        Document doc = Jsoup.connect(search_url).timeout(5000)
-                .userAgent(SEARCH_AGENT).get();
-
-        //search for the span DOM element that holds the # of results
-        Elements result_element = doc.select("span.label.label-danger");
-        safety_reputation = parseURLVOIDresult(result_element.html());
-        return safety_reputation;
-    }
-
-    private int parseURLVOIDresult(final String data) {
+    @Override
+    public final int parse(final String data, final String given_pattern) {
         //set the default safety vaule above the threshold.
         //if the domain is unknown it wont return a value so it will be
         //considered unsafe.
         int parsed_int = 8;
         if (data != null && !data.isEmpty()) {
-            Pattern pattern = Pattern.compile("^(\\d+)/");
+            Pattern pattern = Pattern.compile(given_pattern);
             Matcher matcher = pattern.matcher(data);
             //if a pattern is found replace the symbols delimiting the numbers
             //with nothing so we can transform the String numbers to Integer.
@@ -98,15 +73,26 @@ public class Safety implements DetectionAgentInterface<Link> {
             actual_trigger_label, subject);
 
         String domain_name = subject.getServer();
-        int safety_reputation = 0;
+        String safety_reputation = "";
+///**
+// * returns the Safety Reputation given by URLVOID. THe safety reputation
+// * is between 0 and 34 where each point means one of the 34 detector agents
+// * have discovered something malicious in the domain. A safety reputation
+// * of 0 is good, anything above is suspicious.
+// * Note that a 0 might also mean that the domain wasn't found by URLVOID =
+// * uknown domain.
+// */
         try {
-            safety_reputation = connectToURLVOID(domain_name);
+            String search_url = DEFAULT_URL + domain_name + "/";
+            safety_reputation = connect(search_url, DEFAULT_ELEMENT);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;
         }
 
-        if (safety_reputation > SAFETY_THRESHOLD) {
+        int parsed_reputation = parse(safety_reputation, DEFAULT_PATTERN);
+
+        if (parsed_reputation > SAFETY_THRESHOLD) {
             Evidence evidence = new Evidence();
             evidence.score = 1;
             evidence.subject = subject;
@@ -116,8 +102,9 @@ public class Safety implements DetectionAgentInterface<Link> {
                     + " " + domain_name
                     + " that has suspiciosly low Safety Reputation value."
                     + " http://www.urlvoid.com has found that the domain"
-                    + " has a very low Safety Reputation of "
-                    + safety_reputation + "/34 " + "where " + safety_reputation
+                    + " has a very low Safety Reputation (or no data on the"
+                    + "domain), of "
+                    + parsed_reputation + "/34 " + "where " + parsed_reputation
                     + " detectors out of the 34 found something suspicious.";
             datastore.addEvidence(evidence);
         }

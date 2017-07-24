@@ -24,14 +24,10 @@
 package netrank;
 
 import java.io.IOException;
-import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 /**
  *
@@ -40,45 +36,27 @@ import org.jsoup.select.Elements;
  * based on the scores given by those two websites. If the Reputation Index
  * is below a predetermined threshold, evidence is created.
  */
-public class Reputation implements DetectionAgentInterface<Link> {
+public class Reputation extends WebsiteParser {
 
-    private static final String WOT_URL = "https://www.mywot.com";
-    private static final String SEARCH_AGENT = "Mozilla/5.0 "
-            + "(Windows NT 6.2; WOW64) AppleWebKit/537.15 "
-            + "(KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15";
+    private static final String DEFAULT_URL = "https://www.mywot.com";
+    private static final String DEFAULT_PATTERN = "\\r?\\n";
+    private static final String DEFAULT_ELEMENT = "div.score-board-"
+                                                    + "ratings__index.r1";
     private static final int REPUTATION_THRESHOLD = 50;
 
 /**
  *
- * @param word parameters is the domain we are passing to the WebOfTrust search.
- * @return returns an estimation if the domain we pass has malicious code
- * attached to it. The "www.mywot.com" website checks the reputation of all IP
- * addresses related to a domain. This reputation is computed by users that
- * submit their information about the domain so its a crowdfunded website.
- * @throws IOException
- */
-    private int connectToWOT(final String word) throws IOException {
-        String search_url = WOT_URL + "/en/scorecard/" + word;
-        Document doc = Jsoup.connect(search_url).timeout(5000)
-                .userAgent(SEARCH_AGENT).get();
-
-        //search for the span DOM element that holds the # of results
-        Elements result_element = doc
-                .select("div.score-board-ratings__index.r1");
-        return parseWOTdata(result_element.html());
-    }
-
-/**
- *
  * @param data parameters is the result retrieved from the WebOfTrust search.
+ * @param given_pattern is the pattern to use to parse out the data we need.
  * @return returns the reputation that WOT gives the domain in integer
  * WOT has two parameters: "Trustworthiness" and "Child Safety". For this agent
  * we just consider the trustworthiness of the domain.
  */
-    private int parseWOTdata(final String data) {
+    @Override
+    public final int parse(final String data, final String given_pattern) {
         int reputation = 0;
         if (data != null && !data.isEmpty()) {
-            String[] lines = data.split("\\r?\\n");
+            String[] lines = data.split(given_pattern);
             String trustworthiness = lines[0];
             reputation = Integer.parseInt(trustworthiness);
         }
@@ -96,15 +74,24 @@ public class Reputation implements DetectionAgentInterface<Link> {
             actual_trigger_label, subject);
 
         String domain_name = subject.getServer();
-        int reputation = 0;
+        String reputation = "";
+/**
+ * returns an estimation if the domain we pass has malicious code
+ * attached to it. The "www.mywot.com" website checks the reputation of all IP
+ * addresses related to a domain. This reputation is computed by users that
+ * submit their information about the domain so its a crowd funded website.
+ */
         try {
-            reputation = connectToWOT(domain_name);
+            String search_url = DEFAULT_URL + "/en/scorecard/" + domain_name;
+            reputation = connect(search_url, DEFAULT_ELEMENT);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;
         }
 
-        if (reputation < REPUTATION_THRESHOLD) {
+        int parsed_reputation = parse(reputation, DEFAULT_PATTERN);
+
+        if (parsed_reputation < REPUTATION_THRESHOLD) {
             Evidence evidence = new Evidence();
             evidence.score = 1;
             evidence.subject = subject;

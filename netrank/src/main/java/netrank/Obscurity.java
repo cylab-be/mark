@@ -26,14 +26,10 @@ package netrank;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 /**
  *
@@ -43,55 +39,34 @@ import org.jsoup.select.Elements;
  * under a predetermined threshold its considered suspicious as it gives insight
  * in how obscure the domain is.
  */
-public class Obscurity implements DetectionAgentInterface<Link> {
+public class Obscurity extends WebsiteParser {
 
-    private static final String BING_SEARCH_URL = "https://www.bing.com/search";
-    private static final String BING_SEARCH_AGENT = "Mozilla/5.0 "
-            + "(Windows NT 6.2; WOW64) AppleWebKit/537.15 "
-            + "(KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15";
+    private static final String DEFAULT_URL = "https://www.bing.com/search";
+    private static final String DEFAULT_PATTERN = "(.*?) (?i)r";
+    private static final String DEFAULT_ELEMENT = "span.sb_count";
     private static final int OBSCURITY_THRESHOLD = 1000;
 
-    private String extractResultNumber(final String string) {
-        String result = "";
+
+    @Override
+    public final int parse(final String data, final String given_pattern) {
+        int result = 0;
         //use regex pattern to extract the numbers from the result string.
-        Pattern pattern = Pattern.compile("(.*?) (?i)r");
-        Matcher matcher = pattern.matcher(string);
+        Pattern pattern = Pattern.compile(given_pattern);
+        Matcher matcher = pattern.matcher(data);
         //if a pattern is found replace the symbols delimiting the numbers
         //with nothing so we can transform the String numbers to Integer.
+        String matched_string = "";
         if (matcher.find()) {
             if (matcher.group(1).contains("&nbsp;")) {
-                result = matcher.group(1).replaceAll("&nbsp;", "");
+                matched_string = matcher.group(1).replaceAll("&nbsp;", "");
             } else if (matcher.group(1).contains(",")) {
-                result = matcher.group(1).replaceAll(",", "");
+                matched_string = matcher.group(1).replaceAll(",", "");
             } else {
-                result = matcher.group(1);
+                matched_string = matcher.group(1);
             }
+            result = Integer.parseInt(matched_string);
         }
         return result;
-    }
-/**
- *
- * @param word parameters is the domain we are passing to the Bing search.
- * @return returns the number of results given for the given domain.
- * @throws IOException
- */
-    private int connectToBing(final String word) throws IOException {
-        //constructs the Search Query to be used and sets the language
-        //to use to display the results to English.
-        String search_url = BING_SEARCH_URL + "?q=" + word + "&setlang=en-gb";
-        Document doc = Jsoup.connect(search_url).timeout(5000)
-                .userAgent(BING_SEARCH_AGENT).get();
-
-        //search for the span DOM element that holds the # of results
-        Elements result_element = doc.select("span.sb_count");
-        //extract the number and transform it to int from String
-        String results = extractResultNumber(result_element.html());
-        if (results.equals("")) {
-            return 0;
-        }
-        int number_of_results = Integer.parseInt(results);
-        return number_of_results;
-
     }
 
     @Override
@@ -105,16 +80,20 @@ public class Obscurity implements DetectionAgentInterface<Link> {
             actual_trigger_label, subject);
 
         String domain_name = subject.getServer();
-        int number_of_results = 0;
+        String number_of_results = "";
         try {
-            number_of_results = connectToBing(domain_name);
+            String search_url = DEFAULT_URL + "?q=" + domain_name
+                                                    + "&setlang=en-gb";
+            number_of_results = connect(search_url, DEFAULT_ELEMENT);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;
         }
 
+        int parsed_results = parse(number_of_results, DEFAULT_PATTERN);
 
-        if (number_of_results < OBSCURITY_THRESHOLD) {
+
+        if (parsed_results < OBSCURITY_THRESHOLD) {
             Evidence evidence = new Evidence();
             evidence.score = 1;
             evidence.subject = subject;
