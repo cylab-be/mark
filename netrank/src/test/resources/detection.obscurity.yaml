@@ -2,3 +2,7 @@
 class_name:     netrank.Obscurity
 label:          detection.obscurity.1w
 trigger_label:  data.http
+parameters:
+    website: https://www.ecosia.org/search?q=####&setlang=en-gb
+    pattern: (.*?)\s
+    element: div.search-filters-text.pull-left

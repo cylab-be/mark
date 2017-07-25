@@ -41,7 +41,9 @@ import mark.core.ServerInterface;
  */
 public class Obscurity extends WebsiteParser {
 
-    private static final String DEFAULT_URL = "https://www.bing.com/search";
+    private static final String DEFAULT_URL = "https://www.bing.com/search?q="
+                                                + "####"
+                                                + "&setlang=en-gb";
     private static final String DEFAULT_PATTERN = "(.*?) (?i)r";
     private static final String DEFAULT_ELEMENT = "span.sb_count";
     private static final int OBSCURITY_THRESHOLD = 1000;
@@ -81,16 +83,31 @@ public class Obscurity extends WebsiteParser {
 
         String domain_name = subject.getServer();
         String number_of_results = "";
+        String search_url = "";
+        String element_to_search_for = DEFAULT_ELEMENT;
+        String pattern_to_search_for = DEFAULT_PATTERN;
+
+        //check if the parameter field in the config file has been filled
+        //if it is adapt the DEFAULT parameters with those from the config file.
+        if (profile.parameters != null) {
+            search_url = profile.parameters.values().toArray()[0].toString()
+                                                .replace("####", domain_name);
+            element_to_search_for = profile.parameters.values().toArray()[2]
+                                                .toString();
+            pattern_to_search_for = profile.parameters.values().toArray()[1]
+                                                .toString();
+        } else {
+            search_url = DEFAULT_URL.replace("####", domain_name);
+        }
+
         try {
-            String search_url = DEFAULT_URL + "?q=" + domain_name
-                                                    + "&setlang=en-gb";
-            number_of_results = connect(search_url, DEFAULT_ELEMENT);
+            number_of_results = connect(search_url, element_to_search_for);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;
         }
 
-        int parsed_results = parse(number_of_results, DEFAULT_PATTERN);
+        int parsed_results = parse(number_of_results, pattern_to_search_for);
 
 
         if (parsed_results < OBSCURITY_THRESHOLD) {
@@ -102,7 +119,7 @@ public class Obscurity extends WebsiteParser {
             evidence.report = "Found a domain:"
                     + " " + domain_name
                     + " that has suspiciosly low Obscurity value."
-                    + number_of_results + " references " + "found of "
+                    + parsed_results + " references " + "found of "
                     + domain_name
                     + " on search engines.";
             datastore.addEvidence(evidence);
