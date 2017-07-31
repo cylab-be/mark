@@ -36,18 +36,18 @@ import mark.core.ServerInterface;
  */
 public class Faninout implements DetectionAgentInterface<Link> {
 
-    private HashMap<String, String[]> parseDomainIp(final RawData[] rawdata){
+    private HashMap<String, String[]> parseDomainIp(final RawData[] rawdata) {
         HashMap<String, String[]> hmap = new HashMap<>();
-        Pattern patternIP = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
+        Pattern pattern_ip = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
                 + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
                 + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
-        Pattern patternDomain = Pattern.compile("");
+        Pattern pattern_domain = Pattern.compile("");
         for (RawData data: rawdata) {
             RawData current = data;
             String log = current.data;
         }
         return hmap;
-    } 
+    }
 
     @Override
     public final void analyze(
