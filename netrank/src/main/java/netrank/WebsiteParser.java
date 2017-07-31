@@ -67,6 +67,7 @@ public abstract class WebsiteParser implements DetectionAgentInterface<Link> {
                 .userAgent(SEARCH_AGENT).get();
 
         //search for the span DOM element that holds the # of results
+        System.out.println("DOCUMENT:" + doc.html());
         Elements result_element = doc.select(element);
         result = result_element.html();
         return result;
