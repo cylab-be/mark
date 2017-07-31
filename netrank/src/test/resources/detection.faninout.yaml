@@ -1,0 +1,4 @@
+---
+class_name:     netrank.Faninout
+label:          detection.faninout.1w
+trigger_label:  data.http
