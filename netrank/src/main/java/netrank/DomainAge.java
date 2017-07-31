@@ -156,10 +156,12 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         }
 
         Map<String, String> attributes = getAttributes(whois_result);
+        System.out.println("ATTRIBUTES: "+attributes);
         String creation_date = attributes.get(CREATION_DATE);
+        System.out.println("CREATION DATE: "+creation_date);
         //String updated_date = attributes.get(UPDATED_DATE);
         //String expiration_date = attributes.get(EXPIRATION_DATE);
-        DateFormat format = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date formated_creation_date = format.parse(creation_date);
         Date current_date = new Date();
         long time_difference = TimeUnit.MILLISECONDS.toDays(
