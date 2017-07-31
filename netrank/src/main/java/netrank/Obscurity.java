@@ -106,6 +106,7 @@ public class Obscurity extends WebsiteParser {
             System.out.println("Could not establish connection to server");
             return;
         }
+        System.out.println("NUMBERS: "+number_of_results);
 
         int parsed_results = parse(number_of_results, pattern_to_search_for);
 
