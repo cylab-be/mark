@@ -42,7 +42,7 @@ public class FaninoutTest {
     public void testAnalyze() throws Throwable {
         System.out.println("analyze Faninout test");
 
-        ExtendedDummyClient client = new ExtendedDummyClient();
+        FaninoutTestClient client = new FaninoutTestClient(1000, 60, 0);
         Faninout agent = new Faninout();
         agent.analyze(
                 new Link("192.168.2.3", "github.com"),

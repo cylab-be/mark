@@ -24,6 +24,7 @@
 package netrank;
 
 import java.util.HashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
@@ -41,10 +42,22 @@ public class Faninout implements DetectionAgentInterface<Link> {
         Pattern pattern_ip = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
                 + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
                 + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
-        Pattern pattern_domain = Pattern.compile("");
+        Pattern pattern_domain = Pattern.compile("[^:/?#]+:?//([^/?#]*)?"
+                + "([^?#]*)(\\\\?[^#]*)?(#.*)?");
         for (RawData data: rawdata) {
             RawData current = data;
             String log = current.data;
+            String ip = "";
+            String domain = "";
+            Matcher matcher_ip = pattern_ip.matcher(log);
+            Matcher matcher_domain = pattern_domain.matcher(log);
+            if (!matcher_ip.find() || !matcher_domain.find()) {
+                continue;
+            }
+
+            ip = matcher_ip.group(1);
+            domain = matcher_domain.group(1);
+            System.out.println("IP AND DOMAIN: " + ip + " " + domain);
         }
         return hmap;
     }
@@ -59,6 +72,6 @@ public class Faninout implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
-        String domain_name = subject.getServer();
+        parseDomainIp(raw_data);
     }
 }
