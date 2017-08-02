@@ -41,45 +41,90 @@ public class FaninoutTestClient<T extends Subject>
     private LinkedList<Evidence> evidence = new LinkedList<>();
     private final int N_IP_TO_DOMAIN;
     private final int N_DOMAIN_TO_IP;
-    private final int N_APT_SERVER;
+    // IF GENERATE_IPS = true --> generate random IPs
+    // IF GENERATE_IPS = false --> generate random DOMAINs
+    private final boolean GENERATE_IPS;
 
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
     private static final String APT_SERVER = "105.244.103.";
     private static final String SERVER = "175.193.216.10";
 
-    public FaninoutTestClient(final int number_of_apts,
+    public FaninoutTestClient(final boolean type,
                                 final int number_of_ips,
                                 final int number_of_domains) {
-        this.N_APT_SERVER = number_of_apts;
         this.N_IP_TO_DOMAIN = number_of_ips;
         this.N_DOMAIN_TO_IP = number_of_domains;
+        this.GENERATE_IPS = type;
+    }
+
+    // method for generating random Urls for the generateData method where one
+    // IP is linked to a multitude of different domains.
+    private String generateRandomUrl() {
+        String SALTCHARS = "abcdefghijklmnopqrstuvwxyz1234567890";
+        String[] domain_suffix = {"com", "net", "it", "org", "lt", "ac"};
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 6) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        String result = "http://www." + saltStr + "."
+                + domain_suffix[rnd.nextInt(domain_suffix.length)]
+                + "/testDomainName"; 
+        return result;
     }
 
     private RawData[] generateData(String type, Link subject) {
         int start = 123456;
         Random rand = new Random();
+        int extra_logs_to_add;
+        RawData[] data;
 
-        RawData[] data = new RawData[N_SERVER + N_APT_SERVER];
+        if (GENERATE_IPS){
+            extra_logs_to_add = N_IP_TO_DOMAIN;
+            data = new RawData[N_SERVER + extra_logs_to_add];
 
-        for (int i = 0; i < N_APT_SERVER; i++) {
-            data[i] = new RawData();
-            data[i].subject = subject;
-            data[i].label = type;
-            data[i].time = start + APT_INTERVAL * i;
-            data[i].data = data[i].time + "    "
-                    + "126 "
-                    + "198.36.158.8 "
-                    + "TCP_MISS/"
-                    + "400"
-                    + "918 GET "
-                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + APT_SERVER + Integer.toString(rand.nextInt(255))
-                    + " text/html";
+            for (int i = 0; i < extra_logs_to_add; i++) {
+                data[i] = new RawData();
+                data[i].subject = subject;
+                data[i].label = type;
+                data[i].time = start + APT_INTERVAL * i;
+                data[i].data = data[i].time + "    "
+                        + "126 "
+                        + "198.36.158.8 "
+                        + "TCP_MISS/"
+                        + "400"
+                        + "918 GET "
+                        + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                        + APT_SERVER + Integer.toString(i)
+                        + " text/html";
+            }
+        } else {
+            extra_logs_to_add = N_DOMAIN_TO_IP;
+            data = new RawData[N_SERVER + extra_logs_to_add];
+
+            for (int i = 0; i < extra_logs_to_add; i++) {
+                data[i] = new RawData();
+                data[i].subject = subject;
+                data[i].label = type;
+                data[i].time = start + APT_INTERVAL * i;
+                data[i].data = data[i].time + "    "
+                        + "126 "
+                        + "198.36.158.8 "
+                        + "TCP_MISS/"
+                        + "400"
+                        + "918 GET "
+                        + generateRandomUrl()
+                        + " - DIRECT/"
+                        + APT_SERVER + "10"
+                        + " text/html";
+            }
         }
 
         // Add a few random requests
-        for (int i = N_APT_SERVER; i < N_APT_SERVER + N_SERVER; i++) {
+        for (int i = extra_logs_to_add; i < extra_logs_to_add + N_SERVER; i++) {
             data[i] = new RawData();
             data[i].subject = subject;
             data[i].label = type;
@@ -90,7 +135,7 @@ public class FaninoutTestClient<T extends Subject>
                     + "TCP_MISS/"
                     + "200"
                     + "918 GET "
-                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + "http://www.github.com/jbul.html - DIRECT/"
                     + SERVER
                     + " text/html";
         }

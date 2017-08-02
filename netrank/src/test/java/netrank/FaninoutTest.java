@@ -42,7 +42,8 @@ public class FaninoutTest {
     public void testAnalyze() throws Throwable {
         System.out.println("analyze Faninout test");
 
-        FaninoutTestClient client = new FaninoutTestClient(1000, 60, 0);
+        System.out.println("Test Faninout agent with random IPs");
+        FaninoutTestClient client = new FaninoutTestClient(true, 100, 0);
         Faninout agent = new Faninout();
         agent.analyze(
                 new Link("192.168.2.3", "github.com"),
@@ -53,7 +54,21 @@ public class FaninoutTest {
                 client);
 
         LinkedList<Evidence> evidences = client.getEvidences();
-        //assertEquals(1, evidences.size());
+        assertEquals(1, evidences.size());
+
+        System.out.println("Test Faninout agent with random Domains");
+        FaninoutTestClient client2 = new FaninoutTestClient(false, 0, 100);
+        Faninout agent2 = new Faninout();
+        agent2.analyze(
+                new Link("192.168.2.3", "github.com"),
+                "data.http",
+                DetectionAgentProfile.fromInputStream(
+                        getClass().getResourceAsStream(
+                                "/detection.faninout.yaml")),
+                client2);
+
+        LinkedList<Evidence> evidences2 = client2.getEvidences();
+        assertEquals(1, evidences.size());
     }
     
 }

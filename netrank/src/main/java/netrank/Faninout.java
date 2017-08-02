@@ -23,11 +23,15 @@
  */
 package netrank;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
+import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 
@@ -37,8 +41,11 @@ import mark.core.ServerInterface;
  */
 public class Faninout implements DetectionAgentInterface<Link> {
 
-    private HashMap<String, String[]> parseDomainIp(final RawData[] rawdata) {
-        HashMap<String, String[]> hmap = new HashMap<>();
+    private static final int THRESHOLD = 60;
+
+    private HashMap<String, LinkedList<String>> parseDomainIp(
+                                                    final RawData[] rawdata) {
+        HashMap<String, LinkedList<String>> hmap = new HashMap<>();
         Pattern pattern_ip = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
                 + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
                 + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
@@ -47,17 +54,47 @@ public class Faninout implements DetectionAgentInterface<Link> {
         for (RawData data: rawdata) {
             RawData current = data;
             String log = current.data;
-            String ip = "";
-            String domain = "";
             Matcher matcher_ip = pattern_ip.matcher(log);
             Matcher matcher_domain = pattern_domain.matcher(log);
             if (!matcher_ip.find() || !matcher_domain.find()) {
                 continue;
             }
 
-            ip = matcher_ip.group(1);
-            domain = matcher_domain.group(1);
-            System.out.println("IP AND DOMAIN: " + ip + " " + domain);
+            String ip = matcher_ip.group(1);
+            String domain = matcher_domain.group(1);
+            //System.out.println("IP AND DOMAIN: " + ip + " " + domain);
+            // get a list of all the ips linked to the specific domain
+            LinkedList<String> ips = hmap.get(domain);
+            // get a list of all the domains linked to the specific ip
+            LinkedList<String> domains = hmap.get(ip);
+            // if the list of IPs for the specific domain is not empty
+            if (ips != null) {
+                // check if the IP is already in the list
+                if (!ips.contains(ip)) {
+                    // if its not in the list add it to the list
+                    hmap.get(domain).add(ip);
+                }
+            // if the list is empty --> no key for the specific domain
+            } else {
+                // create a new entry for the domain with empty list
+                hmap.put(domain, new LinkedList<String>());
+                // add the IP to the list for the specific domain
+                hmap.get(domain).add(ip);
+            }
+            // if the list of domains for the specific IP is not empty
+            if (domains != null) {
+                // check if the domain is already in the list
+                if (!domains.contains(domain)) {
+                    // if its not in the list add it to the list
+                    hmap.get(ip).add(domain);
+                }
+            // if the list is empty --> no key for the specific IP
+            } else {
+                // add an entry for the IP with a new empty list
+                hmap.put(ip, new LinkedList<String>());
+                // add the domain to the list for the specific IP
+                hmap.get(ip).add(domain);
+            }
         }
         return hmap;
     }
@@ -72,6 +109,28 @@ public class Faninout implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
-        parseDomainIp(raw_data);
+        // get the parsed data in a hashmap format with keys for each
+        // encountered domain and IP
+        HashMap<String, LinkedList<String>> res_map = parseDomainIp(raw_data);
+        // get all the keys from the hashmap
+        List<String> list_of_keys = new ArrayList<>(res_map.keySet());
+        // iterate over each key and check if the values it holds exceed the
+        // THRESHOLD set by default
+        for (String key: list_of_keys) {
+            LinkedList<String> values = res_map.get(key);
+
+            if (values.size() > THRESHOLD) {
+                Evidence evidence = new Evidence();
+                evidence.score = 1;
+                evidence.subject = subject;
+                evidence.label = profile.label;
+                evidence.time = raw_data[raw_data.length - 1].time;
+                evidence.report = "Found an item: "
+                        + key
+                        + " that corresponds to too many different ips/domains"
+                        + " (" + values.size() + ")";
+                datastore.addEvidence(evidence);
+            }
+        }
     }
 }
