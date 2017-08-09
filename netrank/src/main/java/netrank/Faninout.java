@@ -45,7 +45,7 @@ public class Faninout implements DetectionAgentInterface<Link> {
 
     /**
      * method for parsing the data recieved from the database and constructing
-     * a hashmap with IP-domain pairs. 
+     * a hashmap with IP-domain pairs.
      * @param rawdata recieved from the database.
      * @return hmap HashMap with IP-domain and Domain-IP key-value pairs for
      * each unique domain and IP and their relative IP/domain pairs.
