@@ -56,13 +56,14 @@ public class Faninout implements DetectionAgentInterface<Link> {
             String log = current.data;
             Matcher matcher_ip = pattern_ip.matcher(log);
             Matcher matcher_domain = pattern_domain.matcher(log);
+
+            // if no IP or domain name in the log file discard and continue
             if (!matcher_ip.find() || !matcher_domain.find()) {
                 continue;
             }
 
             String ip = matcher_ip.group(1);
             String domain = matcher_domain.group(1);
-            //System.out.println("IP AND DOMAIN: " + ip + " " + domain);
             // get a list of all the ips linked to the specific domain
             LinkedList<String> ips = hmap.get(domain);
             // get a list of all the domains linked to the specific ip
@@ -108,6 +109,7 @@ public class Faninout implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
+
 
         // get the parsed data in a hashmap format with keys for each
         // encountered domain and IP
