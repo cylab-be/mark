@@ -43,6 +43,13 @@ public class Faninout implements DetectionAgentInterface<Link> {
 
     private static final int THRESHOLD = 60;
 
+    /**
+     * method for parsing the data recieved from the database and constructing
+     * a hashmap with IP-domain pairs. 
+     * @param rawdata recieved from the database.
+     * @return hmap HashMap with IP-domain and Domain-IP key-value pairs for
+     * each unique domain and IP and their relative IP/domain pairs.
+     */
     private HashMap<String, LinkedList<String>> parseDomainIp(
                                                     final RawData[] rawdata) {
         HashMap<String, LinkedList<String>> hmap = new HashMap<>();
