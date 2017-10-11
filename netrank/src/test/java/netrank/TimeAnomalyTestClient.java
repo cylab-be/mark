@@ -23,6 +23,8 @@
  */
 package netrank;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
 import mark.activation.DummyClient;
@@ -37,13 +39,22 @@ import mark.core.Subject;
  */
 public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
 
-    private static final int N = 1000;
+    private static final int N = 5000;
+    private static final int M = 500;
 
     private final LinkedList<Evidence> evidences = new LinkedList<>();
 
+    private RawData[] GenerateAnormalData(String type, T subject) {
+        RawData[] data = new RawData[M];
+        return data;
+    }
 
     private RawData[] GenerateNormalData(String type, T subject) {
-        int start = 1504002488;
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        date = calendar.getTime();
+        long start = date.getTime();
+        System.out.println("START: " + start + " " + date.toString());
         Random rand = new Random();
 
         RawData[] data = new RawData[N];
@@ -52,7 +63,7 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
             data[i] = new RawData();
             data[i].subject = subject;
             data[i].label = type;
-            data[i].time = start + (i * 86400);
+            data[i].time = (int)start + (i * 86400);
             data[i].data = data[i].time + "    "
                 + "126 "
                 + "198.36.158.8 "
