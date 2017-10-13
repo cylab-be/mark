@@ -6,7 +6,7 @@ package mark.core;
  */
 public class RawData<T extends Subject> {
     public String label = "";
-    public int time;
+    public long time;
     public T subject;
     public String data = "";
 

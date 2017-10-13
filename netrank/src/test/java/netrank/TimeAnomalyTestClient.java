@@ -44,7 +44,7 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
 
     private final LinkedList<Evidence> evidences = new LinkedList<>();
 
-    private RawData[] GenerateAnormalData(String type, T subject) {
+    private RawData[] GenerateAbnormalData(String type, T subject) {
         RawData[] data = new RawData[M];
         return data;
     }
@@ -63,7 +63,7 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
             data[i] = new RawData();
             data[i].subject = subject;
             data[i].label = type;
-            data[i].time = (int)start + (i * 86400);
+            data[i].time = start + (i * 86400);
             data[i].data = data[i].time + "    "
                 + "126 "
                 + "198.36.158.8 "

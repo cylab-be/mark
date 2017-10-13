@@ -47,7 +47,7 @@ public class Average implements DetectionAgentInterface {
                 actual_trigger_label, subject);
 
         double score = 0;
-        int last_time = 0;
+        long last_time = 0;
         for (Evidence ev : evidences) {
             score += ev.score / evidences.length;
 

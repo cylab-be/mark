@@ -58,7 +58,7 @@ public class FileSource implements DataAgentInterface {
         }
 
         int start_time = 0;
-        int first_data_time = 0;
+        long first_data_time = 0;
 
         pattern = Pattern.compile(regex);
 

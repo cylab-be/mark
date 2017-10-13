@@ -27,15 +27,15 @@ public class Frequency implements DetectionAgentInterface {
     /**
      * Sampling interval (in second).
      */
-    public static final int SAMPLING_INTERVAL = 2; // in seconds
+    public static final long SAMPLING_INTERVAL = 2; // in seconds
 
     /**
      * Minimum peak to generate an evidence.
      */
     public static final double DETECTION_THRESHOLD = 10.0;
 
-    static int pow2gt(final int value) {
-        int result = 1;
+    static long pow2gt(final long value) {
+        long result = 1;
 
         while (result < value) {
             result <<= 1;
@@ -43,9 +43,9 @@ public class Frequency implements DetectionAgentInterface {
         return result;
     }
 
-    static int min(final int[] values) {
-        int result = Integer.MAX_VALUE;
-        for (int value : values) {
+    static long min(final long[] values) {
+        long result = Integer.MAX_VALUE;
+        for (long value : values) {
             if (value < result) {
                 result = value;
             }
@@ -53,9 +53,9 @@ public class Frequency implements DetectionAgentInterface {
         return result;
     }
 
-    static int max(final int[] values) {
-        int result = Integer.MIN_VALUE;
-        for (int value : values) {
+    static long max(final long[] values) {
+        long result = Integer.MIN_VALUE;
+        for (long value : values) {
             if (value > result) {
                 result = value;
             }
@@ -90,20 +90,20 @@ public class Frequency implements DetectionAgentInterface {
                 DftNormalization.STANDARD);
 
 
-        int[] times = new int[raw_data.length];
+        long[] times = new long[raw_data.length];
         for (int i = 0; i < raw_data.length; i++) {
             times[i] = raw_data[i].time;
         }
 
-        int min = min(times);
-        int max = max(times);
-        int size = pow2gt((max - min) / SAMPLING_INTERVAL);
+        long min = min(times);
+        long max = max(times);
+        long size = pow2gt((max - min) / SAMPLING_INTERVAL);
 
-        double[] counts = new double[size];
-        for (int time : times) {
-            int position = (time - min) / SAMPLING_INTERVAL;
+        double[] counts = new double[(int) size];
+        for (long time : times) {
+            long position = (time - min) / SAMPLING_INTERVAL;
             position = Math.min(position, counts.length - 1);
-            counts[position]++;
+            counts[(int) position]++;
         }
 
         Complex[] transform =

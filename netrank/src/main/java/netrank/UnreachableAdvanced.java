@@ -118,17 +118,17 @@ public class UnreachableAdvanced implements DetectionAgentInterface {
             return;
         }
 
-        int[][] times_status = new int[raw_data.length][2];
+        long[][] times_status = new long[raw_data.length][2];
         int[] status_array = new int[raw_data.length];
         Pattern pattern = Pattern.compile(".*TCP_MISS/([0-9]{3}).*");
         for (int i = 0; i < raw_data.length; i++) {
-            int timestamp = raw_data[i].time;
+            long timestamp = raw_data[i].time;
             int status = 0;
             Matcher matcher = pattern.matcher(raw_data[i].data);
             if (matcher.find()) {
                 status = Integer.parseInt(matcher.group(1));
             }
-            int[] time_status = {timestamp, status};
+            long[] time_status = {timestamp, status};
             times_status[i] = time_status;
             status_array[i] = status;
         }

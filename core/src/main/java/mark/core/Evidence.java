@@ -8,7 +8,7 @@ public class Evidence<T extends Subject> {
 
     public String id = "";
     public String label = "";
-    public int time;
+    public long time;
     public T subject;
     public double score;
     public String report = "";

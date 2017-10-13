@@ -41,8 +41,8 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
         int[] timestamp_collection = new int[raw_data.length];
         for (RawData raw_data1 : raw_data) {
             long timestamp = raw_data1.time;
-            Date date = new Date(timestamp * 1000L);
-            System.out.println("Time: " + date + " " + timestamp);
+            Date date = new Date(timestamp);
+            //System.out.println("Time: " + date + " " + timestamp);
         }
     }
 

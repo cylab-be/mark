@@ -171,7 +171,7 @@ public class RequestHandler implements ServerInterface {
         RawData data = new RawData();
         data.subject = adapter.readFromMongo(doc);
         data.data = doc.getString(DATA);
-        data.time = doc.getInteger(TIME);
+        data.time = doc.getLong(TIME);
         data.label = doc.getString(LABEL);
 
         return data;
@@ -183,7 +183,7 @@ public class RequestHandler implements ServerInterface {
         Evidence evidence = new Evidence();
         evidence.subject = adapter.readFromMongo(doc);
         evidence.score = doc.getDouble(SCORE);
-        evidence.time = doc.getInteger(TIME);
+        evidence.time = doc.getLong(TIME);
         evidence.label = doc.getString(LABEL);
         evidence.report = doc.getString(REPORT);
         evidence.id = doc.getObjectId("_id").toString();
