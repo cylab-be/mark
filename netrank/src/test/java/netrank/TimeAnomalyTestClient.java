@@ -53,6 +53,8 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
         date = calendar.getTime();
+        // date.getTime() Returns the number of milliseconds since 
+        // January 1, 1970, 00:00:00 GMT represented by this Date object.
         long start = date.getTime();
         System.out.println("START: " + start + " " + date.toString());
         Random rand = new Random();

@@ -57,7 +57,7 @@ public class FileSource implements DataAgentInterface {
             }
         }
 
-        int start_time = 0;
+        long start_time = 0;
         long first_data_time = 0;
 
         pattern = Pattern.compile(regex);
@@ -78,14 +78,14 @@ public class FileSource implements DataAgentInterface {
             rd.label = profile.label;
 
             if (start_time == 0) {
-                start_time = (int) (System.currentTimeMillis() / 1000);
+                start_time = System.currentTimeMillis();
                 first_data_time = rd.time;
             }
 
             // Simulated time for this new data
             rd.time = rd.time - first_data_time + start_time;
 
-            long wait_time = (long) (1000 * (rd.time - start_time) / speedup);
+            long wait_time = (long) ((rd.time - start_time) / speedup);
             Thread.sleep(wait_time);
 
             datastore.addRawData(rd);

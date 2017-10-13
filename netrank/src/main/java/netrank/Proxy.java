@@ -148,7 +148,7 @@ public class Proxy implements DataAgentInterface {
             data.subject = new Link(
                     log_line.getRemoteAddress(),
                     log_line.getServerName());
-            data.time = (int) (log_line.getTime() / 1000);
+            data.time = log_line.getTime();
             data.data = log_line.toString();
             try {
                 datastore.addRawData(data);
