@@ -23,9 +23,13 @@
  */
 package netrank;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
+import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 
@@ -35,15 +39,43 @@ import mark.core.ServerInterface;
  */
 public class TimeAnomaly implements DetectionAgentInterface<Link> {
 
-    private void getTimeIntervals(final RawData[] raw_data) {
+    private HashMap<String, ArrayList<RawData>> generateTimeStampArray() {
+        HashMap<String, ArrayList<RawData>> map =
+               new HashMap<>();
+        for (int i = 0; i > 8; i++) {
+            map.put(Integer.toString(i), new ArrayList<RawData>());
+        }
+        return map;
+    }
+
+    private HashMap<String, ArrayList<RawData>> getTimeIntervals(
+            final RawData[] raw_data) {
         //loop through raw_data get timestamps and create timetable
         //of activity bursts
-        int[] timestamp_collection = new int[raw_data.length];
+        HashMap<String, ArrayList<RawData>> weekly_use =
+                generateTimeStampArray();
         for (RawData raw_data1 : raw_data) {
             long timestamp = raw_data1.time;
             Date date = new Date(timestamp);
-            //System.out.println("Time: " + date + " " + timestamp);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            String day_of_the_week = Integer.toString(cal.get(
+                                                        Calendar.DAY_OF_WEEK));
+            ArrayList<RawData> day_list = weekly_use.get(day_of_the_week);
+            // if there is no key made for the specific day create one and
+            // add the entries for the specific day in the hashmap
+            if (day_list == null) {
+                day_list = new ArrayList<>();
+                day_list.add(raw_data1);
+                weekly_use.put(day_of_the_week, day_list);
+            } else {
+            // add if item is not already in list
+                if (!day_list.contains(raw_data1)) {
+                    day_list.add(raw_data1);
+                }
+            }
         }
+        return weekly_use;
     }
 
     @Override
@@ -55,6 +87,18 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
-        getTimeIntervals(raw_data);
+        HashMap<String, ArrayList<RawData>> weekly_use =
+                                                    getTimeIntervals(raw_data);
+
+        if (weekly_use.get("7") != null || weekly_use.get("1") != null) {
+            Evidence evidence = new Evidence();
+            evidence.score = 1;
+            evidence.subject = subject;
+            evidence.label = profile.label;
+            evidence.time = raw_data[raw_data.length - 1].time;
+            evidence.report = "Found irregular activity during the week"
+                    + " outside the normal user activity";
+            datastore.addEvidence(evidence);
+        }
     }
 }
