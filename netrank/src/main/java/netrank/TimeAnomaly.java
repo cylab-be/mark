@@ -48,6 +48,15 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
         return map;
     }
 
+    private ArrayList<RawData> getMinMaxValues(
+            final ArrayList<RawData> data_array) {
+        ArrayList<RawData> minmax_values = new ArrayList<>();
+        for (int i = 0; i > data_array.size(); i++) {
+            System.out.println("DEBUG");
+        }
+        return minmax_values;
+    }
+
     private HashMap<String, ArrayList<RawData>> getTimeIntervals(
             final RawData[] raw_data) {
         //loop through raw_data get timestamps and create timetable
