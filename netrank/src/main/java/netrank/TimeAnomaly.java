@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -48,16 +50,49 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
         return map;
     }
 
-    private ArrayList<RawData> getMinMaxValues(
-            final ArrayList<RawData> data_array) {
-        ArrayList<RawData> minmax_values = new ArrayList<>();
-        for (int i = 0; i > data_array.size(); i++) {
-            System.out.println("DEBUG");
+    private HashMap<String, ArrayList<Integer>> getMinMaxValues(
+            final HashMap<String, ArrayList<RawData>> data_array) {
+        HashMap<String, ArrayList<Integer>> minmax_values = new HashMap<>();
+        Iterator it = data_array.entrySet().iterator();
+        long temp_timestamp = 0;
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            //System.out.println("DEBUG\n");
+            //System.out.println(pair.getKey() + " = " + pair.getValue());
+            String day = (String) pair.getKey();
+            ArrayList<RawData> data = (ArrayList<RawData>) pair.getValue();
+            for (int i = 0; i < data.size(); i++) {
+                RawData temp = data.get(i);
+                Date date = new Date(temp.time);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                int curr_hour = cal.get(Calendar.HOUR_OF_DAY);
+                ArrayList<Integer> day_list = minmax_values.get(day);
+                //check if there is an entry for the specific day
+                //if there is not create one and put the HOUR as default min and
+                //max hour for that day
+                if (day_list == null) {
+                    day_list = new ArrayList<>();
+                    day_list.add(curr_hour);
+                    day_list.add(curr_hour);
+                    minmax_values.put(day, day_list);
+                } else {
+                // check the current HOUR if its smaller/bigger than the values
+                //that are already in the list
+                    if (curr_hour < day_list.get(0)) {
+                        day_list.set(0, curr_hour);
+                    } else if (curr_hour > day_list.get(1)) {
+                        day_list.set(1, curr_hour);
+                    }
+
+                }
+            }
+            it.remove(); //avoids a ConcurrentModificationException
         }
         return minmax_values;
     }
 
-    private HashMap<String, ArrayList<RawData>> getTimeIntervals(
+    private HashMap<String, ArrayList<Integer>> getTimeIntervals(
             final RawData[] raw_data) {
         //loop through raw_data get timestamps and create timetable
         //of activity bursts
@@ -84,7 +119,7 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
                 }
             }
         }
-        return weekly_use;
+        return getMinMaxValues(weekly_use);
     }
 
     @Override
@@ -96,9 +131,9 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
-        HashMap<String, ArrayList<RawData>> weekly_use =
+        HashMap<String, ArrayList<Integer>> weekly_use =
                                                     getTimeIntervals(raw_data);
-
+        //System.out.println(weekly_use);
         if (weekly_use.get("7") != null || weekly_use.get("1") != null) {
             Evidence evidence = new Evidence();
             evidence.score = 1;
