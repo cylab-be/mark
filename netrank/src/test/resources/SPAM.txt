@@ -1,0 +1,47 @@
+Message-ID: <19812345.1075861029777.JavaMail.ss@kk>
+Date: Wed, 6 Mar 2015 12:32:20 -0800 (PST)
+From: "100%ŽëÃâÁ€ºž " <ynpjlgpzgjpdt@sinatag5.w3ip.co.kr>
+To: A Recipient <recipient@example.org>
+Subject: An example of email with images and a plain alternative
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="outer-boundary"
+
+This is a MIME-encoded message. If you are seeing this, your mail
+reader is old.
+--outer-boundary
+Content-Type: text/plain; charset=us-ascii
+
+[Æ¯°¡»óÇ°]ÇÊž³œºÇü žéµµ±â 80% ÃÊÀú°¡ ÆÇžÅÁßÀÔŽÏŽÙ!![Æ¯°¡»óÇ°]ÇÊž³œºÇü žéµµ±â 80% ÃÊÀú°¡ ÆÇžÅÁßÀÔŽÏŽÙ!!
+sqfoisfhzbfds zapfjoFPNDFKNBFIUEPF324984z 6d4az6d4 +6qsd4 d84 A+R4 "AÉ8'4 É"6(4'4"6(4"6§4'"(6"'4R6É"4864(6"(4"6'4É"'
+  (984(64É"''E6 &486²²98²REZ66EZR46"(4'(6È4§È6Ç4!À6Ç!41PM6IO5Ù13I13MJ1K3L51R6F5RTY16Z"AREZPG,Z'É  (ÀI)'"§!UMLRF,D
+
+--outer-boundary
+MIME-Version: 1.0
+Content-Type: multipart/related;
+  type="text/html"; start="<body@here>"; boundary="inner-boundary"
+
+--inner-boundary
+Content-Type: text/html; charset=us-ascii
+Content-Disposition: inline
+Content-ID: <body@here>
+
+<html>
+ <body>
+  [Æ¯°¡»óÇ°]ÇÊž³œºÇü žéµµ±â 80% ÃÊÀú°¡ ÆÇžÅÁßÀÔŽÏŽÙ!![Æ¯°¡»óÇ°]ÇÊž³œºÇü žéµµ±â 80% ÃÊÀú°¡ ÆÇžÅÁßÀÔŽÏŽÙ!!
+  sqfoisfhzbfds zapfjoFPNDFKNBFIUEPF324984z 6d4az6d4 +6qsd4 d84 A+R4 "AÉ8'4 É"6(4'4"6(4"6§4'"(6"'4R6É"4864(6"(4"6'4É"'
+  (984(64É"''E6 &486²²98²REZ66EZR46"(4'(6È4§È6Ç4!À6Ç!41PM6IO5Ù13I13MJ1K3L51R6F5RTY16Z"AREZPG,Z'É  (ÀI)'"§!UMLRF,D
+ </body>
+</html>
+
+--inner-boundary
+Content-Type: image/gif
+Content-Disposition: inline
+Content-Transfer-Encoding: base64
+Content-ID: <smile@here>
+
+R0lGODlhEAAQAKEBAAAAAP//AP//AP//ACH5BAEKAAIALAAAAAAQABAAAAIzlA2px6IBw2
+IpWglOvTahDgGdI0ZlGW5meKlci6JrasrqkypxJr8S0oNpgqkGLtcY6hoFADs=
+
+--inner-boundary--
+
+--outer-boundary--

@@ -50,15 +50,21 @@ import org.bson.Document;
  */
 public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
 
-    private static final int N = 10000;
+    private final int N;
+    private final int S;
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
     private LinkedList<Evidence> evidence = new LinkedList<>();
     String email_Mime = "";
 
-    public String parseMIME()
+    public EmailDummyClient(int noise, int spam) {
+        this.N = noise;
+        this.S = spam;
+    }
+
+    public String parseMIME(String email_path)
             throws FileNotFoundException, MessagingException, IOException {
-        String path = getClass().getResource("/MIME.txt")
+        String path = getClass().getResource(email_path)
                         .getPath();
         Session s = Session.getInstance(new Properties());
         InputStream is = new FileInputStream(path);
@@ -142,7 +148,7 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
     private RawData[] generateData(String type, Link subject)
             throws FileNotFoundException, MessagingException, IOException {
 
-        RawData[] data = new RawData[N];
+        RawData[] data = new RawData[N + S];
         int start = 123456;
         Random rand = new Random();
 
@@ -152,7 +158,16 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
             data[i].subject = subject;
             data[i].label = type;
             data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
-            data[i].data = parseMIME();
+            data[i].data = parseMIME("/MIME.txt");
+        }
+
+        // SPAM Traffic
+        for (int i = N; i < N + S; i++) {
+            data[i] = new RawData();
+            data[i].subject = subject;
+            data[i].label = type;
+            data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
+            data[i].data = parseMIME("/SPAM.txt");
         }
         return data;
     }
