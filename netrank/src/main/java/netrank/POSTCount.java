@@ -45,6 +45,10 @@ public class POSTCount implements DetectionAgentInterface<Link> {
      * trigger of the agent
      * the profile used to load the agent
      * the database to which to connect to gather RawData
+     * @param subject
+     * @param actual_trigger_label
+     * @param profile
+     * @param datastore
      * @throws java.lang.Throwable
      */
     @Override

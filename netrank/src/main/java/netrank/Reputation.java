@@ -63,6 +63,18 @@ public class Reputation extends WebsiteParser {
         return reputation;
     }
 
+    /**
+     * Analyze function inherited from the DetectionAgentInterface.
+     * accepts the subject to analyze
+     * trigger of the agent
+     * the profile used to load the agent
+     * the database to which to connect to gather RawData
+     * @param subject
+     * @param actual_trigger_label
+     * @param profile
+     * @param datastore
+     * @throws java.lang.Throwable
+     */
     @Override
     public final void analyze(
             final Link subject,

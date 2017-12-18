@@ -36,7 +36,9 @@ import mark.core.RawData;
 import mark.core.ServerInterface;
 
 /**
- *
+ * Faninout agent for detecting incoming/outgoing connection to servers.
+ * Determines if the connections are between servers with too many different
+ * domains or a domain with too many different IPs.
  * @author georgi
  */
 public class Faninout implements DetectionAgentInterface<Link> {
@@ -107,6 +109,18 @@ public class Faninout implements DetectionAgentInterface<Link> {
         return hmap;
     }
 
+    /**
+     * Analyze function inherited from the DetectionAgentInterface.
+     * accepts the subject to analyze
+     * trigger of the agent
+     * the profile used to load the agent
+     * the database to which to connect to gather RawData
+     * @param subject
+     * @param actual_trigger_label
+     * @param profile
+     * @param datastore
+     * @throws java.lang.Throwable
+     */
     @Override
     public final void analyze(
             final Link subject,

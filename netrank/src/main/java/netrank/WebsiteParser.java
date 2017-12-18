@@ -32,7 +32,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 /**
- *
+ * The WebsiteParser class is used to parse websites using Jsoup.
+ * Used to extract information from websites.
  * @author georgi
  */
 public abstract class WebsiteParser implements DetectionAgentInterface<Link> {

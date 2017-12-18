@@ -50,15 +50,18 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
         return map;
     }
 
+    /**
+     *
+     * @param data_array
+     * @return HashMap of days and the intervals of hours where connections
+     * were established.
+     */
     private HashMap<String, ArrayList<Integer>> getMinMaxValues(
             final HashMap<String, ArrayList<RawData>> data_array) {
         HashMap<String, ArrayList<Integer>> minmax_values = new HashMap<>();
         Iterator it = data_array.entrySet().iterator();
-        long temp_timestamp = 0;
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            //System.out.println("DEBUG\n");
-            //System.out.println(pair.getKey() + " = " + pair.getValue());
             String day = (String) pair.getKey();
             ArrayList<RawData> data = (ArrayList<RawData>) pair.getValue();
             for (int i = 0; i < data.size(); i++) {
@@ -122,6 +125,18 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
         return getMinMaxValues(weekly_use);
     }
 
+    /**
+     * Analyze function inherited from the DetectionAgentInterface.
+     * accepts the subject to analyze
+     * trigger of the agent
+     * the profile used to load the agent
+     * the database to which to connect to gather RawData
+     * @param subject
+     * @param actual_trigger_label
+     * @param profile
+     * @param datastore
+     * @throws java.lang.Throwable
+     */
     @Override
     public final void analyze(
             final Link subject,

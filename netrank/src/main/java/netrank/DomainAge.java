@@ -119,6 +119,10 @@ public class DomainAge implements DetectionAgentInterface<Link> {
      * trigger of the agent
      * the profile used to load the agent
      * the database to which to connect to gather RawData
+     * @param subject
+     * @param actual_trigger_label
+     * @param profile
+     * @param datastore
      * @throws java.lang.Throwable
      */
     @Override
@@ -158,8 +162,6 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         Map<String, String> attributes = getAttributes(whois_result);
         String creation_date = attributes.get(CREATION_DATE);
         String[] splitted_date = creation_date.split("T");
-        //String updated_date = attributes.get(UPDATED_DATE);
-        //String expiration_date = attributes.get(EXPIRATION_DATE);
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Date formated_creation_date = format.parse(splitted_date[0]);
         Date current_date = new Date();
