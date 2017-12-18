@@ -42,7 +42,7 @@ import org.apache.tika.language.detect.LanguageResult;
  */
 public class LanguageDetection implements DetectionAgentInterface<Link> {
 
-    private final static double RATIO_THRESHOLD = 0.3;
+    private static final double RATIO_THRESHOLD = 0.3;
 
     /**
      * Method for parsing the email data and language detection.
