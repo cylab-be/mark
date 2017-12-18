@@ -26,6 +26,7 @@ package netrank;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -37,14 +38,19 @@ import mark.core.ServerInterface;
  * The Safety Reputation agent scraps URLVOID website which tests the given
  * domain with different online tools to detect threats.
  */
-public class Safety extends WebsiteParser {
+public class Safety implements DetectionAgentInterface<Link> {
 
     private static final String DEFAULT_URL = "http://www.urlvoid.com/scan/";
     private static final String DEFAULT_PATTERN = "^(\\d+)/";
     private static final String DEFAULT_ELEMENT = "span.label.label-danger";
     private static final int SAFETY_THRESHOLD = 7;
 
-    @Override
+    /**
+     *
+     * @param data
+     * @param given_pattern
+     * @return parsed_int
+     */
     public final int parse(final String data, final String given_pattern) {
         //set the default safety vaule above the threshold.
         //if the domain is unknown it wont return a value so it will be
@@ -94,9 +100,11 @@ public class Safety extends WebsiteParser {
 // * Note that a 0 might also mean that the domain wasn't found by URLVOID =
 // * uknown domain.
 // */
+        WebScrapper web_scrapper = new WebScrapper();
         try {
             String search_url = DEFAULT_URL + domain_name + "/";
-            safety_reputation = connect(search_url, DEFAULT_ELEMENT);
+            safety_reputation = web_scrapper.connect(search_url,
+                    DEFAULT_ELEMENT);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;

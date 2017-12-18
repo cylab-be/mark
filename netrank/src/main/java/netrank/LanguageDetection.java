@@ -56,11 +56,12 @@ public class LanguageDetection implements DetectionAgentInterface<Link> {
     private List<String> detectLanguage(final String text) throws IOException {
         List<String> lang = null;
         String[] data = text.split(" , ");
+        LanguageDetector detector =
+                        new OptimaizeLangDetector().loadModels();
         for (String data1 : data) {
             if (data1.contains("Text=")) {
                 String text_body = data1.substring(5);
-                LanguageDetector detector =
-                        new OptimaizeLangDetector().loadModels();
+
                 List<LanguageResult> result = detector.detectAll(text_body);
                 lang = new ArrayList<>(result.size());
                 for (int i = 0; i < result.size(); i++) {

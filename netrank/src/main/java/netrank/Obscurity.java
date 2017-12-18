@@ -26,6 +26,7 @@ package netrank;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -39,7 +40,7 @@ import mark.core.ServerInterface;
  * under a predetermined threshold its considered suspicious as it gives insight
  * in how obscure the domain is.
  */
-public class Obscurity extends WebsiteParser {
+public class Obscurity implements DetectionAgentInterface<Link> {
 
     private static final String DEFAULT_URL = "https://www.bing.com/search?q="
                                                 + "####"
@@ -48,8 +49,12 @@ public class Obscurity extends WebsiteParser {
     private static final String DEFAULT_ELEMENT = "span.sb_count";
     private static final int OBSCURITY_THRESHOLD = 1000;
 
-
-    @Override
+    /**
+     *
+     * @param data
+     * @param given_pattern
+     * @return result
+     */
     public final int parse(final String data, final String given_pattern) {
         int result = 0;
         //use regex pattern to extract the numbers from the result string.
@@ -111,9 +116,10 @@ public class Obscurity extends WebsiteParser {
         } else {
             search_url = DEFAULT_URL.replace("####", domain_name);
         }
-
+        WebScrapper web_scrapper = new WebScrapper();
         try {
-            number_of_results = connect(search_url, element_to_search_for);
+            number_of_results = web_scrapper.connect(search_url,
+                    element_to_search_for);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;

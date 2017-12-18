@@ -130,7 +130,8 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
 
         RawData[] raw_data_normal = GenerateNormalData(type, subject);
         RawData[] raw_data_abnormal = GenerateAbnormalData(type, subject);
-        RawData[] raw_data = ArrayUtils.addAll(raw_data_normal, raw_data_abnormal);
+        RawData[] raw_data = ArrayUtils.addAll(raw_data_normal,
+                raw_data_abnormal);
 
         return raw_data;
     }

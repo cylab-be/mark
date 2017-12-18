@@ -64,11 +64,10 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
 
     public String parseMIME(String email_path)
             throws FileNotFoundException, MessagingException, IOException {
-        String path = getClass().getResource(email_path)
-                        .getPath();
+        InputStream resourceAsStream = getClass().getResourceAsStream(email_path);
+        //MIMEParser test = new MIMEParser(resourceAsStream);
         Session s = Session.getInstance(new Properties());
-        InputStream is = new FileInputStream(path);
-        MimeMessage message = new MimeMessage(s, is);
+        MimeMessage message = new MimeMessage(s, resourceAsStream);
         String field_message_id = "";
         String field_date = "";
         String field_from = "";

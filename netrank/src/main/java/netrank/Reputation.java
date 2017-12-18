@@ -24,6 +24,7 @@
 package netrank;
 
 import java.io.IOException;
+import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -36,7 +37,7 @@ import mark.core.ServerInterface;
  * based on the scores given by those two websites. If the Reputation Index
  * is below a predetermined threshold, evidence is created.
  */
-public class Reputation extends WebsiteParser {
+public class Reputation implements DetectionAgentInterface<Link> {
 
     private static final String DEFAULT_URL = "https://www.mywot.com";
     private static final String DEFAULT_PATTERN = "\\r?\\n";
@@ -52,7 +53,6 @@ public class Reputation extends WebsiteParser {
  * WOT has two parameters: "Trustworthiness" and "Child Safety". For this agent
  * we just consider the trustworthiness of the domain.
  */
-    @Override
     public final int parse(final String data, final String given_pattern) {
         int reputation = 0;
         if (data != null && !data.isEmpty()) {
@@ -93,9 +93,10 @@ public class Reputation extends WebsiteParser {
  * addresses related to a domain. This reputation is computed by users that
  * submit their information about the domain so its a crowd funded website.
  */
+        WebScrapper web_scrapper = new WebScrapper();
         try {
             String search_url = DEFAULT_URL + "/en/scorecard/" + domain_name;
-            reputation = connect(search_url, DEFAULT_ELEMENT);
+            reputation = web_scrapper.connect(search_url, DEFAULT_ELEMENT);
         } catch (IOException ex) {
             System.out.println("Could not establish connection to server");
             return;

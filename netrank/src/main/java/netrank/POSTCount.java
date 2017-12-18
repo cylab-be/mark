@@ -73,9 +73,7 @@ public class POSTCount implements DetectionAgentInterface<Link> {
             }
         }
 
-        double post_percentage = 0;
-
-        post_percentage = (double) number_of_post
+        double post_percentage = (double) number_of_post
                 / raw_data.length;
 
         if (post_percentage > UPLOAD_THRESHOLD) {

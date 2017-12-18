@@ -24,34 +24,20 @@
 package netrank;
 
 import java.io.IOException;
-import mark.core.DetectionAgentInterface;
-import mark.core.DetectionAgentProfile;
-import mark.core.ServerInterface;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 /**
- * The WebsiteParser class is used to parse websites using Jsoup.
+ * The WebScrapper class is used to parse websites using Jsoup.
  * Used to extract information from websites.
  * @author georgi
  */
-public abstract class WebsiteParser implements DetectionAgentInterface<Link> {
+public class WebScrapper {
 
     private static final String SEARCH_AGENT = "Mozilla/5.0 "
             + "(Windows NT 6.2; WOW64) AppleWebKit/537.15 "
             + "(KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15";
-
-    /**
-     *
-     * @param data is the data we are going to parse.
-     * @param given_pattern the pattern used to extract information from the
-     * data.
-     * @return returns the score extracted from the data.
-     */
-    public abstract int parse(final String data, final String given_pattern);
-    //if a pattern is found replace the symbols delimiting the numbers
-    //with nothing so we can transform the String numbers to Integer.
 
     /**
      *
@@ -72,11 +58,4 @@ public abstract class WebsiteParser implements DetectionAgentInterface<Link> {
         result = result_element.html();
         return result;
     }
-
-    @Override
-    public abstract void analyze(
-            final Link subject,
-            final String actual_trigger_label,
-            final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable;
 }

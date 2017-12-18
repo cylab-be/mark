@@ -39,7 +39,7 @@ public class DomainAgeTest extends TestCase {
         DomainAge agent = new DomainAge();
         System.out.println("Test DomainAge with a recently created domain");
         agent.analyze(
-                new Link("192.168.2.3", "3q3c.com"),
+                new Link("192.168.2.3", "9th0.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
