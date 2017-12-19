@@ -55,7 +55,9 @@ public class LanguageDetection implements DetectionAgentInterface<Link> {
      */
     private List<String> detectLanguage(final String text) throws IOException {
         List<String> lang = null;
-        String[] data = text.split(" , ");
+        MIMEParser parser = new MIMEParser(text);
+        String parsed_data = parser.toString();
+        String[] data = parsed_data.split(" , ");
         LanguageDetector detector =
                         new OptimaizeLangDetector().loadModels();
         for (String data1 : data) {
