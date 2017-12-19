@@ -23,13 +23,15 @@
  */
 package netrank;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Properties;
+import javax.mail.BodyPart;
 import javax.mail.Header;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
@@ -40,28 +42,24 @@ import javax.mail.internet.MimeMessage;
  */
 public class MIMEParser {
 
-    private final InputStream mime_path;
+    private final String mime_path;
     private String field_message_id;
     private String field_date;
     private String field_from;
     private String field_to;
     private String field_subject;
     private String field_mime_version;
-    private final String field_content_type_text;
-    private final String field_content_type_html;
-    private final String field_attachment;
+    private String field_content_type_text;
+    private String field_content_type_html;
+    private String field_attachment;
 
     /**
      *
      * @param email_path
+     * @throws java.io.IOException exception
      */
-    public MIMEParser(final InputStream email_path) {
+    public MIMEParser(final String email_path) throws IOException {
         this.mime_path = email_path;
-        try {
-            parseMimeEmail();
-        } catch (MessagingException | FileNotFoundException ex) {
-            System.out.println("Error Parsing MIME Email. Error: " + ex);
-        }
         this.field_message_id = "";
         this.field_date = "";
         this.field_from = "";
@@ -71,57 +69,156 @@ public class MIMEParser {
         this.field_content_type_text = "";
         this.field_content_type_html = "";
         this.field_attachment = "";
+        try {
+            parseMimeEmail();
+        } catch (MessagingException | FileNotFoundException ex) {
+            System.out.println("Error Parsing MIME Email. Error: " + ex);
+        }
     }
 
     private void parseMimeEmail() throws MessagingException,
-            FileNotFoundException {
+            FileNotFoundException,
+            IOException {
         Session s = Session.getInstance(new Properties());
         //InputStream is = new ByteArrayInputStream(this.MIME.getBytes());
-        String path = getClass().getResource("/MIME.txt")
-                .getPath();
-        InputStream ms = new FileInputStream(path);
-        MimeMessage message = new MimeMessage(s, this.mime_path);
+//        String path = getClass().getResource("/MIME.txt")
+//                .getPath();
+//        InputStream ms = new FileInputStream(path);
+//        MimeMessage message = new MimeMessage(s, this.mime_path);
+        MimeMessage message = new MimeMessage(s,
+                        new ByteArrayInputStream(this.mime_path.getBytes()));
 
         message.getAllHeaderLines();
         for (Enumeration<Header> e = message.getAllHeaders();
                 e.hasMoreElements();) {
             Header h = e.nextElement();
-            //System.out.println("DEBUG1: " + h.getName() + " : "
-            //        + h.getValue() + "\n");
+//            System.out.println("DEBUG1: " + h.getName() + " : "
+//                    + h.getValue() + "\n");
             switch (h.getName()) {
                 case "Message-ID":
-                    field_message_id = h.getValue();
+                    this.field_message_id = h.getValue();
                     break;
                 case "From":
-                    field_from = h.getValue();
+                    this.field_from = h.getValue();
                     break;
                 case "To":
-                    field_to = h.getValue();
+                    this.field_to = h.getValue();
                     break;
                 case "Subject":
-                    field_subject = h.getValue();
+                    this.field_subject = h.getValue();
                     break;
                 case "MIME-Version":
-                    field_mime_version = h.getValue();
+                    this.field_mime_version = h.getValue();
                     break;
                 case "Date":
-                    field_date = h.getValue();
+                    this.field_date = h.getValue();
                     break;
                 default:
                     break;
             }
         }
-        toString();
+
+        Multipart mp = (Multipart) message.getContent();
+        for (int i = 0; i < mp.getCount(); i++) {
+            BodyPart bp = mp.getBodyPart(i);
+            if (bp.isMimeType("text/plain")) {
+                this.field_content_type_text = (String) bp.getContent();
+            } else if (bp.isMimeType("multipart/*")) {
+                Multipart submp = (Multipart) bp.getContent();
+                for (int n = 0; n < submp.getCount(); n++) {
+                    BodyPart subbp = submp.getBodyPart(n);
+                    if (subbp.isMimeType("text/html")) {
+                        this.field_content_type_html =
+                                        (String) subbp.getContent();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @return String field_message_id
+     */
+    public final String getMessageID() {
+        return this.field_message_id;
+    }
+
+    /**
+     *
+     * @return String field_date
+     */
+    public final String getDate() {
+        return this.field_date;
+    }
+
+    /**
+     *
+     * @return String field_from
+     */
+    public final String getFrom() {
+        return this.field_from;
+    }
+
+    /**
+     *
+     * @return String field_to
+     */
+    public final String getTo() {
+        return this.field_to;
+    }
+
+    /**
+     *
+     * @return String field_subject
+     */
+    public final String getSubject() {
+        return this.field_subject;
+    }
+
+    /**
+     *
+     * @return String field_mime_version
+     */
+    public final String getMIMEVersion() {
+        return this.field_mime_version;
+    }
+
+    /**
+     *
+     * @return String field_content_type_text
+     */
+    public final String getText() {
+        return this.field_content_type_text;
+    }
+
+    /**
+     *
+     * @return String field_content_type_html
+     */
+    public final String getHTML() {
+        return this.field_content_type_html;
+    }
+
+    /**
+     *
+     * @return String field_attachment
+     */
+    public final String getAttachment() {
+        return this.field_attachment;
     }
 
     @Override
     public final String toString() {
-        String output = "Message-ID=" + field_message_id + ","
-                + "Date=" + field_date + ","
-                + "From=" + field_from + ","
-                + "To=" + field_to + ","
-                + "Subject=" + field_subject + ","
-                + "MIME-Version=" + field_mime_version + ",";
+        String output = "Message-ID=" + this.field_message_id + " , "
+                + "Date=" + this.field_date + " , "
+                + "From=" + this.field_from + " , "
+                + "To=" + this.field_to + " , "
+                + "Subject=" + this.field_subject + " , "
+                + "MIME-Version=" + this.field_mime_version + " , "
+                + "Text=" + this.field_content_type_text + " , "
+                + "HTML=" + this.field_content_type_html + " , "
+                + "Attachments=" + this.field_attachment + " , ";
         return output;
     }
 }
