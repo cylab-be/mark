@@ -24,7 +24,6 @@
 package netrank;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
@@ -42,6 +41,7 @@ import org.apache.tika.language.detect.LanguageResult;
  */
 public class LanguageDetection implements DetectionAgentInterface<Link> {
 
+    private static final double CONFIDENCE_THRESHOLD = 0.5;
     private static final double RATIO_THRESHOLD = 0.3;
 
     /**
@@ -53,25 +53,15 @@ public class LanguageDetection implements DetectionAgentInterface<Link> {
      * language in the body of the email
      * @throws IOException
      */
-    private List<String> detectLanguage(final String text) throws IOException {
-        List<String> lang = null;
+    private double detectLanguage(final String text) throws IOException {
+        double confidence_result = 0;
         MIMEParser parser = new MIMEParser(text);
-        String parsed_data = parser.toString();
-        String[] data = parsed_data.split(" , ");
+        String mime_body = parser.getText();
         LanguageDetector detector =
                         new OptimaizeLangDetector().loadModels();
-        for (String data1 : data) {
-            if (data1.contains("Text=")) {
-                String text_body = data1.substring(5);
-
-                List<LanguageResult> result = detector.detectAll(text_body);
-                lang = new ArrayList<>(result.size());
-                for (int i = 0; i < result.size(); i++) {
-                    lang.add(result.get(i).getLanguage());
-                }
-            }
-        }
-        return lang;
+        List<LanguageResult> result = detector.detectAll(mime_body);
+        confidence_result = result.get(0).getRawScore();
+        return confidence_result;
     }
 
     /**
@@ -99,12 +89,19 @@ public class LanguageDetection implements DetectionAgentInterface<Link> {
         int susp_lang = 0;
         for (RawData raw_data1 : raw_data) {
             String data = raw_data1.data;
-            List<String> detect_result = detectLanguage(data);
-            if (detect_result.size() > 2) {
+            //we pass the data field of the Evidence to the detectLanguage
+            //method that will get the text body of the email and detect
+            //if there is a dominent Language. If the Confidence value of the
+            //detected Language is under 0.5, the language used in the body
+            //is considered suspicious
+            double detect_result = detectLanguage(data);
+            if (detect_result < CONFIDENCE_THRESHOLD) {
                 susp_lang = susp_lang + 1;
             }
         }
 
+        //We determine the ratio between emails with a suspicious language
+        //used in the body and the total amount of emails.
         double lang_percentage = (double) susp_lang / raw_data.length;
         if (lang_percentage > RATIO_THRESHOLD) {
             Evidence evidence = new Evidence();

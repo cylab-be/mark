@@ -23,8 +23,11 @@
  */
 package netrank;
 
+import java.util.LinkedList;
+import static junit.framework.Assert.assertEquals;
 import junit.framework.TestCase;
 import mark.core.DetectionAgentProfile;
+import mark.core.Evidence;
 
 /**
  *
@@ -46,6 +49,8 @@ public class LanguageDetectionTest extends TestCase {
                         getClass().getResourceAsStream(
                                 "/detection.languagedetection.yaml")),
                 client_spam);
+        LinkedList<Evidence> evidences = client_spam.getEvidences();
+        assertEquals(1, evidences.size());
 
         EmailDummyClient client = new EmailDummyClient(25, 5);
         System.out.println("Test LanguageDetection with"

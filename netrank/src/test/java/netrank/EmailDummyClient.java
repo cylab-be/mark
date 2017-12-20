@@ -24,21 +24,12 @@
 package netrank;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.LinkedList;
-import java.util.Properties;
 import java.util.Random;
-import javax.mail.BodyPart;
-import javax.mail.Header;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
 import mark.activation.DummyClient;
 import mark.core.Evidence;
 import mark.core.RawData;
@@ -64,10 +55,10 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
         this.S = spam;
     }
 
-    public String parseMIME(String email_path)
+    private String parseMIME(String email_path)
             throws FileNotFoundException, MessagingException, IOException {
 
-        String path = getClass().getResource("/MIME.txt")
+        String path = getClass().getResource(email_path)
                 .getPath();
         FileReader file = new FileReader(path);
         BufferedReader reader = new BufferedReader(file);
