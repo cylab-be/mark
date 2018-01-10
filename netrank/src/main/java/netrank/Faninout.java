@@ -39,6 +39,13 @@ import mark.core.ServerInterface;
  * Faninout agent for detecting incoming/outgoing connection to servers.
  * Determines if the connections are between servers with too many different
  * domains or a domain with too many different IPs.
+ * The Faninout agent considers squid logs of the form:
+ *      "1286536308.779    180 192.168.0.224 TCP_MISS/200 411 
+ *      GET http://liveupdate.symantecliveupdate.com/minitri.flg 
+ *      - DIRECT/125.23.216.203 text/plain"
+ * From the squid logs we can extract the domain and the ip the user connected
+ * to. If we consider a longer time frame we can observe if the same user tried
+ * to do multiple connections to the same domain or IP.
  * @author georgi
  */
 public class Faninout implements DetectionAgentInterface<Link> {

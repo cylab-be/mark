@@ -59,7 +59,8 @@ public class DomainAge implements DetectionAgentInterface<Link> {
     private static final long TIME_THRESHOLD = 30;
 
     /**
-     * initiate the WHOIS client.
+     * initiate the WHOIS client. Try to connect to the WHOIS client, in a
+     * set time frame. If we can't connect timeout the connection.
      */
     private WhoisClient initWhois() throws IOException {
         WhoisClient whois_client = new WhoisClient();
@@ -95,6 +96,9 @@ public class DomainAge implements DetectionAgentInterface<Link> {
 
     /**
      * method for extracting attributes from the whois data.
+     * The WHOIS database returns a list of attribute such as:
+     *      DOMAIN NAME, REGISTRY DOMAIN ID, UPDATED DATE, CREATION DATE,
+     *      REGISTRY EXPIRY DATE, DOMAIN STATUS, NAME SERVER, ect.      
      *
      * @param whois_data
      * @return
