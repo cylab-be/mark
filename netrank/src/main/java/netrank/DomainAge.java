@@ -98,7 +98,7 @@ public class DomainAge implements DetectionAgentInterface<Link> {
      * method for extracting attributes from the whois data.
      * The WHOIS database returns a list of attribute such as:
      *      DOMAIN NAME, REGISTRY DOMAIN ID, UPDATED DATE, CREATION DATE,
-     *      REGISTRY EXPIRY DATE, DOMAIN STATUS, NAME SERVER, ect.      
+     *      REGISTRY EXPIRY DATE, DOMAIN STATUS, NAME SERVER, ect.
      *
      * @param whois_data
      * @return
@@ -140,13 +140,15 @@ public class DomainAge implements DetectionAgentInterface<Link> {
             actual_trigger_label, subject);
 
         String domain_name = subject.getServer();
-
+        //check if the domain name we get from the DB is valid or if its an IP
+        //valid domains that WHOIS can research end in .com, .net or .edu
         if (!validHostname(domain_name) && !isIp(domain_name)) {
            System.out.println("The Registry database contains ONLY .COM, .NET,"
                    + " .EDU domains names." + "\n");
            return;
         }
 
+        //we try to connect to the WHOIS client
         WhoisClient whois_client;
         try {
             whois_client = initWhois();
@@ -163,6 +165,9 @@ public class DomainAge implements DetectionAgentInterface<Link> {
             return;
         }
 
+        //if we successfully manage to extract the attributes from the WHOIS
+        //data we get the creation date, transform it to a useable form
+        //and determine how long ago the domain was created.
         Map<String, String> attributes = getAttributes(whois_result);
         String creation_date = attributes.get(CREATION_DATE);
         String[] splitted_date = creation_date.split("T");

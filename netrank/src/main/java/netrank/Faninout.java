@@ -40,8 +40,8 @@ import mark.core.ServerInterface;
  * Determines if the connections are between servers with too many different
  * domains or a domain with too many different IPs.
  * The Faninout agent considers squid logs of the form:
- *      "1286536308.779    180 192.168.0.224 TCP_MISS/200 411 
- *      GET http://liveupdate.symantecliveupdate.com/minitri.flg 
+ *      "1286536308.779    180 192.168.0.224 TCP_MISS/200 411
+ *      GET http://liveupdate.symantecliveupdate.com/minitri.flg
  *      - DIRECT/125.23.216.203 text/plain"
  * From the squid logs we can extract the domain and the ip the user connected
  * to. If we consider a longer time frame we can observe if the same user tried
@@ -62,11 +62,14 @@ public class Faninout implements DetectionAgentInterface<Link> {
     private HashMap<String, LinkedList<String>> parseDomainIp(
                                                     final RawData[] rawdata) {
         HashMap<String, LinkedList<String>> hmap = new HashMap<>();
+        //we use a pattern that will extract the IP from the squid log
         Pattern pattern_ip = Pattern.compile("DIRECT/(\\b(?:(?:25[0-5]|2[0-4]"
                 + "[0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]"
                 + "|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b)");
+        //we use a pattern that will extract any domain from the squid log
         Pattern pattern_domain = Pattern.compile("[^:/?#]+:?//([^/?#]*)?"
                 + "([^?#]*)(\\\\?[^#]*)?(#.*)?");
+        //loop over the raw data and for each entry extract the domain and IP
         for (RawData data: rawdata) {
             RawData current = data;
             String log = current.data;
