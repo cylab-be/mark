@@ -23,15 +23,17 @@
  */
 package netrank;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
-//import java.util.Random;
+import java.util.List;
 import mark.activation.DummyClient;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
-import org.apache.commons.lang3.ArrayUtils;
 
 /**
  *
@@ -40,73 +42,60 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
 
-    private static final int N = 500;
+    private static final int N = 1000;
     private static final int M = 5;
 
     private final LinkedList<Evidence> evidences = new LinkedList<>();
 
-    private RawData[] GenerateAbnormalData(String type, T subject) {
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        date = calendar.getTime();
-        // date.getTime() Returns the number of milliseconds since 
-        // January 1, 1970, 00:00:00 GMT represented by this Date object.
-        RawData[] data = new RawData[M];
 
-        for (int i = 0; i < M; i++) {
-            calendar.add(Calendar.DATE, 1);
+    private RawData[] filterAndCombineData(RawData[] data) {
+        List<RawData> list_data = new ArrayList<>(Arrays.asList(data));
+        Iterator<RawData> iterator = list_data.iterator();
+        int amount_of_weekend_data = 0;
+        int amount_of_outsidehours_data = 0;
+        while(iterator.hasNext()) {
+            RawData current_raw_data = iterator.next();
+            Date date = new Date(current_raw_data.time);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
             int day = calendar.get(Calendar.DAY_OF_WEEK);
-            // if the current day is not Saturday or Sunday add days until it is
-            if (day != 7 && day != 1){
-                int diff = 7 - day;
-                calendar.add(Calendar.DATE, diff);
-            }
-            data[i] = new RawData();
-            data[i].subject = subject;
-            data[i].label = type;
-            data[i].time = calendar.getTimeInMillis();
-            data[i].data = data[i].time + "    "
-                + "126 "
-                + "198.36.158.8 "
-                + "TCP_HIT/200"
-                + " 918 GET "
-                + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                + "105.244.103.5 text/html";
-        }
-        return data;
-    }
-
-    private RawData[] GenerateNormalData(String type, T subject) {
-        Date date = new Date();
-        Calendar calendar = Calendar.getInstance();
-        date = calendar.getTime();
-        // date.getTime() Returns the number of milliseconds since 
-        // January 1, 1970, 00:00:00 GMT represented by this Date object.
-        //Random rand = new Random();
-
-        RawData[] data = new RawData[N];
-
-        for (int i = 0; i < N; i++) {
-            //calendar.add(Calendar.HOUR, 1);
-            int day = calendar.get(Calendar.DAY_OF_WEEK);
-            if (day == 7){
-                calendar.add(Calendar.DATE, 2);
-            } else if (day == 1) {
-                calendar.add(Calendar.DATE, 1);
-            }
-            // check if the current time is before 8.30
+            // boolean check if the current time is before 8.30
             boolean low_limit = calendar.get(Calendar.HOUR_OF_DAY) * 60 +
                     calendar.get(Calendar.MINUTE) < 8 * 60 + 30;
-            // check if the current time is after 15.30
+            // boolean check if the current time is after 15.30
             boolean high_limit = calendar.get(Calendar.HOUR_OF_DAY) * 60 +
                     calendar.get(Calendar.MINUTE) > 15 * 60 + 30;
-            if (low_limit) {
-                calendar.set(Calendar.HOUR_OF_DAY, 9);
+
+            if (day == 7 || day == 1) {
+                if (amount_of_weekend_data > M) {
+                    iterator.remove();
+                } else {
+                    amount_of_weekend_data = 1 + amount_of_weekend_data;
+                }
+            } else if (low_limit || high_limit) {
+                if (amount_of_outsidehours_data > M) {
+                    iterator.remove();
+                } else {
+                    amount_of_outsidehours_data = 1 +
+                            amount_of_outsidehours_data;
+                }
             }
-            if (high_limit) {
-                calendar.set(Calendar.HOUR_OF_DAY, 9);
-                calendar.add(Calendar.DATE, 1);
-            }
+        }
+        RawData[] filtered_data = list_data.toArray(
+                new RawData[list_data.size()]);
+        return filtered_data;
+    }
+
+    private RawData[] generateData(String type, T subject) {
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        date = calendar.getTime();
+        // date.getTime() Returns the number of milliseconds since 
+        // January 1, 1970, 00:00:00 GMT represented by this Date object.
+        RawData[] data = new RawData[N];
+        //create one loop of simulated connections, filter out the suspicious
+        //connections and add couple of them afterwards
+        for (int i = 0; i < N; i++) {
             data[i] = new RawData();
             data[i].subject = subject;
             data[i].label = type;
@@ -119,8 +108,9 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
                 + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
                 + "175.193.216.231 text/html";
 
-            calendar.add(Calendar.HOUR, 1);
+            calendar.add(Calendar.HOUR, 2);
         }
+        data = filterAndCombineData(data);
         return data;
     }
 
@@ -128,10 +118,7 @@ public class TimeAnomalyTestClient <T extends Subject> extends DummyClient<T> {
     public RawData[] findRawData(String type, T subject)
             throws Throwable {
 
-        RawData[] raw_data_normal = GenerateNormalData(type, subject);
-        RawData[] raw_data_abnormal = GenerateAbnormalData(type, subject);
-        RawData[] raw_data = ArrayUtils.addAll(raw_data_normal,
-                raw_data_abnormal);
+        RawData[] raw_data = generateData(type, subject);
 
         return raw_data;
     }

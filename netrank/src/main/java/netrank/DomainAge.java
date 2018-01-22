@@ -76,6 +76,7 @@ public class DomainAge implements DetectionAgentInterface<Link> {
      * check if a string is an ip or text.
      */
     private static boolean isIp(final String text) {
+        //pattern used to detect if the hostname is an IP or not
         Pattern p = Pattern.compile("^(?:(?:25[0-5]|2[0-4][0-9]"
                         + "|[01]?[0-9][0-9]?)"
                         + "\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
@@ -87,6 +88,8 @@ public class DomainAge implements DetectionAgentInterface<Link> {
      * check if the hostname end with ".com"/".net"/".edu".
      */
     private static boolean validHostname(final String text) {
+        //check if the hostname is compatible with the hostnames used by
+        //the WHOIS database
         if (text.endsWith(".com") || text.endsWith(".net")
                 || text.endsWith(".edu")) {
             return true;
