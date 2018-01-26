@@ -1,0 +1,4 @@
+---
+class_name:     netrank.AttachmentDetection
+label:          detection.upload.1w
+trigger_label:  data.smtp

@@ -29,6 +29,9 @@ Content-ID: <body@here>
   <img src="cid:smile@here" alt="smile">
   or it might make you
   <img src="cid:frown@here" alt="frown">
+  https://dropbox.com/ind:564820
+  This is a link and another link
+  www.github.com/lookatme/thisiatest:1165
  </body>
 </html>
 

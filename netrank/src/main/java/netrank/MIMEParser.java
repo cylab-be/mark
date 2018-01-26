@@ -26,6 +26,7 @@ package netrank;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 import javax.mail.BodyPart;
@@ -51,7 +52,16 @@ public class MIMEParser {
     private String field_mime_version;
     private String field_content_type_text;
     private String field_content_type_html;
-    private String field_attachment;
+    private ArrayList field_attachment;
+    private final String[] attachment_types = {"application/msword",
+                                            "application/pdf",
+                                            "application/rtf",
+                                            "application/zip",
+                                            "audio/x-wav",
+                                            "image/gif",
+                                            "image/jpeg",
+                                            "image/jpg",
+                                            "image/png"};
 
     /**
      *
@@ -68,7 +78,7 @@ public class MIMEParser {
         this.field_mime_version = "";
         this.field_content_type_text = "";
         this.field_content_type_html = "";
-        this.field_attachment = "";
+        this.field_attachment = new ArrayList();
         try {
             parseMimeEmail();
         } catch (MessagingException | FileNotFoundException ex) {
@@ -130,6 +140,12 @@ public class MIMEParser {
                     if (subbp.isMimeType("text/html")) {
                         this.field_content_type_html =
                                         (String) subbp.getContent();
+                    }
+                    for (String attachment1 : attachment_types) {
+                        if (subbp.isMimeType(attachment1)) {
+                            this.field_attachment.add(
+                                        subbp.getContent());
+                        }
                     }
                 }
             }
@@ -204,7 +220,7 @@ public class MIMEParser {
      *
      * @return String field_attachment
      */
-    public final String getAttachment() {
+    public final ArrayList getAttachment() {
         return this.field_attachment;
     }
 
