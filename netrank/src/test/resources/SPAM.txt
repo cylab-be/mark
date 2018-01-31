@@ -42,6 +42,9 @@ Content-ID: <smile@here>
 R0lGODlhEAAQAKEBAAAAAP//AP//AP//ACH5BAEKAAIALAAAAAAQABAAAAIzlA2px6IBw2
 IpWglOvTahDgGdI0ZlGW5meKlci6JrasrqkypxJr8S0oNpgqkGLtcY6hoFADs=
 
---inner-boundary--
+--inner-boundary
+Content-Type: image/png
+Content-Disposition: inline
+Content-Transfer-Encoding: base64
+Content-ID: <4.2.0.58.20000519003143.00a8d550@pop.example.com.0>
 
---outer-boundary--

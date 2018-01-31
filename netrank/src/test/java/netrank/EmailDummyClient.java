@@ -34,6 +34,7 @@ import mark.activation.DummyClient;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.Document;
 
 /**
@@ -55,9 +56,21 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
         this.S = spam;
     }
 
-    private String parseMIME(String email_path)
+    public String generateRandomAttachment() {
+    int length = 64;
+    boolean useLetters = true;
+    boolean useNumbers = false;
+    String generatedString = RandomStringUtils.random(length,
+                                                    useLetters,
+                                                    useNumbers);
+
+    return generatedString;
+    }
+
+    private String parseMIME(String email_path, boolean spam)
             throws FileNotFoundException, MessagingException, IOException {
 
+        String output = "";
         String path = getClass().getResource(email_path)
                 .getPath();
         FileReader file = new FileReader(path);
@@ -68,7 +81,16 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
             sb.append(line).append("\n");
             line = reader.readLine();
         }
-        return sb.toString();        
+        output = sb.toString();
+        //add a check to see if we are parsing SPAM emails for testing
+        //and need to add random information
+        if (spam) {
+            output = output + generateRandomAttachment()
+                            + "\n"
+                            + "--inner-boundary--\n"
+                            + "\n" + "--outer-boundary--";
+        }
+        return output;        
     }
 
     private RawData[] generateData(String type, Link subject)
@@ -84,7 +106,7 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
             data[i].subject = subject;
             data[i].label = type;
             data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
-            data[i].data = parseMIME("/MIME.txt");
+            data[i].data = parseMIME("/MIME.txt", false);
         }
 
         // SPAM Traffic
@@ -93,7 +115,7 @@ public class EmailDummyClient<T extends Subject> extends DummyClient<T> {
             data[i].subject = subject;
             data[i].label = type;
             data[i].time = start + rand.nextInt(5 * APT_INTERVAL);
-            data[i].data = parseMIME("/SPAM.txt");
+            data[i].data = parseMIME("/SPAM.txt", true);
         }
         return data;
     }

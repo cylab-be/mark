@@ -24,6 +24,7 @@
 package netrank;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -143,8 +144,10 @@ public class MIMEParser {
                     }
                     for (String attachment1 : attachment_types) {
                         if (subbp.isMimeType(attachment1)) {
-                            this.field_attachment.add(
-                                        subbp.getContent());
+                            ByteArrayOutputStream bos =
+                                    new ByteArrayOutputStream();
+                            subbp.getDataHandler().writeTo(bos);
+                            this.field_attachment.add(bos);
                         }
                     }
                 }

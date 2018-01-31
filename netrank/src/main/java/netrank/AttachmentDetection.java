@@ -23,9 +23,10 @@
  */
 package netrank;
 
-import com.sun.mail.util.BASE64DecoderStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -38,6 +39,7 @@ import mark.core.ServerInterface;
  */
 public class AttachmentDetection implements DetectionAgentInterface<Link> {
     private static final double RATIO_THRESHOLD = 0.3;
+    private static final double RATIO_UNIQUE_ATTACHMENTS = 0.5;
 
     private ArrayList getAttachments(final RawData[] raw_data)
             throws IOException {
@@ -45,12 +47,8 @@ public class AttachmentDetection implements DetectionAgentInterface<Link> {
         for (RawData raw_data1 : raw_data) {
             String data = raw_data1.data;
             MIMEParser parser = new MIMEParser(data);
-            //System.err.println("DEBUG1: " + parser.getAttachment());
             for (int i = 0; i < parser.getAttachment().size(); i++) {
-                attachments.add(parser.getAttachment().get(i));
-                BASE64DecoderStream stream =
-                        (BASE64DecoderStream) parser.getAttachment().get(i);
-                //System.err.println("DEBUG2: " + stream.read());
+                attachments.add(parser.getAttachment().get(i).toString());
             }
         }
         return attachments;
@@ -64,9 +62,15 @@ public class AttachmentDetection implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
+        //Get all the attachments from the raw data
         ArrayList attachments = getAttachments(raw_data);
+        //Extract all the unique attachments from the collection of attachments
+        Set<String> unique_attachments = new HashSet<>(attachments);
+        double unique_attachments_ratio =
+                unique_attachments.size() / (double) attachments.size();
         double attachment_data_ratio =
-                (double) raw_data.length / attachments.size();
+                attachments.size() / (double) raw_data.length;
+        if (unique_attachments_ratio > RATIO_UNIQUE_ATTACHMENTS) {
             if (attachment_data_ratio > RATIO_THRESHOLD) {
             Evidence evidence = new Evidence();
             evidence.score = attachment_data_ratio;
@@ -82,6 +86,7 @@ public class AttachmentDetection implements DetectionAgentInterface<Link> {
                     + " attachments and the total amount of emails \n";
 
             datastore.addEvidence(evidence);
+            }
         }
     }
 }
