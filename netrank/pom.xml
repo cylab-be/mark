@@ -45,6 +45,18 @@
                 </executions>
             </plugin>
 
+            <!-- To exclude tests that can't run in Travis CI because of limitations -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.21.0</version>
+              <configuration>
+                <excludes>
+                  <exclude>**/ClamAVDetectionTest.java</exclude>
+                </excludes>
+              </configuration>
+            </plugin>
+
             <!-- To build an uber jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
