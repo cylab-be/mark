@@ -3,7 +3,8 @@ cache:
     - .m2/repository
 
 services:
-  - mongodb
+  - name: khezen/mongo:3.4
+    alias: mongo
 
 test:jdk-8:
   image: maven:3-jdk-8
