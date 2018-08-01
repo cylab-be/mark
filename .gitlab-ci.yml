@@ -1,7 +1,10 @@
-
 cache:
   paths:
     - .m2/repository
+
+services:
+  - mongodb
+
 
 test:jdk-8:
   image: maven:3-jdk-8
