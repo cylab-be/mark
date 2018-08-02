@@ -1,6 +1,6 @@
 cache:
   paths:
-    - .m2/repository
+    - /root/.m2/repository/
 
 services:
   - mongo:3.2
