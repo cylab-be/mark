@@ -16,6 +16,9 @@ import org.yaml.snakeyaml.constructor.Constructor;
  * @author Thibault Debatty
  */
 public class Config {
+
+    public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
+
     private static final int    DEFAULT_UPDATE_INTERVAL = 10;
     private static final String DEFAULT_MONGO_DB = "MARK";
     private static final int    DEFAULT_MAX_THREADS = 100;
@@ -109,7 +112,7 @@ public class Config {
     public String webserver_root = DEFAULT_WEB_ROOT;
 
     // MONGODB parameters
-    public String mongo_host = "127.0.0.1";
+    public String mongo_host;
     public int mongo_port = 27017;
     public String mongo_db = DEFAULT_MONGO_DB;
 
@@ -135,7 +138,10 @@ public class Config {
      * Instantiate a new default configuration.
      */
     public Config() {
-
+        this.mongo_host = System.getenv(ENV_MONGO_HOST);
+        if (this.mongo_host == null) {
+            this.mongo_host = "127.0.0.1";
+        }
     }
 
     /**

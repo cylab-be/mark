@@ -44,7 +44,12 @@ public class RequestHandlerTest extends TestCase {
     }
 
     public void testFindData() {
-        MongoClient mongo = new MongoClient();
+        String mongo_host = System.getenv(Config.ENV_MONGO_HOST);
+        if (mongo_host == null) {
+            mongo_host = "127.0.0.1";
+        }
+
+        MongoClient mongo = new MongoClient(mongo_host);
         MongoDatabase mongodb = mongo.getDatabase("MARK");
         mongodb.drop();
 
