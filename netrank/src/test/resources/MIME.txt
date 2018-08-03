@@ -25,13 +25,14 @@ Content-ID: <body@here>
 
 <html>
  <body>
+  google.com
   This message might make you
   <img src="cid:smile@here" alt="smile">
   or it might make you
   <img src="cid:frown@here" alt="frown">
   https://dropbox.com/ind:564820
   This is a link and another link
-  www.github.com/lookatme/thisiatest:1165
+  www.github.com/lookatme/thisiatest:1165/djsoz/
  </body>
 </html>
 
