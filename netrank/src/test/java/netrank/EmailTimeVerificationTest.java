@@ -23,41 +23,27 @@
  */
 package netrank;
 
-import java.util.LinkedList;
-import static junit.framework.Assert.assertEquals;
 import mark.core.DetectionAgentProfile;
-import mark.core.Evidence;
 
 /**
  *
  * @author georgi
  */
-public class HyperlinkDetectionTest {
+public class EmailTimeVerificationTest {
 
     public void testAnalyze() throws Throwable {
-        System.out.println("analyze HyperlinkDetectionTest test" + "\n");
+        System.out.println("analyze EmailTimeVerification test" + "\n");
 
-        HyperlinkDetection agent = new HyperlinkDetection();
-        EmailDummyClient client_over_ratio = new EmailDummyClient(25, 5);
-        System.out.println("Test HyperlinkDetectionTest with"
-                                + "normal emails + over ratio urls");
+        EmailTimeVerification agent = new EmailTimeVerification();
+        EmailDummyClient client_over_ratio = new EmailDummyClient(5, 30);
+        System.out.println("Test EmailTimeVerification with"
+                                + "a large amount of out of bound times");
         agent.analyze(
                 new Link("192.168.2.3", "test.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(
-                                "/detection.hyperlinkdetection.yaml")),
+                                "/detection.timeverification.yaml")),
                 client_over_ratio);
-    
-        EmailDummyClient client_under_ratio = new EmailDummyClient(20, 200);
-        System.out.println("Test HyperlinkDetectionTest with"
-                                + "normal emails + under ratio emails");
-        agent.analyze(
-                new Link("192.168.2.3", "test.com"),
-                "actual.trigger",
-                DetectionAgentProfile.fromInputStream(
-                        getClass().getResourceAsStream(
-                                "/detection.hyperlinkdetection.yaml")),
-                client_under_ratio);
-    }
+    }    
 }
