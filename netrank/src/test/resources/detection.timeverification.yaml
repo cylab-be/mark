@@ -1,0 +1,4 @@
+---
+class_name:     netrank.EmailTimeVerification
+label:          detection.upload.1w
+trigger_label:  data.smtp
