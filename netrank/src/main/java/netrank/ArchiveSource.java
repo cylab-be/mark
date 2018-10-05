@@ -31,6 +31,7 @@ import mark.core.ServerInterface;
 import java.util.zip.GZIPInputStream;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,14 +82,15 @@ public class ArchiveSource implements DataAgentInterface {
         byte[] buffer = new byte[1024];
 
         try {
-
+            File data_file = profile.getPath(profile.parameters.get("file"));
             FileInputStream file_in =
-                    new FileInputStream(profile.parameters.get("file"));
+                    new FileInputStream(data_file);
 
             GZIPInputStream gzip_input_stream = new GZIPInputStream(file_in);
 
-            StringBuffer str = new StringBuffer();
+            StringBuilder str = new StringBuilder();
             int bytes_read;
+            int nmb_lines = 0;
             while ((bytes_read = gzip_input_stream.read(buffer)) > 0) {
                 if (Thread.currentThread().isInterrupted()) {
                     Thread.currentThread().interrupt();
@@ -96,16 +98,13 @@ public class ArchiveSource implements DataAgentInterface {
                 }
 
                 String s = new String(buffer, 0, bytes_read);
+                //System.out.println("DEBUG: " + s);
                 str.append(s);
-            }
+                String result = str.toString();
+                String[] result_lines = result.split("\\r?\\n");
+                String to_keep = result_lines[0];
 
-            gzip_input_stream.close();
-
-            System.out.println("The file was decompressed successfully!");
-            String final_string = str.toString();
-            String[] lines = final_string.split("\\r?\\n");
-            for (int i = 0; i < lines.length; i++) {
-                RawData rd = parseLine(lines[i]);
+                RawData rd = parseLine(to_keep);
                 rd.label = profile.label;
 
                 if (start_time == 0) {
@@ -120,10 +119,49 @@ public class ArchiveSource implements DataAgentInterface {
                 Thread.sleep(wait_time);
 
                 datastore.addRawData(rd);
+                nmb_lines++;
+
+                if (result_lines.length > 1) {
+                    String temp = result_lines[1];
+                    str.setLength(0);
+                    str.append(temp);
+
+                }
+                //add code for:
+                //str -> to string
+                //split string depending on \\r?\\n
+                //if split lines > 1, get first, make it RawData
+                //clear buffer
+                //append second lines found to buffer and continue
+
             }
+
+            gzip_input_stream.close();
+
+            System.out.println("The file was decompressed"
+                    + " and parced successfully!");
+//            String final_string = str.toString();
+//            String[] lines = final_string.split("\\r?\\n");
+//            for (int i = 0; i < lines.length; i++) {
+//                RawData rd = parseLine(lines[i]);
+//                rd.label = profile.label;
+//
+//                if (start_time == 0) {
+//                    start_time = System.currentTimeMillis();
+//                    first_data_time = rd.time;
+//                }
+//
+//                // Simulated time for this new data
+//                rd.time = rd.time - first_data_time + start_time;
+//
+//                long wait_time = (long) ((rd.time - start_time) / speedup);
+//                Thread.sleep(wait_time);
+//
+//                datastore.addRawData(rd);
+//            }
             // Print some stats
             System.out.println("----");
-            System.out.println("Number of lines: " + lines.length);
+            System.out.println("Number of lines: " + nmb_lines);
 
         } catch (IOException ex) {
             ex.printStackTrace();

@@ -1,12 +1,3 @@
-
-import java.util.HashMap;
-import junit.framework.TestCase;
-import mark.core.DataAgentProfile;
-import mark.server.Config;
-import mark.server.Server;
-import netrank.ArchiveSource;
-import netrank.LinkAdapter;
-
 /*
  * The MIT License
  *
@@ -30,6 +21,14 @@ import netrank.LinkAdapter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package mark.integration;
+import java.util.HashMap;
+import junit.framework.TestCase;
+import mark.core.DataAgentProfile;
+import mark.server.Config;
+import mark.server.Server;
+import netrank.ArchiveSource;
+import netrank.LinkAdapter;
 
 /**
  *
