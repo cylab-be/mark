@@ -23,11 +23,15 @@
  */
 package mark.integration;
 import java.util.HashMap;
+import static junit.framework.Assert.assertEquals;
 import junit.framework.TestCase;
+import mark.client.Client;
 import mark.core.DataAgentProfile;
+import mark.core.RawData;
 import mark.server.Config;
 import mark.server.Server;
 import netrank.ArchiveSource;
+import netrank.Link;
 import netrank.LinkAdapter;
 
 /**
@@ -72,5 +76,14 @@ public class HTTPArchiveSourceIT extends TestCase {
 
         // Wait for data sources and detection to finish...
         server.awaitTermination();
+
+        Client client = new Client(
+                config.getDatastoreUrl(), config.getSubjectAdapter());
+
+        RawData[] data = client.findRawData(
+                "data.http", new Link(
+                        "192.168.2.167", "92.122.122.162"));
+
+        assertEquals(6, data.length);
     }
 }
