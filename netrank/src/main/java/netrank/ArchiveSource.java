@@ -127,38 +127,12 @@ public class ArchiveSource implements DataAgentInterface {
                     str.append(temp);
 
                 }
-                //add code for:
-                //str -> to string
-                //split string depending on \\r?\\n
-                //if split lines > 1, get first, make it RawData
-                //clear buffer
-                //append second lines found to buffer and continue
-
             }
 
             gzip_input_stream.close();
 
             System.out.println("The file was decompressed"
                     + " and parced successfully!");
-//            String final_string = str.toString();
-//            String[] lines = final_string.split("\\r?\\n");
-//            for (int i = 0; i < lines.length; i++) {
-//                RawData rd = parseLine(lines[i]);
-//                rd.label = profile.label;
-//
-//                if (start_time == 0) {
-//                    start_time = System.currentTimeMillis();
-//                    first_data_time = rd.time;
-//                }
-//
-//                // Simulated time for this new data
-//                rd.time = rd.time - first_data_time + start_time;
-//
-//                long wait_time = (long) ((rd.time - start_time) / speedup);
-//                Thread.sleep(wait_time);
-//
-//                datastore.addRawData(rd);
-//            }
             // Print some stats
             System.out.println("----");
             System.out.println("Number of lines: " + nmb_lines);
