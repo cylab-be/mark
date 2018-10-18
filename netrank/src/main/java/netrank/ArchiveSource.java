@@ -31,17 +31,22 @@ import mark.core.ServerInterface;
 import java.util.zip.GZIPInputStream;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+//import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import mark.core.RawData;
 
 /**
  *
  * A generic data agent that reads an archive of files, extracts it and parses
- * rthe files (in JSON format).
+ * the files (in JSON format).
  * This data agent is usually used for testing detection agents, or to run a
  * demo.
  * @author Georgi Nikolov
@@ -55,6 +60,9 @@ public class ArchiveSource implements DataAgentInterface {
     public static final String SPEEDUP_KEY = "speedup";
 
     private static final double DEFAULT_SPEEDUP = Double.MAX_VALUE;
+
+    private final String regex = "(\\{\".*\"})";
+    private Pattern pattern;
 
     /**
      *
@@ -90,7 +98,8 @@ public class ArchiveSource implements DataAgentInterface {
 
             StringBuilder str = new StringBuilder();
             int bytes_read;
-            int nmb_lines = 0;
+            int nmb_read_lines = 0;
+            int nmb_parsed_lines = 0;
             while ((bytes_read = gzip_input_stream.read(buffer)) > 0) {
                 if (Thread.currentThread().isInterrupted()) {
                     Thread.currentThread().interrupt();
@@ -98,55 +107,114 @@ public class ArchiveSource implements DataAgentInterface {
                 }
 
                 String s = new String(buffer, 0, bytes_read);
-                //System.out.println("DEBUG: " + s);
                 str.append(s);
-                String result = str.toString();
-                String[] result_lines = result.split("\\r?\\n");
-                String to_keep = result_lines[0];
 
-                RawData rd = parseLine(to_keep);
-                rd.label = profile.label;
+                if (nmb_read_lines > 100 && str.toString().endsWith("\"}")) {
+                    ArrayList<String> parsed_strings =
+                            extractJson(str.toString());
+                    for (int i = 0; i < parsed_strings.size(); i++) {
+                        RawData rd = parseLine(parsed_strings.get(i));
 
-                if (start_time == 0) {
-                    start_time = System.currentTimeMillis();
-                    first_data_time = rd.time;
-                }
+                        if (rd == null) {
+                            System.out.println("String: "
+                                        + parsed_strings.get(i)
+                                        + " could now be parsed." + "\n");
+                        continue;
+                        }
 
-                // Simulated time for this new data
-                rd.time = rd.time - first_data_time + start_time;
+                        rd.label = profile.label;
 
-                long wait_time = (long) ((rd.time - start_time) / speedup);
-                Thread.sleep(wait_time);
+                        if (start_time == 0) {
+                            start_time = System.currentTimeMillis();
+                            first_data_time = rd.time;
+                        }
 
-                datastore.addRawData(rd);
-                nmb_lines++;
+                        // Simulated time for this new data
+                        rd.time = rd.time - first_data_time + start_time;
 
-                if (result_lines.length > 1) {
-                    String temp = result_lines[1];
+                        long wait_time = (long)
+                                ((rd.time - start_time) / speedup);
+                        Thread.sleep(wait_time);
+
+                        datastore.addRawData(rd);
+                        nmb_parsed_lines++;
+                    }
                     str.setLength(0);
-                    str.append(temp);
-
+                    nmb_read_lines = 0;
                 }
+                nmb_read_lines++;
+
             }
 
             gzip_input_stream.close();
+
+            if (str.length() > 0) {
+                ArrayList<String> parsed_strings = extractJson(str.toString());
+                for (int i = 0; i < parsed_strings.size(); i++) {
+                    RawData rd = parseLine(parsed_strings.get(i));
+
+                    if (rd == null) {
+                        System.out.println("String: "
+                                    + parsed_strings.get(i)
+                                    + " could now be parsed." + "\n");
+                        continue;
+                    }
+
+                    rd.label = profile.label;
+
+                    if (start_time == 0) {
+                        start_time = System.currentTimeMillis();
+                        first_data_time = rd.time;
+                    }
+
+                    // Simulated time for this new data
+                    rd.time = rd.time - first_data_time + start_time;
+
+                    long wait_time = (long)
+                            ((rd.time - start_time) / speedup);
+                    Thread.sleep(wait_time);
+
+                    datastore.addRawData(rd);
+                    nmb_parsed_lines++;
+                }
+            }
 
             System.out.println("The file was decompressed"
                     + " and parced successfully!");
             // Print some stats
             System.out.println("----");
-            System.out.println("Number of lines: " + nmb_lines);
+            System.out.println("Number of lines: " + nmb_parsed_lines);
 
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
+    private ArrayList<String> extractJson(final String buffer)
+            throws Exception {
+        ArrayList<String> results = new ArrayList<String>();
+        pattern = Pattern.compile(regex);
+        Matcher match = pattern.matcher(buffer);
+
+        while (match.find()) {
+            String found_json_string = match.group(0);
+            results.add(found_json_string);
+        }
+
+        return results;
+    }
+
     private RawData parseLine(final String line) throws Exception {
         RawData rd = new RawData();
         JsonParser parser = new JsonParser();
-        JsonObject json_obj = (JsonObject) parser.parse(line);
+        //System.out.println("DEBUG2 ARCHIVESOURCE PARSELINE:  " + line + "\n");
+        JsonObject json_obj;
         try {
+            json_obj = (JsonObject) parser.parse(line);
+        } catch (JsonSyntaxException ex) {
+            return null;
+        }
+            try {
             SimpleDateFormat sdf
                     = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -165,7 +233,7 @@ public class ArchiveSource implements DataAgentInterface {
             if (json_obj.has("tk_size")) {
                 bytes = json_obj.get("tk_size").getAsInt();
             }
-            String url = "unkown";
+            String url = "unknown";
             if (json_obj.has("tk_url")) {
                 url = json_obj.get("tk_url").getAsString();
             }
@@ -194,6 +262,7 @@ public class ArchiveSource implements DataAgentInterface {
             rd.subject = new Link(client, peerhost);
         } catch (ParseException ex) {
             System.out.println("Error Parsing JSON: " + ex);
+            return null;
         }
         return rd;
     }
