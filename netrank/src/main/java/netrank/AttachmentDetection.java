@@ -62,6 +62,7 @@ public class AttachmentDetection implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
+
         //Get all the attachments from the raw data
         ArrayList attachments = getAttachments(raw_data);
         //Extract all the unique attachments from the collection of attachments

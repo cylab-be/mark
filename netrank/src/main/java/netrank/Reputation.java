@@ -85,6 +85,10 @@ public class Reputation implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
+        if (raw_data.length < 50) {
+            return;
+        }
+
         String domain_name = subject.getServer();
         String reputation = "";
 /**

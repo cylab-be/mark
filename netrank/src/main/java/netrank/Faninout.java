@@ -141,6 +141,9 @@ public class Faninout implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
+        if (raw_data.length < 50) {
+            return;
+        }
 
         // get the parsed data in a hashmap format with keys for each
         // encountered domain and IP
