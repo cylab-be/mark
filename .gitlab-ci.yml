@@ -1,8 +1,9 @@
 cache:
   paths:
-    - /root/.m2/
+    - .m2/
 
-
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=.m2"
 
 test:jdk-8:mongo-3.2:
   image: maven:3.5.3-jdk-8
