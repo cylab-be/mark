@@ -1,6 +1,6 @@
 cache:
   paths:
-    - /root/.m2/repository/
+    - /root/.m2/
 
 
 
