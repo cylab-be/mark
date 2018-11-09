@@ -57,9 +57,9 @@ public class WOWA implements DetectionAgentInterface {
         ordered_weights[0] = 0.5;
         ordered_weights[1] = 0.5;
 
-        info.debatty.java.aggregation.WOWA wowa =
-                new info.debatty.java.aggregation.WOWA(
-                        weights, ordered_weights);
+        // info.debatty.java.aggregation.WOWA wowa =
+        //        new info.debatty.java.aggregation.WOWA(
+        //                weights, ordered_weights);
 
     }
 
