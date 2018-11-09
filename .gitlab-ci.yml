@@ -10,12 +10,6 @@ test:jdk-8:mongo-3.2:
   services:
     - mongo:3.2
   script: export MARK_MONGO_HOST="mongo" && mvn clean package -Dgpg.skip=true
-
-test:jdk-7:mongo-3.2:
-  image: maven:3-jdk-7
-  services:
-    - mongo:3.2
-  script: export MARK_MONGO_HOST="mongo" && mvn clean package -Dgpg.skip=true
   
 test:jdk-8:mongo-3.6:
   image: maven:3.5.3-jdk-8

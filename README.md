@@ -14,6 +14,10 @@ The **multi-agent ranking framework (MARK)** aims to provide all the building bl
 
 ![](./report.png)
 
+## Requirements
+
+* Oracle Java 8 (OpenJDK seems not to work + TIKA library requires at least Java 8)
+* MongoDB
 
 ## Getting started
 
