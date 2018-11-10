@@ -22,6 +22,7 @@ import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.spi.collision.fifoqueue.FifoQueueCollisionSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
@@ -58,6 +59,8 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
         ignite_config.setClientMode(!config.ignite_start_server);
+
+        ignite_config.setCollisionSpi(new FifoQueueCollisionSpi());
 
         if (!config.ignite_autodiscovery) {
             // Disable autodiscovery
