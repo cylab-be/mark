@@ -61,7 +61,7 @@ public class POSTCount implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
-        if (raw_data.length == 0 && raw_data.length < 50) {
+        if (raw_data.length == 0) {
             return;
         }
 

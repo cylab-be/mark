@@ -146,11 +146,6 @@ public class TimeAnomaly implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
-
-        if (raw_data.length < 50) {
-            return;
-        }
-
         HashMap<String, ArrayList<Integer>> weekly_use =
                                                     getTimeIntervals(raw_data);
         //System.out.println(weekly_use);
