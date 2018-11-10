@@ -95,10 +95,6 @@ public class Upload implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
-        if (raw_data.length < 50) {
-            return;
-        }
-
         double post_percentage = postBytesSentRatio(raw_data);
 
         if (post_percentage > UPLOAD_THRESHOLD) {

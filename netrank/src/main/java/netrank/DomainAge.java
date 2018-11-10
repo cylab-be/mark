@@ -142,10 +142,6 @@ public class DomainAge implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
-        if (raw_data.length < 50) {
-            return;
-        }
-
         String domain_name = subject.getServer();
         //check if the domain name we get from the DB is valid or if its an IP
         //valid domains that WHOIS can research end in .com, .net or .edu

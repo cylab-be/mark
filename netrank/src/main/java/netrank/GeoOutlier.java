@@ -118,10 +118,6 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
                 .append("LABEL", actual_trigger_label);
         RawData[] data = datastore.findData(query);
 
-        if (data.length < 50) {
-            return;
-        }
-
         LookupService cl = loadGeoIP();
 
 

@@ -91,11 +91,6 @@ public class EmailTimeVerification implements DetectionAgentInterface<Link> {
 
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
-
-        if (raw_data.length < 50) {
-            return;
-        }
-
         ArrayList sending_dates = getSendingTime(raw_data);
         int abnormal_time_count = getAbnormalTimeCount(sending_dates);
         double email_abnormal_time_ratio =
