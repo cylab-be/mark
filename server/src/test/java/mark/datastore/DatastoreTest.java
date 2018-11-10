@@ -27,47 +27,34 @@ package mark.datastore;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import junit.framework.TestCase;
+import mark.activation.ActivationControllerInterface;
+import mark.core.Evidence;
 import mark.core.RawData;
 import mark.server.Config;
 import mark.server.DummySubjectAdapter;
 import mark.server.DummySubject;
+import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class RequestHandlerTest extends TestCase {
+public class DatastoreTest extends TestCase {
 
-    public RequestHandlerTest(String testName) {
+    public DatastoreTest(String testName) {
         super(testName);
     }
 
-    public void testFindData() {
-        String mongo_host = System.getenv(Config.ENV_MONGO_HOST);
-        if (mongo_host == null) {
-            mongo_host = "127.0.0.1";
-        }
+    public void testStartDatastore() throws Exception {
+        Config conf = Config.getTestConfig();
 
-        MongoClient mongo = new MongoClient(mongo_host);
-        MongoDatabase mongodb = mongo.getDatabase("MARK");
-        mongodb.drop();
+        Datastore datastore = new Datastore(conf, new DummyActivationContoller());
+        datastore.start();
 
-        RequestHandler handler = new RequestHandler(
-                mongodb,
-                new DummyActivationContoller(),
-                new DummySubjectAdapter());
+        Thread.sleep(5000);
 
-        RawData<DummySubject> data = new RawData<>();
-        data.data = "1234";
-        data.subject = new DummySubject("test");
-        handler.addRawData(data);
-        handler.addRawData(data);
+        datastore.stop();
 
-        Document query = new Document("DATA", "1234");
-        RawData[] result = handler.findData(query);
-        assertEquals(2, result.length);
     }
-
-
 }

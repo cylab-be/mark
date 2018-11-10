@@ -57,9 +57,6 @@ public class WebIT extends TestCase {
         System.out.println("Test Homepage");
         System.out.println("=============");
 
-        client = new WebClient();
-        base_url = "http://127.0.0.1:8000/";
-
         Config config = Config.getTestConfig();
         config.start_webserver = true;
         config.setWebserverRoot(
@@ -69,6 +66,8 @@ public class WebIT extends TestCase {
         server = new Server(config);
         server.start();
 
+        client = new WebClient();
+        base_url = "http://127.0.0.1:8000/";
         client.getCache().clear();
         HtmlPage page2 = client.getPage(base_url);
         HtmlHeading1 h1 = (HtmlHeading1) page2.getByXPath("//h1").get(0);

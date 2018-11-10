@@ -12,7 +12,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
-import mark.activation.ActivationController;
+import mark.activation.ActivationControllerInterface;
 import mark.core.Subject;
 import mark.server.Config;
 import mark.core.InvalidProfileException;
@@ -40,7 +40,7 @@ public class Datastore {
      */
     public Datastore(
             final Config config,
-            final ActivationController activation_controller)
+            final ActivationControllerInterface activation_controller)
             throws InvalidProfileException {
 
         // Connect to mongodb
