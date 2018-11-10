@@ -29,7 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * The activation controller uses the micro batching principle:
+ * https://streaml.io/resources/tutorials/concepts/understanding-batch-microbatch-streaming
+ * Events are continuously collected (with notifyRawData and notifyEvidence).
+ * In a separate thread, every few secondes (defined by Config.update_interval),
+ * analysis jobs are triggered.
+ * These jobs are executed by an Apache Ignite Compute Grid:
+ * https://apacheignite.readme.io/docs/compute-grid#section-ignitecompute
  * @author Thibault Debatty
  */
 public class ActivationController<T extends Subject> extends SafeThread implements ActivationControllerInterface<T> {
