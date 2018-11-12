@@ -56,11 +56,18 @@ public class Server {
         startLogging();
         parseConfig();
 
+        LOGGER.info("Instantiate web server...");
         this.web_server = new WebServer(config);
-        this.activation_controller = new ActivationController(config);
-        this.datastore = new Datastore(config, activation_controller);
-        this.data_agents = new LinkedList<>();
 
+        LOGGER.info("Instantiate activation controller "
+                + "and Apache Ignite cluster");
+        this.activation_controller = new ActivationController(config);
+
+        LOGGER.info("Instantiate Datastore...");
+        this.datastore = new Datastore(config, activation_controller);
+
+        LOGGER.info("Instantiate data agents...");
+        this.data_agents = new LinkedList<>();
 
         File modules_dir;
         try {
@@ -186,7 +193,7 @@ public class Server {
             IllegalArgumentException, InvocationTargetException,
             InvalidProfileException {
 
-
+        LOGGER.info("Parse configuration...");
         File modules_dir;
         try {
             modules_dir = config.getModulesDirectory();

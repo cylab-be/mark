@@ -22,45 +22,39 @@
  * THE SOFTWARE.
  */
 
-package mark.detection;
+package mark.datastore;
 
-import mark.core.DetectionAgentInterface;
-import mark.core.DetectionAgentProfile;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
+import junit.framework.TestCase;
+import mark.activation.ActivationControllerInterface;
 import mark.core.Evidence;
-import mark.core.ServerInterface;
-import mark.core.Subject;
+import mark.core.RawData;
+import mark.server.Config;
+import mark.server.DummySubjectAdapter;
+import mark.server.DummySubject;
+import org.apache.ignite.cluster.ClusterMetrics;
+import org.bson.Document;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class WOWA implements DetectionAgentInterface {
+public class DatastoreTest extends TestCase {
 
-    @Override
-    public void analyze(
-            final Subject subject,
-            final String actual_trigger_label,
-            final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
-
-        Evidence[] evidences = datastore.findEvidence(
-                actual_trigger_label, subject);
-
-        // Each detector has the same weight
-        double[] weights = new double[evidences.length];
-        for (int i = 0; i < evidences.length; i++) {
-            weights[i] = 1.0 / evidences.length;
-        }
-
-        //
-        double[] ordered_weights = new double[evidences.length];
-        ordered_weights[0] = 0.5;
-        ordered_weights[1] = 0.5;
-
-        // info.debatty.java.aggregation.WOWA wowa =
-        //        new info.debatty.java.aggregation.WOWA(
-        //                weights, ordered_weights);
-
+    public DatastoreTest(String testName) {
+        super(testName);
     }
 
+    public void testStartDatastore() throws Exception {
+        Config conf = Config.getTestConfig();
+
+        Datastore datastore = new Datastore(conf, new DummyActivationContoller());
+        datastore.start();
+
+        Thread.sleep(5000);
+
+        datastore.stop();
+
+    }
 }

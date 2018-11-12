@@ -22,13 +22,20 @@ import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.spi.collision.fifoqueue.FifoQueueCollisionSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * The activation controller uses the micro batching principle:
+ * https://streaml.io/resources/tutorials/concepts/understanding-batch-microbatch-streaming
+ * Events are continuously collected (with notifyRawData and notifyEvidence).
+ * In a separate thread, every few secondes (defined by Config.update_interval),
+ * analysis jobs are triggered.
+ * These jobs are executed by an Apache Ignite Compute Grid:
+ * https://apacheignite.readme.io/docs/compute-grid#section-ignitecompute
  * @author Thibault Debatty
  */
 public class ActivationController<T extends Subject> extends SafeThread implements ActivationControllerInterface<T> {
@@ -58,12 +65,8 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
         ignite_config.setClientMode(!config.ignite_start_server);
-        
-        ignite_config.setPublicThreadPoolSize(1);
-        ignite_config.setSystemThreadPoolSize(2);
-        ignite_config.setUtilityCachePoolSize(1);
-        ignite_config.setManagementThreadPoolSize(1);
-        ignite_config.setRebalanceThreadPoolSize(1);
+
+        ignite_config.setCollisionSpi(new FifoQueueCollisionSpi());
 
         if (!config.ignite_autodiscovery) {
             // Disable autodiscovery
