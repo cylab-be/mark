@@ -57,6 +57,15 @@ public class RequestHandler implements ServerInterface {
         index = new Document(TIME, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
+
+        // Create indexes for CLIENT and SERVER
+        index = new Document(CLIENT, 1);
+        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
+        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
+
+        index = new Document(SERVER, 1);
+        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
+        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
     }
 
     /**
@@ -158,6 +167,8 @@ public class RequestHandler implements ServerInterface {
     private static final String LABEL = "LABEL";
     private static final String TIME = "TIME";
     private static final String DATA = "DATA";
+    private static final String CLIENT = "CLIENT";
+    private static final String SERVER = "SERVER";
     private static final String SCORE = "SCORE";
     private static final String REPORT = "REPORT";
 
