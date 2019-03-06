@@ -148,26 +148,28 @@ public class Frequency implements DetectionAgentInterface {
                     + "= " + (1 / freqs[i]) + " seconds\n";
 
             datastore.addEvidence(evidence);
-        }
 
-        final XYSeries series = new XYSeries("Data");
-        for (int i = 0; i < freqs.length; i++) {
-            series.add(freqs[i], values[i]);
+            final XYSeries series = new XYSeries("Data");
+            for (int n = 0; n < freqs.length; n++) {
+                series.add(freqs[n], values[n]);
+            }
+            final XYSeriesCollection data = new XYSeriesCollection(series);
+            final JFreeChart chart = ChartFactory.createXYLineChart(
+                    "XY Series Demo",
+                    "Frequency (Hz)",
+                    "Y",
+                    data,
+                    PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
+            );
+            File figure = new File("/tmp/mark_figures/");
+            figure.mkdirs();
+            ChartUtilities.saveChartAsPNG(
+                    File.createTempFile("frequency_chart", ".png",
+                            figure),
+                    chart, 1600, 1200);
         }
-        final XYSeriesCollection data = new XYSeriesCollection(series);
-        final JFreeChart chart = ChartFactory.createXYLineChart(
-                "XY Series Demo",
-                "Frequency (Hz)",
-                "Y",
-                data,
-                PlotOrientation.VERTICAL,
-                true,
-                true,
-                false
-        );
-
-        ChartUtilities.saveChartAsPNG(
-                File.createTempFile("frequency_chart", ".png"),
-                chart, 1600, 1200);
     }
 }

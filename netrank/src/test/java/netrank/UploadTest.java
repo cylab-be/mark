@@ -42,7 +42,7 @@ public class UploadTest extends TestCase {
         Upload agent = new Upload();
         System.out.println("Test Upload with no POST methods");
         agent.analyze(
-                new Link("192.168.2.3", "dq46.com"),
+                new Link("192.168.2.3", "nopost.com"),
                 "actual.trigger",
                 DetectionAgentProfile.fromInputStream(
                         getClass().getResourceAsStream(

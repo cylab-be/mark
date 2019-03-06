@@ -23,6 +23,9 @@
  */
 package netrank;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import mark.core.DetectionAgentInterface;
@@ -30,6 +33,12 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartUtilities;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  *
@@ -40,7 +49,7 @@ import mark.core.ServerInterface;
 public class Upload implements DetectionAgentInterface<Link> {
 
     private static final double UPLOAD_THRESHOLD = 0.5;
-
+    private Map dataset = new HashMap();
     /**
      * method for calculating the ratio between the bytes sent via POST method.
      * and the total amount of bytes Sent/Received
@@ -62,12 +71,14 @@ public class Upload implements DetectionAgentInterface<Link> {
             }
 
             long bytes = Integer.parseInt(matcher.group(1));
-            // if the metho is post increment the total bytes posted with
+            // if the method is post increment the total bytes posted with
             // the value retrieved
             if (line.data.contains(" POST ")) {
                 post_bytes += bytes;
+                dataset.put(line.time, bytes);
+            } else {
+                dataset.put(line.time, new Long(0));
             }
-
             all_bytes += bytes;
         }
         // check that we don't divide by 0
@@ -95,6 +106,10 @@ public class Upload implements DetectionAgentInterface<Link> {
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
+        if (raw_data.length < 20) {
+            return;
+        }
+
         double post_percentage = postBytesSentRatio(raw_data);
 
         if (post_percentage > UPLOAD_THRESHOLD) {
@@ -110,6 +125,33 @@ public class Upload implements DetectionAgentInterface<Link> {
                     + post_percentage + "\n";
 
             datastore.addEvidence(evidence);
+
+            if (!dataset.isEmpty()) {
+                final XYSeries series = new XYSeries("Data");
+                for (Object key: dataset.keySet()) {
+                    long dat_key = (long) key;
+                    long dat_value = (long) dataset.get(key);
+                    series.add(dat_key, dat_value);
+                }
+                final XYSeriesCollection data = new XYSeriesCollection(series);
+                final JFreeChart chart = ChartFactory.createXYLineChart(
+                        "POST Bytes between (Client:Server) "
+                                + subject.toString(),
+                        "Timestamp",
+                        "Bytes Sent",
+                        data,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        true,
+                        false
+                );
+                File figure = new File("/tmp/mark_figures/");
+                figure.mkdirs();
+                ChartUtilities.saveChartAsPNG(
+                        File.createTempFile("upload_chart", ".png",
+                                figure),
+                        chart, 1600, 1200);
+            }
         }
     }
 }

@@ -46,6 +46,10 @@ public class Average implements DetectionAgentInterface {
         Evidence[] evidences = datastore.findLastEvidences(
                 actual_trigger_label, subject);
 
+        if (evidences.length < 3) {
+            return;
+        }
+
         double score = 0;
         long last_time = 0;
         for (Evidence ev : evidences) {

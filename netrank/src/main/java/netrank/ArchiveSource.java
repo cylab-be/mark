@@ -118,7 +118,7 @@ public class ArchiveSource implements DataAgentInterface {
                         if (rd == null) {
                             System.out.println("String: "
                                         + parsed_strings.get(i)
-                                        + " could now be parsed." + "\n");
+                                        + " could not be parsed." + "\n");
                         continue;
                         }
 
