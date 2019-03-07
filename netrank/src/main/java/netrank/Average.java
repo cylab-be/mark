@@ -22,29 +22,28 @@
  * THE SOFTWARE.
  */
 
-package mark.detection;
+package netrank;
 
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.ServerInterface;
-import mark.core.Subject;
 
 /**
  *
  * @author Thibault Debatty
  */
-public class Average implements DetectionAgentInterface {
+public class Average implements DetectionAgentInterface<Link> {
 
     @Override
-    public void analyze(
-            final Subject subject,
+    public final void analyze(
+            final Link subject,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
         Evidence[] evidences = datastore.findLastEvidences(
-                actual_trigger_label, subject);
+                profile.trigger_label, subject);
 
         if (evidences.length < 5) {
             return;
