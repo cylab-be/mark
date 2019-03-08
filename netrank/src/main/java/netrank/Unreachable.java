@@ -1,6 +1,9 @@
 package netrank;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import mark.core.DetectionAgentInterface;
@@ -41,6 +44,65 @@ public class Unreachable implements DetectionAgentInterface {
         return result;
     }
 
+    /**
+     * Method for generating a graph from the data recovered from the database.
+     * @param dataset
+     * @param title
+     * @param time
+     * @throws IOException
+     */
+    private String createGraph(final Map dataset,
+                            final String title,
+                            final long time)
+            throws IOException {
+
+        String path = "";
+
+        if (!dataset.isEmpty()) {
+            DefaultCategoryDataset cat_dataset =
+                    new DefaultCategoryDataset();
+            for (Object key: dataset.keySet()) {
+                boolean value = (boolean) dataset.get(key);
+                String dat_key = String.valueOf(key);
+                if (value) {
+                    cat_dataset.addValue(0, "Unreachable", dat_key);
+                    cat_dataset.addValue(1, "Reachable", dat_key);
+                } else {
+                    cat_dataset.addValue(1, "Unreachable", dat_key);
+                    cat_dataset.addValue(0, "Reachable", dat_key);
+                }
+            }
+            JFreeChart chart = ChartFactory.createBarChart(
+                "Unreachable (Client:Server) " + title, //Title
+                "Time", //Category X-axis
+                " ", //Category Y-axis
+                cat_dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false
+            );
+            //transform timestamp to create day folder for the graphs
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = new Date(time);
+            String formated_date = sf.format(date);
+            //set the axis data to be visible or not
+            CategoryPlot plot = chart.getCategoryPlot();
+            plot.getRangeAxis().setVisible(false);
+            plot.getDomainAxis().setVisible(true);
+            //create the folders to store the graph
+            File graph_path = new File("/tmp/mark_figures/"
+                                            + formated_date
+                                            + "/");
+            graph_path.mkdirs();
+            //create the temporary graph file
+            File graph = File.createTempFile("unreachable_chart", ".png",
+                        graph_path);
+            //load the chart into the graph file
+            ChartUtilities.saveChartAsPNG(graph, chart, 1920, 1080);
+            path = graph.getAbsolutePath();
+            }
+        return path;
+    }
+
     // Analyze function inherited from the DetectionAgentInterface
     // accepts the subject to analyze
     // trigger of the agent
@@ -64,7 +126,7 @@ public class Unreachable implements DetectionAgentInterface {
         //Discovering unreachable connections by checking a pattern looking for
         //the server status 50*
         int number_of_unreachable = 0;
-        Map dataset = new HashMap();
+        Map graph_dataset = new HashMap();
         Pattern pattern = Pattern.compile("/" + "([0-9]{3})\\s");
         for (RawData raw_data1 : raw_data) {
             int status = 0;
@@ -75,9 +137,9 @@ public class Unreachable implements DetectionAgentInterface {
             }
             if (doesContain(status)) {
                 number_of_unreachable = number_of_unreachable + 1;
-                dataset.put(timestamp, false);
+                graph_dataset.put(timestamp, false);
             } else {
-                dataset.put(timestamp, true);
+                graph_dataset.put(timestamp, true);
             }
         }
 
@@ -87,48 +149,26 @@ public class Unreachable implements DetectionAgentInterface {
                 / raw_data.length;
 
         if (unreachable_percentage > 0) {
+
+            String graph_path = createGraph(graph_dataset,
+                    subject.toString(),
+                    raw_data[0].time);
+
             Evidence evidence = new Evidence();
             evidence.score = unreachable_percentage;
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found an unreachable server with ratio: "
-                    + unreachable_percentage + "\n";
+                    + unreachable_percentage + "\n"
+                    + "<br />"
+                    + "Graph: "
+                    + "<a href=\"file:///" + graph_path
+                    + "\">" + "Upload Graph</a>";
 
             datastore.addEvidence(evidence);
 
-            if (!dataset.isEmpty()) {
-                DefaultCategoryDataset cat_dataset =
-                        new DefaultCategoryDataset();
-                for (Object key: dataset.keySet()) {
-                    boolean value = (boolean) dataset.get(key);
-                    String dat_key = String.valueOf(key);
-                    if (value) {
-                        cat_dataset.addValue(0, "Unreachable", dat_key);
-                        cat_dataset.addValue(1, "Reachable", dat_key);
-                    } else {
-                        cat_dataset.addValue(1, "Unreachable", dat_key);
-                        cat_dataset.addValue(0, "Reachable", dat_key);
-                    }
-                }
-                JFreeChart chart = ChartFactory.createBarChart(
-                    "Unreachable (Client:Server) " + subject.toString(), //Title
-                    "Time", //Category X-axis
-                    " ", //Category Y-axis
-                    cat_dataset,
-                    PlotOrientation.VERTICAL,
-                    true, true, false
-                );
-                CategoryPlot plot = chart.getCategoryPlot();
-                plot.getRangeAxis().setVisible(false);
-                plot.getDomainAxis().setVisible(false);
-                File figure = new File("/tmp/mark_figures/");
-                figure.mkdirs();
-                ChartUtilities.saveChartAsPNG(
-                    File.createTempFile("unreachable_chart", ".png",
-                            figure),
-                    chart, 1920, 1080);
-            }
+
         }
     }
 }

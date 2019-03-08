@@ -1,6 +1,9 @@
 package netrank;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -72,6 +75,50 @@ public class Frequency implements DetectionAgentInterface {
         return result / values.length;
     }
 
+    /**
+     * Method for generating a graph from the data recovered from the database.
+     * @param dataset
+     * @param title
+     * @throws IOException
+     */
+    private String createGraph(final double[] freqs,
+                            final double[] values,
+                            final String title,
+                            final long time)
+            throws IOException {
+
+        final XYSeries series = new XYSeries("Data");
+        for (int n = 0; n < freqs.length; n++) {
+            series.add(freqs[n], values[n]);
+        }
+        final XYSeriesCollection data = new XYSeriesCollection(series);
+        final JFreeChart chart = ChartFactory.createXYLineChart(
+                "Frequency between (Client:Server) " + title,
+                "Frequency (Hz)",
+                "Y",
+                data,
+                PlotOrientation.VERTICAL,
+                true,
+                true,
+                false
+        );
+        //transform timestamp to create day folder for the graphs
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date(time);
+                String formated_date = sf.format(date);
+                //create the folders to store the graph
+                File graph_path = new File("/tmp/mark_figures/"
+                                            + formated_date
+                                            + "/");
+                graph_path.mkdirs();
+                //create the temporary graph file
+                File graph = File.createTempFile("frequency_chart", ".png",
+                                graph_path);
+                //load the chart into the graph file
+                ChartUtilities.saveChartAsPNG(graph, chart, 1600, 1200);
+                return graph.getAbsolutePath();
+    }
+
     @Override
     public final void analyze(
             final Subject subject,
@@ -138,6 +185,9 @@ public class Frequency implements DetectionAgentInterface {
             if (values[i] < DETECTION_THRESHOLD * average) {
                 continue;
             }
+            String graph_path = createGraph(freqs, values,
+                    subject.toString(),
+                    raw_data[0].time);
 
             Evidence evidence = new Evidence();
             evidence.score = 0.9;
@@ -145,31 +195,13 @@ public class Frequency implements DetectionAgentInterface {
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
             evidence.report = "Found peak for frequency " + freqs[i] + "\n"
-                    + "= " + (1 / freqs[i]) + " seconds\n";
+                    + "= " + (1 / freqs[i]) + " seconds\n"
+                    + "<br />"
+                    + "Graph: "
+                    + "<a href=\"file:///" + graph_path
+                    + "\">" + "Upload Graph</a>";
 
             datastore.addEvidence(evidence);
-
-            final XYSeries series = new XYSeries("Data");
-            for (int n = 0; n < freqs.length; n++) {
-                series.add(freqs[n], values[n]);
-            }
-            final XYSeriesCollection data = new XYSeriesCollection(series);
-            final JFreeChart chart = ChartFactory.createXYLineChart(
-                    "XY Series Demo",
-                    "Frequency (Hz)",
-                    "Y",
-                    data,
-                    PlotOrientation.VERTICAL,
-                    true,
-                    true,
-                    false
-            );
-            File figure = new File("/tmp/mark_figures/");
-            figure.mkdirs();
-            ChartUtilities.saveChartAsPNG(
-                    File.createTempFile("frequency_chart", ".png",
-                            figure),
-                    chart, 1600, 1200);
         }
     }
 }

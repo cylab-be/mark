@@ -24,6 +24,9 @@
 package netrank;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -49,7 +52,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 public class Upload implements DetectionAgentInterface<Link> {
 
     private static final double UPLOAD_THRESHOLD = 0.5;
-    private Map dataset = new HashMap();
+    private final Map dataset = new HashMap();
     /**
      * method for calculating the ratio between the bytes sent via POST method.
      * and the total amount of bytes Sent/Received
@@ -89,6 +92,57 @@ public class Upload implements DetectionAgentInterface<Link> {
     }
 
     /**
+     * Method for generating a graph from the data recovered from the database.
+     * @param dataset
+     * @param title
+     * @param time
+     * @throws IOException
+     */
+    private String createGraph(final Map dataset,
+                            final String title,
+                            final long time)
+            throws IOException {
+
+        String path = "";
+        if (!dataset.isEmpty()) {
+                final XYSeries series = new XYSeries("Data");
+                for (Object key: dataset.keySet()) {
+                    long dat_key = (long) key;
+                    long dat_value = (long) dataset.get(key);
+                    series.add(dat_key, dat_value);
+                }
+                final XYSeriesCollection data = new XYSeriesCollection(series);
+                final JFreeChart chart = ChartFactory.createXYLineChart(
+                        "POST Bytes between (Client:Server) "
+                                + title,
+                        "Timestamp",
+                        "Bytes Sent",
+                        data,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        true,
+                        false
+                );
+                //transform timestamp to create day folder for the graphs
+                SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date(time);
+                String formated_date = sf.format(date);
+                //create the folders to store the graph
+                File graph_path = new File("/tmp/mark_figures/"
+                                            + formated_date
+                                            + "/");
+                graph_path.mkdirs();
+                //create the temporary graph file
+                File graph = File.createTempFile("upload_chart", ".png",
+                                graph_path);
+                //load the chart into the graph file
+                ChartUtilities.saveChartAsPNG(graph, chart, 1600, 1200);
+                path = graph.getAbsolutePath();
+        }
+        return path;
+    }
+
+    /**
      * Analyze function inherited from the DetectionAgentInterface.
      * accepts the subject to analyze
      * trigger of the agent
@@ -113,6 +167,11 @@ public class Upload implements DetectionAgentInterface<Link> {
         double post_percentage = postBytesSentRatio(raw_data);
 
         if (post_percentage > UPLOAD_THRESHOLD) {
+
+            String graph_path = createGraph(dataset,
+                    subject.toString(),
+                    raw_data[0].time);
+
             Evidence evidence = new Evidence();
             evidence.score = post_percentage;
             evidence.subject = subject;
@@ -122,36 +181,12 @@ public class Upload implements DetectionAgentInterface<Link> {
                     + "connection between " + subject.getClient()
                     + " and " + subject.getServer()
                     + " with suspicious post ratio of : "
-                    + post_percentage + "\n";
+                    + post_percentage + "\n <br />"
+                    + "Graph: "
+                    + "<a href=\"file:///" + graph_path
+                    + "\">" + "Upload Graph</a>";
 
             datastore.addEvidence(evidence);
-
-            if (!dataset.isEmpty()) {
-                final XYSeries series = new XYSeries("Data");
-                for (Object key: dataset.keySet()) {
-                    long dat_key = (long) key;
-                    long dat_value = (long) dataset.get(key);
-                    series.add(dat_key, dat_value);
-                }
-                final XYSeriesCollection data = new XYSeriesCollection(series);
-                final JFreeChart chart = ChartFactory.createXYLineChart(
-                        "POST Bytes between (Client:Server) "
-                                + subject.toString(),
-                        "Timestamp",
-                        "Bytes Sent",
-                        data,
-                        PlotOrientation.VERTICAL,
-                        true,
-                        true,
-                        false
-                );
-                File figure = new File("/tmp/mark_figures/");
-                figure.mkdirs();
-                ChartUtilities.saveChartAsPNG(
-                        File.createTempFile("upload_chart", ".png",
-                                figure),
-                        chart, 1600, 1200);
-            }
         }
     }
 }

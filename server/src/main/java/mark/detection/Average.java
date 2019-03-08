@@ -44,9 +44,9 @@ public class Average implements DetectionAgentInterface {
             final ServerInterface datastore) throws Throwable {
 
         Evidence[] evidences = datastore.findLastEvidences(
-                actual_trigger_label, subject);
+                profile.trigger_label, subject);
 
-        if (evidences.length < 5) {
+        if (evidences.length < 3) {
             return;
         }
 
@@ -62,7 +62,8 @@ public class Average implements DetectionAgentInterface {
 
         Evidence ev = new Evidence();
         ev.label = profile.label;
-        ev.report = "<h2>Average</h2>";
+        ev.report = "Average Aggregation generated for evidences with"
+                    + " label " + profile.trigger_label;
         ev.score = score;
         ev.subject = subject;
         ev.time = last_time;
