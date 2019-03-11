@@ -24,6 +24,8 @@
 
 package mark.detection;
 
+import java.util.HashMap;
+import java.util.Map;
 import mark.core.DetectionAgentInterface;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
@@ -36,6 +38,9 @@ import mark.core.Subject;
  */
 public class Average implements DetectionAgentInterface {
 
+    private static final int DEFAULT_MIN_DENOMINATOR = 3;
+    private static final String DENOMINATOR_STRING = "mindenominator";
+
     @Override
     public void analyze(
             final Subject subject,
@@ -43,34 +48,63 @@ public class Average implements DetectionAgentInterface {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
+        //check for parameters set through the config file
+        int min_denominator = DEFAULT_MIN_DENOMINATOR;
+        String threshold_string = profile.parameters.get(DENOMINATOR_STRING);
+        if (threshold_string != null) {
+            try {
+                min_denominator = Integer.valueOf(threshold_string);
+            } catch (NumberFormatException ex) {
+                min_denominator = DEFAULT_MIN_DENOMINATOR;
+            }
+        }
+
         Evidence[] evidences = datastore.findLastEvidences(
                 profile.trigger_label, subject);
 
-        if (evidences.length < 3) {
-            return;
+        //check if the amount of evidences gotten from the DB is equal or higher
+        //to the minimum needed to aggregate. If not the case, use the default
+        //min_denominator, otherwise use the number of evidences available
+        int denominator = min_denominator;
+        if (evidences.length >= min_denominator) {
+            denominator = evidences.length;
         }
+
+        //map to hold the agents triggered and the score they produce
+        Map<String, String[]> agent_labels = new HashMap<>();
 
         double score = 0;
         long last_time = 0;
         for (Evidence ev : evidences) {
-            score += ev.score / evidences.length;
+            score += ev.score / denominator;
 
             if (ev.time > last_time) {
                 last_time = ev.time;
             }
+ 
+            //add the agent and his score to the map
+            agent_labels.put(ev.label, 
+                    new String[]{Double.toString(ev.score), ev.id});
+        }
+
+        //create a string of the agent_labels to be added to the report
+        String agents_output = "";
+        for (String key : agent_labels.keySet()) {
+            agents_output = agents_output + "<br />Agent("
+                    + key + ") : Score(" + agent_labels.get(key)[0]
+                    + ") : Id(" + agent_labels.get(key)[0] + ")";
         }
 
         Evidence ev = new Evidence();
         ev.label = profile.label;
-        ev.report = "Average Aggregation generated for evidences with"
-                    + " label " + profile.trigger_label;
         ev.score = score;
         ev.subject = subject;
         ev.time = last_time;
+        ev.report = "Average Aggregation generated for evidences with"
+                + " label " + profile.trigger_label
+                + "<br /> Agents used for the aggregation: "
+                + agents_output;
         datastore.addEvidence(ev);
-
-
-
     }
 
 }

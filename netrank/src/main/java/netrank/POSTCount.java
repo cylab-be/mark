@@ -37,7 +37,8 @@ import mark.core.ServerInterface;
  */
 public class POSTCount implements DetectionAgentInterface<Link> {
 
-    private static final double UPLOAD_THRESHOLD = 0.4;
+    private static final double DEFAULT_POST_THRESHOLD = 0.4;
+    private static final String THRESHOLD_STRING = "threshold";
 
     /**
      * Analyze function inherited from the DetectionAgentInterface.
@@ -58,6 +59,17 @@ public class POSTCount implements DetectionAgentInterface<Link> {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
+        //check for parameters set through the config file
+        double threshold = DEFAULT_POST_THRESHOLD;
+        String threshold_string = profile.parameters.get(THRESHOLD_STRING);
+        if (threshold_string != null) {
+            try {
+                threshold = Double.valueOf(threshold_string);
+            } catch (NumberFormatException ex) {
+                threshold = DEFAULT_POST_THRESHOLD;
+            }
+        }
+
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
@@ -76,17 +88,21 @@ public class POSTCount implements DetectionAgentInterface<Link> {
         double post_percentage = (double) number_of_post
                 / raw_data.length;
 
-        if (post_percentage > UPLOAD_THRESHOLD) {
+        if (post_percentage > threshold) {
             Evidence evidence = new Evidence();
             evidence.score = post_percentage;
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found a ratio of POST methods in the "
-                    + "connection between " + subject.getClient()
-                    + " and " + subject.getServer()
-                    + " with suspicious ratio of : "
-                    + post_percentage + "\n";
+            evidence.report = "Found a connection between: "
+                    + "<br /> client " + subject.getClient()
+                    + " and server " + subject.getServer()
+                    + "<br /> where the ratio of connections with method POST "
+                    + "compared to all other connection methods has a ratio of:"
+                    + " " + post_percentage + "\n"
+                    + "<br /> Number of entries analysed: " + raw_data.length
+                    + "<br /> The POSTcount ratio threshold for suspicious "
+                    + "activity is " + threshold;
 
             datastore.addEvidence(evidence);
         }

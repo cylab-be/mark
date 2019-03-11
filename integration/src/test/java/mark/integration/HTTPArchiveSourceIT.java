@@ -82,7 +82,7 @@ public class HTTPArchiveSourceIT extends TestCase {
 
         RawData[] data = client.findRawData(
                 "data.http", new Link(
-                        "192.168.2.167", "92.122.122.162"));
+                        "192.168.2.167", "weather.service.msn.com"));
 
         assertEquals(6, data.length);
     }

@@ -51,7 +51,8 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class Upload implements DetectionAgentInterface<Link> {
 
-    private static final double UPLOAD_THRESHOLD = 0.5;
+    private static final double DEFAULT_UPLOAD_THRESHOLD = 0.5;
+    private static final String THRESHOLD_STRING = "threshold";
     private final Map dataset = new HashMap();
     /**
      * method for calculating the ratio between the bytes sent via POST method.
@@ -157,6 +158,17 @@ public class Upload implements DetectionAgentInterface<Link> {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
+        //check for parameters set through the config file
+        double threshold = DEFAULT_UPLOAD_THRESHOLD;
+        String threshold_string = profile.parameters.get(THRESHOLD_STRING);
+        if (threshold_string != null) {
+            try {
+                threshold = Double.valueOf(threshold_string);
+            } catch (NumberFormatException ex) {
+                threshold = DEFAULT_UPLOAD_THRESHOLD;
+            }
+        }
+
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
 
@@ -166,7 +178,7 @@ public class Upload implements DetectionAgentInterface<Link> {
 
         double post_percentage = postBytesSentRatio(raw_data);
 
-        if (post_percentage > UPLOAD_THRESHOLD) {
+        if (post_percentage > threshold) {
 
             String graph_path = createGraph(dataset,
                     subject.toString(),
@@ -177,12 +189,17 @@ public class Upload implements DetectionAgentInterface<Link> {
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found a ratio of POST methods in the "
-                    + "connection between " + subject.getClient()
-                    + " and " + subject.getServer()
-                    + " with suspicious post ratio of : "
-                    + post_percentage + "\n <br />"
-                    + "Graph: "
+            evidence.report = "Found a connection between: "
+                    + "<br /> client " + subject.getClient()
+                    + " and server " + subject.getServer()
+                    + "<br /> where the amount of POST connection and bytes "
+                    + "sent compared to all other connections and bytes "
+                    + "recieved has a suspicious post ratio of: "
+                    + post_percentage + "\n"
+                    + "<br /> Number of entries analysed: " + raw_data.length
+                    + "<br /> The upload ratio threshold for suspicious "
+                    + "activity is " + threshold
+                    + "<br /> Graph: "
                     + "<a href=\"file:///" + graph_path
                     + "\">" + "Upload Graph</a>";
 

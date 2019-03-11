@@ -116,9 +116,9 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
 
         Document query = new Document(LinkAdapter.CLIENT, subject.getClient())
                 .append("LABEL", actual_trigger_label);
-        RawData[] data = datastore.findData(query);
+        RawData[] raw_data = datastore.findData(query);
 
-        if (data.length < 20) {
+        if (raw_data.length < 20) {
             return;
         }
 
@@ -126,7 +126,7 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
 
 
         //get the filtered locations already wrapped without duplicates
-        ArrayList<LocationWrapper> locations = getLocations(cl, data);
+        ArrayList<LocationWrapper> locations = getLocations(cl, raw_data);
         //Initialize a new cluster algorithm.
         //We use DBSCANCluster to determine locations close to each other
         //and outliers that don't belong to any cluster.
@@ -140,12 +140,20 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
                 evidence.score = 1;
                 evidence.subject = subject;
                 evidence.label = profile.label;
-                evidence.time = data[data.length - 1].time;
-                evidence.report = "Found"
-                        + " outliers in the connections with"
-                        + " distance between the servers bigger than the"
-                        + " expected distance between servers"
-                        + "\n";
+                evidence.time = raw_data[raw_data.length - 1].time;
+                evidence.report = "Found a connection between: "
+                        + "<br /> client " + subject.getClient()
+                        + "and server " + subject.getServer()
+                        + "<br />  where outliser exist in the connections with"
+                        + " distance between the servers bigger than the "
+                        + "expected distance between servers"
+                        + "\n"
+                        + "<br />Number of entries analysed: " + raw_data.length
+                        + "<br />The GeoOutlier parameters are: "
+                        + "<br />Maximum radius for forming a cluster"
+                        + " of servers: " + max_radius
+                        + "<br />Minimum servers needed to form a cluser: "
+                        + min_cluster_size;
                 datastore.addEvidence(evidence);
             }
         }

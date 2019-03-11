@@ -9,7 +9,6 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import mark.core.Subject;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -25,7 +24,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author Thibault Debatty
  */
-public class Frequency implements DetectionAgentInterface {
+public class Frequency implements DetectionAgentInterface<Link> {
 
     /**
      * Sampling interval (in second).
@@ -121,7 +120,7 @@ public class Frequency implements DetectionAgentInterface {
 
     @Override
     public final void analyze(
-            final Subject subject,
+            final Link subject,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
@@ -194,12 +193,16 @@ public class Frequency implements DetectionAgentInterface {
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found peak for frequency " + freqs[i] + "\n"
+            evidence.report = "Found peak for frequency between: "
+                    + "<br /> client " + subject.getClient()
+                    + " and server " + subject.getServer()
+                    + "<br />with frequency " + freqs[i] + "\n"
                     + "= " + (1 / freqs[i]) + " seconds\n"
                     + "<br />"
-                    + "Graph: "
+                    + "<br />Number of entries analysed: " + raw_data.length
+                    + "<br />Graph: "
                     + "<a href=\"file:///" + graph_path
-                    + "\">" + "Upload Graph</a>";
+                    + "\">" + "Frequency Graph</a>";
 
             datastore.addEvidence(evidence);
         }

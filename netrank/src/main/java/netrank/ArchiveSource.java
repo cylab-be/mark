@@ -33,6 +33,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import java.io.File;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,8 +59,14 @@ public class ArchiveSource implements DataAgentInterface {
      * file.
      */
     public static final String SPEEDUP_KEY = "speedup";
+    /**
+     * Use this key in the parameters map to set the type of data to be read
+     * from the file.
+     */
+    public static final String TYPE_DATA = "datatype";
 
     private static final double DEFAULT_SPEEDUP = Double.MAX_VALUE;
+    private static final String DEFAULT_DATA_TYPE = "http";
 
     private final String regex = "(\\{\".*\"})";
     private Pattern pattern;
@@ -74,6 +81,7 @@ public class ArchiveSource implements DataAgentInterface {
             final DataAgentProfile profile, final ServerInterface datastore)
             throws Throwable {
 
+        //check if there is a Speedup parameter given in the config file
         double speedup = DEFAULT_SPEEDUP;
         String speedup_string = profile.parameters.get(SPEEDUP_KEY);
         if (speedup_string != null) {
@@ -81,6 +89,16 @@ public class ArchiveSource implements DataAgentInterface {
                 speedup = Double.valueOf(speedup_string);
             } catch (NumberFormatException ex) {
                 speedup = DEFAULT_SPEEDUP;
+            }
+        }
+        //check if there is a DataType parameter given in the config file
+        String data_type = DEFAULT_DATA_TYPE;
+        String data_type_string = profile.parameters.get(TYPE_DATA);
+        if (data_type_string != null) {
+            try {
+                data_type = data_type_string;
+            } catch (NumberFormatException ex) {
+                data_type = DEFAULT_DATA_TYPE;
             }
         }
 
@@ -113,7 +131,12 @@ public class ArchiveSource implements DataAgentInterface {
                     ArrayList<String> parsed_strings =
                             extractJson(str.toString());
                     for (int i = 0; i < parsed_strings.size(); i++) {
-                        RawData rd = parseLine(parsed_strings.get(i));
+                        RawData rd = new RawData();
+                        if (data_type.equals("smtp")) {
+                            rd = parseSMTPLine(parsed_strings.get(i));
+                        } else {
+                            rd = parseHTTPLine(parsed_strings.get(i));
+                        }
 
                         if (rd == null) {
                             System.out.println("String: "
@@ -151,7 +174,12 @@ public class ArchiveSource implements DataAgentInterface {
             if (str.length() > 0) {
                 ArrayList<String> parsed_strings = extractJson(str.toString());
                 for (int i = 0; i < parsed_strings.size(); i++) {
-                    RawData rd = parseLine(parsed_strings.get(i));
+                    RawData rd = new RawData();
+                        if (data_type.equals("smtp")) {
+                            rd = parseSMTPLine(parsed_strings.get(i));
+                        } else {
+                            rd = parseHTTPLine(parsed_strings.get(i));
+                        }
 
                     if (rd == null) {
                         System.out.println("String: "
@@ -204,7 +232,7 @@ public class ArchiveSource implements DataAgentInterface {
         return results;
     }
 
-    private RawData parseLine(final String line) throws Exception {
+    private RawData parseHTTPLine(final String line) throws Exception {
         RawData rd = new RawData();
         JsonParser parser = new JsonParser();
         //System.out.println("DEBUG2 ARCHIVESOURCE PARSELINE:  " + line + "\n");
@@ -221,11 +249,11 @@ public class ArchiveSource implements DataAgentInterface {
             Date date = sdf.parse(json_obj.get("@timestamp").getAsString());
             Long timestamp = date.getTime();
 
-            String client = "unkown";
+            String client = "unknown";
             if (json_obj.has("tk_client_ip")) {
                 client = json_obj.get("tk_client_ip").getAsString();
             }
-            String method = "unkown";
+            String method = "unknown";
             if (json_obj.has("tk_operation")) {
                 method = json_obj.get("tk_operation").getAsString();
             }
@@ -237,11 +265,11 @@ public class ArchiveSource implements DataAgentInterface {
             if (json_obj.has("tk_url")) {
                 url = json_obj.get("tk_url").getAsString();
             }
-            String peerhost = "unkown";
+            String peerhost = "unknown";
             if (json_obj.has("tk_server_ip")) {
                 peerhost = json_obj.get("tk_server_ip").getAsString();
             }
-            String type = "unkown";
+            String type = "unknown";
             if (json_obj.has("tk_mime_content")) {
                 type = json_obj.get("tk_mime_content").getAsString();
             }
@@ -257,13 +285,23 @@ public class ArchiveSource implements DataAgentInterface {
                     + " " + "DIRECT/" + peerhost //server IP
                     + " " + type; //mime type of connection
 
+            URL full_url = new URL(url);
+            String fqdn_url = full_url.getAuthority();
+
             rd.time = timestamp;
             rd.data = raw_data;
-            rd.subject = new Link(client, peerhost);
+            rd.subject = new Link(client, fqdn_url);
         } catch (ParseException ex) {
             System.out.println("Error Parsing JSON: " + ex);
             return null;
         }
+        return rd;
+    }
+
+    private RawData parseSMTPLine(final String line) throws Exception {
+        System.out.println("DEBUG: got into parseSMTPLine");
+        System.out.println("DEBUG2 ARCHIVESOURCE PARSELINE:  " + line + "\n");
+        RawData rd = new RawData();
         return rd;
     }
 }

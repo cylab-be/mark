@@ -50,7 +50,8 @@ import mark.core.ServerInterface;
  */
 public class Faninout implements DetectionAgentInterface<Link> {
 
-    private static final int THRESHOLD = 60;
+    private static final int DEFAULT_FANINOUT_THRESHOLD = 60;
+    private static final String THRESHOLD_STRING = "threshold";
 
     /**
      * method for parsing the data recieved from the database and constructing
@@ -138,9 +139,19 @@ public class Faninout implements DetectionAgentInterface<Link> {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
+        //check for parameters set through the config file
+        double threshold = DEFAULT_FANINOUT_THRESHOLD;
+        String threshold_string = profile.parameters.get(THRESHOLD_STRING);
+        if (threshold_string != null) {
+            try {
+                threshold = Integer.valueOf(threshold_string);
+            } catch (NumberFormatException ex) {
+                threshold = DEFAULT_FANINOUT_THRESHOLD;
+            }
+        }
+
         RawData[] raw_data = datastore.findRawData(
             actual_trigger_label, subject);
-
 
         // get the parsed data in a hashmap format with keys for each
         // encountered domain and IP
@@ -152,16 +163,23 @@ public class Faninout implements DetectionAgentInterface<Link> {
         for (String key: list_of_keys) {
             LinkedList<String> values = res_map.get(key);
 
-            if (values.size() > THRESHOLD) {
+            if (values.size() > threshold) {
                 Evidence evidence = new Evidence();
                 evidence.score = 1;
                 evidence.subject = subject;
                 evidence.label = profile.label;
                 evidence.time = raw_data[raw_data.length - 1].time;
-                evidence.report = "Found an item: "
+                evidence.report = "Found a connection between: "
+                        + "<br /> client " + subject.getClient()
+                        + "and server " + subject.getServer()
+                        + "<br /> where the item: "
                         + key
-                        + " that corresponds to too many different ips/domains"
-                        + " (" + values.size() + ")";
+                        + " corresponds to too many different ips/domains"
+                        + " (" + values.size() + ")"
+                        + "<br />Number of entries analysed: "
+                        + raw_data.length
+                        + "<br /> The FanInOut threshold for suspicious "
+                        + "activity is " + threshold;
                 datastore.addEvidence(evidence);
             }
         }

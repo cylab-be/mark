@@ -11,7 +11,6 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import mark.core.Subject;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -28,9 +27,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * Bad connections are of the type [50*].
  * @author Georgi Nikolov
  */
-public class Unreachable implements DetectionAgentInterface {
+public class Unreachable implements DetectionAgentInterface<Link> {
 
     private final int[] bad_server_status = {500, 501, 502, 503, 504};
+    private static final double DEFAULT_UNREACHABLE_THRESHOLD = 0.03;
+    private static final String THRESHOLD_STRING = "threshold";
 
     //Private function to determine if a status shows a bad connection
     //to the server
@@ -110,10 +111,21 @@ public class Unreachable implements DetectionAgentInterface {
     // the database to which to connect to gather RawData
     @Override
     public final void analyze(
-            final Subject subject,
+            final Link subject,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
+
+        //check for parameters set through the config file
+        double threshold = DEFAULT_UNREACHABLE_THRESHOLD;
+        String threshold_string = profile.parameters.get(THRESHOLD_STRING);
+        if (threshold_string != null) {
+            try {
+                threshold = Double.valueOf(threshold_string);
+            } catch (NumberFormatException ex) {
+                threshold = DEFAULT_UNREACHABLE_THRESHOLD;
+            }
+        }
 
         RawData[] raw_data = datastore.findRawData(
                 actual_trigger_label, subject);
@@ -148,7 +160,7 @@ public class Unreachable implements DetectionAgentInterface {
         unreachable_percentage = (float) number_of_unreachable
                 / raw_data.length;
 
-        if (unreachable_percentage > 0) {
+        if (unreachable_percentage > threshold) {
 
             String graph_path = createGraph(graph_dataset,
                     subject.toString(),
@@ -159,16 +171,21 @@ public class Unreachable implements DetectionAgentInterface {
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found an unreachable server with ratio: "
-                    + unreachable_percentage + "\n"
-                    + "<br />"
-                    + "Graph: "
+            evidence.report = "Found a connection between: "
+                    + "<br /> client " + subject.getClient()
+                    + "and server " + subject.getServer()
+                    + "<br />where the number of times the server was "
+                    + "unreachable is above the allowed threshold"
+                    + "<br />Ratio of unreachable connections: "
+                    + unreachable_percentage
+                    + "<br />Number of entries analysed: " + raw_data.length
+                    + "<br />The Unreachable threshold ratio used is: "
+                    + threshold
+                    + "<br />Graph: "
                     + "<a href=\"file:///" + graph_path
-                    + "\">" + "Upload Graph</a>";
+                    + "\">" + "Unreachable Graph</a>";
 
             datastore.addEvidence(evidence);
-
-
         }
     }
 }
