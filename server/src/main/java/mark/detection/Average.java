@@ -92,7 +92,7 @@ public class Average implements DetectionAgentInterface {
         for (String key : agent_labels.keySet()) {
             agents_output = agents_output + "<br />Agent("
                     + key + ") : Score(" + agent_labels.get(key)[0]
-                    + ") : Id(" + agent_labels.get(key)[0] + ")";
+                    + ") : Id(" + agent_labels.get(key)[1] + ")";
         }
 
         Evidence ev = new Evidence();
