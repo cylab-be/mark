@@ -30,7 +30,8 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class Unreachable implements DetectionAgentInterface<Link> {
 
     private final int[] bad_server_status = {500, 501, 502, 503, 504};
-    private static final double DEFAULT_UNREACHABLE_THRESHOLD = 0.03;
+    //default theshold set to ratio #unreachable/#alldata < 0.03
+    private static final double DEFAULT_UNREACHABLE_THRESHOLD = 0.01;
     private static final String THRESHOLD_STRING = "threshold";
 
     //Private function to determine if a status shows a bad connection

@@ -28,19 +28,20 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
-import mark.core.Subject;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 /**
  * Agent responsible for analyzing the connection status to a server.
- * Determines the # of bad connections compared to the # good connections
+ * Checks if in the same time period as the bad connections other unreachable
+ * connections are present to other servers, determining if its the clients
+ * machine responsible for the bad connection or suspicious activity is present
  * @author georgi
  */
-public class UnreachableAdvanced implements DetectionAgentInterface {
+public class UnreachableAdvanced implements DetectionAgentInterface<Link> {
 
     private final int[] bad_server_status = new int[] {500, 501, 502, 503, 504};
-
+    private static final double DEFAULT_UNREACHABLE_PERIODICITY = 0.02;
     //Private function to determine if a status shows a bad connection
     //to the server
     private boolean doesContain(final int status) {
@@ -105,7 +106,7 @@ public class UnreachableAdvanced implements DetectionAgentInterface {
     // the database to which to connect to gather RawData
     @Override
     public final void analyze(
-            final Subject subject,
+            final Link subject,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
@@ -135,15 +136,21 @@ public class UnreachableAdvanced implements DetectionAgentInterface {
 
         double unreachable_periodicity = checkPeriodicity(status_array);
 
-        if (unreachable_periodicity > 0.2) {
+        if (unreachable_periodicity > DEFAULT_UNREACHABLE_PERIODICITY) {
             Evidence evidence = new Evidence();
             evidence.score = unreachable_periodicity;
             evidence.subject = subject;
             evidence.label = profile.label;
             evidence.time = raw_data[raw_data.length - 1].time;
-            evidence.report = "Found a periodicity in the "
-                    + "with unreachable periodicity: "
-                    + unreachable_periodicity + "\n";
+            evidence.report = "Found an unreachable periodicity in"
+                    + " the connection between:"
+                    + "<br /> client " + subject.getClient()
+                    + " and server " + subject.getServer()
+                    + " with unreachable periodicity: "
+                    + unreachable_periodicity
+                    + "<br />Number of entries analysed: " + raw_data.length
+                    + "<br />The Unreachable threshold ratio used is: "
+                    + DEFAULT_UNREACHABLE_PERIODICITY;
 
             datastore.addEvidence(evidence);
         }
