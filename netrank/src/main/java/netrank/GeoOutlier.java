@@ -57,9 +57,10 @@ public class GeoOutlier implements DetectionAgentInterface<Link> {
 
     //maximum radius of the neighbourhood to be considered by clustering,
     //metric dependant on the DistanceMeasure used for the clustering algorithm
-    private final int max_radius = 500;
+    //radius is set in kilometers
+    private final int max_radius = 2;
     //minimum number of points needed for a cluster
-    private final int min_points = 0;
+    private final int min_points = 1;
     //minimum accepted quantity of points in a cluster
     private final int min_cluster_size = 3;
 
