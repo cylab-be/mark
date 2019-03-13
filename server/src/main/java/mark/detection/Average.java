@@ -50,7 +50,8 @@ public class Average implements DetectionAgentInterface {
 
         //check for parameters set through the config file
         int min_denominator = DEFAULT_MIN_DENOMINATOR;
-        String threshold_string = profile.parameters.get(DENOMINATOR_STRING);
+        String threshold_string = String.valueOf(
+                profile.parameters.get(DENOMINATOR_STRING));
         if (threshold_string != null) {
             try {
                 min_denominator = Integer.valueOf(threshold_string);
