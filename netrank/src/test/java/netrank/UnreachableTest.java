@@ -25,7 +25,6 @@ package netrank;
 
 import java.util.LinkedList;
 import junit.framework.TestCase;
-import mark.activation.DummyClient;
 import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 

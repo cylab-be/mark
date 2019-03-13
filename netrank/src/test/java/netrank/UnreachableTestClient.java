@@ -29,6 +29,7 @@ import mark.activation.DummyClient;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
+import org.bson.Document;
 
 
 public class UnreachableTestClient<T extends Subject> extends DummyClient<T> {
@@ -84,6 +85,51 @@ public class UnreachableTestClient<T extends Subject> extends DummyClient<T> {
         } else {
             return new RawData[0];
         }
+    }
+    
+    @Override
+    public RawData[] findData(Document doc) throws Throwable {
+        int start = 123456;
+        Random rand = new Random();
+        String APT_SERVER = "105.244.103.0";
+        String SERVER = "175.193.216.";
+
+        RawData[] data = new RawData[100 + N];
+
+        for (int i = 0; i < 100; i++) {
+            data[i] = new RawData();
+            data[i].subject = new Link("198.36.158.8", "105.244.103.0");
+            data[i].label = doc.getString("LABEL");
+            data[i].time = start + 60 * i;
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "400"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + APT_SERVER
+                    + " text/html";
+        }
+
+        // Add a few random requests
+        for (int i = 100; i < 100 + N; i++) {
+            String server = SERVER + Integer.toString(rand.nextInt(255));
+            data[i] = new RawData();
+            data[i].subject = new Link("198.36.158.8", server);
+            data[i].label = doc.getString("LABEL");
+            data[i].time = start + rand.nextInt(5 * 60);
+            data[i].data = data[i].time + "    "
+                    + "126 "
+                    + "198.36.158.8 "
+                    + "TCP_MISS/"
+                    + "200"
+                    + "918 GET "
+                    + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
+                    + server
+                    + " text/html";
+        }
+        return data;
     }
 
     @Override
