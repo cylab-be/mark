@@ -1,5 +1,8 @@
 package mark.server;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import mark.core.InvalidProfileException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,28 +18,30 @@ import org.yaml.snakeyaml.constructor.Constructor;
  *
  * @author Thibault Debatty
  */
+@Singleton
 public class Config {
 
     public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
 
-    private static final int    DEFAULT_UPDATE_INTERVAL = 10;
+    private static final int DEFAULT_UPDATE_INTERVAL = 10;
     private static final String DEFAULT_MONGO_DB = "MARK";
-    private static final int    DEFAULT_MAX_THREADS = 100;
-    private static final int    TEST_MAX_THREADS = 9;
-    private static final int    DEFAULT_MIN_THREADS = 4;
-    private static final int    DEFAULT_IDLE_TIMEOUT = 60;
+    private static final int DEFAULT_MAX_THREADS = 100;
+    private static final int TEST_MAX_THREADS = 9;
+    private static final int DEFAULT_MIN_THREADS = 4;
+    private static final int DEFAULT_IDLE_TIMEOUT = 60;
     private static final String DEFAULT_SERVER_HOST = "127.0.0.1";
-    private static final int    DEFAULT_SERVER_PORT = 8080;
-    private static final int    DEFAULT_MAX_PENDING_REQUESTS = 200;
+    private static final int DEFAULT_SERVER_PORT = 8080;
+    private static final int DEFAULT_MAX_PENDING_REQUESTS = 200;
     private static final String DEFAULT_MODULES = "./modules";
 
     private static final String DEFAULT_ADAPTER = "mark.server.DummySubjectAdapter";
 
-    private static final int    DEFAULT_WEB_PORT = 8000;
+    private static final int DEFAULT_WEB_PORT = 8000;
     private static final String DEFAULT_WEB_ROOT = "../ui";
 
     /**
      * Build a configuration from a file.
+     *
      * @param file
      * @return
      * @throws java.io.FileNotFoundException
@@ -49,8 +54,9 @@ public class Config {
     }
 
     /**
-     * Build configuration from input stream (usually a resource packed with
-     * the jar).
+     * Build configuration from input stream (usually a resource packed with the
+     * jar).
+     *
      * @param input
      * @return
      */
@@ -62,6 +68,7 @@ public class Config {
     /**
      * Instantiate a config for tests: no webserver, updated interval = 1s,
      * clean db at startup.
+     *
      * @return
      */
     public static final Config getTestConfig() {
@@ -74,7 +81,6 @@ public class Config {
 
         return conf;
     }
-
 
     /**
      * The path to this actual configuration file. Useful as some path are
@@ -103,8 +109,8 @@ public class Config {
     public int max_pending_requests = DEFAULT_MAX_PENDING_REQUESTS;
 
     /**
-     * Start (or not) the integrated webserver.
-     * Can be disabled for testing, for example...
+     * Start (or not) the integrated webserver. Can be disabled for testing, for
+     * example...
      */
     public boolean start_webserver = true;
 
@@ -122,17 +128,21 @@ public class Config {
     public boolean mongo_clean = false;
 
     /**
-     * Start a local ignite server.
-     * Useful for testing or small installation, to execute the detection
-     * tasks on the same server.
+     * Start a local ignite server. Useful for testing or small installation, to
+     * execute the detection tasks on the same server.
      */
     public boolean ignite_start_server = true;
 
     /**
-     * Enable ignite autodiscovery.
-     * Disabling is useful for testing or small setups.
+     * Enable ignite autodiscovery. Disabling is useful for testing or small
+     * setups.
      */
     public boolean ignite_autodiscovery = true;
+
+    /**
+     * injector for dependency injection.
+     */
+    private Injector injector;
 
     /**
      * Instantiate a new default configuration.
@@ -142,10 +152,22 @@ public class Config {
         if (this.mongo_host == null) {
             this.mongo_host = "127.0.0.1";
         }
+        this.injector = Guice.createInjector(new BillingModule());
+    }
+
+    /**
+     * Returns an instance of the assigned class in Billing module.
+     *
+     * @param c class.
+     * @return instance of the class
+     */
+    public final Object getInstance(Class c) {
+        return this.injector.getInstance(c);
     }
 
     /**
      * Set the path of this configuration file (only used for testing).
+     *
      * @param path
      */
     final void setPath(File path) {
@@ -154,8 +176,7 @@ public class Config {
 
     /**
      *
-     * @return
-     * @throws MalformedURLException
+     * @return @throws MalformedURLException
      */
     public final URL getDatastoreUrl() throws MalformedURLException {
         return new URL("http", server_host, server_port, "");
@@ -163,8 +184,7 @@ public class Config {
 
     /**
      *
-     * @return
-     * @throws InvalidProfileException
+     * @return @throws InvalidProfileException
      */
     public final SubjectAdapter getSubjectAdapter()
             throws InvalidProfileException {
@@ -194,8 +214,8 @@ public class Config {
             // modules is a relative path...
             if (path == null) {
                 throw new FileNotFoundException(
-                    "modules directory is not valid (not a directory "
-                            + "or not a valid path)");
+                        "modules directory is not valid (not a directory "
+                        + "or not a valid path)");
             }
             modules_file = new File(path.toURI().resolve(modules));
         }
@@ -203,7 +223,7 @@ public class Config {
         if (!modules_file.isDirectory()) {
             throw new FileNotFoundException(
                     "modules directory is not valid (not a directory "
-                            + "or not a valid path)");
+                    + "or not a valid path)");
         }
 
         return modules_file;
@@ -219,8 +239,7 @@ public class Config {
 
     /**
      *
-     * @return
-     * @throws FileNotFoundException
+     * @return @throws FileNotFoundException
      */
     public final File getWebserverRoot() throws FileNotFoundException {
         File webroot_file = new File(webserver_root);
@@ -229,9 +248,9 @@ public class Config {
             // web root is a relative path...
             if (path == null) {
                 throw new FileNotFoundException(
-                    "webserver root is not valid: "
-                            + webserver_root
-                            + " (not a directory or not a valid path)");
+                        "webserver root is not valid: "
+                        + webserver_root
+                        + " (not a directory or not a valid path)");
             }
             webroot_file = new File(path.toURI().resolve(webserver_root));
         }
@@ -239,8 +258,8 @@ public class Config {
         if (!webroot_file.isDirectory()) {
             throw new FileNotFoundException(
                     "webserver root is not valid: "
-                            + webserver_root
-                            + " (not a directory or not a valid path)");
+                    + webserver_root
+                    + " (not a directory or not a valid path)");
         }
 
         return webroot_file;
@@ -257,16 +276,16 @@ public class Config {
             // it's a relative file
             if (path == null) {
                 throw new FileNotFoundException(
-                    "log directory is not valid: "
+                        "log directory is not valid: "
                         + log_directory
                         + " (not a directory or not a valid path)");
             }
             logdir_file = new File(path.toURI().resolve(log_directory));
         }
 
-        if(!logdir_file.isDirectory()) {
+        if (!logdir_file.isDirectory()) {
             throw new FileNotFoundException(
-                "log directory is not valid: "
+                    "log directory is not valid: "
                     + log_directory
                     + " (not a directory or not a valid path)");
         }

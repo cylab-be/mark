@@ -10,7 +10,6 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 
-
 /**
  *
  * @author Thibault Debatty
@@ -45,7 +44,6 @@ public final class Main {
             formatter.printHelp("java -jar server-<version>.jar", options);
             return;
         }
-
 
         Config config = new Config();
         if (cmd.hasOption("c")) {

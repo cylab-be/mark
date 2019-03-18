@@ -24,19 +24,15 @@ import org.apache.log4j.PatternLayout;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a MARK server.
- * It is composed of:
- * - a webserver
- * - an activation controller
- * - a datastore (json-rpc server)
- * - optionally: some data agents
+ * Represents a MARK server. It is composed of: - a webserver - an activation
+ * controller - a datastore (json-rpc server) - optionally: some data agents
  *
  * @author Thibault Debatty
  */
 public class Server {
 
-    private static final org.slf4j.Logger LOGGER =
-            LoggerFactory.getLogger(Server.class);
+    private static final org.slf4j.Logger LOGGER
+            = LoggerFactory.getLogger(Server.class);
 
     private final Config config;
     private final Datastore datastore;
@@ -45,8 +41,9 @@ public class Server {
     private final ActivationController activation_controller;
 
     /**
-     * Initialize a server with default configuration, dummy subject adapter,
-     * no data agents and no detection agents.
+     * Initialize a server with default configuration, dummy subject adapter, no
+     * data agents and no detection agents.
+     *
      * @param config
      * @throws java.lang.Throwable
      */
@@ -57,14 +54,15 @@ public class Server {
         parseConfig();
 
         LOGGER.info("Instantiate web server...");
-        this.web_server = new WebServer(config);
+        this.web_server = (WebServer) config.getInstance(WebServer.class);
 
         LOGGER.info("Instantiate activation controller "
                 + "and Apache Ignite cluster");
-        this.activation_controller = new ActivationController(config);
+        this.activation_controller = (ActivationController) config.
+                getInstance(ActivationController.class);
 
         LOGGER.info("Instantiate Datastore...");
-        this.datastore = new Datastore(config, activation_controller);
+        this.datastore = (Datastore) config.getInstance(Datastore.class);
 
         LOGGER.info("Instantiate data agents...");
         this.data_agents = new LinkedList<>();
@@ -96,13 +94,13 @@ public class Server {
         }
 
         // Parse *.detection.yml files
-        File[] detection_agent_files =
-                modules_dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".detection.yml");
-            }
-        });
+        File[] detection_agent_files
+                = modules_dir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(final File dir, final String name) {
+                        return name.endsWith(".detection.yml");
+                    }
+                });
 
         for (File file : detection_agent_files) {
             activation_controller.addAgent(
@@ -112,9 +110,9 @@ public class Server {
 
     /**
      * Non-blocking start the datastore and data agents (sources) in separate
-     * threads.
-     * This method returns when the server and agents are started.
-     * You can use server.stop()
+     * threads. This method returns when the server and agents are started. You
+     * can use server.stop()
+     *
      * @throws java.net.MalformedURLException if the URL specified by config is
      * invalid
      * @throws Exception if Jetty caused an exception
@@ -178,12 +176,10 @@ public class Server {
         activation_controller.awaitTermination();
     }
 
-
     /**
-     * Analyze the module folder.
-     * - modify the class path
-     * - parse data agent profiles
-     * - parse detection agent profiles
+     * Analyze the module folder. - modify the class path - parse data agent
+     * profiles - parse detection agent profiles
+     *
      * @throws MalformedURLException
      */
     private void parseConfig()
@@ -205,8 +201,8 @@ public class Server {
         // List *.jar and update the class path
         // this is a hack that allows to modify the global (system) class
         // loader.
-        URLClassLoader class_loader =
-                (URLClassLoader) ClassLoader.getSystemClassLoader();
+        URLClassLoader class_loader
+                = (URLClassLoader) ClassLoader.getSystemClassLoader();
         Method method = URLClassLoader.class.getDeclaredMethod(
                 "addURL", URL.class);
         method.setAccessible(true);
@@ -224,6 +220,7 @@ public class Server {
 
     /**
      * Add the profile for a detection agent.
+     *
      * @param profile
      */
     public final void addDetectionAgent(final DetectionAgentProfile profile) {

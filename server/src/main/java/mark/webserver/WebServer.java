@@ -24,6 +24,7 @@
 package mark.webserver;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.google.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -65,8 +66,10 @@ public class WebServer {
 
     /**
      * Instantiate a web server with provided config.
+     *
      * @param config
      */
+    @Inject
     public WebServer(final Config config) {
         this.config = config;
     }
@@ -90,7 +93,7 @@ public class WebServer {
         wini.put("config", "update_interval", config.update_interval);
         wini.put("config", "adapter_class", config.adapter_class);
         wini.store(config.getWebserverRoot().toPath()
-                        .resolve("config.ini").toFile());
+                .resolve("config.ini").toFile());
 
         // Handle php files
         ServletContextHandler php_handler = new ServletContextHandler();
@@ -171,21 +174,16 @@ public class WebServer {
 }
 
 /**
- * Rewrite the request if the requested file does not exist.
- * Similar to following Apache .htaccess:
- * RewriteEngine On
- * RewriteCond %{REQUEST_FILENAME} !-f
- * RewriteRule ^(.*)$ index.php [QSA,L]
+ * Rewrite the request if the requested file does not exist. Similar to
+ * following Apache .htaccess: RewriteEngine On RewriteCond %{REQUEST_FILENAME}
+ * !-f RewriteRule ^(.*)$ index.php [QSA,L]
  *
- * Or to following nginx:
- * server {
- *   location / {
- *     try_files $uri /index.php;
- *   }
- * }
+ * Or to following nginx: server { location / { try_files $uri /index.php; } }
+ *
  * @author Thibault Debatty
  */
 class RewriteIfNotExistsRule extends Rule {
+
     private final Path root;
 
     RewriteIfNotExistsRule(final File root) {
