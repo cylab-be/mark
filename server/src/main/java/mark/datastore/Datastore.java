@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.googlecode.jsonrpc4j.JsonRpcServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.inject.Inject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class Datastore {
      * @param activation_controller
      * @throws mark.server.InvalidProfileException
      */
+    @Inject
     public Datastore(
             final Config config,
             final ActivationControllerInterface activation_controller)
@@ -65,8 +67,8 @@ public class Datastore {
                 new SubjectDeserializer<>(config.getSubjectAdapter()));
         object_mapper.registerModule(module);
 
-        JsonRpcServer jsonrpc_server =
-                new JsonRpcServer(object_mapper, datastore_handler);
+        JsonRpcServer jsonrpc_server
+                = new JsonRpcServer(object_mapper, datastore_handler);
 
         QueuedThreadPool thread_pool = new QueuedThreadPool(
                 config.max_threads,
@@ -85,12 +87,12 @@ public class Datastore {
     }
 
     /**
-     * Start the datastore.
-     * This will start the json-rpc server in a separate thread and return
-     * when the server is ready.
+     * Start the datastore. This will start the json-rpc server in a separate
+     * thread and return when the server is ready.
+     *
      * @throws Exception
      */
-    public final void start() throws Exception  {
+    public final void start() throws Exception {
 
         server.start();
 
@@ -101,6 +103,7 @@ public class Datastore {
 
     /**
      * Stop the datastore.
+     *
      * @throws Exception if jetty fails to stop.
      */
     public final void stop() throws Exception {
@@ -114,6 +117,7 @@ public class Datastore {
 
 /**
  * JSON Deserializer that can be provided to the JSON-RPC server.
+ *
  * @author Thibault Debatty
  * @param <T>
  */

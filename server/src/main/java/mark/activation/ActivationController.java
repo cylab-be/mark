@@ -1,5 +1,6 @@
 package mark.activation;
 
+import com.google.inject.Inject;
 import mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -31,17 +32,18 @@ import org.slf4j.LoggerFactory;
 /**
  * The activation controller uses the micro batching principle:
  * https://streaml.io/resources/tutorials/concepts/understanding-batch-microbatch-streaming
- * Events are continuously collected (with notifyRawData and notifyEvidence).
- * In a separate thread, every few secondes (defined by Config.update_interval),
- * analysis jobs are triggered.
- * These jobs are executed by an Apache Ignite Compute Grid:
+ * Events are continuously collected (with notifyRawData and notifyEvidence). In
+ * a separate thread, every few secondes (defined by Config.update_interval),
+ * analysis jobs are triggered. These jobs are executed by an Apache Ignite
+ * Compute Grid:
  * https://apacheignite.readme.io/docs/compute-grid#section-ignitecompute
+ *
  * @author Thibault Debatty
  */
 public class ActivationController<T extends Subject> extends SafeThread implements ActivationControllerInterface<T> {
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(ActivationController.class);
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(ActivationController.class);
 
     private final LinkedList<DetectionAgentProfile> profiles;
     private final Ignite ignite;
@@ -56,6 +58,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
      * @param config
      * @throws InvalidProfileException
      */
+    @Inject
     public ActivationController(final Config config)
             throws InvalidProfileException {
 
@@ -89,6 +92,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
 
     /**
      * Ask ignite executor to shutdown then when for tasks to finish.
+     *
      * @throws InterruptedException
      */
     public final void awaitTermination() throws InterruptedException {
@@ -166,7 +170,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
                                 | InvalidProfileException ex) {
                             LOGGER.error(
                                     "Cannot start agent "
-                                            + profile.class_name,
+                                    + profile.class_name,
                                     ex);
                         }
                     }
@@ -180,6 +184,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
 
     /**
      * Get the total number of detection tasks that were activated.
+     *
      * @return
      */
     public final int getTaskCount() {
@@ -189,6 +194,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
     /**
      * Test the profiles: instantiate (without running) one of each task defined
      * in the profiles.
+     *
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
     public final void testProfiles()
@@ -202,7 +208,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
                     | SecurityException ex) {
                 throw new InvalidProfileException(
                         "Invalid profile: " + profile.toString()
-                                + " : " + ex.getMessage(), ex);
+                        + " : " + ex.getMessage(), ex);
             }
         }
     }
@@ -225,6 +231,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
 
     /**
      * Trigger required tasks for this new RawData.
+     *
      * @param data
      */
     @Override
@@ -261,6 +268,5 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
         ignite.cluster().nodes().iterator().next().hostNames();
         return ignite.cluster().metrics();
     }
-
 
 }
