@@ -36,8 +36,7 @@ public class BillingModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(ActivationControllerInterface.class).
-                to(ActivationController.class);
+        bind(ActivationControllerInterface.class).to(ActivationController.class);
     }
 
 }
