@@ -1,6 +1,7 @@
 package mark.activation;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thibault Debatty
  */
+@Singleton
 public class ActivationController<T extends Subject> extends SafeThread implements ActivationControllerInterface<T> {
 
     private static final Logger LOGGER

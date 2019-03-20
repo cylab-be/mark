@@ -45,6 +45,7 @@ public class Datastore {
             final ActivationControllerInterface activation_controller)
             throws InvalidProfileException {
 
+        System.out.println("datastore constructor");
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
                 config.mongo_host, config.mongo_port);

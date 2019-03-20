@@ -242,6 +242,7 @@ public class Config {
      * @return @throws FileNotFoundException
      */
     public final File getWebserverRoot() throws FileNotFoundException {
+        System.out.println("OK ---------- " + System.getProperty("java.class.path").split(":")[0]);
         File webroot_file = new File(webserver_root);
 
         if (!webroot_file.isAbsolute()) {

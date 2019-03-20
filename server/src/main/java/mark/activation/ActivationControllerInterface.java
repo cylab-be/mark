@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package mark.activation;
 
 import mark.core.DetectionAgentProfile;
@@ -44,6 +43,7 @@ public interface ActivationControllerInterface<T extends Subject> {
 
     /**
      * Trigger required tasks for this new RawData.
+     *
      * @param data
      */
     void notifyRawData(final RawData<T> data);

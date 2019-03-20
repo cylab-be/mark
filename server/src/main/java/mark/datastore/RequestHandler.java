@@ -1,5 +1,6 @@
 package mark.datastore;
 
+import com.google.inject.Inject;
 import com.mongodb.client.FindIterable;
 import mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
@@ -28,8 +29,8 @@ public class RequestHandler implements ServerInterface {
     private static final String COLLECTION_DATA = "DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
 
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(RequestHandler.class);
+    private static final Logger LOGGER
+            = LoggerFactory.getLogger(RequestHandler.class);
 
     private final MongoDatabase mongodb;
     private final ActivationControllerInterface activation_controller;
@@ -70,6 +71,7 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * Should return the string 1.
+     *
      * @return
      */
     @Override
@@ -78,8 +80,9 @@ public class RequestHandler implements ServerInterface {
     }
 
     /**
-     * Test RPC method that accepts a single string parameter.
-     * Do nothing but print string on screen.
+     * Test RPC method that accepts a single string parameter. Do nothing but
+     * print string on screen.
+     *
      * @param data
      */
     public final void testString(final String data) {
@@ -88,7 +91,8 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * {@inheritDoc}
-     * @param data  {@inheritDoc}
+     *
+     * @param data {@inheritDoc}
      */
     public final void addRawData(final RawData data) {
 
@@ -112,6 +116,7 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * {@inheritDoc}
+     *
      * @param label
      * @param subject
      * @return
@@ -149,7 +154,7 @@ public class RequestHandler implements ServerInterface {
      *
      * @return
      */
-    public final  Map<String, Object> status() {
+    public final Map<String, Object> status() {
         HashMap<String, Object> status = new HashMap<String, Object>();
         status.put("state", "running");
         status.put("activation", activation_controller.getProfiles());
@@ -174,6 +179,7 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * Convert from MongoDB document to RawData.
+     *
      * @param doc
      * @return
      */
@@ -205,6 +211,7 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * Convert from RawData to MongoDB document.
+     *
      * @param data
      * @return
      */
@@ -218,9 +225,9 @@ public class RequestHandler implements ServerInterface {
         return doc;
     }
 
-
     /**
      * Convert from Evidence to MongoDB document.
+     *
      * @param evidence
      * @return
      */
@@ -238,6 +245,7 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * {@inheritDoc}
+     *
      * @param label
      * @param subject
      * @return
@@ -283,8 +291,8 @@ public class RequestHandler implements ServerInterface {
                     .getCollection(COLLECTION_EVIDENCE)
                     .find(query);
 
-            HashMap<Subject, Evidence> evidences =
-                    new HashMap<Subject, Evidence>();
+            HashMap<Subject, Evidence> evidences
+                    = new HashMap<Subject, Evidence>();
             for (Document doc : documents) {
                 Evidence evidence = convertEvidence(doc);
 
@@ -342,6 +350,7 @@ public class RequestHandler implements ServerInterface {
 
     /**
      * {@inheritDoc}
+     *
      * @param label
      * @param subject
      * @return
