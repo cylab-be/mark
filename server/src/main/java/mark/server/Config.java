@@ -18,7 +18,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
  *
  * @author Thibault Debatty
  */
-@Singleton
 public class Config {
 
     public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
@@ -37,7 +36,7 @@ public class Config {
     private static final String DEFAULT_ADAPTER = "mark.server.DummySubjectAdapter";
 
     private static final int DEFAULT_WEB_PORT = 8000;
-    private static final String DEFAULT_WEB_ROOT = "./ui";
+    private static final String DEFAULT_WEB_ROOT = "../ui";
 
     /**
      * Build a configuration from a file.
