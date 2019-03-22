@@ -2,18 +2,22 @@ package mark.integration;
 
 import java.util.HashMap;
 import junit.framework.TestCase;
+import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
 import netrank.FileSource;
 import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 import mark.core.DataAgentProfile;
+import mark.datastore.Datastore;
+import mark.webserver.WebServer;
 
 /**
  *
  * @author Thibault Debatty
  */
 public class HTTPFrequencyIT extends TestCase {
+
     private Server server;
 
     @Override
@@ -25,13 +29,16 @@ public class HTTPFrequencyIT extends TestCase {
     public final void testFrequencyAgent()
             throws Throwable {
 
-
         System.out.println("test frequency agent");
         System.out.println("====================");
 
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller
+                = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
 
         // Configure a single data source (HTTP, Regex, file with 2k reqs)
         HashMap<String, String> parameters = new HashMap<String, String>();
@@ -51,7 +58,7 @@ public class HTTPFrequencyIT extends TestCase {
         server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(
                         getClass()
-                        .getResourceAsStream("/detection.http.frequency.yml")));
+                                .getResourceAsStream("/detection.http.frequency.yml")));
         server.start();
         server.awaitTermination();
     }

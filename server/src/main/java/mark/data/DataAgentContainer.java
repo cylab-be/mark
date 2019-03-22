@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package mark.data;
 
 import mark.core.DataAgentProfile;
@@ -39,6 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author Thibault Debatty
  */
 public class DataAgentContainer extends Thread {
+
     private final Config config;
     private final DataAgentProfile profile;
 
@@ -61,10 +61,8 @@ public class DataAgentContainer extends Thread {
         } catch (Throwable ex) {
             LoggerFactory.getLogger(
                     DataAgentContainer.class.getName()).error(
-                            "Data agent failed to run!", ex);
+                    "Data agent failed to run!", ex);
         }
     }
-
-
 
 }

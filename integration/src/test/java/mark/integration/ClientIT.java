@@ -4,19 +4,22 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import junit.framework.TestCase;
+import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
 import mark.client.Client;
 import mark.core.Evidence;
 import netrank.Link;
 import netrank.LinkAdapter;
 import mark.core.RawData;
+import mark.datastore.Datastore;
 import mark.server.Config;
 import mark.server.Server;
+import mark.webserver.WebServer;
 import org.bson.Document;
 
 /**
- * The server must be compiled and started before we can run this
- * test => integration test (and not unit test).
+ * The server must be compiled and started before we can run this test =>
+ * integration test (and not unit test).
  *
  * @author Thibault Debatty
  */
@@ -33,20 +36,24 @@ public class ClientIT extends TestCase {
     protected final void startDummyServer()
             throws Throwable {
 
-
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller
+                = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
 
         // Activate the dummy activation profile
         server.addDetectionAgent(DetectionAgentProfile.fromInputStream(
                 getClass()
-                .getResourceAsStream("/detection.dummy.yml")));
+                        .getResourceAsStream("/detection.dummy.yml")));
         server.start();
     }
 
     /**
      * Test of Test method, of class DatastoreClient.
+     *
      * @throws java.lang.Throwable
      */
     public final void testTest() throws Throwable {
@@ -124,12 +131,15 @@ public class ClientIT extends TestCase {
         // Start server with read-write activation profile
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
 
         server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(
                         getClass()
-                        .getResourceAsStream("/detection.readwrite.yml")));
+                                .getResourceAsStream("/detection.readwrite.yml")));
         server.start();
 
         // Count the original number of evidences
@@ -137,8 +147,7 @@ public class ClientIT extends TestCase {
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
         int original_count = datastore
                 .findEvidence(
-                        "detection.rw", new Link("1.2.3.4", "www.google.be"))
-                .length;
+                        "detection.rw", new Link("1.2.3.4", "www.google.be")).length;
 
         // add a data, which should trigger the rw detector
         RawData data = new RawData();
@@ -156,8 +165,7 @@ public class ClientIT extends TestCase {
 
         int final_count = datastore
                 .findEvidence(
-                        "detection.rw", new Link("1.2.3.4", "www.google.be"))
-                .length;
+                        "detection.rw", new Link("1.2.3.4", "www.google.be")).length;
 
         assertEquals(original_count + 2, final_count);
     }
@@ -171,7 +179,11 @@ public class ClientIT extends TestCase {
 
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller
+                = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
         server.start();
 
         Client datastore = new Client(
@@ -196,7 +208,11 @@ public class ClientIT extends TestCase {
 
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller
+                = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
         server.start();
 
         // Count the original number of evidences
@@ -247,10 +263,10 @@ public class ClientIT extends TestCase {
             assertEquals(
                     ex.getClass().getName(), "java.net.SocketTimeoutException");
 
-        }catch (SocketException ex) {
-          //  assertEquals(
-          //          ex.getClass().getName(), "java.net.SocketException");
-          assertTrue(true);
+        } catch (SocketException ex) {
+            //  assertEquals(
+            //          ex.getClass().getName(), "java.net.SocketException");
+            assertTrue(true);
         }
     }
 }

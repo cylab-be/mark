@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Thibault Debatty.
+ * Copyright 2019 bunyamin.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,37 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package mark.activation;
+package mark.server;
 
-import mark.core.DetectionAgentProfile;
-import mark.core.Evidence;
-import mark.core.RawData;
-import mark.core.Subject;
-import org.apache.ignite.cluster.ClusterMetrics;
+import com.google.inject.AbstractModule;
+import java.io.File;
+import java.io.FileNotFoundException;
+import mark.activation.ActivationController;
+import mark.activation.ActivationControllerInterface;
 
 /**
+ * Used for dependency injection, and avoid "new" in server code.
  *
- * @author Thibault Debatty
+ * @author Bunyamin Aslan
  */
-public interface ActivationControllerInterface<T extends Subject> {
+public class BillingModule extends AbstractModule {
 
-    /**
-     *
-     * @param evidence
-     */
-    void notifyEvidence(final Evidence<T> evidence);
+    private final File config_file;
 
-    /**
-     * Trigger required tasks for this new RawData.
-     *
-     * @param data
-     */
-    void notifyRawData(final RawData<T> data);
+    public BillingModule(File config_file) {
+        this.config_file = config_file;
+    }
 
-    public ClusterMetrics getIgniteMetrics();
-
-    public int getTaskCount();
-
-    public Iterable<DetectionAgentProfile> getProfiles();
+    @Override
+    protected void configure() {
+        bind(ActivationControllerInterface.class).
+                to(ActivationController.class);
+        try {
+            bind(Config.class).toInstance(new Config(config_file));
+        } catch (FileNotFoundException ex) {
+            //todo
+        }
+    }
 
 }
