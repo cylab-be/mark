@@ -1,7 +1,5 @@
 package mark.server;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import mark.core.InvalidProfileException;
 import java.io.File;
@@ -47,8 +45,18 @@ public class Config {
      */
     public Config(final File file)
             throws FileNotFoundException {
-        this(new FileInputStream(file));
+        this(new Yaml(new Constructor(Config.class))
+                .loadAs(new FileInputStream(file), Config.class));
         this.path = file;
+    }
+
+    public Config(Config config) {
+        this.mongo_host = config.mongo_host;
+        this.mongo_port = config.mongo_port;
+        this.mongo_db = config.mongo_db;
+        this.server_host = config.server_host;
+        this.server_port = config.server_port;
+        this.webserver_root = config.webserver_root;
     }
 
     /**
@@ -57,9 +65,9 @@ public class Config {
      *
      * @param input
      */
-    public Config(final InputStream input) {
+    public static final Config config(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
-        yaml.loadAs(input, Config.class);
+        return yaml.loadAs(input, Config.class);
     }
 
     /**
