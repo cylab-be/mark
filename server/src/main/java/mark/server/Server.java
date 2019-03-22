@@ -1,5 +1,6 @@
 package mark.server;
 
+import com.google.inject.Inject;
 import mark.core.InvalidProfileException;
 import mark.datastore.Datastore;
 import mark.core.DataAgentProfile;
@@ -31,6 +32,11 @@ import org.slf4j.LoggerFactory;
  */
 public class Server {
 
+    public interface ServerFactory {
+
+        Server create(Config config);
+    }
+
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
 
@@ -47,22 +53,24 @@ public class Server {
      * @param config
      * @throws java.lang.Throwable
      */
-    public Server(final Config config) throws Throwable {
+    @Inject
+    public Server(final Config config, final WebServer web_server,
+            final ActivationController activation_controller,
+            final Datastore datastore) throws Throwable {
         this.config = config;
 
         startLogging();
         parseConfig();
 
         LOGGER.info("Instantiate web server...");
-        this.web_server = (WebServer) config.getInstance(WebServer.class);
+        this.web_server = web_server;
 
         LOGGER.info("Instantiate activation controller "
                 + "and Apache Ignite cluster");
-        this.activation_controller = (ActivationController) config.
-                getInstance(ActivationController.class);
+        this.activation_controller = activation_controller;
 
         LOGGER.info("Instantiate Datastore...");
-        this.datastore = (Datastore) config.getInstance(Datastore.class);
+        this.datastore = datastore;
 
         LOGGER.info("Instantiate data agents...");
         this.data_agents = new LinkedList<>();

@@ -1,5 +1,7 @@
 package mark.server;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -45,12 +47,14 @@ public final class Main {
             return;
         }
 
-        Config config = new Config();
+        //Config config = new Config();
+        File config_file = null;
         if (cmd.hasOption("c")) {
-            config = Config.fromFile(new File(cmd.getOptionValue("c")));
+            config_file = new File(cmd.getOptionValue("c"));
         }
 
-        final Server server = new Server(config);
+        Injector injector = Guice.createInjector(new BillingModule(config_file));
+        final Server server = injector.getInstance(Server.class);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

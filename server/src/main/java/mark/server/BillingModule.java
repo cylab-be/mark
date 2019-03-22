@@ -24,6 +24,8 @@
 package mark.server;
 
 import com.google.inject.AbstractModule;
+import java.io.File;
+import java.io.FileNotFoundException;
 import mark.activation.ActivationController;
 import mark.activation.ActivationControllerInterface;
 
@@ -34,10 +36,21 @@ import mark.activation.ActivationControllerInterface;
  */
 public class BillingModule extends AbstractModule {
 
+    private final File config_file;
+
+    public BillingModule(File config_file) {
+        this.config_file = config_file;
+    }
+
     @Override
     protected void configure() {
         bind(ActivationControllerInterface.class).
                 to(ActivationController.class);
+        try {
+            bind(Config.class).toInstance(new Config(config_file));
+        } catch (FileNotFoundException ex) {
+            //todo
+        }
     }
 
 }

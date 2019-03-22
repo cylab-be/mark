@@ -18,6 +18,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
  *
  * @author Thibault Debatty
  */
+@Singleton
 public class Config {
 
     public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
@@ -42,14 +43,12 @@ public class Config {
      * Build a configuration from a file.
      *
      * @param file
-     * @return
      * @throws java.io.FileNotFoundException
      */
-    public static final Config fromFile(final File file)
+    public Config(final File file)
             throws FileNotFoundException {
-        Config conf = Config.fromInputStream(new FileInputStream(file));
-        conf.path = file;
-        return conf;
+        this(new FileInputStream(file));
+        this.path = file;
     }
 
     /**
@@ -57,11 +56,10 @@ public class Config {
      * jar).
      *
      * @param input
-     * @return
      */
-    public static final Config fromInputStream(final InputStream input) {
+    public Config(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
-        return yaml.loadAs(input, Config.class);
+        yaml.loadAs(input, Config.class);
     }
 
     /**
@@ -139,11 +137,6 @@ public class Config {
     public boolean ignite_autodiscovery = true;
 
     /**
-     * injector for dependency injection.
-     */
-    private Injector injector;
-
-    /**
      * Instantiate a new default configuration.
      */
     public Config() {
@@ -151,17 +144,6 @@ public class Config {
         if (this.mongo_host == null) {
             this.mongo_host = "127.0.0.1";
         }
-        this.injector = Guice.createInjector(new BillingModule());
-    }
-
-    /**
-     * Returns an instance of the assigned class in Billing module.
-     *
-     * @param c class.
-     * @return instance of the class
-     */
-    public final Object getInstance(Class c) {
-        return this.injector.getInstance(c);
     }
 
     /**
@@ -241,28 +223,28 @@ public class Config {
      * @return @throws FileNotFoundException
      */
     public final File getWebserverRoot() throws FileNotFoundException {
-        System.out.println("OK ---------- " + System.getProperty("java.class.path").split(":")[0]);
         File webroot_file = new File(webserver_root);
 
         if (!webroot_file.isAbsolute()) {
             // web root is a relative path...
             if (path == null) {
                 throw new FileNotFoundException(
-                        "webserver root is not valid: "
+                        "webserver root is not valid: bbbbbbb"
                         + webserver_root
                         + " (not a directory or not a valid path)");
             }
+
             webroot_file = new File(path.toURI().resolve(webserver_root));
         }
 
         if (!webroot_file.isDirectory()) {
             throw new FileNotFoundException(
-                    "webserver root is not valid: "
+                    "webserver root is not valid: aaaaaaa "
                     + webserver_root
                     + " (not a directory or not a valid path)");
         }
-
         return webroot_file;
+
     }
 
     public final File getLogDiretory() throws FileNotFoundException {
