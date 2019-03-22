@@ -32,11 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class Server {
 
-    public interface ServerFactory {
-
-        Server create(Config config);
-    }
-
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
 
@@ -51,6 +46,9 @@ public class Server {
      * data agents and no detection agents.
      *
      * @param config
+     * @param web_server
+     * @param activation_controller
+     * @param datastore
      * @throws java.lang.Throwable
      */
     @Inject

@@ -53,6 +53,7 @@ public final class Main {
             config_file = new File(cmd.getOptionValue("c"));
         }
 
+        //Dependency injection
         Injector injector = Guice.createInjector(new BillingModule(config_file));
         final Server server = injector.getInstance(Server.class);
 

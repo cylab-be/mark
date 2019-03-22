@@ -50,6 +50,12 @@ public class Config {
         this.path = file;
     }
 
+    /**
+     * Copy constructor used for yaml loading. TODO : Change this because
+     * hardcoding.
+     *
+     * @param config
+     */
     public Config(Config config) {
         this.mongo_host = config.mongo_host;
         this.mongo_port = config.mongo_port;
@@ -64,6 +70,7 @@ public class Config {
      * jar).
      *
      * @param input
+     * @return
      */
     public static final Config config(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));

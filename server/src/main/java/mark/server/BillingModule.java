@@ -28,28 +28,39 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import mark.activation.ActivationController;
 import mark.activation.ActivationControllerInterface;
+import org.slf4j.LoggerFactory;
 
 /**
- * Used for dependency injection, and avoid "new" in server code.
+ * Used for dependency injection, and avoid the utilization of "new".
  *
  * @author Bunyamin Aslan
  */
 public class BillingModule extends AbstractModule {
 
     private final File config_file;
+    private static final org.slf4j.Logger LOGGER
+            = LoggerFactory.getLogger(BillingModule.class);
 
+    /**
+     * Constructor of BillingModule.
+     *
+     * @param config_file used to instantiate Config.
+     */
     public BillingModule(File config_file) {
         this.config_file = config_file;
     }
 
     @Override
     protected void configure() {
+        //Associate Interface to class
         bind(ActivationControllerInterface.class).
                 to(ActivationController.class);
+        //Specific way to instantiate Config
         try {
             bind(Config.class).toInstance(new Config(config_file));
         } catch (FileNotFoundException ex) {
-            //todo
+            LOGGER.error("File not found exception :"
+                    + config_file + "not found");
         }
     }
 
