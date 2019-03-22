@@ -27,12 +27,15 @@ import com.maxmind.geoip.LookupService;
 import java.io.IOException;
 import java.util.HashMap;
 import junit.framework.TestCase;
+import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
 import netrank.FileSource;
 import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 import mark.core.DataAgentProfile;
+import mark.datastore.Datastore;
+import mark.webserver.WebServer;
 import netrank.GeoOutlier;
 
 /**
@@ -50,7 +53,7 @@ public class HTTPGeoOutlierIT extends TestCase {
         }
         super.tearDown();
     }
-    
+
     public final void testLoadGeoIP() throws IOException {
         System.out.println("test we can load the GeoIP DB from JAR");
         System.out.println("======================================");
@@ -67,7 +70,11 @@ public class HTTPGeoOutlierIT extends TestCase {
 
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller
+                = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
 
         // Configure a single data source (HTTP, Regex, file with 2k reqs)
         HashMap<String, String> parameters = new HashMap<>();

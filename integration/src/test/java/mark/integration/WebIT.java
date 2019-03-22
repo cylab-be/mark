@@ -21,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package mark.integration;
 
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -29,19 +28,22 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeading1;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.nio.file.Paths;
 import junit.framework.TestCase;
+import mark.activation.ActivationController;
+import mark.datastore.Datastore;
 import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
+import mark.webserver.WebServer;
 
 /**
  *
  * @author Thibault Debatty
  */
 public class WebIT extends TestCase {
+
     private WebClient client;
     private String base_url;
     private Server server;
-
 
     @Override
     public final void tearDown() throws Exception {
@@ -50,8 +52,7 @@ public class WebIT extends TestCase {
     }
 
     /**
-     * Tests for the homepage.
-     * - title is "Multi Agent..."
+     * Tests for the homepage. - title is "Multi Agent..."
      */
     public final void testHomepage() throws Throwable {
         System.out.println("Test Homepage");
@@ -63,7 +64,11 @@ public class WebIT extends TestCase {
                 Paths.get("").toAbsolutePath().getParent().resolve("ui")
                         .toString());
         config.adapter_class = LinkAdapter.class.getName();
-        server = new Server(config);
+        ActivationController activation_controller
+                = new ActivationController(config);
+        server = new Server(config, new WebServer(config),
+                activation_controller, new Datastore(config,
+                        activation_controller));
         server.start();
 
         client = new WebClient();
