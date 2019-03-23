@@ -1,7 +1,0 @@
----
-class_name:     netrank.ClamAVDetection
-label:          detection.upload.1w
-trigger_label:  data.smtp
-parameters:
-    server: 127.0.0.1
-    port:   3310

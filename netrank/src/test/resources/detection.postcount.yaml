@@ -1,6 +1,0 @@
----
-class_name:     netrank.POSTCount
-label:          detection.postcount.1w
-trigger_label:  data.http
-parameters: {
-}

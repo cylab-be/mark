@@ -1,7 +1,0 @@
----
-class_name:     netrank.Upload
-label:          detection.upload.1w
-trigger_label:  data.http
-parameters: {
-}
-

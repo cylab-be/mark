@@ -1,5 +1,0 @@
-# A built-in proxy server that saves requests to the datastore
-#
----
-class_name: netrank.Proxy
-label:      data.http.proxy

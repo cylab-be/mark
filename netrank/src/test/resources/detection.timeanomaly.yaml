@@ -1,5 +1,0 @@
----
-class_name:     netrank.TimeAnomaly
-label:          detection.timeanomaly.1w
-trigger_label:  data.http
-

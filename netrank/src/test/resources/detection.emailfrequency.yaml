@@ -1,4 +1,0 @@
----
-class_name:     netrank.EmailFrequency
-label:          detection.upload.1w
-trigger_label:  data.smtp

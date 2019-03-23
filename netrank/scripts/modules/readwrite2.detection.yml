@@ -1,8 +1,0 @@
-# Activate the dummy analyzis module
-# (that does nothing)
-# for every new RAM_DATA.http entry
-
----
-class_name:     mark.detection.ReadWrite
-trigger_label:  data.http
-label:          detection.readwrite2

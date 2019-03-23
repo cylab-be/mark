@@ -1,4 +1,0 @@
----
-class_name:     netrank.LanguageDetection
-label:          detection.languagedetection.1w
-trigger_label:  data.smtp

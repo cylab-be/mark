@@ -1,5 +1,0 @@
----
-class_name:     netrank.DomainAge
-label:          detection.domainage.1w
-trigger_label:  data.http
-
