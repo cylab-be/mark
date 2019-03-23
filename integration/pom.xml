@@ -40,13 +40,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>netrank</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>server</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
