@@ -8,8 +8,6 @@ import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
 import mark.client.Client;
 import mark.core.Evidence;
-import netrank.Link;
-import netrank.LinkAdapter;
 import mark.core.RawData;
 import mark.datastore.Datastore;
 import mark.server.Config;

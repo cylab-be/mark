@@ -30,7 +30,6 @@ import java.nio.file.Paths;
 import junit.framework.TestCase;
 import mark.activation.ActivationController;
 import mark.datastore.Datastore;
-import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 import mark.webserver.WebServer;
