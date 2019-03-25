@@ -8,6 +8,8 @@ import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
 import mark.client.Client;
 import mark.core.Evidence;
+import netrank.Link;
+import netrank.LinkAdapter;
 import mark.core.RawData;
 import mark.datastore.Datastore;
 import mark.server.Config;
@@ -31,16 +33,31 @@ public class ClientIT extends TestCase {
         super.tearDown();
     }
 
-    protected final void startDummyServer()
-            throws Throwable {
-
+    /**
+     * Set up normal server.
+     *
+     * @return server.
+     * @throws Throwable
+     */
+    protected final Server getServer() throws Throwable {
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
         ActivationController activation_controller
                 = new ActivationController(config);
-        server = new Server(config, new WebServer(config),
+        return new Server(config, new WebServer(config),
                 activation_controller, new Datastore(config,
                         activation_controller));
+    }
+
+    /**
+     * Set up and start dummy server.
+     *
+     * @throws Throwable
+     */
+    protected final void startDummyServer()
+            throws Throwable {
+
+        server = getServer();
 
         // Activate the dummy activation profile
         server.addDetectionAgent(DetectionAgentProfile.fromInputStream(
@@ -127,13 +144,7 @@ public class ClientIT extends TestCase {
         System.out.println("============================================");
 
         // Start server with read-write activation profile
-        Config config = Config.getTestConfig();
-        config.adapter_class = LinkAdapter.class.getName();
-        ActivationController activation_controller = new ActivationController(config);
-        server = new Server(config, new WebServer(config),
-                activation_controller, new Datastore(config,
-                        activation_controller));
-
+        server = getServer();
         server.addDetectionAgent(
                 DetectionAgentProfile.fromInputStream(
                         getClass()
@@ -175,13 +186,7 @@ public class ClientIT extends TestCase {
         System.out.println("findRawData(Bson.Document)");
         System.out.println("==========================");
 
-        Config config = Config.getTestConfig();
-        config.adapter_class = LinkAdapter.class.getName();
-        ActivationController activation_controller
-                = new ActivationController(config);
-        server = new Server(config, new WebServer(config),
-                activation_controller, new Datastore(config,
-                        activation_controller));
+        server = getServer();
         server.start();
 
         Client datastore = new Client(
@@ -204,13 +209,7 @@ public class ClientIT extends TestCase {
         System.out.println("findEvidence, test we get the most recent");
         System.out.println("=========================================");
 
-        Config config = Config.getTestConfig();
-        config.adapter_class = LinkAdapter.class.getName();
-        ActivationController activation_controller
-                = new ActivationController(config);
-        server = new Server(config, new WebServer(config),
-                activation_controller, new Datastore(config,
-                        activation_controller));
+        server = getServer();
         server.start();
 
         // Count the original number of evidences

@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import junit.framework.TestCase;
 import mark.activation.ActivationController;
 import mark.datastore.Datastore;
+import netrank.LinkAdapter;
 import mark.server.Config;
 import mark.server.Server;
 import mark.webserver.WebServer;
@@ -57,6 +58,7 @@ public class WebIT extends TestCase {
         System.out.println("Test Homepage");
         System.out.println("=============");
 
+        //Set up config and server
         Config config = Config.getTestConfig();
         config.start_webserver = true;
         config.setWebserverRoot(
