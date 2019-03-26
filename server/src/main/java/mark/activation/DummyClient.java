@@ -31,10 +31,12 @@ import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.ServerInterface;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
- * A fake connection to MARK server, can be used for testing and debugging.
- * It will simply return fake data, and write out what it receives...
+ * A fake connection to MARK server, can be used for testing and debugging. It
+ * will simply return fake data, and write out what it receives...
+ *
  * @author Thibault Debatty
  */
 public class DummyClient<T extends Subject> implements ServerInterface<T> {
@@ -53,6 +55,12 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
     public void addEvidence(Evidence evidence) throws Throwable {
         System.out.println(evidence);
+    }
+
+    @Override
+    public ObjectId addFile(byte[] bytes, String filename) throws Throwable {
+        System.out.println(bytes);
+        return null;
     }
 
     private static final int N_APT = 1000;
@@ -132,4 +140,5 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     public RawData[] findData(Document query) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
 }

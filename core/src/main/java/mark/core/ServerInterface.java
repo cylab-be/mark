@@ -2,22 +2,22 @@ package mark.core;
 
 import java.net.URL;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
- * Interface defining all methods provided by the server.
- * These are implemented by the client and server packages.
+ * Interface defining all methods provided by the server. These are implemented
+ * by the client and server packages.
  *
  * @author Thibault Debatty
- * @param <T> The type of data that this server is dealing with (can be a
- * link between between a local computer and a server on the internet, or
- * a person, etc.).
+ * @param <T> The type of data that this server is dealing with (can be a link
+ * between between a local computer and a server on the internet, or a person,
+ * etc.).
  */
 public interface ServerInterface<T extends Subject> {
 
     /**
      *
-     * @return
-     * @throws java.lang.Throwable if request fails
+     * @return @throws java.lang.Throwable if request fails
      */
     String test() throws Throwable;
 
@@ -45,6 +45,15 @@ public interface ServerInterface<T extends Subject> {
 
     /**
      *
+     * @param bytes
+     * @param filename
+     * @return ObjectId in mongodb of the added file.
+     * @throws Throwable if request fails
+     */
+    ObjectId addFile(byte[] bytes, String filename) throws Throwable;
+
+    /**
+     *
      * @param type
      * @param subject
      * @return
@@ -64,6 +73,7 @@ public interface ServerInterface<T extends Subject> {
     /**
      * Find evidence of given label, for all subjects. Useful for displaying
      * ranked list of subjects.
+     *
      * @param label
      * @return
      * @throws java.lang.Throwable if request fails
@@ -72,6 +82,7 @@ public interface ServerInterface<T extends Subject> {
 
     /**
      * Get a single evidence by id.
+     *
      * @param id
      * @return
      * @throws Throwable if request fails
@@ -86,8 +97,8 @@ public interface ServerInterface<T extends Subject> {
 
     /**
      * Find the evidences according to a pattern (that start with provided
-     * pattern), and if multiple evidences are found with same label, return
-     * the most recent one.
+     * pattern), and if multiple evidences are found with same label, return the
+     * most recent one.
      *
      * @param label
      * @param subject
@@ -100,6 +111,7 @@ public interface ServerInterface<T extends Subject> {
     /**
      * Search for data with a custom filter (don't forget to mention a label,
      * for example).
+     *
      * @param query
      * @return
      * @throws Throwable if an error occured

@@ -1,9 +1,11 @@
 package mark.datastore;
 
-import com.google.inject.Inject;
 import com.mongodb.client.FindIterable;
 import mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.gridfs.GridFSBucket;
+import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSUploadStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +30,13 @@ public class RequestHandler implements ServerInterface {
 
     private static final String COLLECTION_DATA = "DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
+    private static final String COLLECTION_FILES = "FILES";
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(RequestHandler.class);
 
     private final MongoDatabase mongodb;
+    private final GridFSBucket gridfsbucket;
     private final ActivationControllerInterface activation_controller;
     private final SubjectAdapter adapter;
 
@@ -49,6 +53,7 @@ public class RequestHandler implements ServerInterface {
         this.mongodb = mongodb;
         this.activation_controller = activation_controller;
         this.adapter = adapter;
+        this.gridfsbucket = GridFSBuckets.create(mongodb, COLLECTION_FILES);
 
         // Create indexes for LABEL and TIME
         Document index = new Document(LABEL, 1);
@@ -148,6 +153,18 @@ public class RequestHandler implements ServerInterface {
                 .insertOne(convert(evidence));
 
         activation_controller.notifyEvidence(evidence);
+    }
+
+    @Override
+    public ObjectId addFile(final byte[] bytes, final String filename)
+            throws Throwable {
+        ObjectId file_id;
+        try (GridFSUploadStream uploadStream
+                = this.gridfsbucket.openUploadStream(filename)) {
+            uploadStream.write(bytes);
+            file_id = uploadStream.getObjectId();
+        }
+        return file_id;
     }
 
     /**
@@ -385,4 +402,5 @@ public class RequestHandler implements ServerInterface {
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
     }
+
 }
