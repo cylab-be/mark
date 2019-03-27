@@ -20,6 +20,7 @@ import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.SubjectAdapter;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  *
@@ -50,8 +51,8 @@ public class Client<T extends Subject> implements ServerInterface {
                 Evidence.class, new EvidenceDeserializer(adapter));
         mapper.registerModule(module);
 
-        datastore =
-                new JsonRpcHttpClient(
+        datastore
+                = new JsonRpcHttpClient(
                         mapper, server_url, new HashMap<String, String>());
         datastore.setConnectionTimeoutMillis(CONNECTION_TIMEOUT);
 
@@ -74,6 +75,17 @@ public class Client<T extends Subject> implements ServerInterface {
 
         datastore.invoke("addRawData", new Object[]{data});
 
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param bytes {@inheritDoc}
+     */
+    public final ObjectId addFile(final byte[] bytes, final String filename)
+            throws Throwable {
+        return datastore.invoke(
+                "addFile", new Object[]{bytes, filename}, ObjectId.class);
     }
 
     /**
@@ -131,6 +143,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
     /**
      * Find a single evidence by id or throw an exception (if id is invalid).
+     *
      * @param id
      * @return
      * @throws Throwable
@@ -157,6 +170,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
     /**
      * {@inheritDoc}
+     *
      * @param label
      * @return
      * @throws Throwable
@@ -184,10 +198,9 @@ public class Client<T extends Subject> implements ServerInterface {
         return this.server_url;
     }
 
-
-
     /**
      * Helper class to deserialize raw data, using the subject adapter.
+     *
      * @param <T>
      */
     private static class RawDataDezerializer<T extends Subject>
@@ -218,6 +231,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
     /**
      * Helper class to deserialize evidence, using subject adapter.
+     *
      * @param <T>
      */
     private static class EvidenceDeserializer

@@ -2,15 +2,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>info.debatty.mark</groupId>
+        <groupId>be.cylab.mark</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.10-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>server</artifactId>
     <packaging>jar</packaging>
     <name>server</name>
+    <description>The main MARK server.</description>
 
     <build>
         <plugins>
@@ -73,14 +74,6 @@
     </build>
 
     <dependencies>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>client</artifactId>
@@ -89,7 +82,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
-            <version>0.0.10-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -201,14 +194,6 @@
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>info.debatty</groupId>
-            <artifactId>java-aggregation</artifactId>
-            <version>0.2</version>
-        </dependency>
-        -->
 
         <dependency>
             <groupId>org.yaml</groupId>

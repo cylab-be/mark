@@ -2,9 +2,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>info.debatty.mark</groupId>
+        <groupId>be.cylab.mark</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.10-SNAPSHOT</version>
+        <version>0.0.12-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
