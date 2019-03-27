@@ -23,6 +23,7 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterMetrics;
+import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.collision.fifoqueue.FifoQueueCollisionSpi;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
@@ -72,6 +73,14 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
         ignite_config.setClientMode(!config.ignite_start_server);
 
         ignite_config.setCollisionSpi(new FifoQueueCollisionSpi());
+        
+        // Changing total RAM size to be used by Ignite Node.
+        DataStorageConfiguration storage_config =
+                new DataStorageConfiguration();
+        // Setting the size of the default memory region to 
+        storage_config.getDefaultDataRegionConfiguration().setMaxSize(
+            8L * 1024 * 1024 * 1024);
+        ignite_config.setDataStorageConfiguration(storage_config);
 
         if (!config.ignite_autodiscovery) {
             // Disable autodiscovery
