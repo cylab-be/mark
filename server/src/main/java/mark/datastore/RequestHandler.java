@@ -5,6 +5,7 @@ import mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;
+import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.GridFSUploadStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -165,6 +166,18 @@ public class RequestHandler implements ServerInterface {
             file_id = uploadStream.getObjectId();
         }
         return file_id;
+    }
+
+    @Override
+    public byte[] findFile(ObjectId file_id) throws Throwable {
+        byte[] data;
+        try (GridFSDownloadStream downloadStream
+                = this.gridfsbucket.openDownloadStream(file_id)) {
+            int fileLength = (int) downloadStream.getGridFSFile().getLength();
+            data = new byte[fileLength];
+            downloadStream.read(data);
+        }
+        return data;
     }
 
     /**
