@@ -141,4 +141,9 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public byte[] findFile(ObjectId file_id) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

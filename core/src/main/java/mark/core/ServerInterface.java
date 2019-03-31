@@ -54,6 +54,14 @@ public interface ServerInterface<T extends Subject> {
 
     /**
      *
+     * @param file_id
+     * @return byte[].
+     * @throws Throwable if request fails.
+     */
+    byte[] findFile(ObjectId file_id) throws Throwable;
+
+    /**
+     *
      * @param type
      * @param subject
      * @return
