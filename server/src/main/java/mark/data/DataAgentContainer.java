@@ -45,16 +45,12 @@ public class DataAgentContainer extends Thread {
     public DataAgentContainer(
             final DataAgentProfile profile, final Config config) {
         this.profile = profile;
-        System.out.println("Constructor data agent ------------------");
-        System.out.println("------------------------------------------------");
-        System.out.println("DATA AGENT PROFILE : " + profile.class_name);
         this.config = config;
     }
 
     @Override
     public final void run() {
         try {
-            System.out.println("DATA AGENT EN TRAIN DE RUN ------------------");
             DataAgentInterface source = profile.createInstance();
             source.run(
                     profile,

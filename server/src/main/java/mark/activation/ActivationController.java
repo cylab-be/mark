@@ -63,7 +63,6 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
     @Inject
     public ActivationController(final Config config)
             throws InvalidProfileException {
-        System.out.println("CONSTR ACTIVATIONCONTROLLER OUI");
         this.config = config;
         this.profiles = new LinkedList<>();
 
