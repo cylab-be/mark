@@ -13,3 +13,5 @@ server_port:    8080
 webserver_root: ./ui
 log_directory:  ./logs
 modules:        ./modules
+
+adapter_class:  mark.server.DummySubjectAdapter

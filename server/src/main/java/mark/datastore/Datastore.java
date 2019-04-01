@@ -44,6 +44,7 @@ public class Datastore {
             final Config config,
             final ActivationControllerInterface activation_controller)
             throws InvalidProfileException {
+        System.out.println("CONSTR DATASTORE OUI");
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
                 config.mongo_host, config.mongo_port);
@@ -52,12 +53,12 @@ public class Datastore {
         if (config.mongo_clean) {
             mongodb.drop();
         }
-
+        System.out.println("DATASTORE");
         // Create and run HTTP / JSON-RPC server
         RequestHandler datastore_handler = new RequestHandler(
                 mongodb,
                 activation_controller,
-                config.getSubjectAdapter());
+                config.getSubjectAdapter()); //HERE IS PROBLEM
 
         ObjectMapper object_mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();

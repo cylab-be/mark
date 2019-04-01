@@ -11,3 +11,5 @@ server_host:    127.0.0.1
 server_port:    8080
 
 webserver_root: ../../ui
+
+adapter_class:  mark.server.DummySubjectAdapter

@@ -8,7 +8,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.core.SubjectAdapter;
+import mark.data.DataAgentContainer;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -63,6 +67,13 @@ public class Config {
         this.server_host = config.server_host;
         this.server_port = config.server_port;
         this.webserver_root = config.webserver_root;
+        this.adapter_class = config.adapter_class;
+        if (config.log_directory != null) {
+            this.log_directory = config.log_directory;
+        }
+        if (config.modules != null) {
+            this.modules = config.modules;
+        }
     }
 
     /**
@@ -184,13 +195,35 @@ public class Config {
      */
     public final SubjectAdapter getSubjectAdapter()
             throws InvalidProfileException {
-        try {
-            return (SubjectAdapter) Class.forName(adapter_class).newInstance();
-        } catch (ClassNotFoundException
-                | InstantiationException
-                | IllegalAccessException ex) {
-            throw new InvalidProfileException("Adapter class is invalid", ex);
+        if (adapter_class.equals(DEFAULT_ADAPTER)) {
+            try {
+                return (SubjectAdapter) Class.forName(adapter_class).
+                        newInstance();
+            } catch (ClassNotFoundException
+                    | InstantiationException
+                    | IllegalAccessException ex) {
+                //DEBUG TODO
+                System.out.println("ERREUR : ----------------------------------"
+                        + " ");
+                ex.printStackTrace();
+                throw new InvalidProfileException("Adapter class is invalid",
+                        ex);
+            }
+        } else {
+            try {
+                URLClassLoader child = new URLClassLoader(
+                        new URL[]{new URL(""
+                                    + "../modules/masfad-0.0.1-SNAPSHOT.jar")},
+                        DataAgentContainer.class.getClassLoader());
+                Class<?> clazz = Class.forName("LinkAdapter", true, child);
+                return (SubjectAdapter) clazz.newInstance();
+            } catch (ClassNotFoundException | MalformedURLException
+                    | InstantiationException
+                    | IllegalAccessException ex) {
+                ex.printStackTrace();
+            }
         }
+        return null;
     }
 
     @Override

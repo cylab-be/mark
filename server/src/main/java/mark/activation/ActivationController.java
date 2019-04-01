@@ -63,7 +63,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
     @Inject
     public ActivationController(final Config config)
             throws InvalidProfileException {
-
+        System.out.println("CONSTR ACTIVATIONCONTROLLER OUI");
         this.config = config;
         this.profiles = new LinkedList<>();
 
@@ -158,7 +158,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
                                     "Trigger detector {} for subject {}",
                                     detector_label,
                                     subject.toString());
-
+                            System.out.println("ACTIVATION CONTROLLER");
                             executor_service.submit(
                                     new DetectionAgentContainer(
                                             subject,
