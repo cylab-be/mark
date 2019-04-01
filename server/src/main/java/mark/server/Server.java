@@ -1,12 +1,14 @@
 package mark.server;
 
 import com.google.inject.Inject;
+import java.io.BufferedReader;
 import mark.core.InvalidProfileException;
 import mark.datastore.Datastore;
 import mark.core.DataAgentProfile;
 import mark.webserver.WebServer;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -58,7 +60,6 @@ public class Server {
         this.config = config;
 
         startLogging();
-        parseConfig();
 
         LOGGER.info("Instantiate web server...");
         this.web_server = web_server;
@@ -91,14 +92,13 @@ public class Server {
                 return name.endsWith(".data.yml");
             }
         });
-
+        //Instanciate DataAgentProfiles for each previously parsed files.
         for (File file : data_agent_files) {
             data_agents.add(
                     new DataAgentContainer(
                             DataAgentProfile.fromFile(file),
                             config));
         }
-
         // Parse *.detection.yml files
         File[] detection_agent_files
                 = modules_dir.listFiles(new FilenameFilter() {
@@ -180,48 +180,6 @@ public class Server {
 
         LOGGER.info("Wait for activation controller to finish running tasks...");
         activation_controller.awaitTermination();
-    }
-
-    /**
-     * Analyze the module folder. - modify the class path - parse data agent
-     * profiles - parse detection agent profiles
-     *
-     * @throws MalformedURLException
-     */
-    private void parseConfig()
-            throws MalformedURLException, FileNotFoundException,
-            ClassNotFoundException, InstantiationException,
-            IllegalAccessException, NoSuchMethodException,
-            IllegalArgumentException, InvocationTargetException,
-            InvalidProfileException {
-
-        LOGGER.info("Parse configuration...");
-        File modules_dir;
-        try {
-            modules_dir = config.getModulesDirectory();
-        } catch (FileNotFoundException ex) {
-            LOGGER.warn(ex.getMessage());
-            return;
-        }
-
-        // List *.jar and update the class path
-        // this is a hack that allows to modify the global (system) class
-        // loader.
-        URLClassLoader class_loader
-                = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Method method = URLClassLoader.class.getDeclaredMethod(
-                "addURL", URL.class);
-        method.setAccessible(true);
-
-        File[] jar_files = modules_dir.listFiles(new FilenameFilter() {
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".jar");
-            }
-        });
-
-        for (File jar_file : jar_files) {
-            method.invoke(class_loader, jar_file.toURI().toURL());
-        }
     }
 
     /**

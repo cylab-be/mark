@@ -91,6 +91,17 @@ public class Client<T extends Subject> implements ServerInterface {
     /**
      * {@inheritDoc}
      *
+     * @param file_id {@inheritDoc}
+     */
+    @Override
+    public byte[] findFile(ObjectId file_id) throws Throwable {
+        return datastore.invoke(
+                "findFile", new Object[]{file_id}, byte[].class);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @param data {@inheritDoc}
      */
     public final void testString(final String data) throws Throwable {

@@ -5,10 +5,14 @@ import mark.core.InvalidProfileException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import mark.core.SubjectAdapter;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -36,6 +40,8 @@ public class Config {
 
     private static final int DEFAULT_WEB_PORT = 8000;
     private static final String DEFAULT_WEB_ROOT = "../ui";
+    private static final org.slf4j.Logger LOGGER
+            = LoggerFactory.getLogger(Config.class);
 
     /**
      * Build a configuration from a file.
@@ -48,6 +54,7 @@ public class Config {
         this(new Yaml(new Constructor(Config.class))
                 .loadAs(new FileInputStream(file), Config.class));
         this.path = file;
+        parseConfig();
     }
 
     /**
@@ -56,13 +63,20 @@ public class Config {
      *
      * @param config
      */
-    public Config(Config config) {
+    private Config(Config config) {
         this.mongo_host = config.mongo_host;
         this.mongo_port = config.mongo_port;
         this.mongo_db = config.mongo_db;
         this.server_host = config.server_host;
         this.server_port = config.server_port;
         this.webserver_root = config.webserver_root;
+        this.adapter_class = config.adapter_class;
+        if (config.log_directory != null) {
+            this.log_directory = config.log_directory;
+        }
+        if (config.modules != null) {
+            this.modules = config.modules;
+        }
     }
 
     /**
@@ -185,11 +199,13 @@ public class Config {
     public final SubjectAdapter getSubjectAdapter()
             throws InvalidProfileException {
         try {
-            return (SubjectAdapter) Class.forName(adapter_class).newInstance();
+            return (SubjectAdapter) Class.forName(adapter_class).
+                    newInstance();
         } catch (ClassNotFoundException
                 | InstantiationException
                 | IllegalAccessException ex) {
-            throw new InvalidProfileException("Adapter class is invalid", ex);
+            throw new InvalidProfileException("Adapter class is invalid",
+                    ex);
         }
     }
 
@@ -288,5 +304,42 @@ public class Config {
         }
 
         return logdir_file;
+    }
+
+    /**
+     * Analyze the module folder. - modify the class path - parse data agent
+     * profiles - parse detection agent profiles
+     *
+     * @throws MalformedURLException
+     */
+    private void parseConfig() {
+
+        LOGGER.info("Parse configuration...");
+
+        // List *.jar and update the class path
+        // this is a hack that allows to modify the global (system) class
+        // loader.
+        try {
+            URLClassLoader class_loader
+                    = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Method method = URLClassLoader.class.getDeclaredMethod(
+                    "addURL", URL.class);
+            method.setAccessible(true);
+
+            File[] jar_files;
+            jar_files = this.getModulesDirectory()
+                    .listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(final File dir, final String name) {
+                            return name.endsWith(".jar");
+                        }
+                    });
+
+            for (File jar_file : jar_files) {
+                method.invoke(class_loader, jar_file.toURI().toURL());
+            }
+        } catch (Throwable exc) {
+            exc.printStackTrace();
+        }
     }
 }
