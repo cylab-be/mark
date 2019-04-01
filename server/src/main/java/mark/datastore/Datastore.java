@@ -52,7 +52,6 @@ public class Datastore {
         if (config.mongo_clean) {
             mongodb.drop();
         }
-
         // Create and run HTTP / JSON-RPC server
         RequestHandler datastore_handler = new RequestHandler(
                 mongodb,
