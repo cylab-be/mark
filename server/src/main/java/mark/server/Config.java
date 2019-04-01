@@ -7,10 +7,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mark.core.SubjectAdapter;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -23,31 +27,152 @@ import org.yaml.snakeyaml.constructor.Constructor;
 @Singleton
 public class Config {
 
-    public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
-
-    private static final int DEFAULT_UPDATE_INTERVAL = 10;
-    private static final String DEFAULT_MONGO_DB = "MARK";
+    /**
+     * Datastore HTTP/JSON-RPC server parameters : max threads.
+     */
+    public int max_threads = DEFAULT_MAX_THREADS;
     private static final int DEFAULT_MAX_THREADS = 100;
-    private static final int TEST_MAX_THREADS = 9;
+
+    /**
+     * Datastore HTTP/JSON-RPC server parameters : min threads.
+     */
+    public int min_threads = DEFAULT_MIN_THREADS;
     private static final int DEFAULT_MIN_THREADS = 4;
+
+    /**
+     * Datastore HTTP/JSON-RPC server parameters : idle timeout.
+     */
+    public int idle_timeout = DEFAULT_IDLE_TIMEOUT;
     private static final int DEFAULT_IDLE_TIMEOUT = 60;
+
+    /**
+     * Server host IP.
+     */
+    public String server_host = DEFAULT_SERVER_HOST;
     private static final String DEFAULT_SERVER_HOST = "127.0.0.1";
+
+    /**
+     * Server host Port.
+     */
+    public int server_port = DEFAULT_SERVER_PORT;
     private static final int DEFAULT_SERVER_PORT = 8080;
+
+    /**
+     * Server max pending requests.
+     */
+    public int max_pending_requests = DEFAULT_MAX_PENDING_REQUESTS;
     private static final int DEFAULT_MAX_PENDING_REQUESTS = 200;
+
+    /**
+     * Folder containing modules: jar files (if any) and activation files.
+     */
+    public String modules = DEFAULT_MODULES;
     private static final String DEFAULT_MODULES = "./modules";
 
-    private static final String DEFAULT_ADAPTER = "mark.server.DummySubjectAdapter";
+    /**
+     * Adapter class to use.
+     */
+    public String adapter_class = DEFAULT_ADAPTER_CLASS;
+    private static final String DEFAULT_ADAPTER_CLASS
+            = "mark.server.DummySubjectAdapter";
 
-    private static final int DEFAULT_WEB_PORT = 8000;
+    /**
+     * Webserver port.
+     */
+    public int webserver_port = DEFAULT_WEBSERVER_PORT;
+    private static final int DEFAULT_WEBSERVER_PORT = 8000;
+
+    /**
+     * update interval.
+     */
+    public int update_interval = DEFAULT_UPDATE_INTERVAL;
+    private static final int DEFAULT_UPDATE_INTERVAL = 10;
+
+    /**
+     * Start (or not) the integrated webserver. Can be disabled for testing, for
+     * example...
+     */
+    public boolean start_webserver = DEFAULT_START_WEBSERVER;
+    private static final boolean DEFAULT_START_WEBSERVER = true;
+
+    /**
+     * Web root path.
+     */
+    public String webserver_root = DEFAULT_WEB_ROOT;
     private static final String DEFAULT_WEB_ROOT = "../ui";
+
+    /**
+     * Empty the MONGO database before starting (useful for testing).
+     */
+    public boolean mongo_clean = DEFAULT_MONGO_CLEAN;
+    private static final boolean DEFAULT_MONGO_CLEAN = false;
+
+    /**
+     * MONGODB parameter : host.
+     */
+    public String mongo_host = DEFAULT_MONGO_HOST;
+    private static final String DEFAULT_MONGO_HOST = "127.0.0.1";
+
+    /**
+     * MONGODB parameter : port.
+     */
+    public int mongo_port = DEFAULT_MONGO_PORT;
+    private static final int DEFAULT_MONGO_PORT = 27017;
+
+    /**
+     * MONGODB parameter : db name.
+     */
+    public String mongo_db = DEFAULT_MONGO_DB;
+    private static final String DEFAULT_MONGO_DB = "MARK";
+
+    /**
+     * Start a local ignite server. Useful for testing or small installation, to
+     * execute the detection tasks on the same server.
+     */
+    public boolean ignite_start_server = DEFAULT_IGNITE_START_SERVER;
+    private static boolean DEFAULT_IGNITE_START_SERVER = true;
+
+    /**
+     * Enable ignite autodiscovery. Disabling is useful for testing or small
+     * setups.
+     */
+    public boolean ignite_autodiscovery = DEFAULT_IGNITE_AUTODISCOVERY;
+    private static boolean DEFAULT_IGNITE_AUTODISCOVERY = true;
+
+    /**
+     * module directory path.
+     */
+    public String log_directory = DEFAULT_LOG_DIRECTORY;
+    private static final String DEFAULT_LOG_DIRECTORY = "./modules";
+
+    /**
+     * Env variable for tests.
+     */
+    public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
+
+    /**
+     * Logger.
+     */
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(Config.class);
+
+    /**
+     * Max threads for tests.
+     */
+    private static final int TEST_MAX_THREADS = 9;
+
+    /**
+     * The path to this actual configuration file. Useful as some path are
+     * relative to this config file...
+     */
+    private File path;
 
     /**
      * Build a configuration from a file.
      *
      * @param file
      * @throws java.io.FileNotFoundException
+     * @throws java.lang.NoSuchFieldException
      */
     public Config(final File file)
             throws FileNotFoundException {
@@ -58,24 +183,26 @@ public class Config {
     }
 
     /**
-     * Copy constructor used for yaml loading. TODO : Change this because
-     * hardcoding.
+     * Generic copy constructor only for non static attributes.
      *
      * @param config
      */
     private Config(Config config) {
-        this.mongo_host = config.mongo_host;
-        this.mongo_port = config.mongo_port;
-        this.mongo_db = config.mongo_db;
-        this.server_host = config.server_host;
-        this.server_port = config.server_port;
-        this.webserver_root = config.webserver_root;
-        this.adapter_class = config.adapter_class;
-        if (config.log_directory != null) {
-            this.log_directory = config.log_directory;
-        }
-        if (config.modules != null) {
-            this.modules = config.modules;
+        for (Field field : config.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            try {
+                field.setAccessible(true);
+                this.getClass().getDeclaredField(field.getName()).
+                        setAccessible(true);
+                field.set(this, field.get(config));
+            } catch (SecurityException
+                    | IllegalArgumentException
+                    | IllegalAccessException
+                    | NoSuchFieldException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -109,69 +236,12 @@ public class Config {
     }
 
     /**
-     * The path to this actual configuration file. Useful as some path are
-     * relative to this config file...
-     */
-    private File path;
-
-    /**
-     * Folder containing modules: jar files (if any) and activation files.
-     */
-    public String modules = DEFAULT_MODULES;
-
-    public String adapter_class = DEFAULT_ADAPTER;
-
-    public String log_directory = null;
-
-    //
-    public int update_interval = DEFAULT_UPDATE_INTERVAL;
-
-    // Datastore HTTP/JSON-RPC server parameters
-    public int max_threads = DEFAULT_MAX_THREADS;
-    public int min_threads = DEFAULT_MIN_THREADS;
-    public int idle_timeout = DEFAULT_IDLE_TIMEOUT;
-    public String server_host = DEFAULT_SERVER_HOST;
-    public int server_port = DEFAULT_SERVER_PORT;
-    public int max_pending_requests = DEFAULT_MAX_PENDING_REQUESTS;
-
-    /**
-     * Start (or not) the integrated webserver. Can be disabled for testing, for
-     * example...
-     */
-    public boolean start_webserver = true;
-
-    public int webserver_port = DEFAULT_WEB_PORT;
-    public String webserver_root = DEFAULT_WEB_ROOT;
-
-    // MONGODB parameters
-    public String mongo_host;
-    public int mongo_port = 27017;
-    public String mongo_db = DEFAULT_MONGO_DB;
-
-    /**
-     * Empty the MONGO database before starting (useful for testing).
-     */
-    public boolean mongo_clean = false;
-
-    /**
-     * Start a local ignite server. Useful for testing or small installation, to
-     * execute the detection tasks on the same server.
-     */
-    public boolean ignite_start_server = true;
-
-    /**
-     * Enable ignite autodiscovery. Disabling is useful for testing or small
-     * setups.
-     */
-    public boolean ignite_autodiscovery = true;
-
-    /**
      * Instantiate a new default configuration.
      */
     public Config() {
         this.mongo_host = System.getenv(ENV_MONGO_HOST);
         if (this.mongo_host == null) {
-            this.mongo_host = "127.0.0.1";
+            this.mongo_host = DEFAULT_MONGO_HOST;
         }
     }
 
@@ -260,7 +330,7 @@ public class Config {
             // web root is a relative path...
             if (path == null) {
                 throw new FileNotFoundException(
-                        "webserver root is not valid: bbbbbbb"
+                        "webserver root is not valid: "
                         + webserver_root
                         + " (not a directory or not a valid path)");
             }
@@ -270,7 +340,7 @@ public class Config {
 
         if (!webroot_file.isDirectory()) {
             throw new FileNotFoundException(
-                    "webserver root is not valid: aaaaaaa "
+                    "webserver root is not valid: "
                     + webserver_root
                     + " (not a directory or not a valid path)");
         }
