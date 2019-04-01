@@ -56,7 +56,7 @@ public class Datastore {
         RequestHandler datastore_handler = new RequestHandler(
                 mongodb,
                 activation_controller,
-                config.getSubjectAdapter()); //HERE IS PROBLEM
+                config.getSubjectAdapter());
 
         ObjectMapper object_mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
