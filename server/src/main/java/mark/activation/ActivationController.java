@@ -78,7 +78,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
                 new DataStorageConfiguration();
         // Setting the size of the default memory region to 
         storage_config.getDefaultDataRegionConfiguration().setMaxSize(
-            8L * 1024 * 1024 * 1024);
+            12L * 1024 * 1024 * 1024);
         ignite_config.setDataStorageConfiguration(storage_config);
 
         if (!config.ignite_autodiscovery) {
