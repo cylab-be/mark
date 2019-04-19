@@ -125,4 +125,16 @@ public interface ServerInterface<T extends Subject> {
      * @throws Throwable if an error occured
      */
     RawData[] findData(Document query) throws Throwable;
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    Object getFromCache(String key) throws Throwable;
+
+    void storeInCache(String key, Object value) throws Throwable;
+
+    boolean compareAndSwapInCache(String key, Object new_value,
+            Object old_value) throws Throwable;
 }

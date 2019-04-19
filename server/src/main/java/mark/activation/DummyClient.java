@@ -146,4 +146,19 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public Object getFromCache(String key) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void storeInCache(String key, Object value) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean compareAndSwapInCache(String key, Object new_value, Object old_value) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

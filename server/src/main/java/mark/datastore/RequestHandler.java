@@ -41,6 +41,9 @@ public class RequestHandler implements ServerInterface {
     private final ActivationControllerInterface activation_controller;
     private final SubjectAdapter adapter;
 
+    //Cache
+    private final HashMap<String, Object> agents_cache;
+
     /**
      *
      * @param mongodb
@@ -51,6 +54,7 @@ public class RequestHandler implements ServerInterface {
             final ActivationControllerInterface activation_controller,
             final SubjectAdapter adapter) {
 
+        this.agents_cache = new HashMap();
         this.mongodb = mongodb;
         this.activation_controller = activation_controller;
         this.adapter = adapter;
@@ -414,6 +418,29 @@ public class RequestHandler implements ServerInterface {
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
+    }
+
+    @Override
+    public Object getFromCache(String key) throws Throwable {
+        return this.agents_cache.get(key);
+    }
+
+    @Override
+    public void storeInCache(String key, Object value) throws Throwable {
+        this.agents_cache.put(key, value);
+    }
+
+    @Override
+    public boolean compareAndSwapInCache(String key, Object new_value, Object old_value) throws Throwable {
+        boolean swaped = false;
+        synchronized (agents_cache) {
+            Object current = agents_cache.get(key);
+            if (current.equals(old_value)) {
+                agents_cache.put(key, new_value);
+                swaped = true;
+            }
+        }
+        return swaped;
     }
 
 }

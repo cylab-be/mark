@@ -209,6 +209,26 @@ public class Client<T extends Subject> implements ServerInterface {
         return this.server_url;
     }
 
+    @Override
+    public Object getFromCache(String key) throws Throwable {
+        return datastore.invoke(
+                "getFromCache", new Object[]{key}, Object.class);
+    }
+
+    @Override
+    public void storeInCache(String key, Object value) throws Throwable {
+        datastore.invoke(
+                "storeInCache", new Object[]{key, value}, Object.class);
+    }
+
+    @Override
+    public boolean compareAndSwapInCache(String key,
+            Object new_value, Object old_value) throws Throwable {
+        return datastore.invoke(
+                "compareAndSwapInCache",
+                new Object[]{key, new_value, old_value}, Boolean.class);
+    }
+
     /**
      * Helper class to deserialize raw data, using the subject adapter.
      *
