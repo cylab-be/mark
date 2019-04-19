@@ -127,14 +127,33 @@ public interface ServerInterface<T extends Subject> {
     RawData[] findData(Document query) throws Throwable;
 
     /**
+     * get value from cache represented by a map.
      *
-     * @param key
-     * @return
+     * @param key to get value.
+     * @return value.
      */
     Object getFromCache(String key) throws Throwable;
 
+    /**
+     * Store the value in the cache with the key key.
+     *
+     * @param key to store value.
+     * @param value to store.
+     * @throws Throwable if any problems happens.
+     */
     void storeInCache(String key, Object value) throws Throwable;
 
+    /**
+     * Compare and swap verify if the current stored value in the cache is
+     * equals to old_value. Since multiple agents can get access to the cache,
+     * We do this verification to not overwrite new values from other agents.
+     *
+     * @param key to store new value.
+     * @param new_value to be stored.
+     * @param old_value to verify current value.
+     * @return true if it's swaped
+     * @throws Throwable if any problems happens.
+     */
     boolean compareAndSwapInCache(String key, Object new_value,
             Object old_value) throws Throwable;
 }

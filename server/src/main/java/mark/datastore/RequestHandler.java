@@ -420,18 +420,43 @@ public class RequestHandler implements ServerInterface {
         return evidences.values().toArray(new Evidence[evidences.size()]);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param key
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Object getFromCache(String key) throws Throwable {
+    public Object getFromCache(final String key) throws Throwable {
         return this.agents_cache.get(key);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param key
+     * @param value
+     * @throws Throwable
+     */
     @Override
-    public void storeInCache(String key, Object value) throws Throwable {
+    public void storeInCache(final String key, final Object value) throws Throwable {
         this.agents_cache.put(key, value);
     }
 
+    /**
+     * {@inheritDoc} synchronized block because multiple agents can acces to the
+     * cache at the same time.
+     *
+     * @param key
+     * @param new_value
+     * @param old_value
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public boolean compareAndSwapInCache(String key, Object new_value, Object old_value) throws Throwable {
+    public boolean compareAndSwapInCache(final String key,
+            final Object new_value, final Object old_value) throws Throwable {
         boolean swaped = false;
         synchronized (agents_cache) {
             Object current = agents_cache.get(key);
