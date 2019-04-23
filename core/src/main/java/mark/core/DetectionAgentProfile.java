@@ -77,15 +77,15 @@ public class DetectionAgentProfile {
             return (DetectionAgentInterface) Class.forName(class_name).newInstance();
         } catch (ClassNotFoundException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name,
                     ex);
         } catch (InstantiationException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name,
                     ex);
         } catch (IllegalAccessException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name,
                     ex);
         }
     }
