@@ -45,8 +45,8 @@ public class FuzzyLogic {
      * @return
      */
 
-    public double setMembership(double x1, double x2, double y1, double y2,
-            double value) {
+    public double determineMembership(double x1, double x2, double y1,
+            double y2, double value) {
         //test if x1 is equal to x2 because it may cause division by 0
         if (x1 == x2) {
             throw new ArithmeticException("X1 == X2 -> can't divide by 0");

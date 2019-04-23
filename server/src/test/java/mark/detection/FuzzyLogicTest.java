@@ -42,28 +42,28 @@ public class FuzzyLogicTest extends TestCase {
     /**
      * Test for the setMembership function of FuzzyLogic 
      */
-    public final void testSetMembershipWithValidValues() {
+    public final void testDetermineMembershipWithValidValues() {
         System.out.println("Run FuzzyLogic test one with normal values");
-        double result = fuzzylogic.setMembership(x1, x2, y1, y2, test_value1);
+        double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value1);
         assertEquals(0.3999999999999999, result);
     }
 
-    public final void testSetMembershipWithValueBiggerThanX2() {
+    public final void testDetermineMembershipValueBiggerThanX2() {
         System.out.println("run test with value > x2");
-        double result = fuzzylogic.setMembership(x1, x2, y1, y2, test_value2);
+        double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value2);
         assertEquals(1.0, result);
     }
     
-    public final void testSetMembershipWithValueSmallerThanX1() {
+    public final void testDetermineMembershipWithValueSmallerThanX1() {
         System.out.println("run test with value < x1");
-        double result = fuzzylogic.setMembership(x1, x2, y1, y2, test_value3);
+        double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value3);
         assertEquals(0.0, result);
     }
     
-    public final void testSetMembershipWhereX1EqualToX2() {
+    public final void testDetermineMembershipWhereX1EqualToX2() {
         System.out.println("run test where x1 = x2");
         try {
-            double result = fuzzylogic.setMembership(
+            double result = fuzzylogic.determineMembership(
                     x1, x1, y1, y2, test_value1);
             fail();
         } catch (ArithmeticException ex) {
@@ -71,9 +71,9 @@ public class FuzzyLogicTest extends TestCase {
         }
     }
     
-    public final void testSetMembershipWhereY1EqualToY2() {
+    public final void testDetermineMembershipWhereY1EqualToY2() {
         System.out.println("run test where y1 = y2");
-        double result = fuzzylogic.setMembership(x1, x2, y2, y2, test_value1);
+        double result = fuzzylogic.determineMembership(x1, x2, y2, y2, test_value1);
         assertEquals(1.0, result);
     }
 
