@@ -3,6 +3,7 @@ package mark.integration;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
 import junit.framework.TestCase;
 import mark.activation.ActivationController;
 import mark.core.DetectionAgentProfile;
@@ -175,6 +176,66 @@ public class ClientIT extends TestCase {
                         "detection.rw", new Link("1.2.3.4", "www.google.be")).length;
 
         assertEquals(original_count + 2, final_count);
+    }
+
+    /**
+     * We are testing if an object stored in cache is the same when we retrieve
+     * it. Testing with two differents objects. (String and ArrayList)
+     *
+     * @throws Throwable
+     */
+    public final void testStoreInAndGetFromCache() throws Throwable {
+        System.out.println("storeInCache, get from cache");
+        System.out.println("============================");
+
+        server = getServer();
+        server.start();
+
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
+        String key1 = "key1";
+        String key2 = "key2";
+        String value1 = "value";
+        ArrayList value2 = new ArrayList();
+
+        datastore.storeInCache(key1, value1);
+        datastore.storeInCache(key2, value2);
+
+        String retrieved_value1 = (String) datastore.getFromCache(key1);
+        ArrayList retrieved_value2 = (ArrayList) datastore.getFromCache(key2);
+
+        assertEquals(value1, retrieved_value1);
+        assertEquals(value2, retrieved_value2);
+    }
+
+    /**
+     * We are testing the CompareAndSwapInCache method. Testing with a good old
+     * value and a bad old value.
+     *
+     * @throws Throwable
+     */
+    public final void testCompareAndSwapInCache() throws Throwable {
+        System.out.println("Compare and swap in cache");
+        System.out.println("=========================");
+
+        server = getServer();
+        server.start();
+
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
+        String key1 = "key1";
+        String value1 = "value";
+
+        datastore.storeInCache(key1, value1);
+
+        String retrieved_value1 = (String) datastore.getFromCache(key1);
+        assertTrue(datastore.compareAndSwapInCache(
+                key1, "new value", retrieved_value1));
+        assertFalse(datastore.compareAndSwapInCache(
+                key1, "new value again", retrieved_value1));
+
     }
 
     /**

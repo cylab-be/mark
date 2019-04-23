@@ -145,8 +145,9 @@ public interface ServerInterface<T extends Subject> {
 
     /**
      * Compare and swap verify if the current stored value in the cache is
-     * equals to old_value. Since multiple agents can get access to the cache,
-     * We do this verification to not overwrite new values from other agents.
+     * equals to old_value, or if the value has never been stored in the cache
+     * for this key. Since multiple agents can get access to the cache, We do
+     * this verification to not overwrite new values from other agents.
      *
      * @param key to store new value.
      * @param new_value to be stored.

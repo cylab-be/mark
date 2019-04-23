@@ -460,7 +460,8 @@ public class RequestHandler implements ServerInterface {
         boolean swaped = false;
         synchronized (agents_cache) {
             Object current = agents_cache.get(key);
-            if (current.equals(old_value)) {
+            //If the value is not in the cache or if it didn't change
+            if (current == null || current.equals(old_value)) {
                 agents_cache.put(key, new_value);
                 swaped = true;
             }
