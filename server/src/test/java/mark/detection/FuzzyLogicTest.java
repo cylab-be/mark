@@ -31,124 +31,131 @@ import junit.framework.TestCase;
  */
 public class FuzzyLogicTest extends TestCase {
     FuzzyLogic fuzzylogic = new FuzzyLogic();
+    double test_value1 = 0.6;
+    double test_value2 = 2;
+    double test_value3 = 0.1;
+    double x1 = 0.4;
+    double x2 = 0.9;
+    double y1 = 0;
+    double y2 = 1;
 
     /**
      * Test for the setMembership function of FuzzyLogic 
      */
-    public final void testSetMembership() {
-        System.out.println("Test FuzzyLogic setMembership \n");
-        double test_value1 = 0.6;
-        double test_value2 = 2;
-        double test_value3 = 0.1;
-        System.out.println("Run test one with normal values");
-        double[][] test1 = {{0.4, 0}, {0.9, 1}};
-        try {
-        double result = fuzzylogic.setMembership(test1, test_value1);
-        System.out.println("Result: " + result);
-        //assertEquals(result1, 0.4);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with value > upper bound X");
-        try {
-        double result = fuzzylogic.setMembership(test1, test_value2);
-        System.out.println("Result: " + result);
-        assertEquals(result, 1.0);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with value < lower bound X");
-        try {
-        double result = fuzzylogic.setMembership(test1, test_value3);
-        System.out.println("Result: " + result);
-        assertEquals(result, 0.0);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
+    public final void testSetMembershipWithValidValues() {
+        System.out.println("Run FuzzyLogic test one with normal values");
+        double result = fuzzylogic.setMembership(x1, x2, y1, y2, test_value1);
+        assertEquals(0.3999999999999999, result);
+    }
+
+    public final void testSetMembershipWithValueBiggerThanX2() {
+        System.out.println("run test with value > x2");
+        double result = fuzzylogic.setMembership(x1, x2, y1, y2, test_value2);
+        assertEquals(1.0, result);
+    }
+    
+    public final void testSetMembershipWithValueSmallerThanX1() {
+        System.out.println("run test with value < x1");
+        double result = fuzzylogic.setMembership(x1, x2, y1, y2, test_value3);
+        assertEquals(0.0, result);
+    }
+    
+    public final void testSetMembershipWhereX1EqualToX2() {
         System.out.println("run test where x1 = x2");
-        double[][] test2 = {{0.4, 0}, {0.4, 1}};
         try {
-        double result = fuzzylogic.setMembership(test2, test_value1);
-        System.out.println("Result: " + result);
-        } catch (Exception ex) {
-            System.err.println(ex);
+            double result = fuzzylogic.setMembership(
+                    x1, x1, y1, y2, test_value1);
+            fail();
+        } catch (ArithmeticException ex) {
+            assertEquals("X1 == X2 -> can't divide by 0", ex.getMessage());
         }
+    }
+    
+    public final void testSetMembershipWhereY1EqualToY2() {
         System.out.println("run test where y1 = y2");
-        double[][] test3 = {{0.4, 1}, {0.9, 1}};
+        double result = fuzzylogic.setMembership(x1, x2, y2, y2, test_value1);
+        assertEquals(1.0, result);
+    }
+
+
+    double[] fuzzyand_values1 = {0.4, 1, 0.2};
+    double[] fuzzyand_values2 = {0.4, 0.4, 0.4};
+    double[] fuzzyand_values3 = {-0.4, 0.3, 0.4};
+    double[] fuzzyand_values4 = {};
+
+    /**
+     * Test the FuzzyAnd method
+     */
+    public final void testFuzzyAndWithNormalValues() {
+        System.out.println("run test with normal values");
+        double result = fuzzylogic.fuzzyAnd(fuzzyand_values1);
+        assertEquals(0.2, result);
+    }
+    
+    public final void testFuzzyAndWithAllTheSameValues() {
+        System.out.println("run test with all the same values given");
+        double result = fuzzylogic.fuzzyAnd(fuzzyand_values2);
+        assertEquals(0.4, result);
+    }
+
+    public final void testFuzzyAndWithBadValuesLowerThan0() {
+        System.out.println("run test with bad value lower than 0");  
         try {
-        double result = fuzzylogic.setMembership(test3, test_value1);
-        System.out.println("Result: " + result);
-        } catch (Exception ex) {
-            System.err.println(ex);
+            double result = fuzzylogic.fuzzyAnd(fuzzyand_values3);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Bad values provided", ex.getMessage());
         }
     }
 
-    public final void testFuzzyAnd() {
-        System.out.println("Test FuzzyLogic fuzzyAnd \n");
-        double[] test_values1 = {0.4, 1, 0.2};
-        double[] test_values2 = {0.4, 0.4, 0.4};
-        double[] test_values3 = {-0.4, 0.3, 0.4};
-        double[] test_values4 = {};
-        System.out.println("run test with normal values");
-        try {
-        double result1 = fuzzylogic.fuzzyAnd(test_values1);
-        assertEquals(result1, 0.2);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with all the same values given");
-        try {
-        double result2 = fuzzylogic.fuzzyAnd(test_values2);
-        assertEquals(result2, 0.4);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with bad value lower than 0");
-        try {
-        double result3 = fuzzylogic.fuzzyAnd(test_values3);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
+    public final void testFuzzyAndWithEmptyArray() {
         System.out.println("run test with empty values array given");
         try {
-        double result4 = fuzzylogic.fuzzyAnd(test_values4);
-        } catch (Exception ex) {
-            System.err.println(ex);
+            double result = fuzzylogic.fuzzyAnd(fuzzyand_values4);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Values array given is empty", ex.getMessage());
         }
     }
 
-        public final void testFuzzyOr() {
-        System.out.println("Test FuzzyLogic fuzzyOr \n");
-        double[] test_values1 = {0.4, 0.9, 0.2};
-        double[] test_values2 = {0.4, 0.4, 0.4};
-        double[] test_values3 = {2, 0.3, 0.4};
-        double[] test_values4 = {};
-        System.out.println("run test with normal values");
+    double[] fuzzyor_values1 = {0.4, 0.9, 0.2};
+    double[] fuzzyor_values2 = {0.4, 0.4, 0.4};
+    double[] fuzzyor_values3 = {2, 0.3, 0.4};
+    double[] fuzzyor_values4 = {};
+
+    /**
+     * Test the FuzzyOr method
+     */
+    public final void testFuzzyOrWithNormalValues() {
+    System.out.println("run test with normal values");
+
+    double result = fuzzylogic.fuzzyOr(fuzzyor_values1);
+    assertEquals(0.9, result);
+    }
+    
+    public final void testFuzzyOrWithAllTheSameValues() {
+    System.out.println("run test with all the same values given");
+    double result = fuzzylogic.fuzzyOr(fuzzyor_values2);
+    assertEquals(0.4, result);
+    }
+    
+    public final void testFuzzyOrWithBadValuesLowerThan0() {
+    System.out.println("run test with bad value lower than 0");
         try {
-        double result1 = fuzzylogic.fuzzyOr(test_values1);
-        assertEquals(result1,0.9);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with all the same values given");
-        try {
-        double result2 = fuzzylogic.fuzzyOr(test_values2);
-        assertEquals(result2, 0.4);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with bad value lower than 0");
-        try {
-        double result3 = fuzzylogic.fuzzyOr(test_values3);
-        } catch (Exception ex) {
-            System.err.println(ex);
-        }
-        System.out.println("run test with empty values array given");
-        try {
-        double result4 = fuzzylogic.fuzzyOr(test_values4);
-        } catch (Exception ex) {
-            System.err.println(ex);
+            double result = fuzzylogic.fuzzyOr(fuzzyand_values3);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Bad values provided", ex.getMessage());
         }
     }
-
+    
+    public final void testFuzzyOrWithEmptyArray() {
+    System.out.println("run test with empty values array given");
+        try {
+            double result = fuzzylogic.fuzzyOr(fuzzyand_values4);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Values array given is empty", ex.getMessage());
+        }
+    }
 }

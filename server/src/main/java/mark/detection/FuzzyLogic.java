@@ -37,63 +37,42 @@ public class FuzzyLogic {
      * Lower bound (x1,y1) and upper bound (x2,y2) will be used to calculate the
      * membership function and then calculate f(value) of this function. The 
      * function returns a value between (0,1).
-     * @param fuzzy_parameters
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
      * @param value
      * @return
      */
 
-    public double setMembership(double[][] fuzzy_parameters,
+    public double setMembership(double x1, double x2, double y1, double y2,
             double value) {
-        double result;
-        //extract lower_bound and upper_bound and get the x and y for each bound
-        double[] lower_bound = fuzzy_parameters[0];
-        double[] upper_bound = fuzzy_parameters[1];
-        double lower_bound_x = lower_bound[0];
-        double lower_bound_y = lower_bound[1];
-        double upper_bound_x = upper_bound[0];
-        double upper_bound_y = upper_bound[1];
-        //check if x1 = x2, if that is the case 
-        //throw error as we can't divide by 0
-        if (lower_bound_x == upper_bound_x) {
-            throw new ArithmeticException(
-                    "Lower bound X equal to upper bound X. / by zero");
+        //test if x1 is equal to x2 because it may cause division by 0
+        if (x1 == x2) {
+            throw new ArithmeticException("X1 == X2 -> can't divide by 0");
         }
-        //check if y1 = y2, if that is the case
-        //throw error as we want soft threshold between (0,1)
-        if (lower_bound_y == upper_bound_y) {
-            throw new ArithmeticException(
-                    "Lower bound Y equal to upper bound Y."
-                            + " Expected function bound between (0,1)");
+        //receives ex. (x1,y1) = [90,0] and (x2,y2) = [100,1]
+        //determine if value is < x1 or > x2
+        //because f(x) = m*x + b is a membership function it has soft limits
+        //which are f(x1) and f(x2), anything below or
+        //above that is considered equal to y1 or y2 respectively
+        //where the result will be between (0,1)
+        if (value < x1) {
+            return y1;
+        } else if (value > x2) {
+            return y2;
         }
         //the function we need to determine if f(x)=m*x + b
-        //first determine the mean m
-        double mean_m = (upper_bound_y - lower_bound_y) /
-                (upper_bound_x - lower_bound_x);
-        //once we have the mean m we can substitute m,x and y in the function
+        //first determine the slope m
+        double test = x2 - x1;
+        double slope_m = (y2 - y1) / (x2 - x1);
+        //once we have the slope m we can substitute m,x and y in the function
         //and determine the coef b
-        double lower_coeff_b = lower_bound_y - (lower_bound_x * mean_m);
-        double upper_coeff_b = upper_bound_y - (upper_bound_x * mean_m);
-        if (lower_coeff_b != upper_coeff_b) {
-            throw new ArithmeticException(
-                    "Error determining membership function, lower coefficient b"
-                            + "is not equal to upper coefficient b");
-        }
-        //we have the mean m and the coefficient b, now we can substitute them
+        double coeff_b = y1 - (x1 * slope_m);
+        //we have the slope m and the coefficient b, now we can substitute them
         //in the function and determine f(value)
-        double f_value = ( mean_m * value ) + lower_coeff_b;
-        //determine if f_value is < lower bound or > upper_bound
-        //because f(x) = m*x + b is a membership function it has soft limits
-        //which are f(lower_bound_x) and f(upper_bound_x), anything below or
-        //above that is considered equal to lower or upper bound respectively
-        //where the result will be between (0,1)
-        if (f_value < lower_bound_y) {
-            result = lower_bound_y;
-        } else if (f_value > upper_bound_y) {
-            result = upper_bound_y;
-        } else {
-            result = f_value;
-        }
-        return result;
+        double f_value = ( slope_m * value ) + coeff_b;
+        return f_value;        
     }
 
     /**
@@ -104,19 +83,17 @@ public class FuzzyLogic {
     public double fuzzyAnd(double[] values) {
         if (values.length == 0) {
             //if the values supplied are empty throw exception
-            throw new NullPointerException("Values array given is empty");
+            throw new IllegalArgumentException("Values array given is empty");
         }
         double result = 1;
         //loop through the values to find the smallest one
         for (double value : values) {
+            if (value < 0 || value > 1) {
+                throw new IllegalArgumentException("Bad values provided");
+            }
             if (value <= result) {
                 result = value;
             }
-        }
-        //check if the result is between 0 and 1
-        if (result < 0 || result > 1) {
-            throw new ArithmeticException("The values given to fuzzyAnd must"
-                    + "be between 0 and 1, was given: " + result);
         }
         //return the smallest value as result
         return result;
@@ -125,19 +102,17 @@ public class FuzzyLogic {
     public double fuzzyOr(double[] values) {
          if (values.length == 0) {
             //if the values supplied are empty throw exception
-            throw new NullPointerException("Values array given is empty");
+            throw new IllegalArgumentException("Values array given is empty");
         }
         double result = 0;
         //loop through the values to find the largest one
         for (double value : values) {
+            if (value < 0 || value > 1) {
+                throw new IllegalArgumentException("Bad values provided");
+            }
             if (value >= result) {
                 result = value;
             }
-        }
-        //check if the result is between 0 and 1
-        if (result < 0 || result > 1) {
-            throw new ArithmeticException("The values given to fuzzyOr must"
-                    + "be between 0 and 1, was given: " + result);
         }
         //return the largest value as result
         return result;
