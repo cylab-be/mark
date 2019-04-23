@@ -116,7 +116,6 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
 
         Map<String, Set<T>> local_events;
         this.events = new HashMap<>();
-
         while (true) {
             Thread.sleep(1000 * config.update_interval);
 

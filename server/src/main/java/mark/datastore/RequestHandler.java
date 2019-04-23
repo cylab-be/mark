@@ -41,6 +41,9 @@ public class RequestHandler implements ServerInterface {
     private final ActivationControllerInterface activation_controller;
     private final SubjectAdapter adapter;
 
+    //Cache
+    private final HashMap<String, Object> agents_cache;
+
     /**
      *
      * @param mongodb
@@ -51,6 +54,7 @@ public class RequestHandler implements ServerInterface {
             final ActivationControllerInterface activation_controller,
             final SubjectAdapter adapter) {
 
+        this.agents_cache = new HashMap();
         this.mongodb = mongodb;
         this.activation_controller = activation_controller;
         this.adapter = adapter;
@@ -414,6 +418,59 @@ public class RequestHandler implements ServerInterface {
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param key
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Object getFromCache(final String key) throws Throwable {
+        synchronized (agents_cache) {
+            return this.agents_cache.get(key);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param key
+     * @param value
+     * @throws Throwable
+     */
+    @Override
+    public void storeInCache(final String key, final Object value) throws Throwable {
+        synchronized (agents_cache) {
+            this.agents_cache.put(key, value);
+        }
+    }
+
+    /**
+     * {@inheritDoc} synchronized block because multiple agents can acces to the
+     * cache at the same time.
+     *
+     * @param key
+     * @param new_value
+     * @param old_value
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public boolean compareAndSwapInCache(final String key,
+            final Object new_value, final Object old_value) throws Throwable {
+        boolean swaped = false;
+        synchronized (agents_cache) {
+            Object current = agents_cache.get(key);
+            //If the value is not in the cache or if it didn't change
+            if (current == null || current.equals(old_value)) {
+                agents_cache.put(key, new_value);
+                swaped = true;
+            }
+        }
+        return swaped;
     }
 
 }

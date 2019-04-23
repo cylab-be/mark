@@ -15,15 +15,15 @@ import org.yaml.snakeyaml.constructor.Constructor;
 public class DetectionAgentProfile {
 
     /**
-     * The label attached to the evidence produced by this detection agent.
-     * Ex: evidence.http.frequency.1week or aggregation
+     * The label attached to the evidence produced by this detection agent. Ex:
+     * evidence.http.frequency.1week or aggregation
      */
     public String label;
 
     /**
-     * The label that will trigger this detection agent.
-     * Ex: http frequency could be triggered by data.http and aggregation could
-     * be triggered by evidence.
+     * The label that will trigger this detection agent. Ex: http frequency
+     * could be triggered by data.http and aggregation could be triggered by
+     * evidence.
      */
     public String trigger_label;
 
@@ -35,13 +35,14 @@ public class DetectionAgentProfile {
     /**
      * The parameters that will be provided to the detector.
      */
-    public HashMap<String, String> parameters;
+    public HashMap<String, String> parameters = new HashMap<>();
 
-    private static final Yaml PARSER =
-            new Yaml(new Constructor(DetectionAgentProfile.class));
+    private static final Yaml PARSER
+            = new Yaml(new Constructor(DetectionAgentProfile.class));
 
     /**
      * Read a detection agent profile from a YAML file.
+     *
      * @param file
      * @return
      * @throws FileNotFoundException if the file does not exist
@@ -53,6 +54,7 @@ public class DetectionAgentProfile {
 
     /**
      * Read a detection agent profile from an input stream (a resource file).
+     *
      * @param input
      * @return
      */
@@ -63,6 +65,7 @@ public class DetectionAgentProfile {
 
     /**
      * Instantiate a detection agent for the provided subject.
+     *
      * @return
      * @throws mark.core.InvalidProfileException if the profile is incorrect
      * (generally due to an invalid class name).
@@ -71,26 +74,26 @@ public class DetectionAgentProfile {
             throws InvalidProfileException {
 
         try {
-            return (DetectionAgentInterface)
-                    Class.forName(class_name).newInstance();
+            return (DetectionAgentInterface) Class.forName(class_name).newInstance();
         } catch (ClassNotFoundException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name,
                     ex);
         } catch (InstantiationException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name,
                     ex);
         } catch (IllegalAccessException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name,
                     ex);
         }
     }
 
     /**
-     * Test if the provided label should trigger this detection agent.
-     * return trigger_label.startsWith(label)
+     * Test if the provided label should trigger this detection agent. return
+     * trigger_label.startsWith(label)
+     *
      * @param label
      * @return
      */
