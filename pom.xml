@@ -3,7 +3,7 @@
 
     <groupId>be.cylab.mark</groupId>
     <artifactId>root</artifactId>
-    <version>0.0.14-SNAPSHOT</version>
+    <version>0.0.14</version>
     <packaging>pom</packaging>
     <name>root</name>
     <description>Parent module for MARK project</description>
@@ -37,7 +37,7 @@
         <connection>scm:git@gitlab.cylab.be:cylab/mark.git</connection>
         <developerConnection>scm:git:git@gitlab.cylab.be:cylab/mark.git</developerConnection>
         <url>git@gitlab.cylab.be:cylab/mark.git</url>
-        <tag>v0.0.3</tag>
+        <tag>v0.0.14</tag>
     </scm>
 
     <properties>
