@@ -59,7 +59,7 @@ public class FuzzyLogicTest extends TestCase {
         double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value3);
         assertEquals(0.0, result);
     }
-    
+
     public final void testDetermineMembershipWhereX1EqualToX2() {
         System.out.println("run test where x1 = x2");
         try {

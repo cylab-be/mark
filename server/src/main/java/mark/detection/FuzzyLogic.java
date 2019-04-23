@@ -71,8 +71,7 @@ public class FuzzyLogic {
         double coeff_b = y1 - (x1 * slope_m);
         //we have the slope m and the coefficient b, now we can substitute them
         //in the function and determine f(value)
-        double f_value = ( slope_m * value ) + coeff_b;
-        return f_value;        
+        return ( slope_m * value ) + coeff_b;        
     }
 
     /**
