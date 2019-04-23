@@ -429,7 +429,9 @@ public class RequestHandler implements ServerInterface {
      */
     @Override
     public Object getFromCache(final String key) throws Throwable {
-        return this.agents_cache.get(key);
+        synchronized (agents_cache) {
+            return this.agents_cache.get(key);
+        }
     }
 
     /**
@@ -441,7 +443,9 @@ public class RequestHandler implements ServerInterface {
      */
     @Override
     public void storeInCache(final String key, final Object value) throws Throwable {
-        this.agents_cache.put(key, value);
+        synchronized (agents_cache) {
+            this.agents_cache.put(key, value);
+        }
     }
 
     /**
