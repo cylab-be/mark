@@ -30,7 +30,6 @@ import junit.framework.TestCase;
  * @author georgi
  */
 public class FuzzyLogicTest extends TestCase {
-    FuzzyLogic fuzzylogic = new FuzzyLogic();
     double test_value1 = 0.6;
     double test_value2 = 2;
     double test_value3 = 0.1;
@@ -44,27 +43,30 @@ public class FuzzyLogicTest extends TestCase {
      */
     public final void testDetermineMembershipWithValidValues() {
         System.out.println("Run FuzzyLogic test one with normal values");
-        double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value1);
+        FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
+        double result = fuzzylogic.determineMembership(test_value1);
         assertEquals(0.3999999999999999, result);
     }
 
     public final void testDetermineMembershipValueBiggerThanX2() {
         System.out.println("run test with value > x2");
-        double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value2);
+        FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
+        double result = fuzzylogic.determineMembership(test_value2);
         assertEquals(1.0, result);
     }
     
     public final void testDetermineMembershipWithValueSmallerThanX1() {
         System.out.println("run test with value < x1");
-        double result = fuzzylogic.determineMembership(x1, x2, y1, y2, test_value3);
+        FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
+        double result = fuzzylogic.determineMembership(test_value3);
         assertEquals(0.0, result);
     }
 
     public final void testDetermineMembershipWhereX1EqualToX2() {
         System.out.println("run test where x1 = x2");
         try {
-            double result = fuzzylogic.determineMembership(
-                    x1, x1, y1, y2, test_value1);
+            FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x1, y1, y2);
+            double result = fuzzylogic.determineMembership(test_value1);
             fail();
         } catch (ArithmeticException ex) {
             assertEquals("X1 == X2 -> can't divide by 0", ex.getMessage());
@@ -73,7 +75,8 @@ public class FuzzyLogicTest extends TestCase {
     
     public final void testDetermineMembershipWhereY1EqualToY2() {
         System.out.println("run test where y1 = y2");
-        double result = fuzzylogic.determineMembership(x1, x2, y2, y2, test_value1);
+        FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y2, y2);
+        double result = fuzzylogic.determineMembership(test_value1);
         assertEquals(1.0, result);
     }
 
@@ -88,12 +91,14 @@ public class FuzzyLogicTest extends TestCase {
      */
     public final void testFuzzyAndWithNormalValues() {
         System.out.println("run test with normal values");
+        FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
         double result = fuzzylogic.fuzzyAnd(fuzzyand_values1);
         assertEquals(0.2, result);
     }
     
     public final void testFuzzyAndWithAllTheSameValues() {
         System.out.println("run test with all the same values given");
+        FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
         double result = fuzzylogic.fuzzyAnd(fuzzyand_values2);
         assertEquals(0.4, result);
     }
@@ -101,6 +106,7 @@ public class FuzzyLogicTest extends TestCase {
     public final void testFuzzyAndWithBadValuesLowerThan0() {
         System.out.println("run test with bad value lower than 0");  
         try {
+            FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
             double result = fuzzylogic.fuzzyAnd(fuzzyand_values3);
             fail();
         } catch (IllegalArgumentException ex) {
@@ -111,6 +117,7 @@ public class FuzzyLogicTest extends TestCase {
     public final void testFuzzyAndWithEmptyArray() {
         System.out.println("run test with empty values array given");
         try {
+            FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
             double result = fuzzylogic.fuzzyAnd(fuzzyand_values4);
             fail();
         } catch (IllegalArgumentException ex) {
@@ -128,13 +135,14 @@ public class FuzzyLogicTest extends TestCase {
      */
     public final void testFuzzyOrWithNormalValues() {
     System.out.println("run test with normal values");
-
+    FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
     double result = fuzzylogic.fuzzyOr(fuzzyor_values1);
     assertEquals(0.9, result);
     }
     
     public final void testFuzzyOrWithAllTheSameValues() {
     System.out.println("run test with all the same values given");
+    FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
     double result = fuzzylogic.fuzzyOr(fuzzyor_values2);
     assertEquals(0.4, result);
     }
@@ -142,6 +150,7 @@ public class FuzzyLogicTest extends TestCase {
     public final void testFuzzyOrWithBadValuesLowerThan0() {
     System.out.println("run test with bad value lower than 0");
         try {
+            FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
             double result = fuzzylogic.fuzzyOr(fuzzyand_values3);
             fail();
         } catch (IllegalArgumentException ex) {
@@ -152,6 +161,7 @@ public class FuzzyLogicTest extends TestCase {
     public final void testFuzzyOrWithEmptyArray() {
     System.out.println("run test with empty values array given");
         try {
+            FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x2, y1, y2);
             double result = fuzzylogic.fuzzyOr(fuzzyand_values4);
             fail();
         } catch (IllegalArgumentException ex) {

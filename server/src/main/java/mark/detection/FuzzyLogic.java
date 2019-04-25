@@ -24,29 +24,32 @@
 package mark.detection;
 
 /** Class responsible for implementing fuzzy logic membership function.
- *
+ * fuzzy logic function is f(x)=m*x + b
+ * we need to calculate the mean and coefficient b to be able to calculate
+ * the f(x) for given point x
  * @author georgi
  */
 public class FuzzyLogic {
-    //fuzzy logic function is f(x)=m*x + b
-    //we need to calculate the mean and coefficient b to be able to calculate
-    //the f(x) for given point x
+    private final double x1;
+    private final double x2;
+    private final double y1;
+    private final double y2;
 
+    public FuzzyLogic(double x1, double x2, double y1, double y2) {
+        this.x1 = x1;
+        this.x2 = x2;
+        this.y1 = y1;
+        this.y2 = y2;
+    }
     /**
      * Method for calculating the membership functions given two points.
      * Lower bound (x1,y1) and upper bound (x2,y2) will be used to calculate the
      * membership function and then calculate f(value) of this function. The 
      * function returns a value between (0,1).
-     * @param x1
-     * @param x2
-     * @param y1
-     * @param y2
      * @param value
      * @return
      */
-
-    public double determineMembership(double x1, double x2, double y1,
-            double y2, double value) {
+    public double determineMembership(double value) {
         //test if x1 is equal to x2 because it may cause division by 0
         if (x1 == x2) {
             throw new ArithmeticException("X1 == X2 -> can't divide by 0");
