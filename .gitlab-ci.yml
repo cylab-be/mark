@@ -1,14 +1,20 @@
+stages:
+  - test
+  - release
+
 cache:
   paths:
     - .m2/
 
 test:jdk-8:mongo-3.2:
+  stage: test
   image: maven:3.5.3-jdk-8
   services:
     - mongo:3.2
   script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
   
 test:jdk-8:mongo-3.6:
+  stage: test
   image: maven:3.5.3-jdk-8
   services:
     - mongo:3.6
@@ -16,3 +22,11 @@ test:jdk-8:mongo-3.6:
   artifacts:
     paths:
     - "server/target/server-*-standalone.zip"
+
+release:
+  stage: release
+  only:
+    - tags
+  image: cylab/php72
+  script:
+    - "curl https://download.cylab.be/api/mark/server-$CI_COMMIT_TAG-standalone.zip  --request POST --header \"Authorization: Bearer $UPLOAD_TOKEN\" -F \"file=@./server/target/server-$CI_COMMIT_TAG-standalone.zip\""
