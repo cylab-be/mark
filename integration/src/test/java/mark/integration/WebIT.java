@@ -46,7 +46,9 @@ public class WebIT extends TestCase {
 
     @Override
     public final void tearDown() throws Exception {
-        server.stop();
+        if (server !== null) {
+            server.stop();
+        }
         super.tearDown();
     }
 

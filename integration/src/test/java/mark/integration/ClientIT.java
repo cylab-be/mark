@@ -28,7 +28,9 @@ public class ClientIT extends TestCase {
 
     @Override
     protected final void tearDown() throws Exception {
-        server.stop();
+        if (server !== null) {
+            server.stop();
+        }
         super.tearDown();
     }
 
