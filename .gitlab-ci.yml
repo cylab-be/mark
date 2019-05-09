@@ -28,28 +28,48 @@ test:jdk-9:mongo-3.2:
   image: maven:3.5.3-jdk-9
   services:
     - mongo:3.2
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  script: 
+    - export MARK_MONGO_HOST="mongo" 
+    # To let Apache Ignite work with Java 9 and up
+    # https://stackoverflow.com/questions/54140877/apache-ignite-illegalaccessexception-from-gridunsafe-when-using-ignite-object
+    - export MAVEN_OPTS="--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED"
+    - mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
   
 test:jdk-9:mongo-3.6:
   stage: test
   image: maven:3.5.3-jdk-9
   services:
     - mongo:3.6
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  script:  
+    - export MARK_MONGO_HOST="mongo" 
+    # To let Apache Ignite work with Java 9 and up
+    # https://stackoverflow.com/questions/54140877/apache-ignite-illegalaccessexception-from-gridunsafe-when-using-ignite-object
+    - export MAVEN_OPTS="--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED"
+    - mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
   
 test:jdk-10:mongo-3.2:
   stage: test
   image: maven:3.5.3-jdk-10
   services:
     - mongo:3.2
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  script:  
+    - export MARK_MONGO_HOST="mongo" 
+    # To let Apache Ignite work with Java 9 and up
+    # https://stackoverflow.com/questions/54140877/apache-ignite-illegalaccessexception-from-gridunsafe-when-using-ignite-object
+    - export MAVEN_OPTS="--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED"
+    - mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
   
 test:jdk-10:mongo-3.6:
   stage: test
   image: maven:3.5.3-jdk-10
   services:
     - mongo:3.6
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  script:  
+    - export MARK_MONGO_HOST="mongo" 
+    # To let Apache Ignite work with Java 9 and up
+    # https://stackoverflow.com/questions/54140877/apache-ignite-illegalaccessexception-from-gridunsafe-when-using-ignite-object
+    - export MAVEN_OPTS="--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED --add-exports=java.base/sun.nio.ch=ALL-UNNAMED"
+    - mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
 
 release:
   stage: release
