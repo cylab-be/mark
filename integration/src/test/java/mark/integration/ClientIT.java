@@ -28,7 +28,7 @@ public class ClientIT extends TestCase {
 
     @Override
     protected final void tearDown() throws Exception {
-        if (server !== null) {
+        if (server != null) {
             server.stop();
         }
         super.tearDown();
@@ -45,9 +45,11 @@ public class ClientIT extends TestCase {
         config.adapter_class = LinkAdapter.class.getName();
         ActivationController activation_controller
                 = new ActivationController(config);
-        return new Server(config, new WebServer(config),
-                activation_controller, new Datastore(config,
-                        activation_controller));
+        return new Server(
+                config,
+                new WebServer(config),
+                activation_controller,
+                new Datastore(config, activation_controller));
     }
 
     /**
