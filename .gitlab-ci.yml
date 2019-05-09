@@ -23,6 +23,34 @@ test:jdk-8:mongo-3.6:
     paths:
     - "server/target/server-*-standalone.zip"
 
+test:jdk-9:mongo-3.2:
+  stage: test
+  image: maven:3.5.3-jdk-9
+  services:
+    - mongo:3.2
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  
+test:jdk-9:mongo-3.6:
+  stage: test
+  image: maven:3.5.3-jdk-9
+  services:
+    - mongo:3.6
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  
+test:jdk-10:mongo-3.2:
+  stage: test
+  image: maven:3.5.3-jdk-10
+  services:
+    - mongo:3.2
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+  
+test:jdk-10:mongo-3.6:
+  stage: test
+  image: maven:3.5.3-jdk-10
+  services:
+    - mongo:3.6
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+
 release:
   stage: release
   only:
