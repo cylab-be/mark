@@ -1,5 +1,6 @@
 package mark.datastore;
 
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
@@ -9,6 +10,7 @@ import com.mongodb.client.gridfs.GridFSDownloadStream;
 import com.mongodb.client.gridfs.GridFSUploadStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -418,6 +420,26 @@ public class RequestHandler implements ServerInterface {
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
+    }
+
+    /**
+     * Get the number of unique subjects(Client Server couples) in the database.
+     *
+     * @param doc   doc containing the aggregation value.
+     * @return int, number of unique subjects
+     */
+    public final int findUniqueSubjects(final Document doc) {
+        int unique_subjects = 0;
+        Document query = new Document("$group", 
+                            new Document("_id", doc));
+        AggregateIterable<Document> db_output = mongodb
+                                .getCollection(COLLECTION_EVIDENCE)
+                                .aggregate(Arrays.asList(query));
+
+        for (Document db_document : db_output) {
+                unique_subjects += 1;
+        }
+        return unique_subjects;
     }
 
     /**
