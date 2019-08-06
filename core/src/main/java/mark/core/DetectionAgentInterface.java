@@ -40,6 +40,7 @@ public interface DetectionAgentInterface<T extends Subject> {
      */
     public void analyze(
             T subject,
+            long timestamp,
             String actual_trigger_label,
             DetectionAgentProfile profile,
             ServerInterface<T> datastore) throws Throwable;
