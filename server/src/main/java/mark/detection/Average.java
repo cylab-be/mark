@@ -44,6 +44,7 @@ public class Average implements DetectionAgentInterface {
     @Override
     public void analyze(
             final Subject subject,
+            final long timestamp,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {

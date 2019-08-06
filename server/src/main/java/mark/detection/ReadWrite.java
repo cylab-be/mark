@@ -21,9 +21,12 @@ public class ReadWrite<T extends Subject>
     @Override
     public final void analyze(
             final T subject,
+            final long timestamp,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface<T> datastore) throws Throwable {
+        
+        System.out.println("DEBUG RW: " + subject + " " + timestamp);
 
         RawData[] data = datastore.findRawData(actual_trigger_label, subject);
 
