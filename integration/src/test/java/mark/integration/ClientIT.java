@@ -256,10 +256,13 @@ public class ClientIT extends TestCase {
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
 
         RawData<Link> data = new RawData();
+        data.label = "data.http";
         data.subject = new Link("1.2.3.4", "some.server");
+        data.time = 123456;
         datastore.addRawData(data);
 
         data.subject = new Link("1.2.3.4", "some.other.server");
+        data.time = 456789;
         datastore.addRawData(data);
 
         Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
