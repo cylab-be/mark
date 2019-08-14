@@ -106,8 +106,10 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(data.label));
 
-        //check for two instances of different subjects under the label
+        //check for one instance for the subject under the label
         Map<T, Long> subject_map = event_map.get(data.label);
+        assertEquals(1, subject_map.keySet().size());
+        //check that it uses only the latest timestamp
         long map_timestamp = subject_map.get(data.subject);
         assertEquals(456789, map_timestamp);
     }
@@ -178,8 +180,10 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(data.label));
 
-        //check for two instances of different subjects under the label
+        //check for one instance for the subject under the label
         Map<T, Long> subject_map = event_map.get(data.label);
+        assertEquals(1, subject_map.keySet().size());
+        //check that it uses only the latest timestamp
         long map_timestamp = subject_map.get(data.subject);
         assertEquals(456789, map_timestamp);
     }
