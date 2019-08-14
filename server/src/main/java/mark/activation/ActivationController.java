@@ -290,4 +290,12 @@ public class ActivationController<T extends Subject> extends SafeThread
         return ignite.cluster().metrics();
     }
 
+    Map<String, Map<T, Long>> getEvents() {
+        return this.events;
+    }
+
+    void setEvents(final Map<String, Map<T, Long>> map) {
+        this.events = map;
+    }
+
 }
