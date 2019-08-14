@@ -25,8 +25,6 @@ public class ReadWrite<T extends Subject>
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface<T> datastore) throws Throwable {
-        
-        System.out.println("DEBUG RW: " + subject + " " + timestamp);
 
         RawData[] data = datastore.findRawData(actual_trigger_label, subject);
 
