@@ -8,10 +8,8 @@ import java.util.Arrays;
 import mark.core.InvalidProfileException;
 import mark.core.DetectionAgentInterface;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import mark.core.Evidence;
@@ -34,16 +32,18 @@ import org.slf4j.LoggerFactory;
 /**
  * The activation controller uses the micro batching principle:
  * https://streaml.io/resources/tutorials/concepts/understanding-batch-microbatch-streaming
- * Events are continuously collected (with notifyRawData and notifyEvidence). In
- * a separate thread, every few secondes (defined by Config.update_interval),
- * analysis jobs are triggered. These jobs are executed by an Apache Ignite
- * Compute Grid:
- * https://apacheignite.readme.io/docs/compute-grid#section-ignitecompute
+ * Events are continuously collected (with notifyRawData and notifyEvidence).In
+ a separate thread, every few secondes (defined by Config.update_interval),
+ analysis jobs are triggered. These jobs are executed by an Apache Ignite
+ Compute Grid:
+ https://apacheignite.readme.io/docs/compute-grid#section-ignitecompute
  *
  * @author Thibault Debatty
+ * @param <T>
  */
 @Singleton
-public class ActivationController<T extends Subject> extends SafeThread implements ActivationControllerInterface<T> {
+public class ActivationController<T extends Subject> extends SafeThread
+                                implements ActivationControllerInterface<T> {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(ActivationController.class);
@@ -53,7 +53,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
     private final ExecutorService executor_service;
 
     // events is a table of label => subjects
-    private volatile Map<String, Set<T>> events;
+    private volatile Map<String, Map<T, Long>> events;
     private final Config config;
 
     /**
@@ -114,7 +114,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
     @Override
     public final void doRun() throws Throwable {
 
-        Map<String, Set<T>> local_events;
+        Map<String, Map<T, Long>> local_events;
         this.events = new HashMap<>();
         while (true) {
             Thread.sleep(1000 * config.update_interval);
@@ -131,34 +131,34 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
 
             // Keep track of triggered detectors, to avoid triggering
             // same detector multiple times
-            Map<String, Set<T>> triggered_detectors = new HashMap<>();
+            Map<String, Map<T, Long>> triggered_detectors =
+                    new HashMap<>();
 
             // process the events:
             // for each received label find the agents that must be triggered
             // then spawn one agent for each subject
-            for (Map.Entry<String, Set<T>> entry : local_events.entrySet()) {
-                String label = entry.getKey();
+            for (String key : local_events.keySet()) {
+                String label = key;
 
                 for (DetectionAgentProfile profile : profiles) {
                     if (!profile.match(label)) {
                         continue;
                     }
 
-                    for (T subject : entry.getValue()) {
+                    for (Map.Entry<T, Long> subject_time :
+                            local_events.get(key).entrySet()) {
+                        T subject = (T) subject_time.getKey();
+                        long timestamp = subject_time.getValue();
                         String detector_label = profile.label;
-                        Set<T> triggered_subjects = triggered_detectors.get(
-                                detector_label);
+                        Map<T, Long> triggered_subjects =
+                                triggered_detectors.get(detector_label);
                         if (triggered_subjects == null) {
-                            triggered_subjects = new HashSet<>();
+                            triggered_subjects = new HashMap<>();
                             triggered_detectors.put(
                                     detector_label, triggered_subjects);
                         }
 
-                        if (triggered_subjects.contains(subject)) {
-                            continue;
-                        }
-
-                        triggered_subjects.add(subject);
+                        triggered_subjects.put(subject, timestamp);
 
                         try {
                             LOGGER.debug(
@@ -168,6 +168,7 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
                             executor_service.submit(
                                     new DetectionAgentContainer(
                                             subject,
+                                            timestamp,
                                             config.getDatastoreUrl(),
                                             config.getSubjectAdapter(),
                                             label,
@@ -245,14 +246,19 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
     @Override
     public final synchronized void notifyRawData(final RawData<T> data) {
 
-        Set<T> set = events.get(data.label);
-
-        if (set == null) {
-            set = new HashSet<>();
-            events.put(data.label, set);
+        Map<T, Long> hashmap = events.get(data.label);
+        if (hashmap == null) {
+            hashmap = new HashMap<>();
+            events.put(data.label, hashmap);
+            hashmap.put(data.subject, data.time);
         }
 
-        set.add(data.subject);
+        if (hashmap.get(data.subject) == null) {
+            hashmap.put(data.subject, data.time);
+        } else if (hashmap.get(data.subject) < data.time) {
+            hashmap.replace(data.subject, data.time);
+        }
+
     }
 
     /**
@@ -261,20 +267,35 @@ public class ActivationController<T extends Subject> extends SafeThread implemen
      */
     @Override
     public final synchronized void notifyEvidence(final Evidence<T> evidence) {
-        Set<T> set = events.get(evidence.label);
+        Map<T, Long> hashmap = events.get(evidence.label);
 
-        if (set == null) {
-            set = new HashSet<>();
-            events.put(evidence.label, set);
+        if (hashmap == null) {
+            hashmap = new HashMap<>();
+            events.put(evidence.label, hashmap);
+            hashmap.put(evidence.subject, evidence.time);
         }
 
-        set.add(evidence.subject);
+        if (hashmap.get(evidence.subject) == null) {
+            hashmap.put(evidence.subject, evidence.time);
+        } else if (hashmap.get(evidence.subject) < evidence.time) {
+            hashmap.replace(evidence.subject, evidence.time);
+        }
+
+        
     }
 
     public ClusterMetrics getIgniteMetrics() {
         ignite.cluster().nodes().iterator().next().addresses();
         ignite.cluster().nodes().iterator().next().hostNames();
         return ignite.cluster().metrics();
+    }
+
+    Map<String, Map<T, Long>> getEvents() {
+        return this.events;
+    }
+
+    void setEvents(final Map<String, Map<T, Long>> map) {
+        this.events = map;
     }
 
 }

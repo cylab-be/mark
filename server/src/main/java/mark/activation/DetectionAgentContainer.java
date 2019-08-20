@@ -26,11 +26,13 @@ public class DetectionAgentContainer <T extends Subject>
     private final String actual_trigger_label;
     private final DetectionAgentProfile profile;
     private final DetectionAgentInterface<T> agent;
+    private final Long initial_timestamp;
 
 
     /**
      *
      * @param subject
+     * @param timestamp
      * @param datastore_url
      * @param subject_adapter
      * @param actual_trigger_label
@@ -39,6 +41,7 @@ public class DetectionAgentContainer <T extends Subject>
      */
     public DetectionAgentContainer(
             final T subject,
+            final long timestamp,
             final URL datastore_url,
             final SubjectAdapter<T> subject_adapter,
             final String actual_trigger_label,
@@ -50,6 +53,7 @@ public class DetectionAgentContainer <T extends Subject>
         this.subject_adapter = subject_adapter;
         this.actual_trigger_label = actual_trigger_label;
         this.subject = subject;
+        this.initial_timestamp = timestamp;
         this.datastore_url = datastore_url;
     }
 
@@ -62,7 +66,8 @@ public class DetectionAgentContainer <T extends Subject>
                 datastore_url, subject_adapter);
 
         try {
-            agent.analyze(subject, actual_trigger_label, profile, datastore);
+            agent.analyze(subject, initial_timestamp, actual_trigger_label,
+                    profile, datastore);
         } catch (Throwable ex) {
             LoggerFactory.getLogger(this.getClass().getName()).error(
                     "Detector failed with exception!", ex);

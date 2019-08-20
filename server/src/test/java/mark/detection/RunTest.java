@@ -58,6 +58,7 @@ public class RunTest extends TestCase {
         agent.parameters.put(Run.KEY_WD, temp_directory);
 
         run_detector.analyze(new DummySubject("Tibo"),
+                123456,
                 "actual.trigger",
                 agent,
                 new DummyClient());

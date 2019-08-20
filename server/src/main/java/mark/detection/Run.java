@@ -76,6 +76,7 @@ public class Run implements DetectionAgentInterface {
     @Override
     public final void analyze(
             final Subject subject,
+            final long timestamp,
             final String actual_trigger_label,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
