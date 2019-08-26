@@ -46,14 +46,16 @@ public class ActivationController<T extends Subject> extends SafeThread
     /**
      *
      * @param config
+     * @param executor
      * @throws InvalidProfileException
      */
     @Inject
-    public ActivationController(final Config config)
+    public ActivationController(
+            final Config config, final ExecutorInterface executor)
             throws InvalidProfileException {
         this.config = config;
         this.profiles = new LinkedList<>();
-        this.executor = new IgniteExecutor(config);
+        this.executor = executor;
         this.events = new HashMap<>();
     }
 

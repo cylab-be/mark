@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import mark.activation.ActivationController;
 import mark.activation.ActivationControllerInterface;
+import mark.activation.ExecutorInterface;
+import mark.activation.IgniteExecutor;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -53,8 +55,9 @@ public class BillingModule extends AbstractModule {
     @Override
     protected void configure() {
         //Associate Interface to class
-        bind(ActivationControllerInterface.class).
-                to(ActivationController.class);
+        bind(ActivationControllerInterface.class).to(ActivationController.class);
+        bind(ExecutorInterface.class).to(IgniteExecutor.class);
+
         //Specific way to instantiate Config
         try {
             bind(Config.class).toInstance(new Config(config_file));

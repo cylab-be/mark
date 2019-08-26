@@ -41,9 +41,7 @@ public class ActivationControllerTest extends TestCase {
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyRawData With Different Subjects");
 
-        Config config = Config.getTestConfig();
-        ActivationController activation_controller =
-                new ActivationController(config);
+        ActivationController activation_controller = getTestController();
 
         //create a RawData entry to be pushed to the Activation Controller
         RawData data = this.getTestData();
@@ -71,9 +69,7 @@ public class ActivationControllerTest extends TestCase {
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyRawData With Same Subjects");
 
-        Config config = Config.getTestConfig();
-        ActivationController<DummySubject> activation_controller =
-                new ActivationController(config);
+        ActivationController activation_controller = getTestController();
 
         // create a RawData entry to be pushed to the Activation Controller
         RawData data = this.getTestData();
@@ -101,9 +97,7 @@ public class ActivationControllerTest extends TestCase {
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyEvidence With Different Subjects");
 
-        Config config = Config.getTestConfig();
-        ActivationController activation_controller =
-                new ActivationController(config);
+        ActivationController activation_controller = getTestController();
 
         //create an Evidence entry to be pushed to the Activation Controller
         Evidence evidence = getTestEvidence();
@@ -129,9 +123,7 @@ public class ActivationControllerTest extends TestCase {
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyEvidence With Same Subjects");
 
-        Config config = Config.getTestConfig();
-        ActivationController activation_controller =
-                new ActivationController(config);
+        ActivationController activation_controller = getTestController();
 
         //create a Evidence entry to be pushed to the Activation Controller
         Evidence evidence = getTestEvidence();
@@ -176,5 +168,12 @@ public class ActivationControllerTest extends TestCase {
         evidence.time = 123456;
         evidence.report = "Some report...";
         return evidence;
+    }
+
+    private ActivationController getTestController()
+            throws InvalidProfileException {
+        Config config = Config.getTestConfig();
+        ExecutorInterface executor = new IgniteExecutor(config);
+        return new ActivationController(config, executor);
     }
 }

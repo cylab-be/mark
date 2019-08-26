@@ -23,6 +23,8 @@
  */
 package mark.activation;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +42,7 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
  * Allows to run our detection jobs using an Apache Ignite cluster.
  * @author tibo
  */
+@Singleton
 public class IgniteExecutor implements ExecutorInterface {
 
     private final Ignite ignite;
@@ -47,6 +50,7 @@ public class IgniteExecutor implements ExecutorInterface {
     private final Config config;
 
 
+    @Inject
     public IgniteExecutor(final Config config) {
 
         this.config = config;
