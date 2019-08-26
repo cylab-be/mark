@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import junit.framework.TestCase;
 import mark.activation.ActivationController;
+import mark.activation.ExecutorInterface;
+import mark.activation.IgniteExecutor;
 import mark.core.DetectionAgentProfile;
 import mark.client.Client;
 import mark.core.Evidence;
@@ -43,8 +45,12 @@ public class ClientIT extends TestCase {
     protected final Server getServer() throws Throwable {
         Config config = Config.getTestConfig();
         config.adapter_class = LinkAdapter.class.getName();
+
+
+        ExecutorInterface executor = new IgniteExecutor(config);
+
         ActivationController activation_controller
-                = new ActivationController(config);
+                = new ActivationController(config, executor);
         return new Server(
                 config,
                 new WebServer(config),

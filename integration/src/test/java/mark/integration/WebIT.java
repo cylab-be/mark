@@ -29,6 +29,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.nio.file.Paths;
 import junit.framework.TestCase;
 import mark.activation.ActivationController;
+import mark.activation.ExecutorInterface;
+import mark.activation.IgniteExecutor;
 import mark.datastore.Datastore;
 import mark.server.Config;
 import mark.server.Server;
@@ -66,8 +68,11 @@ public class WebIT extends TestCase {
                 Paths.get("").toAbsolutePath().getParent().resolve("ui")
                         .toString());
         config.adapter_class = LinkAdapter.class.getName();
+
+        ExecutorInterface executor = new IgniteExecutor(config);
+
         ActivationController activation_controller
-                = new ActivationController(config);
+                = new ActivationController(config, executor);
         server = new Server(config, new WebServer(config),
                 activation_controller, new Datastore(config,
                         activation_controller));
