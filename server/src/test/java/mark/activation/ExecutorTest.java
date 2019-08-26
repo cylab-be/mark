@@ -24,6 +24,11 @@
 package mark.activation;
 
 import junit.framework.TestCase;
+import mark.core.DetectionAgentProfile;
+import mark.core.InvalidProfileException;
+import mark.core.RawData;
+import mark.server.Config;
+import mark.server.DummySubject;
 
 /**
  *
@@ -31,8 +36,30 @@ import junit.framework.TestCase;
  */
 public class ExecutorTest extends TestCase {
 
-    public void testNotifyRawDataWithDifferentSubjects() {
+    public void testActivation()
+            throws InvalidProfileException, InterruptedException {
+        Config config = Config.getTestConfig();
+        ExecutorInterface executor = new DummyExecutor();
+        ActivationController controller =
+                new ActivationController(config, executor);
 
+        RawData<DummySubject> data = new RawData();
+        data.label = "data.dummy";
+        data.subject = new DummySubject("dummy subject");
+        data.time = 123456;
+        data.data = "A proxy log line...";
+
+        DetectionAgentProfile profile = new DetectionAgentProfile();
+        profile.trigger_label = "data.dummy";
+        profile.class_name = mark.detection.DummyDetector.class.getCanonicalName();
+        controller.addAgent(profile);
+        controller.start();
+
+        Thread.sleep(1000);
+        controller.notifyRawData(data);
+        Thread.sleep(2000);
+
+        assertEquals(1, executor.taskCount());
 
     }
 
