@@ -28,32 +28,25 @@ import junit.framework.TestCase;
 import mark.core.Evidence;
 import mark.core.InvalidProfileException;
 import mark.core.RawData;
-import mark.core.Subject;
 import mark.server.Config;
 import mark.server.DummySubject;
 
 /**
  *
  * @author georgi
- * @param <T>
  */
-public class ActivationControllerTest<T extends Subject> extends TestCase {
+public class ActivationControllerTest extends TestCase {
 
     public void testNotifyRawDataWithDifferentSubjects()
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyRawData With Different Subjects");
-        System.out.println("==========================");
+
         Config config = Config.getTestConfig();
         ActivationController activation_controller =
                 new ActivationController(config);
-        //create a RawData entry to be pushed to the Activation Controller
-        RawData data = new RawData();
-        data.label = "data.http";
-        data.subject = new DummySubject("dummy subject");
-        data.time = (long) (System.currentTimeMillis() / 1000L);
-        data.data = "A proxy log line...";
 
-        //notify the Activation Controller that new data is available
+        //create a RawData entry to be pushed to the Activation Controller
+        RawData data = this.getTestData();
         activation_controller.notifyRawData(data);
 
         //add a second RawData entry with different subject
@@ -64,46 +57,41 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         activation_controller.notifyRawData(data);
 
         //get the events map from the Activation Controller
-        Map<String, Map<T, Long>> event_map = activation_controller.getEvents();
+        Map<String, Map<DummySubject, Long>> event_map =
+                activation_controller.getEvents();
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(data.label));
 
         //check for two instances of different subjects under the label
-        Map<T, Long> subject_map = event_map.get(data.label);
+        Map<DummySubject, Long> subject_map = event_map.get(data.label);
         assertEquals(2, subject_map.keySet().size());
     }
 
     public void testNotifyRawDataWithSameSubjects()
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyRawData With Same Subjects");
-        System.out.println("==========================");
-        Config config = Config.getTestConfig();
-        ActivationController activation_controller =
-                new ActivationController(config);
-        //create a RawData entry to be pushed to the Activation Controller
-        RawData data = new RawData();
-        data.label = "data.http";
-        data.subject = new DummySubject("dummy subject");
-        data.time = 123456;
-        data.data = "A proxy log line...";
 
-        //notify the Activation Controller that new data is available
+        Config config = Config.getTestConfig();
+        ActivationController<DummySubject> activation_controller =
+                new ActivationController(config);
+
+        // create a RawData entry to be pushed to the Activation Controller
+        RawData data = this.getTestData();
         activation_controller.notifyRawData(data);
 
         //add a second RawData entry with the same subject but later timestamp
         data.time = 456789;
-
-        //notify the Activation Controller that new data is available
         activation_controller.notifyRawData(data);
 
         //get the events map from the Activation Controller
-        Map<String, Map<T, Long>> event_map = activation_controller.getEvents();
+        Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(data.label));
 
         //check for one instance for the subject under the label
-        Map<T, Long> subject_map = event_map.get(data.label);
+        Map<DummySubject, Long> subject_map = event_map.get(data.label);
         assertEquals(1, subject_map.keySet().size());
+
         //check that it uses only the latest timestamp
         long map_timestamp = subject_map.get(data.subject);
         assertEquals(456789, map_timestamp);
@@ -112,70 +100,81 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         public void testNotifyEvidenceWithDifferentSubjects()
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyEvidence With Different Subjects");
-        System.out.println("==========================");
+
         Config config = Config.getTestConfig();
         ActivationController activation_controller =
                 new ActivationController(config);
-        //create a RawData entry to be pushed to the Activation Controller
-        Evidence data = new Evidence();
-        data.label = "evidence.http";
-        data.subject = new DummySubject("dummy subject");
-        data.time = (long) (System.currentTimeMillis() / 1000L);
-        data.report = "A proxy log line...";
 
-        //notify the Activation Controller that new data is available
-        activation_controller.notifyEvidence(data);
+        //create an Evidence entry to be pushed to the Activation Controller
+        Evidence evidence = getTestEvidence();
+        activation_controller.notifyEvidence(evidence);
 
-        //add a second RawData entry with different subject
-        data.subject = new DummySubject("another dummy subject 2");
-        data.time = (long) (System.currentTimeMillis() / 1000L);
-
-        //notify the Activation Controller that new data is available
-        activation_controller.notifyEvidence(data);
+        //add a second Evidence entry with different subject
+        evidence.subject = new DummySubject("another dummy subject 2");
+        evidence.time = (long) (System.currentTimeMillis() / 1000L);
+        activation_controller.notifyEvidence(evidence);
 
         //get the events map from the Activation Controller
-        Map<String, Map<T, Long>> event_map = activation_controller.getEvents();
+        Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
+
         //check that the data was saved under the correct label
-        assertEquals(true, event_map.keySet().contains(data.label));
+        assertEquals(true, event_map.keySet().contains(evidence.label));
 
         //check for two instances of different subjects under the label
-        Map<T, Long> subject_map = event_map.get(data.label);
+        Map<DummySubject, Long> subject_map = event_map.get(evidence.label);
         assertEquals(2, subject_map.keySet().size());
     }
 
     public void testNotifyEvidenceWithSameSubjects()
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyEvidence With Same Subjects");
-        System.out.println("==========================");
+
         Config config = Config.getTestConfig();
         ActivationController activation_controller =
                 new ActivationController(config);
-        //create a RawData entry to be pushed to the Activation Controller
-        Evidence data = new Evidence();
-        data.label = "evidence.http";
-        data.subject = new DummySubject("dummy subject");
-        data.time = 123456;
-        data.report = "A proxy log line...";
 
-        //notify the Activation Controller that new data is available
-        activation_controller.notifyEvidence(data);
+        //create a Evidence entry to be pushed to the Activation Controller
+        Evidence evidence = getTestEvidence();
+        activation_controller.notifyEvidence(evidence);
 
-        //add a second RawData entry with the same subject but later timestamp
-        data.time = 456789;
-
-        //notify the Activation Controller that new data is available
-        activation_controller.notifyEvidence(data);
+        //add a second Evidence entry with the same subject but later timestamp
+        evidence.time = 456789;
+        activation_controller.notifyEvidence(evidence);
 
         //get the events map from the Activation Controller
-        Map<String, Map<T, Long>> event_map = activation_controller.getEvents();
+        Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
+
         //check that the data was saved under the correct label
-        assertEquals(true, event_map.keySet().contains(data.label));
+        assertEquals(true, event_map.keySet().contains(evidence.label));
 
         //check for one instance for the subject under the label
-        Map<T, Long> subject_map = event_map.get(data.label);
+        Map<DummySubject, Long> subject_map = event_map.get(evidence.label);
         assertEquals(1, subject_map.keySet().size());
+
         //check that it uses only the latest timestamp
-        long map_timestamp = subject_map.get(data.subject);
+        long map_timestamp = subject_map.get(evidence.subject);
         assertEquals(456789, map_timestamp);
+    }
+
+    /**
+     * Create a single instance of RawData that can inserted for testing...
+     * @return
+     */
+    private RawData<DummySubject> getTestData() {
+        RawData<DummySubject> data = new RawData();
+        data.label = "data.http";
+        data.subject = new DummySubject("dummy subject");
+        data.time = 123456;
+        data.data = "A proxy log line...";
+        return data;
+    }
+
+    private Evidence<DummySubject> getTestEvidence() {
+        Evidence evidence = new Evidence();
+        evidence.label = "evidence.http";
+        evidence.subject = new DummySubject("dummy subject");
+        evidence.time = 123456;
+        evidence.report = "Some report...";
+        return evidence;
     }
 }

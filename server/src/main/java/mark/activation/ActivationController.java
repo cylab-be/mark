@@ -39,7 +39,7 @@ public class ActivationController<T extends Subject> extends SafeThread
     private final LinkedList<DetectionAgentProfile> profiles;
     private final ExecutorInterface executor;
 
-    // events is a table of label => subjects
+    // events is a table of label => subjects => last timestamp
     private volatile Map<String, Map<T, Long>> events;
     private final Config config;
 
@@ -92,16 +92,16 @@ public class ActivationController<T extends Subject> extends SafeThread
             // process the events:
             // for each received label find the agents that must be triggered
             // then spawn one agent for each subject
-            for (String key : local_events.keySet()) {
-                String label = key;
+            for (String event_label : local_events.keySet()) {
 
                 for (DetectionAgentProfile profile : profiles) {
-                    if (!profile.match(label)) {
+                    if (!profile.match(event_label)) {
                         continue;
                     }
 
                     for (Map.Entry<T, Long> subject_time :
-                            local_events.get(key).entrySet()) {
+                            local_events.get(event_label).entrySet()) {
+
                         T subject = (T) subject_time.getKey();
                         long timestamp = subject_time.getValue();
                         String detector_label = profile.label;
@@ -126,7 +126,7 @@ public class ActivationController<T extends Subject> extends SafeThread
                                             timestamp,
                                             config.getDatastoreUrl(),
                                             config.getSubjectAdapter(),
-                                            label,
+                                            event_label,
                                             profile,
                                             profile.createInstance()));
 
@@ -146,6 +146,11 @@ public class ActivationController<T extends Subject> extends SafeThread
 
     }
 
+    /**
+     * Get the number of executed jobs.
+     * @return
+     */
+    @Override
     public int getTaskCount() {
         return executor.taskCount();
     }
@@ -235,6 +240,10 @@ public class ActivationController<T extends Subject> extends SafeThread
 
     }
 
+    /**
+     *
+     * @return
+     */
     Map<String, Map<T, Long>> getEvents() {
         return this.events;
     }
