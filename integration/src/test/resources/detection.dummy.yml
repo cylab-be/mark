@@ -1,7 +1,7 @@
 # Launch a single Dummy agent for every
 # new http data
 ---
-class_name:     mark.detection.Dummy
+class_name:     mark.detection.DummyDetector
 label:          detection.dummy
 trigger_label:  data.http
 

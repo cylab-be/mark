@@ -10,7 +10,7 @@ import mark.core.Subject;
  * Can be used to test activation, without starting a complete server.
  * @author Thibault Debatty
  */
-public class Dummy implements DetectionAgentInterface {
+public class DummyDetector implements DetectionAgentInterface {
 
     private static final int SLEEP_TIME = 500;
 

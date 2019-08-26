@@ -14,7 +14,7 @@ import mark.core.Subject;
  * @author Thibault Debatty
  * @param <T> The type of subject we deal with
  */
-public class ReadWrite<T extends Subject>
+public class DummyReadWriteDetector<T extends Subject>
         implements DetectionAgentInterface<T> {
 
 
