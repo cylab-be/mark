@@ -27,7 +27,6 @@ import mark.core.DetectionAgentProfile;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
-import org.apache.ignite.cluster.ClusterMetrics;
 
 /**
  *
@@ -48,10 +47,8 @@ public interface ActivationControllerInterface<T extends Subject> {
      */
     void notifyRawData(final RawData<T> data);
 
-    public ClusterMetrics getIgniteMetrics();
+    public Iterable<DetectionAgentProfile> getProfiles();
 
     public int getTaskCount();
-
-    public Iterable<DetectionAgentProfile> getProfiles();
 
 }

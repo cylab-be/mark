@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Thibault Debatty.
+ * Copyright 2019 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,43 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
-package mark.datastore;
-
-import mark.activation.ActivationControllerInterface;
-import mark.core.Evidence;
-import mark.core.RawData;
-import org.apache.ignite.cluster.ClusterMetrics;
+package mark.activation;
 
 /**
  *
- * @author Thibault Debatty
+ * @author tibo
  */
-public class DummyActivationContoller implements ActivationControllerInterface {
+public interface ExecutorInterface {
+    public void submit(Runnable job);
 
-    @Override
-    public void notifyEvidence(Evidence evidence) {
+    public boolean shutdown() throws InterruptedException;
 
-    }
-
-    @Override
-    public void notifyRawData(RawData data) {
-
-    }
-
-    public ClusterMetrics getIgniteMetrics() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getTaskCount() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Iterable getProfiles() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
+    public int taskCount();
 }

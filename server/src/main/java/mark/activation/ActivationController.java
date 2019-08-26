@@ -2,30 +2,18 @@ package mark.activation;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
-import java.util.Arrays;
-import mark.core.InvalidProfileException;
-import mark.core.DetectionAgentInterface;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import mark.core.DetectionAgentProfile;
+import mark.core.InvalidProfileException;
+import mark.core.DetectionAgentInterface;
 import mark.core.Evidence;
 import mark.core.RawData;
 import mark.core.Subject;
 import mark.server.Config;
 import mark.server.SafeThread;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteState;
-import org.apache.ignite.Ignition;
-import org.apache.ignite.cluster.ClusterMetrics;
-import org.apache.ignite.configuration.DataStorageConfiguration;
-import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.spi.collision.fifoqueue.FifoQueueCollisionSpi;
-import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
-import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +37,7 @@ public class ActivationController<T extends Subject> extends SafeThread
             = LoggerFactory.getLogger(ActivationController.class);
 
     private final LinkedList<DetectionAgentProfile> profiles;
-    private final Ignite ignite;
-    private final ExecutorService executor_service;
+    private final ExecutorInterface executor;
 
     // events is a table of label => subjects
     private volatile Map<String, Map<T, Long>> events;
@@ -66,49 +53,16 @@ public class ActivationController<T extends Subject> extends SafeThread
             throws InvalidProfileException {
         this.config = config;
         this.profiles = new LinkedList<>();
-
-        IgniteConfiguration ignite_config = new IgniteConfiguration();
-        ignite_config.setPeerClassLoadingEnabled(true);
-        ignite_config.setClientMode(!config.ignite_start_server);
-
-        ignite_config.setCollisionSpi(new FifoQueueCollisionSpi());
-        
-        // Changing total RAM size to be used by Ignite Node.
-        DataStorageConfiguration storage_config =
-                new DataStorageConfiguration();
-        // Setting the size of the default memory region to 
-        storage_config.getDefaultDataRegionConfiguration().setMaxSize(
-            12L * 1024 * 1024 * 1024);
-        ignite_config.setDataStorageConfiguration(storage_config);
-
-        if (!config.ignite_autodiscovery) {
-            // Disable autodiscovery
-            TcpDiscoverySpi spi = new TcpDiscoverySpi();
-            TcpDiscoveryVmIpFinder ip_finder = new TcpDiscoveryVmIpFinder();
-            ip_finder.setAddresses(Arrays.asList("127.0.0.1"));
-            spi.setIpFinder(ip_finder);
-            ignite_config.setDiscoverySpi(spi);
-        }
-
-        // Start Ignite framework..
-        if (Ignition.state() == IgniteState.STARTED) {
-            ignite = Ignition.ignite();
-        } else {
-            ignite = Ignition.start(ignite_config);
-        }
-
-        executor_service = ignite.executorService();
+        this.executor = new IgniteExecutor(config);
     }
 
     /**
-     * Ask ignite executor to shutdown then when for tasks to finish.
+     * Ask executor to shutdown then wait for tasks to finish.
      *
      * @throws InterruptedException
      */
     public final void awaitTermination() throws InterruptedException {
-        Thread.sleep(2 * 1000 * config.update_interval);
-        executor_service.shutdown();
-        executor_service.awaitTermination(1, TimeUnit.DAYS);
+        this.executor.shutdown();
     }
 
     @Override
@@ -165,7 +119,7 @@ public class ActivationController<T extends Subject> extends SafeThread
                                     "Trigger detector {} for subject {}",
                                     detector_label,
                                     subject.toString());
-                            executor_service.submit(
+                            executor.submit(
                                     new DetectionAgentContainer(
                                             subject,
                                             timestamp,
@@ -186,19 +140,15 @@ public class ActivationController<T extends Subject> extends SafeThread
                 }
             }
 
-            LOGGER.debug("Executed " + getTaskCount() + " tasks");
+            // LOGGER.debug("Executed " + getTaskCount() + " tasks");
         }
 
     }
 
-    /**
-     * Get the total number of detection tasks that were activated.
-     *
-     * @return
-     */
-    public final int getTaskCount() {
-        return ignite.cluster().metrics().getTotalExecutedJobs();
+    public int getTaskCount() {
+        return executor.taskCount();
     }
+
 
     /**
      * Test the profiles: instantiate (without running) one of each task defined
@@ -281,13 +231,7 @@ public class ActivationController<T extends Subject> extends SafeThread
             hashmap.replace(evidence.subject, evidence.time);
         }
 
-        
-    }
 
-    public ClusterMetrics getIgniteMetrics() {
-        ignite.cluster().nodes().iterator().next().addresses();
-        ignite.cluster().nodes().iterator().next().hostNames();
-        return ignite.cluster().metrics();
     }
 
     Map<String, Map<T, Long>> getEvents() {
@@ -297,5 +241,4 @@ public class ActivationController<T extends Subject> extends SafeThread
     void setEvents(final Map<String, Map<T, Long>> map) {
         this.events = map;
     }
-
 }

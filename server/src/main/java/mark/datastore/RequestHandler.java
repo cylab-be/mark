@@ -191,7 +191,7 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     public final Map<String, Object> status() {
-        HashMap<String, Object> status = new HashMap<String, Object>();
+        HashMap<String, Object> status = new HashMap<>();
         status.put("state", "running");
         status.put("activation", activation_controller.getProfiles());
         status.put("executed", activation_controller.getTaskCount());
@@ -377,7 +377,8 @@ public class RequestHandler implements ServerInterface {
     }
 
     public final ClusterMetrics igniteStatus() {
-        return activation_controller.getIgniteMetrics();
+        // return activation_controller.getIgniteMetrics();
+        throw new UnsupportedOperationException("Not supported...");
     }
 
     public URL getURL() {
@@ -430,7 +431,7 @@ public class RequestHandler implements ServerInterface {
      */
     public final int findUniqueSubjects(final Document doc) {
         int unique_subjects = 0;
-        Document query = new Document("$group", 
+        Document query = new Document("$group",
                             new Document("_id", doc));
         AggregateIterable<Document> db_output = mongodb
                                 .getCollection(COLLECTION_EVIDENCE)
