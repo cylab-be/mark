@@ -31,6 +31,7 @@ import mark.core.Subject;
 /**
  *
  * @author Thibault Debatty
+ * @param <T> the actual type of ranking subject
  */
 public interface ActivationControllerInterface<T extends Subject> {
 

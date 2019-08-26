@@ -37,7 +37,7 @@ import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 
 /**
- *
+ * Allows to run our detection jobs using an Apache Ignite cluster.
  * @author tibo
  */
 public class IgniteExecutor implements ExecutorInterface {

@@ -24,7 +24,8 @@
 package mark.activation;
 
 /**
- *
+ * The actual detection jobs can be executed by any platform that implements
+ * this interface. We currently use Apache Ignite.
  * @author tibo
  */
 public interface ExecutorInterface {

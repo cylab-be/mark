@@ -182,6 +182,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      *
      * @return
      */
+    @Override
     public final Iterable<DetectionAgentProfile> getProfiles() {
         return profiles;
     }
@@ -241,7 +242,8 @@ public class ActivationController<T extends Subject> extends SafeThread
     }
 
     /**
-     *
+     * Get the list of received events (new data or new evidence reports).
+     * Used mainly for testing.
      * @return
      */
     Map<String, Map<T, Long>> getEvents() {
