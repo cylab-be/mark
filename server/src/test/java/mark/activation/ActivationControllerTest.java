@@ -23,7 +23,6 @@
  */
 package mark.activation;
 
-import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
 import mark.core.Evidence;
@@ -54,11 +53,9 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         data.time = (long) (System.currentTimeMillis() / 1000L);
         data.data = "A proxy log line...";
 
-        //initiate the events map
-        activation_controller.setEvents(new HashMap<>());
         //notify the Activation Controller that new data is available
         activation_controller.notifyRawData(data);
-        
+
         //add a second RawData entry with different subject
         data.subject = new DummySubject("another dummy subject 2");
         data.time = (long) (System.currentTimeMillis() / 1000L);
@@ -90,11 +87,9 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         data.time = 123456;
         data.data = "A proxy log line...";
 
-        //initiate the events map
-        activation_controller.setEvents(new HashMap<>());
         //notify the Activation Controller that new data is available
         activation_controller.notifyRawData(data);
-        
+
         //add a second RawData entry with the same subject but later timestamp
         data.time = 456789;
 
@@ -128,11 +123,9 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         data.time = (long) (System.currentTimeMillis() / 1000L);
         data.report = "A proxy log line...";
 
-        //initiate the events map
-        activation_controller.setEvents(new HashMap<>());
         //notify the Activation Controller that new data is available
         activation_controller.notifyEvidence(data);
-        
+
         //add a second RawData entry with different subject
         data.subject = new DummySubject("another dummy subject 2");
         data.time = (long) (System.currentTimeMillis() / 1000L);
@@ -164,11 +157,9 @@ public class ActivationControllerTest<T extends Subject> extends TestCase {
         data.time = 123456;
         data.report = "A proxy log line...";
 
-        //initiate the events map
-        activation_controller.setEvents(new HashMap<>());
         //notify the Activation Controller that new data is available
         activation_controller.notifyEvidence(data);
-        
+
         //add a second RawData entry with the same subject but later timestamp
         data.time = 456789;
 

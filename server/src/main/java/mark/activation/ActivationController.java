@@ -54,6 +54,7 @@ public class ActivationController<T extends Subject> extends SafeThread
         this.config = config;
         this.profiles = new LinkedList<>();
         this.executor = new IgniteExecutor(config);
+        this.events = new HashMap<>();
     }
 
     /**
@@ -69,7 +70,7 @@ public class ActivationController<T extends Subject> extends SafeThread
     public final void doRun() throws Throwable {
 
         Map<String, Map<T, Long>> local_events;
-        this.events = new HashMap<>();
+
         while (true) {
             Thread.sleep(1000 * config.update_interval);
 
@@ -236,9 +237,5 @@ public class ActivationController<T extends Subject> extends SafeThread
 
     Map<String, Map<T, Long>> getEvents() {
         return this.events;
-    }
-
-    void setEvents(final Map<String, Map<T, Long>> map) {
-        this.events = map;
     }
 }
