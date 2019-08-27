@@ -119,10 +119,12 @@
             <type>jar</type>
         </dependency>
 
+        <!-- We use our own version of snakeyaml, to support
+        snake_case_notation -->
         <dependency>
-            <groupId>org.yaml</groupId>
+            <groupId>be.cylab</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.17</version>
+            <version>1.25.1</version>
         </dependency>
     </dependencies>
 </project>
