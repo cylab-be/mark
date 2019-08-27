@@ -59,8 +59,8 @@ public class RequestHandlerTest extends TestCase {
                 new DummySubjectAdapter());
 
         RawData<DummySubject> data = new RawData<>();
-        data.data = "1234";
-        data.subject = new DummySubject("test");
+        data.setData("1234");
+        data.setSubject(new DummySubject("test"));
         handler.addRawData(data);
         handler.addRawData(data);
 

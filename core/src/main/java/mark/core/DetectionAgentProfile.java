@@ -35,7 +35,7 @@ public class DetectionAgentProfile {
     /**
      * The parameters that will be provided to the detector.
      */
-    private final HashMap<String, String> parameters = new HashMap<>();
+    private HashMap<String, String> parameters = new HashMap<>();
 
 
     /**
@@ -88,10 +88,27 @@ public class DetectionAgentProfile {
 
     /**
      *
+     * @param parameters
+     */
+    public final void setParameters(final HashMap<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
+    /**
+     *
      * @return
      */
     public final HashMap<String, String> getParameters() {
         return parameters;
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public final String getParameter(final String name) {
+        return parameters.get(name);
     }
 
     private static final Yaml PARSER

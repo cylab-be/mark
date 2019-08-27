@@ -36,15 +36,15 @@ public class DummyReadWriteDetector<T extends Subject>
         Random rand = new Random();
 
         // Add evidences to datastore
-        Evidence<T> evidence = new Evidence<T>();
-        evidence.label = profile.label;
-        evidence.subject = subject;
-        evidence.report = "Some report...";
-        evidence.score = rand.nextDouble();
-        evidence.time = data[data.length - 1].time;
+        Evidence<T> evidence = new Evidence<>();
+        evidence.setLabel(profile.getLabel());
+        evidence.setSubject(subject);
+        evidence.setReport("Some report...");
+        evidence.setScore(rand.nextDouble());
+        evidence.setTime(data[data.length - 1].getTime());
         datastore.addEvidence(evidence);
 
-        evidence.score = rand.nextDouble();
+        evidence.setScore(rand.nextDouble());
         datastore.addEvidence(evidence);
     }
 }

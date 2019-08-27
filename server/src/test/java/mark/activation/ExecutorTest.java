@@ -44,14 +44,15 @@ public class ExecutorTest extends TestCase {
                 new ActivationController(config, executor);
 
         RawData<DummySubject> data = new RawData();
-        data.label = "data.dummy";
-        data.subject = new DummySubject("dummy subject");
-        data.time = 123456;
-        data.data = "A proxy log line...";
+        data.setLabel("data.dummy");
+        data.setSubject(new DummySubject("dummy subject"));
+        data.setTime(123456);
+        data.setData("A proxy log line...");
 
         DetectionAgentProfile profile = new DetectionAgentProfile();
-        profile.trigger_label = "data.dummy";
-        profile.class_name = mark.detection.DummyDetector.class.getCanonicalName();
+        profile.setTriggerLabel("data.dummy");
+        profile.setClassName(
+                mark.detection.DummyDetector.class.getCanonicalName());
         controller.addAgent(profile);
         controller.start();
 

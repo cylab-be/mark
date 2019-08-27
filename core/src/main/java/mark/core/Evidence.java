@@ -34,6 +34,14 @@ public class Evidence<T extends Subject> {
 
     /**
      *
+     * @param id
+     */
+    public final void setId(final String id) {
+        this.id = id;
+    }
+
+    /**
+     *
      * @return
      */
     public final String getLabel() {

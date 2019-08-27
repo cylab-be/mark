@@ -82,22 +82,22 @@ public class Run implements DetectionAgentInterface {
             final ServerInterface datastore) throws Throwable {
 
         LinkedList<String> command = new LinkedList<String>();
-        command.add(profile.parameters.get(KEY_COMMAND));
+        command.add(profile.getParameter(KEY_COMMAND));
 
         command.add("-d");
         command.add(datastore.getURL().toExternalForm());
 
-        for (String key : profile.parameters.keySet()) {
+        for (String key : profile.getParameters().keySet()) {
             if (key.equals(KEY_COMMAND) || key.equals(KEY_WD)) {
                 continue;
             }
 
             command.add("-" + key);
-            command.add(profile.parameters.get(key));
+            command.add(profile.getParameter(key));
         }
 
         ProcessBuilder pb = new ProcessBuilder(command);
-        pb.directory(new File(profile.parameters.get(KEY_WD)));
+        pb.directory(new File(profile.getParameter(KEY_WD)));
         Process p = pb.start();
         p.waitFor();
         String out = readInputStream(p.getInputStream());

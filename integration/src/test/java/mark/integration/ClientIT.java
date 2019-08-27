@@ -117,15 +117,15 @@ public class ClientIT extends TestCase {
         String label = "http";
         Link link = new Link("1.2.3.4", "www.google.be");
 
-        Client<Link> datastore = new Client<Link>(
+        Client<Link> datastore = new Client<>(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
         RawData[] original_data = datastore.findRawData(label, link);
 
         RawData new_data = new RawData();
-        new_data.label = label;
-        new_data.subject = link;
-        new_data.time = (int) (System.currentTimeMillis() / 1000L);
-        new_data.data = "A proxy log line...";
+        new_data.setLabel(label);
+        new_data.setSubject(link);
+        new_data.setTime((System.currentTimeMillis() / 1000L));
+        new_data.setData("A proxy log line...");
         datastore.addRawData(new_data);
 
         RawData[] final_data = datastore.findRawData(label, link);
@@ -134,13 +134,11 @@ public class ClientIT extends TestCase {
                 original_data.length + 1,
                 final_data.length);
 
-        System.out.println(final_data[0].label);
-        assertEquals(label,
-                final_data[0].label);
+        assertEquals(label, final_data[0].getLabel());
 
         assertEquals(
                 "A proxy log line...",
-                final_data[0].data);
+                final_data[0].getData());
 
     }
 
@@ -169,14 +167,14 @@ public class ClientIT extends TestCase {
 
         // add a data, which should trigger the rw detector
         RawData data = new RawData();
-        data.label = "data.http";
-        data.subject = new Link("1.2.3.4", "www.google.be");
-        data.time = 1230987;
-        data.data = "A proxy log line...";
+        data.setLabel("data.http");
+        data.setSubject(new Link("1.2.3.4", "www.google.be"));
+        data.setTime(1230987);
+        data.setData("A proxy log line...");
         datastore.addRawData(data);
 
         // Add it twice... detector should be triggered only once...
-        data.time = 1234567;
+        data.setTime(1234567);
         datastore.addRawData(data);
 
         server.awaitTermination();
@@ -262,13 +260,13 @@ public class ClientIT extends TestCase {
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
 
         RawData<Link> data = new RawData();
-        data.label = "data.http";
-        data.subject = new Link("1.2.3.4", "some.server");
-        data.time = 123456;
+        data.setLabel("data.http");
+        data.setSubject(new Link("1.2.3.4", "some.server"));
+        data.setTime(123456);
         datastore.addRawData(data);
 
-        data.subject = new Link("1.2.3.4", "some.other.server");
-        data.time = 456789;
+        data.setSubject(new Link("1.2.3.4", "some.other.server"));
+        data.setTime(456789);
         datastore.addRawData(data);
 
         Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
@@ -293,15 +291,15 @@ public class ClientIT extends TestCase {
 
         Evidence<Link> evidence = new Evidence<>();
         Link subject = new Link("1.2.3.4", "test.me");
-        evidence.label = label;
-        evidence.score = 0.9;
-        evidence.time = 1234;
-        evidence.subject = subject;
+        evidence.setLabel(label);
+        evidence.setScore(0.9);
+        evidence.setTime(1234);
+        evidence.setSubject(subject);
         datastore.addEvidence(evidence);
 
         // After some time, score decreases
-        evidence.score = 0.8;
-        evidence.time = 2345;
+        evidence.setScore(0.8);
+        evidence.setTime(2345);
         datastore.addEvidence(evidence);
 
         // Ask for last evidences
@@ -309,7 +307,7 @@ public class ClientIT extends TestCase {
         assertEquals(1, evidences.length);
 
         // Check it is indeed the most recent report
-        assertEquals(2345, evidences[0].time);
+        assertEquals(2345, evidences[0].getTime());
     }
 
     /**

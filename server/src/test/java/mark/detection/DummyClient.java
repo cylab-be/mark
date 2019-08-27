@@ -78,33 +78,33 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
         for (int i = 0; i < N_APT; i++) {
             data[i] = new RawData();
-            data[i].subject = subject;
-            data[i].label = type;
-            data[i].time = start + APT_INTERVAL * i;
-            data[i].data = data[i].time + "    "
+            data[i].setSubject(subject);
+            data[i].setLabel(type);
+            data[i].setTime(start + APT_INTERVAL * i);
+            data[i].setData(data[i].getTime() + "    "
                     + "126 "
                     + "198.36.158.8 "
                     + "TCP_MISS/"
                     + "400"
                     + " 918 GET "
                     + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + "175.193.216.231 text/html";
+                    + "175.193.216.231 text/html");
         }
 
         // Add a few random requests
         for (int i = N_APT; i < N_APT + N_NOISE; i++) {
             data[i] = new RawData();
-            data[i].subject = subject;
-            data[i].label = type;
-            data[i].time = start + rand.nextInt(N_APT * APT_INTERVAL);
-            data[i].data = data[i].time + "    "
+            data[i].setSubject(subject);
+            data[i].setLabel(type);
+            data[i].setTime(start + rand.nextInt(N_APT * APT_INTERVAL));
+            data[i].setData(data[i].getTime() + "    "
                     + "126 "
                     + "198.36.158.8 "
                     + "TCP_MISS/"
                     + "200"
                     + " 918 GET "
                     + "http://lyfqnr.owvcq.wf/jbul.html - DIRECT/"
-                    + "175.193.216.231 text/html";
+                    + "175.193.216.231 text/html");
         }
 
         return data;
@@ -148,17 +148,17 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
     @Override
     public Object getFromCache(String key) throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void storeInCache(String key, Object value) throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean compareAndSwapInCache(String key, Object new_value, Object old_value) throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean compareAndSwapInCache(
+            String key, Object new_value, Object old_value) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }

@@ -263,10 +263,11 @@ public class Client<T extends Subject> implements ServerInterface {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
             RawData<T> data = new RawData<>();
-            data.data = ((TextNode) tree.get("data")).asText();
-            data.label = ((TextNode) tree.get("label")).asText();
-            data.time = ((NumericNode) tree.get("time")).asInt();
-            data.subject = adapter.deserialize((JsonNode) tree.get("subject"));
+            data.setData(((TextNode) tree.get("data")).asText());
+            data.setLabel(((TextNode) tree.get("label")).asText());
+            data.setTime(((NumericNode) tree.get("time")).asLong());
+            data.setSubject(
+                    adapter.deserialize((JsonNode) tree.get("subject")));
 
             return data;
         }
@@ -294,11 +295,12 @@ public class Client<T extends Subject> implements ServerInterface {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
             Evidence data = new Evidence();
-            data.report = ((TextNode) tree.get("report")).asText();
-            data.label = ((TextNode) tree.get("label")).asText();
-            data.score = ((NumericNode) tree.get("score")).asDouble();
-            data.time = ((NumericNode) tree.get("time")).asInt();
-            data.subject = adapter.deserialize((JsonNode) tree.get("subject"));
+            data.setReport(((TextNode) tree.get("report")).asText());
+            data.setLabel(((TextNode) tree.get("label")).asText());
+            data.setScore(((NumericNode) tree.get("score")).asDouble());
+            data.setTime(((NumericNode) tree.get("time")).asLong());
+            data.setSubject(
+                    adapter.deserialize((JsonNode) tree.get("subject")));
 
             return data;
         }

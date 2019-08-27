@@ -52,7 +52,7 @@ public class Average implements DetectionAgentInterface {
         //check for parameters set through the config file
         int min_denominator = DEFAULT_MIN_DENOMINATOR;
         String threshold_string = String.valueOf(
-                profile.parameters.get(DENOMINATOR_STRING));
+                profile.getParameter(DENOMINATOR_STRING));
         if (threshold_string != null) {
             try {
                 min_denominator = Integer.valueOf(threshold_string);
@@ -62,7 +62,7 @@ public class Average implements DetectionAgentInterface {
         }
 
         Evidence[] evidences = datastore.findLastEvidences(
-                profile.trigger_label, subject);
+                profile.getTriggerLabel(), subject);
 
         //check if the amount of evidences gotten from the DB is equal or higher
         //to the minimum needed to aggregate. If not the case, use the default
@@ -78,15 +78,15 @@ public class Average implements DetectionAgentInterface {
         double score = 0;
         long last_time = 0;
         for (Evidence ev : evidences) {
-            score += ev.score / denominator;
+            score += ev.getScore() / denominator;
 
-            if (ev.time > last_time) {
-                last_time = ev.time;
+            if (ev.getTime() > last_time) {
+                last_time = ev.getTime();
             }
- 
+
             //add the agent and his score to the map
-            agent_labels.put(ev.label, 
-                    new String[]{Double.toString(ev.score), ev.id});
+            agent_labels.put(ev.getLabel(),
+                    new String[]{Double.toString(ev.getScore()), ev.getId()});
         }
 
         //create a string of the agent_labels to be added to the report
@@ -98,14 +98,14 @@ public class Average implements DetectionAgentInterface {
         }
 
         Evidence ev = new Evidence();
-        ev.label = profile.label;
-        ev.score = score;
-        ev.subject = subject;
-        ev.time = last_time;
-        ev.report = "Average Aggregation generated for evidences with"
-                + " label " + profile.trigger_label
+        ev.setLabel(profile.getLabel());
+        ev.setScore(score);
+        ev.setSubject(subject);
+        ev.setTime(last_time);
+        ev.setReport("Average Aggregation generated for evidences with"
+                + " label " + profile.getTriggerLabel()
                 + "<br /> Agents used for the aggregation: "
-                + agents_output;
+                + agents_output);
         datastore.addEvidence(ev);
     }
 

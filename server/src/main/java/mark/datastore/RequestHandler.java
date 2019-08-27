@@ -222,10 +222,10 @@ public class RequestHandler implements ServerInterface {
     private RawData convert(final Document doc) {
 
         RawData data = new RawData();
-        data.subject = adapter.readFromMongo(doc);
-        data.data = doc.getString(DATA);
-        data.time = doc.getLong(TIME);
-        data.label = doc.getString(LABEL);
+        data.setSubject(adapter.readFromMongo(doc));
+        data.setData(doc.getString(DATA));
+        data.setTime(doc.getLong(TIME));
+        data.setLabel(doc.getString(LABEL));
 
         return data;
 
@@ -234,12 +234,12 @@ public class RequestHandler implements ServerInterface {
     private Evidence convertEvidence(final Document doc) {
 
         Evidence evidence = new Evidence();
-        evidence.subject = adapter.readFromMongo(doc);
-        evidence.score = doc.getDouble(SCORE);
-        evidence.time = doc.getLong(TIME);
-        evidence.label = doc.getString(LABEL);
-        evidence.report = doc.getString(REPORT);
-        evidence.id = doc.getObjectId("_id").toString();
+        evidence.setSubject(adapter.readFromMongo(doc));
+        evidence.setScore(doc.getDouble(SCORE));
+        evidence.setTime(doc.getLong(TIME));
+        evidence.setLabel(doc.getString(LABEL));
+        evidence.setReport(doc.getString(REPORT));
+        evidence.setId(doc.getObjectId("_id").toString());
 
         return evidence;
 
@@ -254,10 +254,10 @@ public class RequestHandler implements ServerInterface {
     private Document convert(final RawData data) {
 
         Document doc = new Document()
-                .append(LABEL, data.label)
-                .append(TIME, data.time)
-                .append(DATA, data.data);
-        adapter.writeToMongo(data.subject, doc);
+                .append(LABEL, data.getLabel())
+                .append(TIME, data.getTime())
+                .append(DATA, data.getData());
+        adapter.writeToMongo(data.getSubject(), doc);
         return doc;
     }
 
@@ -269,13 +269,13 @@ public class RequestHandler implements ServerInterface {
      */
     private Document convert(final Evidence evidence) {
         Document doc = new Document()
-                .append(LABEL, evidence.label)
-                .append(TIME, evidence.time)
-                .append(SCORE, evidence.score)
-                .append(TIME, evidence.time)
-                .append(REPORT, evidence.report);
+                .append(LABEL, evidence.getLabel())
+                .append(TIME, evidence.getTime())
+                .append(SCORE, evidence.getScore())
+                .append(TIME, evidence.getTime())
+                .append(REPORT, evidence.getReport());
 
-        adapter.writeToMongo(evidence.subject, doc);
+        adapter.writeToMongo(evidence.getSubject(), doc);
         return doc;
     }
 
@@ -332,14 +332,14 @@ public class RequestHandler implements ServerInterface {
             for (Document doc : documents) {
                 Evidence evidence = convertEvidence(doc);
 
-                Evidence inmap = evidences.get(evidence.subject);
+                Evidence inmap = evidences.get(evidence.getSubject());
                 if (inmap == null) {
-                    evidences.put(evidence.subject, evidence);
+                    evidences.put(evidence.getSubject(), evidence);
                     continue;
                 }
 
-                if (evidence.time > inmap.time) {
-                    evidences.put(evidence.subject, evidence);
+                if (evidence.getTime() > inmap.getTime()) {
+                    evidences.put(evidence.getSubject(), evidence);
                 }
             }
 
@@ -410,14 +410,14 @@ public class RequestHandler implements ServerInterface {
         for (Document doc : documents) {
             Evidence evidence = convertEvidence(doc);
 
-            Evidence inmap = evidences.get(evidence.label);
+            Evidence inmap = evidences.get(evidence.getLabel());
             if (inmap == null) {
-                evidences.put(evidence.label, evidence);
+                evidences.put(evidence.getLabel(), evidence);
                 continue;
             }
 
-            if (evidence.time > inmap.time) {
-                evidences.put(evidence.label, evidence);
+            if (evidence.getTime() > inmap.getTime()) {
+                evidences.put(evidence.getLabel(), evidence);
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);

@@ -4,3 +4,5 @@
 class_name:     mark.core.DummyDetector
 label:          detection.dummy
 trigger_label:  data.http
+parameters:
+    say:  echo

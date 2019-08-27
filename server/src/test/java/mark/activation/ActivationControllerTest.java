@@ -48,8 +48,8 @@ public class ActivationControllerTest extends TestCase {
         activation_controller.notifyRawData(data);
 
         //add a second RawData entry with different subject
-        data.subject = new DummySubject("another dummy subject 2");
-        data.time = (long) (System.currentTimeMillis() / 1000L);
+        data.setSubject(new DummySubject("another dummy subject 2"));
+        data.setTime((long) (System.currentTimeMillis() / 1000L));
 
         //notify the Activation Controller that new data is available
         activation_controller.notifyRawData(data);
@@ -58,10 +58,10 @@ public class ActivationControllerTest extends TestCase {
         Map<String, Map<DummySubject, Long>> event_map =
                 activation_controller.getEvents();
         //check that the data was saved under the correct label
-        assertEquals(true, event_map.keySet().contains(data.label));
+        assertEquals(true, event_map.keySet().contains(data.getLabel()));
 
         //check for two instances of different subjects under the label
-        Map<DummySubject, Long> subject_map = event_map.get(data.label);
+        Map<DummySubject, Long> subject_map = event_map.get(data.getLabel());
         assertEquals(2, subject_map.keySet().size());
     }
 
@@ -72,24 +72,24 @@ public class ActivationControllerTest extends TestCase {
         ActivationController activation_controller = getTestController();
 
         // create a RawData entry to be pushed to the Activation Controller
-        RawData data = this.getTestData();
+        RawData<DummySubject> data = this.getTestData();
         activation_controller.notifyRawData(data);
 
         //add a second RawData entry with the same subject but later timestamp
-        data.time = 456789;
+        data.setTime(456789);
         activation_controller.notifyRawData(data);
 
         //get the events map from the Activation Controller
         Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
         //check that the data was saved under the correct label
-        assertEquals(true, event_map.keySet().contains(data.label));
+        assertEquals(true, event_map.keySet().contains(data.getLabel()));
 
         //check for one instance for the subject under the label
-        Map<DummySubject, Long> subject_map = event_map.get(data.label);
+        Map<DummySubject, Long> subject_map = event_map.get(data.getLabel());
         assertEquals(1, subject_map.keySet().size());
 
         //check that it uses only the latest timestamp
-        long map_timestamp = subject_map.get(data.subject);
+        long map_timestamp = subject_map.get(data.getSubject());
         assertEquals(456789, map_timestamp);
     }
 
@@ -104,18 +104,18 @@ public class ActivationControllerTest extends TestCase {
         activation_controller.notifyEvidence(evidence);
 
         //add a second Evidence entry with different subject
-        evidence.subject = new DummySubject("another dummy subject 2");
-        evidence.time = (long) (System.currentTimeMillis() / 1000L);
+        evidence.setSubject(new DummySubject("another dummy subject 2"));
+        evidence.setTime((long) (System.currentTimeMillis() / 1000L));
         activation_controller.notifyEvidence(evidence);
 
         //get the events map from the Activation Controller
         Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
 
         //check that the data was saved under the correct label
-        assertEquals(true, event_map.keySet().contains(evidence.label));
+        assertEquals(true, event_map.keySet().contains(evidence.getLabel()));
 
         //check for two instances of different subjects under the label
-        Map<DummySubject, Long> subject_map = event_map.get(evidence.label);
+        Map<DummySubject, Long> subject_map = event_map.get(evidence.getLabel());
         assertEquals(2, subject_map.keySet().size());
     }
 
@@ -130,21 +130,21 @@ public class ActivationControllerTest extends TestCase {
         activation_controller.notifyEvidence(evidence);
 
         //add a second Evidence entry with the same subject but later timestamp
-        evidence.time = 456789;
+        evidence.setTime(456789);
         activation_controller.notifyEvidence(evidence);
 
         //get the events map from the Activation Controller
         Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
 
         //check that the data was saved under the correct label
-        assertEquals(true, event_map.keySet().contains(evidence.label));
+        assertEquals(true, event_map.keySet().contains(evidence.getLabel()));
 
         //check for one instance for the subject under the label
-        Map<DummySubject, Long> subject_map = event_map.get(evidence.label);
+        Map<DummySubject, Long> subject_map = event_map.get(evidence.getLabel());
         assertEquals(1, subject_map.keySet().size());
 
         //check that it uses only the latest timestamp
-        long map_timestamp = subject_map.get(evidence.subject);
+        long map_timestamp = subject_map.get(evidence.getSubject());
         assertEquals(456789, map_timestamp);
     }
 
@@ -154,19 +154,19 @@ public class ActivationControllerTest extends TestCase {
      */
     private RawData<DummySubject> getTestData() {
         RawData<DummySubject> data = new RawData();
-        data.label = "data.http";
-        data.subject = new DummySubject("dummy subject");
-        data.time = 123456;
-        data.data = "A proxy log line...";
+        data.setLabel("data.http");
+        data.setSubject(new DummySubject("dummy subject"));
+        data.setTime(123456);
+        data.setData("A proxy log line...");
         return data;
     }
 
     private Evidence<DummySubject> getTestEvidence() {
         Evidence evidence = new Evidence();
-        evidence.label = "evidence.http";
-        evidence.subject = new DummySubject("dummy subject");
-        evidence.time = 123456;
-        evidence.report = "Some report...";
+        evidence.setLabel("evidence.http");
+        evidence.setSubject(new DummySubject("dummy subject"));
+        evidence.setTime(123456);
+        evidence.setReport("Some report...");
         return evidence;
     }
 

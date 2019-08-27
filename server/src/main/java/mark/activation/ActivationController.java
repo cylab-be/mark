@@ -106,7 +106,7 @@ public class ActivationController<T extends Subject> extends SafeThread
 
                         T subject = (T) subject_time.getKey();
                         long timestamp = subject_time.getValue();
-                        String detector_label = profile.label;
+                        String detector_label = profile.getLabel();
                         Map<T, Long> triggered_subjects =
                                 triggered_detectors.get(detector_label);
                         if (triggered_subjects == null) {
@@ -136,7 +136,7 @@ public class ActivationController<T extends Subject> extends SafeThread
                                 | InvalidProfileException ex) {
                             LOGGER.error(
                                     "Cannot start agent "
-                                    + profile.class_name,
+                                    + profile.getClassName(),
                                     ex);
                         }
                     }
@@ -205,17 +205,17 @@ public class ActivationController<T extends Subject> extends SafeThread
     @Override
     public final synchronized void notifyRawData(final RawData<T> data) {
 
-        Map<T, Long> hashmap = events.get(data.label);
+        Map<T, Long> hashmap = events.get(data.getLabel());
         if (hashmap == null) {
             hashmap = new HashMap<>();
-            events.put(data.label, hashmap);
-            hashmap.put(data.subject, data.time);
+            events.put(data.getLabel(), hashmap);
+            hashmap.put(data.getSubject(), data.getTime());
         }
 
-        if (hashmap.get(data.subject) == null) {
-            hashmap.put(data.subject, data.time);
-        } else if (hashmap.get(data.subject) < data.time) {
-            hashmap.replace(data.subject, data.time);
+        if (hashmap.get(data.getSubject()) == null) {
+            hashmap.put(data.getSubject(), data.getTime());
+        } else if (hashmap.get(data.getSubject()) < data.getTime()) {
+            hashmap.replace(data.getSubject(), data.getTime());
         }
 
     }
@@ -226,18 +226,18 @@ public class ActivationController<T extends Subject> extends SafeThread
      */
     @Override
     public final synchronized void notifyEvidence(final Evidence<T> evidence) {
-        Map<T, Long> hashmap = events.get(evidence.label);
+        Map<T, Long> hashmap = events.get(evidence.getLabel());
 
         if (hashmap == null) {
             hashmap = new HashMap<>();
-            events.put(evidence.label, hashmap);
-            hashmap.put(evidence.subject, evidence.time);
+            events.put(evidence.getLabel(), hashmap);
+            hashmap.put(evidence.getSubject(), evidence.getTime());
         }
 
-        if (hashmap.get(evidence.subject) == null) {
-            hashmap.put(evidence.subject, evidence.time);
-        } else if (hashmap.get(evidence.subject) < evidence.time) {
-            hashmap.replace(evidence.subject, evidence.time);
+        if (hashmap.get(evidence.getSubject()) == null) {
+            hashmap.put(evidence.getSubject(), evidence.getTime());
+        } else if (hashmap.get(evidence.getSubject()) < evidence.getTime()) {
+            hashmap.replace(evidence.getSubject(), evidence.getTime());
         }
 
 
