@@ -27,16 +27,19 @@ package mark.core;
 /**
  *
  * @author Thibault Debatty
+ * @param <T>
  */
 public interface DetectionAgentInterface<T extends Subject> {
 
     /**
      * Perform the analysis.
+     *
      * @param subject
+     * @param timestamp
      * @param actual_trigger_label
      * @param profile
      * @param datastore
-     * @throws Throwable
+     * @throws Throwable if an error occured during analysis
      */
     void analyze(
             T subject,

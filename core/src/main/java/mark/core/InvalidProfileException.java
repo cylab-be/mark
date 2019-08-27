@@ -6,11 +6,20 @@ package mark.core;
  */
 public class InvalidProfileException extends Exception {
 
-    public InvalidProfileException(String message) {
+    /**
+     *
+     * @param message
+     */
+    public InvalidProfileException(final String message) {
         super(message);
     }
 
-    public InvalidProfileException(String message, Exception ex) {
+    /**
+     *
+     * @param message
+     * @param ex
+     */
+    public InvalidProfileException(final String message, final Exception ex) {
         super(message, ex);
     }
 }

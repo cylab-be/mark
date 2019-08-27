@@ -131,6 +131,7 @@ public interface ServerInterface<T extends Subject> {
      *
      * @param key to get value.
      * @return value.
+     * @throws java.lang.Throwable if an error occured
      */
     Object getFromCache(String key) throws Throwable;
 

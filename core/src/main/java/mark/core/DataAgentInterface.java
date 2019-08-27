@@ -30,6 +30,12 @@ package mark.core;
  */
 public interface DataAgentInterface {
 
+    /**
+     *
+     * @param profile
+     * @param datastore
+     * @throws Throwable if any error occurs
+     */
     void run(DataAgentProfile profile, ServerInterface datastore)
             throws Throwable;
 

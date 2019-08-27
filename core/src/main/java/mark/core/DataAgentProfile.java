@@ -113,14 +113,15 @@ public class DataAgentProfile {
     /**
      * Create an instance of this data agent.
      * @return
-     * @throws InvalidProfileException
+     * @throws InvalidProfileException if the profile is not parsed correctly
      */
     public final DataAgentInterface createInstance()
             throws InvalidProfileException {
 
         try {
             return (DataAgentInterface) Class.forName(class_name).newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException ex) {
             throw new InvalidProfileException(
                     "Cannot instantiate data agent " + class_name,
                     ex);
@@ -132,7 +133,7 @@ public class DataAgentProfile {
      * absolute path, or a relative path to this data agent profile file.
      * @param filename
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if file is not found
      */
     public final File getPath(final String filename)
             throws FileNotFoundException {

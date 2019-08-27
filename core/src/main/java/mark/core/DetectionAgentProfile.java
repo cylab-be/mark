@@ -18,24 +18,81 @@ public class DetectionAgentProfile {
      * The label attached to the evidence produced by this detection agent. Ex:
      * evidence.http.frequency.1week or aggregation
      */
-    public String label;
+    private String label;
 
     /**
      * The label that will trigger this detection agent. Ex: http frequency
      * could be triggered by data.http and aggregation could be triggered by
      * evidence.
      */
-    public String trigger_label;
+    private String trigger_label;
 
     /**
      * The class of the detection agent to trigger.
      */
-    public String class_name;
+    private String class_name;
 
     /**
      * The parameters that will be provided to the detector.
      */
-    public HashMap<String, String> parameters = new HashMap<>();
+    private final HashMap<String, String> parameters = new HashMap<>();
+
+
+    /**
+     *
+     * @return
+     */
+    public final String getLabel() {
+        return label;
+    }
+
+    /**
+     *
+     * @param label
+     */
+    public final void setLabel(final String label) {
+        this.label = label;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final String getTriggerLabel() {
+        return trigger_label;
+    }
+
+    /**
+     *
+     * @param trigger_label
+     */
+    public final void setTriggerLabel(final String trigger_label) {
+        this.trigger_label = trigger_label;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final String getClassName() {
+        return class_name;
+    }
+
+    /**
+     *
+     * @param class_name
+     */
+    public final void setClassName(final String class_name) {
+        this.class_name = class_name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final HashMap<String, String> getParameters() {
+        return parameters;
+    }
 
     private static final Yaml PARSER
             = new Yaml(new Constructor(DetectionAgentProfile.class));
@@ -74,16 +131,12 @@ public class DetectionAgentProfile {
             throws InvalidProfileException {
 
         try {
-            return (DetectionAgentInterface) Class.forName(class_name).newInstance();
-        } catch (ClassNotFoundException ex) {
-            throw new InvalidProfileException(
-                    "Cannot instantiate detection agent " + class_name,
-                    ex);
-        } catch (InstantiationException ex) {
-            throw new InvalidProfileException(
-                    "Cannot instantiate detection agent " + class_name,
-                    ex);
-        } catch (IllegalAccessException ex) {
+            return (DetectionAgentInterface)
+                    Class.forName(class_name).newInstance();
+
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException ex) {
+
             throw new InvalidProfileException(
                     "Cannot instantiate detection agent " + class_name,
                     ex);
