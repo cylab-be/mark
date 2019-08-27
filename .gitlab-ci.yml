@@ -22,6 +22,7 @@ test:jdk-8:mongo-3.6:
   artifacts:
     paths:
     - "server/target/server-*-standalone.zip"
+    - "server/target/site/jacoco"
 
 release:
   stage: release
