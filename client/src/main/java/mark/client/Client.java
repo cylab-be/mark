@@ -97,7 +97,7 @@ public class Client<T extends Subject> implements ServerInterface {
      * @param file_id {@inheritDoc}
      */
     @Override
-    public byte[] findFile(ObjectId file_id) throws Throwable {
+    public final byte[] findFile(final ObjectId file_id) throws Throwable {
         return datastore.invoke(
                 "findFile", new Object[]{file_id}, byte[].class);
     }
@@ -205,7 +205,7 @@ public class Client<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public Evidence[] findLastEvidences(
+    public final Evidence[] findLastEvidences(
             final String label, final Subject subject)
             throws Throwable {
         return datastore.invoke(
@@ -220,20 +220,22 @@ public class Client<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public Object getFromCache(String key) throws Throwable {
+    public final Object getFromCache(final String key) throws Throwable {
         return datastore.invoke(
                 "getFromCache", new Object[]{key}, Object.class);
     }
 
     @Override
-    public void storeInCache(String key, Object value) throws Throwable {
+    public final void storeInCache(final String key, final Object value)
+            throws Throwable {
         datastore.invoke(
                 "storeInCache", new Object[]{key, value}, Object.class);
     }
 
     @Override
-    public boolean compareAndSwapInCache(String key,
-            Object new_value, Object old_value) throws Throwable {
+    public final boolean compareAndSwapInCache(
+            final String key, final Object new_value, final Object old_value)
+            throws Throwable {
         return datastore.invoke(
                 "compareAndSwapInCache",
                 new Object[]{key, new_value, old_value}, Boolean.class);
