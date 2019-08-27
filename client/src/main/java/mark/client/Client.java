@@ -25,13 +25,14 @@ import org.bson.types.ObjectId;
 /**
  *
  * @author Thibault Debatty
+ * @param <T>
  */
 public class Client<T extends Subject> implements ServerInterface {
 
     private static final int CONNECTION_TIMEOUT = 5000;
 
     private final JsonRpcHttpClient datastore;
-    private URL server_url;
+    private final URL server_url;
 
     /**
      * Create a connection to server with provided URL, and test the connection.
@@ -61,6 +62,7 @@ public class Client<T extends Subject> implements ServerInterface {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String test() throws Throwable {
         return datastore.invoke("test", null, String.class);
 
@@ -71,6 +73,7 @@ public class Client<T extends Subject> implements ServerInterface {
      *
      * @param data {@inheritDoc}
      */
+    @Override
     public final void addRawData(final RawData data) throws Throwable {
 
         datastore.invoke("addRawData", new Object[]{data});
@@ -104,11 +107,13 @@ public class Client<T extends Subject> implements ServerInterface {
      *
      * @param data {@inheritDoc}
      */
+    @Override
     public final void testString(final String data) throws Throwable {
 
         datastore.invoke("testString", new Object[]{data});
     }
 
+    @Override
     public final RawData[] findData(final Document query) throws Throwable {
         return datastore.invoke(
                 "findData",
@@ -124,6 +129,7 @@ public class Client<T extends Subject> implements ServerInterface {
      * @return
      * @throws Throwable
      */
+    @Override
     public final RawData[] findRawData(
             final String label, final Subject subject)
             throws Throwable {
@@ -142,6 +148,7 @@ public class Client<T extends Subject> implements ServerInterface {
      * @return
      * @throws Throwable
      */
+    @Override
     public final Evidence[] findEvidence(
             final String label, final Subject subject)
             throws Throwable {
@@ -159,6 +166,7 @@ public class Client<T extends Subject> implements ServerInterface {
      * @return
      * @throws Throwable
      */
+    @Override
     public final Evidence findEvidenceById(final String id) throws Throwable {
 
         return datastore.invoke(
@@ -196,6 +204,7 @@ public class Client<T extends Subject> implements ServerInterface {
                 Evidence[].class);
     }
 
+    @Override
     public Evidence[] findLastEvidences(
             final String label, final Subject subject)
             throws Throwable {
@@ -205,6 +214,7 @@ public class Client<T extends Subject> implements ServerInterface {
                 Evidence[].class);
     }
 
+    @Override
     public final URL getURL() {
         return this.server_url;
     }
@@ -291,5 +301,4 @@ public class Client<T extends Subject> implements ServerInterface {
             return data;
         }
     }
-
 }
