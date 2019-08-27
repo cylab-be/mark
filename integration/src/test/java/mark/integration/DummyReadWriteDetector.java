@@ -1,4 +1,4 @@
-package mark.detection;
+package mark.integration;
 
 import java.util.Random;
 import mark.core.DetectionAgentInterface;

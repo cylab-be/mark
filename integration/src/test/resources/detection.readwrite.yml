@@ -1,7 +1,7 @@
 # Launch a single dummy.ReadWrite agent for every
 # new http data
 ---
-class_name:     mark.detection.DummyReadWriteDetector
+class_name:     mark.integration.DummyReadWriteDetector
 label:          detection.rw
 trigger_label:  data.http
 
