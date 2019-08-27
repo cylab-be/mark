@@ -17,22 +17,71 @@ public class DataAgentProfile {
     /**
      * Name of the class to instantiate (must implement DataAgentInterface).
      */
-    public String class_name;
+    private String class_name;
 
     /**
      * The label for the data that will be added to the datastore.
      */
-    public String label;
+    private String label;
 
     /**
      * Additional parameters to pass to the agent (e.g time range).
      */
-    public Map<String, String> parameters;
+    private Map<String, String> parameters;
 
     /**
      * The path to the profile file, can be used to compute relative paths.
      */
-    public File path;
+    private File path;
+
+
+    /**
+     *
+     * @return
+     */
+    public final String getClassName() {
+        return class_name;
+    }
+
+    /**
+     *
+     * @param class_name
+     */
+    public final void setClassName(final String class_name) {
+        this.class_name = class_name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final String getLabel() {
+        return label;
+    }
+
+    /**
+     *
+     * @param label
+     */
+    public final void setLabel(final String label) {
+        this.label = label;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final File getPath() {
+        return path;
+    }
 
     private static final Yaml PARSER =
             new Yaml(new Constructor(DataAgentProfile.class));
@@ -71,15 +120,7 @@ public class DataAgentProfile {
 
         try {
             return (DataAgentInterface) Class.forName(class_name).newInstance();
-        } catch (ClassNotFoundException ex) {
-            throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
-                    ex);
-        } catch (InstantiationException ex) {
-            throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
-                    ex);
-        } catch (IllegalAccessException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             throw new InvalidProfileException(
                     "Cannot instantiate data agent " + class_name,
                     ex);

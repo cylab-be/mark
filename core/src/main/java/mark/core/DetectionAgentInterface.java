@@ -38,7 +38,7 @@ public interface DetectionAgentInterface<T extends Subject> {
      * @param datastore
      * @throws Throwable
      */
-    public void analyze(
+    void analyze(
             T subject,
             long timestamp,
             String actual_trigger_label,

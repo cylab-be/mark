@@ -30,7 +30,7 @@ package mark.core;
  */
 public interface DataAgentInterface {
 
-    public void run(DataAgentProfile profile, ServerInterface datastore)
+    void run(DataAgentProfile profile, ServerInterface datastore)
             throws Throwable;
 
 }

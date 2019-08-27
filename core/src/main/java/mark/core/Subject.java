@@ -32,9 +32,9 @@ import java.io.Serializable;
  */
 public interface Subject extends Serializable {
     @Override
-    public boolean equals(Object other);
+    boolean equals(Object other);
 
     @Override
-    public int hashCode();
+    int hashCode();
 
 }
