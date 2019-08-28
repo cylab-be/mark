@@ -101,37 +101,10 @@ public class ActivationController<T extends Subject> extends SafeThread
                     for (Map.Entry<T, Long> subject_time :
                             local_events.get(event_label).entrySet()) {
 
-                        T subject = (T) subject_time.getKey();
-                        long timestamp = subject_time.getValue();
-                        String detector_label = profile.getLabel();
-
-                        try {
-                            LOGGER.debug(
-                                    "Trigger detector {} for subject {}",
-                                    detector_label,
-                                    subject.toString());
-                            executor.submit(
-                                    new DetectionAgentContainer(
-                                            subject,
-                                            timestamp,
-                                            config.getDatastoreUrl(),
-                                            config.getSubjectAdapter(),
-                                            event_label,
-                                            profile,
-                                            profile.createInstance()));
-
-                        } catch (MalformedURLException
-                                | InvalidProfileException ex) {
-                            LOGGER.error(
-                                    "Cannot start agent "
-                                    + profile.getClassName(),
-                                    ex);
-                        }
+                        this.scheduleDetection(profile, subject_time, event_label);
                     }
                 }
             }
-
-            // LOGGER.debug("Executed " + getTaskCount() + " tasks");
         }
     }
 
@@ -253,5 +226,40 @@ public class ActivationController<T extends Subject> extends SafeThread
      */
     Map<String, Map<T, Long>> getEvents() {
         return this.events;
+    }
+
+    private void scheduleDetection(
+            final DetectionAgentProfile profile,
+            final Map.Entry<T, Long> subject_time,
+            final String event_label) {
+
+
+        T subject = subject_time.getKey();
+        long timestamp = subject_time.getValue();
+        String detector_label = profile.getLabel();
+
+        try {
+            LOGGER.debug(
+                    "Trigger detector {} for subject {}",
+                    detector_label,
+                    subject.toString());
+            executor.submit(
+                    new DetectionAgentContainer(
+                            subject,
+                            timestamp,
+                            config.getDatastoreUrl(),
+                            config.getSubjectAdapter(),
+                            event_label,
+                            profile,
+                            profile.createInstance()));
+
+        } catch (MalformedURLException
+                | InvalidProfileException ex) {
+            LOGGER.error(
+                    "Cannot start agent "
+                    + profile.getClassName(),
+                    ex);
+        }
+
     }
 }
