@@ -23,7 +23,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>mark.server.Main</mainClass>
+                            <mainClass>be.cylab.mark.server.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,5 +1,5 @@
 ---
-class_name:     mark.detection.Run
+class_name:     be.cylab.mark.detection.Run
 label:          detection.run.echo
 trigger_label:  data.http
 parameters:
