@@ -6,13 +6,6 @@ cache:
   paths:
     - .m2/
 
-test:jdk-7:mongo-3.2:
-  stage: test
-  image: maven:3.5.3-jdk-7
-  services:
-    - mongo:3.2
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
-
 test:jdk-8:mongo-3.2:
   stage: test
   image: maven:3.5.3-jdk-8
