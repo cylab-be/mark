@@ -40,8 +40,9 @@ public class ActivationController<T extends Subject> extends SafeThread
     private final LinkedList<DetectionAgentProfile> profiles;
     private final ExecutorInterface executor;
 
-    // events is a table of label => subjects => last timestamp
-    private volatile Map<String, Map<T, Long>> events;
+    // events are stored in a table of label => subjects => Event
+    // to allow fast lookup
+    private volatile Map<String, Map<T, Event<T>>> events;
     private final Config config;
 
     /**
@@ -61,18 +62,66 @@ public class ActivationController<T extends Subject> extends SafeThread
     }
 
     /**
-     * Ask executor to shutdown then wait for tasks to finish.
+     * Trigger required tasks for this new RawData.
      *
-     * @throws InterruptedException
+     * @param data
      */
-    public final void awaitTermination() throws InterruptedException {
-        this.executor.shutdown();
+    @Override
+    public final void notifyRawData(final RawData<T> data) {
+
+        this.addEvent(
+                new Event(
+                        data.getLabel(),
+                        data.getSubject(),
+                        data.getTime()));
+    }
+
+    /**
+     *
+     * @param evidence
+     */
+    @Override
+    public final void notifyEvidence(final Evidence<T> evidence) {
+
+        this.addEvent(
+                new Event(
+                        evidence.getLabel(),
+                        evidence.getSubject(),
+                        evidence.getTime()));
+    }
+
+    /**
+     * Add this event to the tree of events (if required).
+     * @param new_event
+     */
+    final synchronized void addEvent(Event<T> new_event) {
+
+        // all subjects that have an event with this label
+        Map<T, Event<T>> subjects = events.get(new_event.getLabel());
+
+        if (subjects == null) {
+            subjects = new HashMap<>();
+            events.put(new_event.getLabel(), subjects);
+        }
+
+        Event saved_event = subjects.get(new_event.getSubject());
+
+        // until now there was no such event (label) for this subject
+        if (saved_event == null) {
+            subjects.put(new_event.getSubject(), new_event);
+            return;
+        }
+
+        // the new event is more recent then the one we have
+        if (saved_event.getTimestamp() < new_event.getTimestamp()) {
+            subjects.replace(new_event.getSubject(), new_event);
+        }
     }
 
     @Override
     public final void doRun() throws Throwable {
 
-        Map<String, Map<T, Long>> local_events;
+        Map<String, Map<T, Event<T>>> copy_of_events;
 
         while (true) {
             Thread.sleep(1000 * config.update_interval);
@@ -83,26 +132,32 @@ public class ActivationController<T extends Subject> extends SafeThread
 
             // Clone the list of events and clear
             synchronized (this) {
-                local_events = this.events;
+                copy_of_events = this.events;
                 this.events = new HashMap<>();
             }
 
-            // process the events:
-            // for each received label find the agents that must be triggered
-            // then spawn one agent for each subject
-            for (String event_label : local_events.keySet()) {
+            this.processEvents(copy_of_events);
+        }
+    }
 
-                for (DetectionAgentProfile profile : profiles) {
-                    if (! this.checkLabelsMatch(
-                            profile.getTriggerLabel(), event_label)) {
-                        continue;
-                    }
+    /**
+     * Process the events: for each received label find the agents that must be
+     * triggered then spawn one agent for each subject.
+     *
+     * @param events
+     */
+    private void processEvents(final Map<String, Map<T, Event<T>>> events) {
+        //
+        for (String event_label : events.keySet()) {
 
-                    for (Map.Entry<T, Long> subject_time :
-                            local_events.get(event_label).entrySet()) {
+            for (DetectionAgentProfile profile : profiles) {
+                if (!this.checkLabelsMatch(
+                        profile.getTriggerLabel(), event_label)) {
+                    continue;
+                }
 
-                        this.scheduleDetection(profile, subject_time, event_label);
-                    }
+                for (Event<T> event : events.get(event_label).values()) {
+                    this.scheduleDetection(profile, event);
                 }
             }
         }
@@ -122,6 +177,49 @@ public class ActivationController<T extends Subject> extends SafeThread
             final String trigger_label, final String event_label) {
 
         return Pattern.compile(trigger_label).matcher(event_label).find();
+    }
+
+    /**
+     * Start the detection algorithm described in this profile for this subject.
+     * @param profile
+     * @param subject_time
+     * @param event_label
+     */
+    private void scheduleDetection(
+            final DetectionAgentProfile profile,
+            final Event<T> event) {
+
+        try {
+            LOGGER.debug(
+                    "Trigger detector {} for {}",
+                    profile.getClassName(),
+                    event.getSubject().toString());
+            executor.submit(
+                    new DetectionAgentContainer(
+                            event.getSubject(),
+                            event.getTimestamp(),
+                            config.getDatastoreUrl(),
+                            config.getSubjectAdapter(),
+                            event.getLabel(),
+                            profile,
+                            profile.createInstance()));
+
+        } catch (MalformedURLException
+                | InvalidProfileException ex) {
+            LOGGER.error(
+                    "Cannot start agent "
+                    + profile.getClassName(),
+                    ex);
+        }
+    }
+
+    /**
+     * Ask executor to shutdown then wait for tasks to finish.
+     *
+     * @throws InterruptedException
+     */
+    public final void awaitTermination() throws InterruptedException {
+        this.executor.shutdown();
     }
 
     /**
@@ -174,92 +272,11 @@ public class ActivationController<T extends Subject> extends SafeThread
     }
 
     /**
-     * Trigger required tasks for this new RawData.
-     *
-     * @param data
-     */
-    @Override
-    public final synchronized void notifyRawData(final RawData<T> data) {
-
-        Map<T, Long> hashmap = events.get(data.getLabel());
-        if (hashmap == null) {
-            hashmap = new HashMap<>();
-            events.put(data.getLabel(), hashmap);
-            hashmap.put(data.getSubject(), data.getTime());
-        }
-
-        if (hashmap.get(data.getSubject()) == null) {
-            hashmap.put(data.getSubject(), data.getTime());
-        } else if (hashmap.get(data.getSubject()) < data.getTime()) {
-            hashmap.replace(data.getSubject(), data.getTime());
-        }
-
-    }
-
-    /**
-     *
-     * @param evidence
-     */
-    @Override
-    public final synchronized void notifyEvidence(final Evidence<T> evidence) {
-        Map<T, Long> hashmap = events.get(evidence.getLabel());
-
-        if (hashmap == null) {
-            hashmap = new HashMap<>();
-            events.put(evidence.getLabel(), hashmap);
-            hashmap.put(evidence.getSubject(), evidence.getTime());
-        }
-
-        if (hashmap.get(evidence.getSubject()) == null) {
-            hashmap.put(evidence.getSubject(), evidence.getTime());
-        } else if (hashmap.get(evidence.getSubject()) < evidence.getTime()) {
-            hashmap.replace(evidence.getSubject(), evidence.getTime());
-        }
-
-
-    }
-
-    /**
      * Get the list of received events (new data or new evidence reports).
      * Used mainly for testing.
      * @return
      */
-    Map<String, Map<T, Long>> getEvents() {
+    Map<String, Map<T, Event<T>>> getEvents() {
         return this.events;
-    }
-
-    private void scheduleDetection(
-            final DetectionAgentProfile profile,
-            final Map.Entry<T, Long> subject_time,
-            final String event_label) {
-
-
-        T subject = subject_time.getKey();
-        long timestamp = subject_time.getValue();
-        String detector_label = profile.getLabel();
-
-        try {
-            LOGGER.debug(
-                    "Trigger detector {} for subject {}",
-                    detector_label,
-                    subject.toString());
-            executor.submit(
-                    new DetectionAgentContainer(
-                            subject,
-                            timestamp,
-                            config.getDatastoreUrl(),
-                            config.getSubjectAdapter(),
-                            event_label,
-                            profile,
-                            profile.createInstance()));
-
-        } catch (MalformedURLException
-                | InvalidProfileException ex) {
-            LOGGER.error(
-                    "Cannot start agent "
-                    + profile.getClassName(),
-                    ex);
-        }
-
     }
 }
