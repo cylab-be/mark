@@ -87,11 +87,6 @@ public class ActivationController<T extends Subject> extends SafeThread
                 this.events = new HashMap<>();
             }
 
-            // Keep track of triggered detectors, to avoid triggering
-            // same detector multiple times
-            Map<String, Map<T, Long>> triggered_detectors =
-                    new HashMap<>();
-
             // process the events:
             // for each received label find the agents that must be triggered
             // then spawn one agent for each subject
@@ -109,15 +104,6 @@ public class ActivationController<T extends Subject> extends SafeThread
                         T subject = (T) subject_time.getKey();
                         long timestamp = subject_time.getValue();
                         String detector_label = profile.getLabel();
-                        Map<T, Long> triggered_subjects =
-                                triggered_detectors.get(detector_label);
-                        if (triggered_subjects == null) {
-                            triggered_subjects = new HashMap<>();
-                            triggered_detectors.put(
-                                    detector_label, triggered_subjects);
-                        }
-
-                        triggered_subjects.put(subject, timestamp);
 
                         try {
                             LOGGER.debug(
