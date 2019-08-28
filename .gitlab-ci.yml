@@ -24,6 +24,14 @@ test:jdk-8:mongo-3.6:
     - "server/target/server-*-standalone.zip"
     - "server/target/site/jacoco"
 
+test:jdk-9:mongo-3.6:
+  stage: test
+  image: maven:3.5.3-jdk-9
+  services:
+    - mongo:3.6
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
+
+
 release:
   stage: release
   only:
