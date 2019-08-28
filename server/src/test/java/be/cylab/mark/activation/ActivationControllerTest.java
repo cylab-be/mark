@@ -23,9 +23,6 @@
  */
 package be.cylab.mark.activation;
 
-import be.cylab.mark.activation.ExecutorInterface;
-import be.cylab.mark.activation.IgniteExecutor;
-import be.cylab.mark.activation.ActivationController;
 import java.util.Map;
 import junit.framework.TestCase;
 import be.cylab.mark.core.Evidence;
@@ -151,6 +148,15 @@ public class ActivationControllerTest extends TestCase {
         assertEquals(456789, map_timestamp);
     }
 
+    public void testLabelsMatching() throws InvalidProfileException {
+        ActivationController<DummySubject> controller =
+                this.getTestController();
+
+
+        assertTrue(controller.checkLabelsMatch("data.http", "data.http"));
+        assertTrue(controller.checkLabelsMatch("data.http", "data.http.123"));
+    }
+
     /**
      * Create a single instance of RawData that can inserted for testing...
      * @return
@@ -173,7 +179,7 @@ public class ActivationControllerTest extends TestCase {
         return evidence;
     }
 
-    private ActivationController getTestController()
+    private ActivationController<DummySubject> getTestController()
             throws InvalidProfileException {
         Config config = Config.getTestConfig();
         ExecutorInterface executor = new IgniteExecutor(config);

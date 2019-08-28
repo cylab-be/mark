@@ -159,15 +159,4 @@ public class DetectionAgentProfile {
                     ex);
         }
     }
-
-    /**
-     * Test if the provided label should trigger this detection agent. return
-     * trigger_label.startsWith(label)
-     *
-     * @param label
-     * @return
-     */
-    public final boolean match(final String label) {
-        return label.startsWith(this.trigger_label);
-    }
 }

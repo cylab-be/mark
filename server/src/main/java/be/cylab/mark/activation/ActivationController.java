@@ -97,7 +97,8 @@ public class ActivationController<T extends Subject> extends SafeThread
             for (String event_label : local_events.keySet()) {
 
                 for (DetectionAgentProfile profile : profiles) {
-                    if (!profile.match(event_label)) {
+                    if (! this.checkLabelsMatch(
+                            profile.getTriggerLabel(), event_label)) {
                         continue;
                     }
 
@@ -145,6 +146,19 @@ public class ActivationController<T extends Subject> extends SafeThread
 
             // LOGGER.debug("Executed " + getTaskCount() + " tasks");
         }
+    }
+
+    /**
+     * Check if the trigger label defined in a detection profile matches the
+     * label of an event (and hence wether we should run this detector).
+     * @param trigger_label
+     * @param event_label
+     * @return
+     */
+    boolean checkLabelsMatch(
+            final String trigger_label, final String event_label) {
+
+        return event_label.startsWith(trigger_label);
 
     }
 
