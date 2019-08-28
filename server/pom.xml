@@ -56,7 +56,9 @@
                 <version>3.1.1</version>
 
                 <configuration>
-                    <descriptor>src/assembly/dep.xml</descriptor>
+                    <descriptors>
+                        <descriptor>src/assembly/dep.xml</descriptor>
+                    </descriptors>
                     <attach>false</attach>
                 </configuration>
 
