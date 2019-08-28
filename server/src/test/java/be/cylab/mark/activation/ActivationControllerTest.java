@@ -155,6 +155,10 @@ public class ActivationControllerTest extends TestCase {
 
         assertTrue(controller.checkLabelsMatch("data.http", "data.http"));
         assertTrue(controller.checkLabelsMatch("data.http", "data.http.123"));
+
+        assertTrue(controller.checkLabelsMatch("data.http..*", "data.http.123"));
+        assertTrue(controller.checkLabelsMatch("^data.http", "data.http.123"));
+        assertTrue(controller.checkLabelsMatch("data.*.123", "data.http.123"));
     }
 
     /**

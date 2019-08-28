@@ -14,6 +14,7 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.SafeThread;
+import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,6 +152,9 @@ public class ActivationController<T extends Subject> extends SafeThread
     /**
      * Check if the trigger label defined in a detection profile matches the
      * label of an event (and hence wether we should run this detector).
+     *
+     * Uses pattern matching...
+     *
      * @param trigger_label
      * @param event_label
      * @return
@@ -158,8 +162,7 @@ public class ActivationController<T extends Subject> extends SafeThread
     boolean checkLabelsMatch(
             final String trigger_label, final String event_label) {
 
-        return event_label.startsWith(trigger_label);
-
+        return Pattern.compile(trigger_label).matcher(event_label).find();
     }
 
     /**
