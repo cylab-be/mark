@@ -2,10 +2,7 @@ package be.cylab.mark.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import java.awt.Desktop;
 import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;

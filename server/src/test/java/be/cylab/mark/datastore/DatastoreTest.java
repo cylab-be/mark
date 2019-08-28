@@ -24,17 +24,8 @@
 
 package be.cylab.mark.datastore;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import junit.framework.TestCase;
-import be.cylab.mark.activation.ActivationControllerInterface;
-import be.cylab.mark.core.Evidence;
-import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
-import be.cylab.mark.server.DummySubjectAdapter;
-import be.cylab.mark.server.DummySubject;
-import org.apache.ignite.cluster.ClusterMetrics;
-import org.bson.Document;
 
 /**
  *

@@ -13,8 +13,6 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import be.cylab.mark.core.SubjectAdapter;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;

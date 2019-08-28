@@ -1,20 +1,14 @@
 package be.cylab.mark.server;
 
 import com.google.inject.Inject;
-import java.io.BufferedReader;
 import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.webserver.WebServer;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.core.DetectionAgentProfile;
