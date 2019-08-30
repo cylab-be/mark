@@ -46,7 +46,6 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 public class IgniteExecutor implements ExecutorInterface {
 
     private final Ignite ignite;
-    private final ExecutorService executor;
     private final Config config;
 
 
@@ -55,16 +54,22 @@ public class IgniteExecutor implements ExecutorInterface {
 
         this.config = config;
 
+        if (Ignition.state() == IgniteState.STARTED) {
+            ignite = Ignition.ignite();
+            return;
+        }
+
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
         ignite_config.setClientMode(!config.ignite_start_server);
 
         ignite_config.setCollisionSpi(new FifoQueueCollisionSpi());
 
+        ignite_config.setMetricsUpdateFrequency(500);
+
         // Changing total RAM size to be used by Ignite Node.
         DataStorageConfiguration storage_config =
                 new DataStorageConfiguration();
-        // Setting the size of the default memory region to
         storage_config.getDefaultDataRegionConfiguration().setMaxSize(
             12L * 1024 * 1024 * 1024);
         ignite_config.setDataStorageConfiguration(storage_config);
@@ -79,26 +84,21 @@ public class IgniteExecutor implements ExecutorInterface {
         }
 
         // Start Ignite framework..
-        if (Ignition.state() == IgniteState.STARTED) {
-            ignite = Ignition.ignite();
-        } else {
-            ignite = Ignition.start(ignite_config);
-        }
+        ignite = Ignition.start(ignite_config);
 
-        this.executor = ignite.executorService();
     }
 
 
     @Override
     public void submit(Runnable job) {
-        this.executor.submit(job);
+        this.ignite.executorService().submit(job);
     }
 
     @Override
     public boolean shutdown() throws InterruptedException {
         Thread.sleep(2 * 1000 * config.update_interval);
-        executor.shutdown();
-        return executor.awaitTermination(1, TimeUnit.DAYS);
+        this.ignite.executorService().shutdown();
+        return this.ignite.executorService().awaitTermination(1, TimeUnit.DAYS);
     }
 
     @Override
