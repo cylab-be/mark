@@ -251,7 +251,8 @@ public class Config {
         } catch (ClassNotFoundException
                 | InstantiationException
                 | IllegalAccessException ex) {
-            throw new InvalidProfileException("Adapter class is invalid",
+            throw new InvalidProfileException(
+                    "Adapter class " + adapter_class + " is invalid",
                     ex);
         }
     }

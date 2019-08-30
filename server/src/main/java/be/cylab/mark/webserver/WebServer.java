@@ -74,7 +74,7 @@ public class WebServer {
 
         staticFiles.location("/static");
         port(8000);
-        get("/hello", (req, res) -> "Hello World");
+        get("/", (req, res) -> "Hello World");
     }
 
     /**
