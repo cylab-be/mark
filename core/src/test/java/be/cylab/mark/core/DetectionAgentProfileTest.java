@@ -1,6 +1,5 @@
 package be.cylab.mark.core;
 
-import be.cylab.mark.core.DetectionAgentProfile;
 import java.io.InputStream;
 import junit.framework.TestCase;
 

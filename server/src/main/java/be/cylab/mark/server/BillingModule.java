@@ -60,7 +60,8 @@ public class BillingModule extends AbstractModule {
 
         //Specific way to instantiate Config
         try {
-            bind(Config.class).toInstance(new Config(config_file));
+            bind(Config.class).toInstance(
+                    Config.fromFile(config_file));
         } catch (FileNotFoundException ex) {
             LOGGER.error("File not found exception :"
                     + config_file + "not found");

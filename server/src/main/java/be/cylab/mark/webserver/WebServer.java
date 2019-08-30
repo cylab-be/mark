@@ -92,7 +92,7 @@ public class WebServer {
         wini.put("config", "server_port", config.server_port);
         wini.put("config", "update_interval", config.update_interval);
         wini.put("config", "adapter_class", config.adapter_class);
-        wini.store(config.getWebserverRoot().toPath()
+        wini.store(config.getRealWebserverRoot().toPath()
                 .resolve("config.ini").toFile());
 
         // Handle php files
@@ -100,7 +100,7 @@ public class WebServer {
         php_handler.addServlet(
                 com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
         php_handler.setResourceBase(
-                config.getWebserverRoot().getAbsolutePath());
+                config.getRealWebserverRoot().getAbsolutePath());
 
         // Handle static files (if it's not php)
         ResourceHandler resource_handler = new ResourceHandler() {
@@ -123,7 +123,7 @@ public class WebServer {
         };
         resource_handler.setDirectoriesListed(false);
         resource_handler.setResourceBase(
-                config.getWebserverRoot().getAbsolutePath());
+                config.getRealWebserverRoot().getAbsolutePath());
 
         HandlerList handler_list = new HandlerList();
         handler_list.setHandlers(new Handler[]{
@@ -137,7 +137,7 @@ public class WebServer {
         rewrite_handler.setRewritePathInfo(false);
         rewrite_handler.setOriginalPathAttribute("requestedPath");
         rewrite_handler.addRule(new RewriteIfNotExistsRule(
-                config.getWebserverRoot()));
+                config.getRealWebserverRoot()));
         rewrite_handler.setHandler(handler_list);
 
         server = new Server(config.webserver_port);
