@@ -7,13 +7,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import be.cylab.mark.core.SubjectAdapter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -128,23 +128,23 @@ public class Config {
      * execute the detection tasks on the same server.
      */
     public boolean ignite_start_server = DEFAULT_IGNITE_START_SERVER;
-    private static boolean DEFAULT_IGNITE_START_SERVER = true;
+    private static final boolean DEFAULT_IGNITE_START_SERVER = true;
 
     /**
      * Enable ignite autodiscovery. Disabling is useful for testing or small
      * setups.
      */
     public boolean ignite_autodiscovery = DEFAULT_IGNITE_AUTODISCOVERY;
-    private static boolean DEFAULT_IGNITE_AUTODISCOVERY = true;
+    private static final boolean DEFAULT_IGNITE_AUTODISCOVERY = true;
 
     /**
-     * module directory path.
+     * logs directory path.
      */
     public String log_directory = DEFAULT_LOG_DIRECTORY;
-    private static final String DEFAULT_LOG_DIRECTORY = "./modules";
+    private static final String DEFAULT_LOG_DIRECTORY = "./log";
 
     /**
-     * Env variable for tests.
+     * Env variable for setting mongodb host.
      */
     public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
 
@@ -166,42 +166,28 @@ public class Config {
     private File path;
 
     /**
-     * Build a configuration from a file.
-     *
-     * @param file
-     * @throws java.io.FileNotFoundException
-     * @throws java.lang.NoSuchFieldException
+     * Instantiate a new default configuration.
      */
-    public Config(final File file)
-            throws FileNotFoundException {
-        this(new Yaml(new Constructor(Config.class))
-                .loadAs(new FileInputStream(file), Config.class));
-        this.path = file;
-        parseConfig();
+    public Config() {
+        this.mongo_host = System.getenv(ENV_MONGO_HOST);
+        if (this.mongo_host == null) {
+            this.mongo_host = DEFAULT_MONGO_HOST;
+        }
     }
 
     /**
-     * Generic copy constructor only for non static attributes.
+     * Build a configuration from a file.
      *
-     * @param config
+     * @param file
+     * @return
+     * @throws java.io.FileNotFoundException
      */
-    private Config(Config config) {
-        for (Field field : config.getClass().getDeclaredFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-            try {
-                field.setAccessible(true);
-                this.getClass().getDeclaredField(field.getName()).
-                        setAccessible(true);
-                field.set(this, field.get(config));
-            } catch (SecurityException
-                    | IllegalArgumentException
-                    | IllegalAccessException
-                    | NoSuchFieldException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public static final Config fromFile(final File file)
+            throws FileNotFoundException {
+
+        Config config = fromInputStream(new FileInputStream(file));
+        config.path = file;
+        return config;
     }
 
     /**
@@ -211,9 +197,12 @@ public class Config {
      * @param input
      * @return
      */
-    public static final Config config(final InputStream input) {
+    public static final Config fromInputStream(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
-        return yaml.loadAs(input, Config.class);
+        Config config = yaml.loadAs(input, Config.class);
+        config.parseConfig();
+
+        return config;
     }
 
     /**
@@ -231,16 +220,6 @@ public class Config {
         conf.max_threads = TEST_MAX_THREADS;
 
         return conf;
-    }
-
-    /**
-     * Instantiate a new default configuration.
-     */
-    public Config() {
-        this.mongo_host = System.getenv(ENV_MONGO_HOST);
-        if (this.mongo_host == null) {
-            this.mongo_host = DEFAULT_MONGO_HOST;
-        }
     }
 
     /**
@@ -317,11 +296,15 @@ public class Config {
         this.webserver_root = webserver_root;
     }
 
+    public final String getWebserverRoot() {
+        return this.webserver_root;
+    }
+
     /**
      *
      * @return @throws FileNotFoundException
      */
-    public final File getWebserverRoot() throws FileNotFoundException {
+    public final File getRealWebserverRoot() throws FileNotFoundException {
         File webroot_file = new File(webserver_root);
 
         if (!webroot_file.isAbsolute()) {
@@ -384,6 +367,14 @@ public class Config {
 
         LOGGER.info("Parse configuration...");
 
+
+        File modules_dir;
+        try {
+            modules_dir = this.getModulesDirectory();
+        } catch (FileNotFoundException ex) {
+            return;
+        }
+
         // List *.jar and update the class path
         // this is a hack that allows to modify the global (system) class
         // loader.
@@ -395,7 +386,7 @@ public class Config {
             method.setAccessible(true);
 
             File[] jar_files;
-            jar_files = this.getModulesDirectory()
+            jar_files = modules_dir
                     .listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(final File dir, final String name) {
@@ -410,4 +401,150 @@ public class Config {
             exc.printStackTrace();
         }
     }
+
+    public int getMaxThreads() {
+        return max_threads;
+    }
+
+    public void setMaxThreads(int max_threads) {
+        this.max_threads = max_threads;
+    }
+
+    public int getMinThreads() {
+        return min_threads;
+    }
+
+    public void setMinThreads(int min_threads) {
+        this.min_threads = min_threads;
+    }
+
+    public int getIdleTimeout() {
+        return idle_timeout;
+    }
+
+    public void setIdleTimeout(int idle_timeout) {
+        this.idle_timeout = idle_timeout;
+    }
+
+    public String getServerHost() {
+        return server_host;
+    }
+
+    public void setServerHost(String server_host) {
+        this.server_host = server_host;
+    }
+
+    public int getServerPort() {
+        return server_port;
+    }
+
+    public void setServerPort(int server_port) {
+        this.server_port = server_port;
+    }
+
+    public int getMaxPendingRequests() {
+        return max_pending_requests;
+    }
+
+    public void setMaxPendingRequests(int max_pending_requests) {
+        this.max_pending_requests = max_pending_requests;
+    }
+
+    public String getModules() {
+        return modules;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
+    }
+
+    public String getAdapterClass() {
+        return adapter_class;
+    }
+
+    public void setAdapterClass(String adapter_class) {
+        this.adapter_class = adapter_class;
+    }
+
+    public int getWebserverPort() {
+        return webserver_port;
+    }
+
+    public void setWebserverPort(int webserver_port) {
+        this.webserver_port = webserver_port;
+    }
+
+    public int getUpdateInterval() {
+        return update_interval;
+    }
+
+    public void setUpdateInterval(int update_interval) {
+        this.update_interval = update_interval;
+    }
+
+    public boolean isStartWebserver() {
+        return start_webserver;
+    }
+
+    public void setStartWebserver(boolean start_webserver) {
+        this.start_webserver = start_webserver;
+    }
+
+    public boolean isMongo_clean() {
+        return mongo_clean;
+    }
+
+    public void setMongoClean(boolean mongo_clean) {
+        this.mongo_clean = mongo_clean;
+    }
+
+    public String getMongoHost() {
+        return mongo_host;
+    }
+
+    public void setMongoHost(String mongo_host) {
+        this.mongo_host = mongo_host;
+    }
+
+    public int getMongoPort() {
+        return mongo_port;
+    }
+
+    public void setMongoPort(int mongo_port) {
+        this.mongo_port = mongo_port;
+    }
+
+    public String getMongoDb() {
+        return mongo_db;
+    }
+
+    public void setMongoDb(String mongo_db) {
+        this.mongo_db = mongo_db;
+    }
+
+    public boolean isIgniteStartServer() {
+        return ignite_start_server;
+    }
+
+    public void setIgniteStartServer(boolean ignite_start_server) {
+        this.ignite_start_server = ignite_start_server;
+    }
+
+    public boolean isIgniteAutodiscovery() {
+        return ignite_autodiscovery;
+    }
+
+    public void setIgniteAutodiscovery(boolean ignite_autodiscovery) {
+        this.ignite_autodiscovery = ignite_autodiscovery;
+    }
+
+    public String getLogDirectory() {
+        return log_directory;
+    }
+
+    public void setLogDirectory(String log_directory) {
+        this.log_directory = log_directory;
+    }
+
+
 }

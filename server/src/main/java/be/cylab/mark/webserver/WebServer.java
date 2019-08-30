@@ -71,6 +71,7 @@ public class WebServer {
 
         LOGGER.info("Starting web interface at port 8000");
 
+
         staticFiles.location("/static");
         port(8000);
         get("/hello", (req, res) -> "Hello World");

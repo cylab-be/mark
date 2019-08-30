@@ -26,6 +26,7 @@ package be.cylab.mark.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import junit.framework.TestCase;
 
 /**
@@ -33,6 +34,19 @@ import junit.framework.TestCase;
  * @author Thibault Debatty
  */
 public class ConfigTest extends TestCase {
+
+    /**
+     * Test we correctly parse a .yml config file
+     */
+    public void testYmlParsing() {
+        InputStream stream = getClass()
+                .getResourceAsStream("/config.test.yml");
+
+
+        Config config = Config.fromInputStream(stream);
+        assertEquals("1.2.3.4", config.server_host);
+
+    }
 
     /**
      * Test of getLogDiretory method, of class Config.
