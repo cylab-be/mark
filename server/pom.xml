@@ -143,6 +143,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-template-pebble</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.briandilley.jsonrpc4j</groupId>
             <artifactId>jsonrpc4j</artifactId>
             <version>1.5.3</version>
@@ -252,6 +258,12 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>4.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mitchellbosecke</groupId>
+            <artifactId>pebble</artifactId>
+            <version>2.3.0</version>
         </dependency>
     </dependencies>
 </project>

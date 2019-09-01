@@ -28,9 +28,14 @@ import be.cylab.mark.core.InvalidProfileException;
 import static spark.Spark.*;
 import com.google.inject.Inject;
 import be.cylab.mark.server.Config;
+import com.mitchellbosecke.pebble.loader.ClasspathLoader;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.ModelAndView;
+import spark.template.pebble.PebbleTemplateEngine;
 
 /**
  *
@@ -72,9 +77,19 @@ public class WebServer {
         LOGGER.info("Starting web interface at port 8000");
 
 
+        PebbleTemplateEngine pebble = new PebbleTemplateEngine(
+                new ClasspathLoader());
+
         staticFiles.location("/static");
         port(8000);
-        get("/", (req, res) -> "Hello World");
+        get("/", (req, res) -> {
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("message", "Hello World!");
+
+            // The hello.pebble file is located in directory:
+            // src/test/resources/spark/template/pebble
+            return new ModelAndView(attributes, "index.pebble");
+       	}, pebble);
     }
 
     /**
