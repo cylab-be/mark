@@ -88,7 +88,7 @@ public class WebServer {
 
             // The hello.pebble file is located in directory:
             // src/test/resources/spark/template/pebble
-            return new ModelAndView(attributes, "index.pebble");
+            return new ModelAndView(attributes, "index.html");
        	}, pebble);
     }
 
