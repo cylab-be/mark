@@ -70,15 +70,6 @@ public class RequestHandler implements ServerInterface {
         index = new Document(TIME, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
-
-        // Create indexes for CLIENT and SERVER
-        index = new Document(CLIENT, 1);
-        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
-        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
-
-        index = new Document(SERVER, 1);
-        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
-        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
     }
 
     /**
