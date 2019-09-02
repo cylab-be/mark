@@ -19,6 +19,7 @@ import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
+import java.util.Collections;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -336,6 +337,8 @@ public class RequestHandler implements ServerInterface {
 
             Evidence[] evidences_array = evidences.values()
                     .toArray(new Evidence[evidences.size()]);
+
+            Arrays.sort(evidences_array, Collections.reverseOrder());
 
             return evidences_array;
         } catch (Throwable ex) {

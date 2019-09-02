@@ -5,7 +5,7 @@ package be.cylab.mark.core;
  * @author Thibault Debatty
  * @param <T>
  */
-public class Evidence<T extends Subject> {
+public class Evidence<T extends Subject> implements Comparable<Evidence> {
 
     private String id = "";
     private String label = "";
@@ -118,5 +118,14 @@ public class Evidence<T extends Subject> {
      */
     public final void setReport(final String report) {
         this.report = report;
+    }
+
+    @Override
+    public final int compareTo(final Evidence other) {
+        if (this.score >= other.score) {
+            return 1;
+        }
+
+        return -1;
     }
 }
