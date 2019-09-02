@@ -15,11 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import be.cylab.mark.activation.ActivationControllerInterface;
+import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
 import java.util.Collections;
+import java.util.List;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -184,10 +186,16 @@ public class RequestHandler implements ServerInterface {
      */
     public final Map<String, Object> status() {
         HashMap<String, Object> status = new HashMap<>();
-        status.put("state", "running");
         status.put("activation", activation_controller.getProfiles());
         status.put("executed", activation_controller.getTaskCount());
         return status;
+    }
+
+    public final DetectionAgentProfile[] activation() {
+        List<DetectionAgentProfile> profiles =
+                activation_controller.getProfiles();
+        return profiles.toArray(
+                new DetectionAgentProfile[profiles.size()]);
     }
 
     public final Document mongoStatus() {

@@ -30,6 +30,7 @@ import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
+import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -159,6 +160,11 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     @Override
     public boolean compareAndSwapInCache(
             String key, Object new_value, Object old_value) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<String, Object> status() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

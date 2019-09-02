@@ -24,11 +24,12 @@
 package be.cylab.mark.webserver;
 
 import be.cylab.mark.client.Client;
+import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
@@ -58,10 +59,29 @@ public class HomeRoute implements TemplateViewRoute {
             Evidence[] evidences = this.client.findEvidence(label);
             LOGGER.info("Found " + evidences.length + " evidences");
             attributes.put("evidences", evidences);
+
+            String[] labels = this.getLabels();
+            LOGGER.info("Found " + labels.length + " labels");
+            attributes.put("detectors", this.getLabels());
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from datastore!", ex);
         }
         return new ModelAndView(attributes, "index.html");
     }
 
+    private String[] getLabels() throws Throwable {
+        List<String> labels = new ArrayList<>();
+
+        //Map status = this.client.status();
+        //System.out.println(status);
+        //List<DetectionAgentProfile> profiles =
+        //        (LinkedList<DetectionAgentProfile>) status.get("activation");
+        DetectionAgentProfile[] profiles = this.client.activation();
+
+        for (DetectionAgentProfile profile : profiles) {
+            labels.add(profile.getLabel());
+        }
+
+        return labels.toArray(new String[labels.size()]);
+    }
 }

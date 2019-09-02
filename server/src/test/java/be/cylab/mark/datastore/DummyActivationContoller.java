@@ -25,8 +25,10 @@
 package be.cylab.mark.datastore;
 
 import be.cylab.mark.activation.ActivationControllerInterface;
+import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
+import java.util.List;
 import org.apache.ignite.cluster.ClusterMetrics;
 
 /**
@@ -55,7 +57,7 @@ public class DummyActivationContoller implements ActivationControllerInterface {
     }
 
     @Override
-    public Iterable getProfiles() {
+    public List<DetectionAgentProfile> getProfiles() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
