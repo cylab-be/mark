@@ -3,5 +3,25 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-	<h1>MARK</h1>
+<h1>Multi Agent Ranking Framework</h1>
+
+<table class="table">
+  <tr>
+    <th>Subject</th>
+    <th>Score</th>
+    <th>Time</th>
+  </tr>
+
+  {% for evidence in evidences %}
+  <tr>
+    <td>
+      <a href="/report/{{ evidence.getId() }}">
+        {{ evidence.getSubject() }}
+      </a>
+    </td>
+    <td>{{ evidence.getScore() }}</td>
+    <td>{{ evidence.getTime() }}</td>
+  </tr>
+  {% endfor %}
+</table>
 {% endblock %}
