@@ -27,8 +27,9 @@ package be.cylab.mark.core;
 /**
  *
  * @author Thibault Debatty
+ * @param <T> the actual type of subject
  */
-public interface DataAgentInterface {
+public interface DataAgentInterface<T extends Subject> {
 
     /**
      *
@@ -36,7 +37,7 @@ public interface DataAgentInterface {
      * @param datastore
      * @throws Throwable if any error occurs
      */
-    void run(DataAgentProfile profile, ServerInterface datastore)
+    void run(DataAgentProfile profile, ServerInterface<T> datastore)
             throws Throwable;
 
 }

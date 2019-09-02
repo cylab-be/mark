@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Thibault Debatty.
+ * Copyright 2019 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,54 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package be.cylab.mark.demo;
 
-package be.cylab.mark.server;
-
-import be.cylab.mark.core.Subject;
-import java.util.Objects;
+import be.cylab.mark.core.DataAgentInterface;
+import be.cylab.mark.core.DataAgentProfile;
+import be.cylab.mark.core.RawData;
+import be.cylab.mark.core.ServerInterface;
+import be.cylab.mark.server.DummySubject;
 
 /**
  *
- * @author Thibault Debatty
+ * @author tibo
  */
-public class DummySubject implements Subject {
-
-    public String name = "";
-
-    public DummySubject() {
-    }
-
-    public DummySubject(String name) {
-        this.name = name;
-    }
+public class DummyData implements DataAgentInterface {
 
     @Override
-    public String toString() {
-        return name;
+    public void run(DataAgentProfile profile, ServerInterface datastore)
+            throws Throwable {
+
+        while (true) {
+
+            DummySubject subject = new DummySubject("Thibault");
+
+            RawData data = new RawData();
+            data.setData("Some data...");
+            data.setSubject(subject);
+            data.setTime(System.currentTimeMillis());
+            data.setLabel("data.dummy");
+            datastore.addRawData(data);
+
+            Thread.sleep(1000);
+        }
+
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.name);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DummySubject other = (DummySubject) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return true;
-    }
 }

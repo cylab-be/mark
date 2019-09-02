@@ -55,19 +55,12 @@ public class Server {
 
         startLogging();
 
-        LOGGER.info("Instantiate web server...");
         this.web_server = web_server;
-
-        LOGGER.info("Instantiate activation controller "
-                + "and Apache Ignite cluster");
         this.activation_controller = activation_controller;
-
-        LOGGER.info("Instantiate Datastore...");
         this.datastore = datastore;
-
-        LOGGER.info("Instantiate data agents...");
         this.data_agents = new LinkedList<>();
 
+        LOGGER.info("Parsing modules directory ");
         File modules_dir;
         try {
             modules_dir = config.getModulesDirectory();
@@ -76,9 +69,7 @@ public class Server {
             return;
         }
 
-        LOGGER.info("Parsing modules directory "
-                + modules_dir.getAbsolutePath());
-
+        LOGGER.info(modules_dir.getAbsolutePath());
         // Parse *.data.yml files
         File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
             @Override
@@ -93,6 +84,8 @@ public class Server {
                             DataAgentProfile.fromFile(file),
                             config));
         }
+        LOGGER.info("Found " + data_agents.size() + " data agents ...");
+
         // Parse *.detection.yml files
         File[] detection_agent_files
                 = modules_dir.listFiles(new FilenameFilter() {
@@ -106,6 +99,10 @@ public class Server {
             activation_controller.addAgent(
                     DetectionAgentProfile.fromFile(file));
         }
+        LOGGER.info(
+                "Found " + activation_controller.getProfiles().size()
+                        + " detection agents ...");
+
     }
 
     /**
@@ -215,7 +212,7 @@ public class Server {
 
         try {
             Logger.getRootLogger().addAppender(
-                    getFileAppender("mark-server.log", Level.INFO));
+                    getFileAppender("mark-server.log", Level.DEBUG));
             Logger.getLogger("org.apache.ignite").addAppender(
                     getFileAppender("mark-ignite.log", Level.INFO));
             Logger.getLogger("org.eclipse.jetty").addAppender(

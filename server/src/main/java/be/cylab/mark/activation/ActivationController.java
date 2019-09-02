@@ -14,6 +14,7 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.SafeThread;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -147,7 +148,9 @@ public class ActivationController<T extends Subject> extends SafeThread
      * @param events
      */
     private void processEvents(final Map<String, Map<T, Event<T>>> events) {
-        //
+
+
+        int scheduled = 0;
         for (String event_label : events.keySet()) {
 
             for (DetectionAgentProfile profile : profiles) {
@@ -158,9 +161,12 @@ public class ActivationController<T extends Subject> extends SafeThread
 
                 for (Event<T> event : events.get(event_label).values()) {
                     this.scheduleDetection(profile, event);
+                    scheduled++;
                 }
             }
         }
+
+        LOGGER.info("Scheduled " + scheduled + " detectors...");
     }
 
     /**
@@ -259,7 +265,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      * @return
      */
     @Override
-    public final Iterable<DetectionAgentProfile> getProfiles() {
+    public final List<DetectionAgentProfile> getProfiles() {
         return profiles;
     }
 

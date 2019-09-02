@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Thibault Debatty.
+ * Copyright 2019 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,54 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package be.cylab.mark.detection;
 
-package be.cylab.mark.server;
-
+import be.cylab.mark.core.DetectionAgentInterface;
+import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Evidence;
+import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Subject;
-import java.util.Objects;
 
 /**
  *
- * @author Thibault Debatty
+ * @author tibo
  */
-public class DummySubject implements Subject {
-
-    public String name = "";
-
-    public DummySubject() {
-    }
-
-    public DummySubject(String name) {
-        this.name = name;
-    }
+public class Counter implements DetectionAgentInterface<Subject> {
 
     @Override
-    public String toString() {
-        return name;
+    public void analyze(
+            final Subject subject,
+            final long timestamp,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface<Subject> datastore) throws Throwable {
+
+        int count = datastore.findRawData(actual_trigger_label, subject).length;
+
+        Evidence ev = new Evidence();
+        ev.setLabel("detection.counter");
+        ev.setReport(
+                "Found " + count + " data entries for " + subject.toString());
+
+        ev.setScore(count);
+        ev.setSubject(subject);
+        ev.setTime(timestamp);
+        datastore.addEvidence(ev);
+
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.name);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DummySubject other = (DummySubject) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return true;
-    }
 }

@@ -199,8 +199,6 @@ public class RequestHandler implements ServerInterface {
     private static final String LABEL = "LABEL";
     private static final String TIME = "TIME";
     private static final String DATA = "DATA";
-    private static final String CLIENT = "CLIENT";
-    private static final String SERVER = "SERVER";
     private static final String SCORE = "SCORE";
     private static final String REPORT = "REPORT";
 
@@ -290,7 +288,7 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        ArrayList<Evidence> results = new ArrayList<Evidence>();
+        ArrayList<Evidence> results = new ArrayList<>();
         for (Document doc : documents) {
             results.add(convertEvidence(doc));
         }
@@ -313,13 +311,15 @@ public class RequestHandler implements ServerInterface {
         try {
             Document query = new Document();
             query.append(LABEL, label);
+            LOGGER.debug(query.toString());
 
             FindIterable<Document> documents = mongodb
                     .getCollection(COLLECTION_EVIDENCE)
                     .find(query);
 
-            HashMap<Subject, Evidence> evidences
-                    = new HashMap<Subject, Evidence>();
+            LOGGER.debug(documents.toString());
+
+            HashMap<Subject, Evidence> evidences = new HashMap<>();
             for (Document doc : documents) {
                 Evidence evidence = convertEvidence(doc);
 

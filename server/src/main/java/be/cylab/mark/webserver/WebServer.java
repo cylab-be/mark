@@ -30,11 +30,16 @@ import com.google.inject.Inject;
 import be.cylab.mark.server.Config;
 import com.mitchellbosecke.pebble.loader.ClasspathLoader;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+import spark.TemplateViewRoute;
 import spark.template.pebble.PebbleTemplateEngine;
 
 /**
@@ -59,9 +64,9 @@ public class WebServer {
             throws MalformedURLException, InvalidProfileException {
         this.config = config;
 
-
-        client = new Client(
-                config.getDatastoreUrl(), config.getSubjectAdapter());
+        this.client = new Client(
+                new URL("http://127.0.0.1:8080"), config.getSubjectAdapter());
+                //config.getDatastoreUrl(), config.getSubjectAdapter());
     }
 
     /**
@@ -82,14 +87,9 @@ public class WebServer {
 
         staticFiles.location("/static");
         port(8000);
-        get("/", (req, res) -> {
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put("message", "Hello World!");
 
-            // The hello.pebble file is located in directory:
-            // src/test/resources/spark/template/pebble
-            return new ModelAndView(attributes, "index.html");
-       	}, pebble);
+        get("/", new HomeRoute(client), pebble);
+        get("/status", new StatusRoute(client), pebble);
     }
 
     /**
@@ -99,5 +99,22 @@ public class WebServer {
     public final void stop() throws Exception {
         spark.Spark.stop();
     }
-}
 
+    class StatusRoute implements TemplateViewRoute {
+
+        private final Client client;
+
+        public StatusRoute(Client client) {
+            this.client = client;
+        }
+
+        @Override
+        public ModelAndView handle(Request rqst, Response rspns)
+                throws Exception {
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("mark", this.client);
+            return new ModelAndView(attributes, "status.html");
+        }
+    }
+}
