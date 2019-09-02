@@ -28,12 +28,17 @@ import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.server.DummySubject;
+import java.util.Random;
 
 /**
+ * A dummy data source, for demo and testing purpose.
  *
  * @author tibo
  */
 public class DummyData implements DataAgentInterface {
+
+    private final String[] names = {"Thibault", "Wim", "Georgi", "Alex", "Fred"};
+    private Random rand = new Random();
 
     @Override
     public void run(DataAgentProfile profile, ServerInterface datastore)
@@ -41,7 +46,8 @@ public class DummyData implements DataAgentInterface {
 
         while (true) {
 
-            DummySubject subject = new DummySubject("Thibault");
+            DummySubject subject = new DummySubject(
+                    names[rand.nextInt(names.length)]);
 
             RawData data = new RawData();
             data.setData("Some data...");
