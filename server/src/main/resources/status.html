@@ -1,45 +1,18 @@
-<?php
-$this->layout('template', ['title' => 'Status']);
+{% extends "layout.html" %}
 
-require_once "MarkClient.php";
-$mark = new MarkClient();
-$state = $mark->status();
-?>
+{% block title %} Home {% endblock %}
 
-<h1>Multi Agent Ranking Framework</h1>
-<p><?php echo date("Y-m-d", time()) ?></p>
-<p>Server state: <?= $state->state ?></p>
+{% block content %}
+<h2>Status</h2>
 
-<h2>Ignite cluster status</h2>
-
-<?php
-$igniteStatus = $mark->igniteStatus();
-?>
-
-<p>Nodes: <?= $igniteStatus->totalNodes ?></p>
-<p>CPUS: <?= $igniteStatus->totalCpus ?></p>
-<p>Average CPU load: <?= round(100 * $igniteStatus->averageCpuLoad, 2) ?>%</p>
-
-<h3>Job statistics</h3>
-<p>Current job wait time: <?= $igniteStatus->currentJobWaitTime ?></p>
-<p>Average job execute time: <?= round($igniteStatus->averageJobExecuteTime/1000, 2) ?> second</p>
-<p>Current active jobs: <?= $igniteStatus->currentActiveJobs ?></p>
-<p>Maximum waiting jobs: <?= $igniteStatus->maximumWaitingJobs ?></p>
-<p>Current waiting jobs: <?= $igniteStatus->currentWaitingJobs ?></p>
-<p>Total executed tasks: <?= $igniteStatus->totalExecutedTasks ?></p>
 
 
 <h2>Activation cascade</h2>
 <div id="activation-graph"></div>
 
-<h2>Server status dump</h2>
-<pre>
-<?php var_dump($state) ?>
-</pre>
-
-<script src="js/libs/viz.js"></script>
+<script src="/js/viz.js"></script>
 <script>
-    var mark_url = "<?= $mark->url() ?>";
+    var mark_url = "{{ mark.getURL() }}";
     var json_request_body = {"jsonrpc": "2.0",
         "method": "status",
         "params": {},
@@ -76,7 +49,7 @@ $igniteStatus = $mark->igniteStatus();
         detection_agents.forEach(function(detection_agent){
             console.log(detection_agent);
             graph_src += '"' + detection_agent.label +  '" [label="'
-                    + detection_agent.class_name + '\n'
+                    + detection_agent.className + '\n'
                     + detection_agent.label + '"];\n';
         });
 
@@ -84,7 +57,7 @@ $igniteStatus = $mark->igniteStatus();
         detection_agents.forEach(function(detection_agent){
             var matches = 0;
             detection_agents.forEach(function(other){
-                if (other.label.startsWith(detection_agent.trigger_label)) {
+                if (other.label.startsWith(detection_agent.triggerLabel)) {
                     graph_src += '"' + other.label + '" -> "'
                         + detection_agent.label + '"; ';
                     matches++;
@@ -95,7 +68,7 @@ $igniteStatus = $mark->igniteStatus();
             // => must be a data agent
             // => draw manually...
             if (matches === 0) {
-               graph_src += '"' + detection_agent.trigger_label + '" -> "'
+               graph_src += '"' + detection_agent.triggerLabel + '" -> "'
                     + detection_agent.label + '"; ';
             }
 
@@ -117,3 +90,5 @@ $igniteStatus = $mark->igniteStatus();
     }
 
 </script>
+
+{% endblock %}

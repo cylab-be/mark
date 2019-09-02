@@ -1,6 +1,7 @@
 package be.cylab.mark.core;
 
 import java.net.URL;
+import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -158,4 +159,11 @@ public interface ServerInterface<T extends Subject> {
      */
     boolean compareAndSwapInCache(String key, Object new_value,
             Object old_value) throws Throwable;
+
+    /**
+     * Get the status of the server (running tasks, activation cascade).
+     * @return
+     * @throws Throwable if any error occurs
+     */
+    Map<String, Object> status() throws Throwable;
 }

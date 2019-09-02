@@ -12,8 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import be.cylab.mark.core.SubjectAdapter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -251,7 +249,8 @@ public class Config {
         } catch (ClassNotFoundException
                 | InstantiationException
                 | IllegalAccessException ex) {
-            throw new InvalidProfileException("Adapter class is invalid",
+            throw new InvalidProfileException(
+                    "Adapter class " + adapter_class + " is invalid",
                     ex);
         }
     }

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+<h1>Multi Agent Ranking Framework</h1>
+
+<form style="margin-bottom: 10px" method="GET" class="form-inline">
+  <div class="form-group">
+    <label for="agent">Detector : </label>
+    <select class="form-control" id="agent" name="agent">
+      {% for detector in detectors %}
+      <option>{{ detector }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Apply</button>
+</form>
+
+<table class="table">
+  <tr>
+    <th>Subject</th>
+    <th>Score</th>
+    <th>Time</th>
+  </tr>
+
+  {% for evidence in evidences %}
+  <tr>
+    <td>
+      <a href="/report/{{ evidence.getId() }}">
+        {{ evidence.getSubject() }}
+      </a>
+    </td>
+    <td>{{ evidence.getScore() }}</td>
+    <td>{{ evidence.getTime() }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Thibault Debatty.
+ * Copyright 2019 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,45 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package be.cylab.mark.detection;
 
-package be.cylab.mark.datastore;
-
-import be.cylab.mark.activation.ActivationControllerInterface;
+import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
-import be.cylab.mark.core.RawData;
-import java.util.List;
-import org.apache.ignite.cluster.ClusterMetrics;
+import be.cylab.mark.core.ServerInterface;
+import be.cylab.mark.core.Subject;
 
 /**
  *
- * @author Thibault Debatty
+ * @author tibo
  */
-public class DummyActivationContoller implements ActivationControllerInterface {
+public class Counter implements DetectionAgentInterface<Subject> {
 
     @Override
-    public void notifyEvidence(Evidence evidence) {
+    public void analyze(
+            final Subject subject,
+            final long timestamp,
+            final String actual_trigger_label,
+            final DetectionAgentProfile profile,
+            final ServerInterface<Subject> datastore) throws Throwable {
+
+        int count = datastore.findRawData(actual_trigger_label, subject).length;
+
+        Evidence ev = new Evidence();
+        ev.setLabel("detection.counter");
+        ev.setReport(
+                "Found " + count + " data entries for " + subject.toString());
+
+        ev.setScore(count);
+        ev.setSubject(subject);
+        ev.setTime(timestamp);
+        datastore.addEvidence(ev);
 
     }
-
-    @Override
-    public void notifyRawData(RawData data) {
-
-    }
-
-    public ClusterMetrics getIgniteMetrics() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public int getTaskCount() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<DetectionAgentProfile> getProfiles() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 
 }

@@ -23,26 +23,24 @@
  */
 package be.cylab.mark.webserver;
 
-import com.gargoylesoftware.htmlunit.WebClient;
+import be.cylab.mark.client.Client;
+import be.cylab.mark.core.InvalidProfileException;
+import static spark.Spark.*;
 import com.google.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import be.cylab.mark.server.Config;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
-import org.eclipse.jetty.rewrite.handler.Rule;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.ini4j.Wini;
+import com.mitchellbosecke.pebble.loader.ClasspathLoader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.ModelAndView;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+import spark.TemplateViewRoute;
+import spark.template.pebble.PebbleTemplateEngine;
 
 /**
  *
@@ -53,16 +51,8 @@ public class WebServer {
     private static final Logger LOGGER = LoggerFactory.getLogger(
             WebServer.class);
 
-    /**
-     * Pages that should be manually fetched to avoid Quercus 500 errors
-     */
-    private static final String[] pages_to_test = new String[]{
-        "/",
-        "/status",
-        "/report/123456"};
-
-    private Server server;
     private final Config config;
+    private final Client client;
 
     /**
      * Instantiate a web server with provided config.
@@ -70,8 +60,13 @@ public class WebServer {
      * @param config
      */
     @Inject
-    public WebServer(final Config config) {
+    public WebServer(final Config config)
+            throws MalformedURLException, InvalidProfileException {
         this.config = config;
+
+        this.client = new Client(
+                new URL("http://127.0.0.1:8080"), config.getSubjectAdapter());
+                //config.getDatastoreUrl(), config.getSubjectAdapter());
     }
 
     /**
@@ -86,78 +81,15 @@ public class WebServer {
 
         LOGGER.info("Starting web interface at port 8000");
 
-        // Write config.ini file for PHP framework...
-        Wini wini = new Wini();
-        wini.put("config", "server_host", config.server_host);
-        wini.put("config", "server_port", config.server_port);
-        wini.put("config", "update_interval", config.update_interval);
-        wini.put("config", "adapter_class", config.adapter_class);
-        wini.store(config.getRealWebserverRoot().toPath()
-                .resolve("config.ini").toFile());
 
-        // Handle php files
-        ServletContextHandler php_handler = new ServletContextHandler();
-        php_handler.addServlet(
-                com.caucho.quercus.servlet.QuercusServlet.class, "*.php");
-        php_handler.setResourceBase(
-                config.getRealWebserverRoot().getAbsolutePath());
+        PebbleTemplateEngine pebble = new PebbleTemplateEngine(
+                new ClasspathLoader());
 
-        // Handle static files (if it's not php)
-        ResourceHandler resource_handler = new ResourceHandler() {
+        staticFiles.location("/static");
+        port(8000);
 
-            @Override
-            public void handle(
-                    final String target,
-                    final Request base_request,
-                    final HttpServletRequest request,
-                    final HttpServletResponse response)
-                    throws IOException, ServletException {
-
-                if (target.endsWith(".php")) {
-                    return;
-                }
-
-                super.handle(target, base_request, request, response);
-            }
-
-        };
-        resource_handler.setDirectoriesListed(false);
-        resource_handler.setResourceBase(
-                config.getRealWebserverRoot().getAbsolutePath());
-
-        HandlerList handler_list = new HandlerList();
-        handler_list.setHandlers(new Handler[]{
-            resource_handler,
-            php_handler
-        });
-
-        // First of all, redirect to index.php if file does not exist
-        RewriteHandler rewrite_handler = new RewriteHandler();
-        rewrite_handler.setRewriteRequestURI(false);
-        rewrite_handler.setRewritePathInfo(false);
-        rewrite_handler.setOriginalPathAttribute("requestedPath");
-        rewrite_handler.addRule(new RewriteIfNotExistsRule(
-                config.getRealWebserverRoot()));
-        rewrite_handler.setHandler(handler_list);
-
-        server = new Server(config.webserver_port);
-        server.setHandler(rewrite_handler);
-        server.start();
-
-        // Manually perform some http requests to the web server, to avoid
-        // the 500 errors generated by Quercus at boot...
-        WebClient client = new WebClient();
-        String base_url = "http://127.0.0.1:8000";
-        client.getCache().clear();
-        client.getPage(base_url);
-
-        client.getCache().clear();
-        client.getPage(base_url);
-
-        for (String page : pages_to_test) {
-            client.getCache().clear();
-            client.getPage(base_url + page);
-        }
+        get("/", new HomeRoute(client), pebble);
+        get("/status", new StatusRoute(client), pebble);
     }
 
     /**
@@ -165,45 +97,24 @@ public class WebServer {
      * @throws Exception if an error happens while stopping the server
      */
     public final void stop() throws Exception {
-        if (server == null) {
-            return;
-        }
-
-        server.stop();
-    }
-}
-
-/**
- * Rewrite the request if the requested file does not exist. Similar to
- * following Apache .htaccess: RewriteEngine On RewriteCond %{REQUEST_FILENAME}
- * !-f RewriteRule ^(.*)$ index.php [QSA,L]
- *
- * Or to following nginx: server { location / { try_files $uri /index.php; } }
- *
- * @author Thibault Debatty
- */
-class RewriteIfNotExistsRule extends Rule {
-
-    private final Path root;
-
-    RewriteIfNotExistsRule(final File root) {
-        this.root = root.toPath();
-        _terminating = false;
-        _handling = false;
+        spark.Spark.stop();
     }
 
-    @Override
-    public String matchAndApply(
-            final String target,
-            final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
+    class StatusRoute implements TemplateViewRoute {
 
-        // Remove the leading / from the request path
-        File resource = root.resolve(target.substring(1)).toFile();
-        if (resource.exists() && resource.isFile()) {
-            return target;
+        private final Client client;
+
+        public StatusRoute(Client client) {
+            this.client = client;
         }
 
-        return "/index.php";
+        @Override
+        public ModelAndView handle(Request rqst, Response rspns)
+                throws Exception {
+
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("mark", this.client);
+            return new ModelAndView(attributes, "status.html");
+        }
     }
 }

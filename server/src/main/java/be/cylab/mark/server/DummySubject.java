@@ -25,6 +25,7 @@
 package be.cylab.mark.server;
 
 import be.cylab.mark.core.Subject;
+import java.util.Objects;
 
 /**
  *
@@ -44,5 +45,30 @@ public class DummySubject implements Subject {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.name);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DummySubject other = (DummySubject) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        return true;
     }
 }

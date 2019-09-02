@@ -1,5 +1,6 @@
 package be.cylab.mark.client;
 
+import be.cylab.mark.core.DetectionAgentProfile;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.TreeNode;
@@ -19,6 +20,7 @@ import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
+import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -239,6 +241,24 @@ public class Client<T extends Subject> implements ServerInterface {
         return datastore.invoke(
                 "compareAndSwapInCache",
                 new Object[]{key, new_value, old_value}, Boolean.class);
+    }
+
+    @Override
+    public final Map<String, Object> status() throws Throwable {
+
+        return datastore.invoke(
+            "status",
+                null, Map.class);
+    }
+
+    /**
+     *
+     * @return
+     * @throws Throwable if anything goes wrong
+     */
+    public final DetectionAgentProfile[] activation() throws Throwable {
+        return datastore.invoke(
+                "activation", null, DetectionAgentProfile[].class);
     }
 
     /**

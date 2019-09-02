@@ -12,4 +12,4 @@ server_port:    8080
 
 webserver_root: ../../ui
 
-adapter_class:  mark.server.DummySubjectAdapter
+adapter_class:  be.cylab.mark.server.DummySubjectAdapter

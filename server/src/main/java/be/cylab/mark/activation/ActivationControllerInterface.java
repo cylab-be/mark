@@ -27,6 +27,7 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.Subject;
+import java.util.List;
 
 /**
  *
@@ -48,7 +49,7 @@ public interface ActivationControllerInterface<T extends Subject> {
      */
     void notifyRawData(final RawData<T> data);
 
-    public Iterable<DetectionAgentProfile> getProfiles();
+    public List<DetectionAgentProfile> getProfiles();
 
     public int getTaskCount();
 

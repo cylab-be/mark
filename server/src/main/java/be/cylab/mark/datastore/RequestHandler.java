@@ -15,10 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import be.cylab.mark.activation.ActivationControllerInterface;
+import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
+import java.util.Collections;
+import java.util.List;
 import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -68,15 +71,6 @@ public class RequestHandler implements ServerInterface {
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
 
         index = new Document(TIME, 1);
-        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
-        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
-
-        // Create indexes for CLIENT and SERVER
-        index = new Document(CLIENT, 1);
-        mongodb.getCollection(COLLECTION_DATA).createIndex(index);
-        mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
-
-        index = new Document(SERVER, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
     }
@@ -192,10 +186,16 @@ public class RequestHandler implements ServerInterface {
      */
     public final Map<String, Object> status() {
         HashMap<String, Object> status = new HashMap<>();
-        status.put("state", "running");
         status.put("activation", activation_controller.getProfiles());
         status.put("executed", activation_controller.getTaskCount());
         return status;
+    }
+
+    public final DetectionAgentProfile[] activation() {
+        List<DetectionAgentProfile> profiles =
+                activation_controller.getProfiles();
+        return profiles.toArray(
+                new DetectionAgentProfile[profiles.size()]);
     }
 
     public final Document mongoStatus() {
@@ -208,8 +208,6 @@ public class RequestHandler implements ServerInterface {
     private static final String LABEL = "LABEL";
     private static final String TIME = "TIME";
     private static final String DATA = "DATA";
-    private static final String CLIENT = "CLIENT";
-    private static final String SERVER = "SERVER";
     private static final String SCORE = "SCORE";
     private static final String REPORT = "REPORT";
 
@@ -299,7 +297,7 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        ArrayList<Evidence> results = new ArrayList<Evidence>();
+        ArrayList<Evidence> results = new ArrayList<>();
         for (Document doc : documents) {
             results.add(convertEvidence(doc));
         }
@@ -322,13 +320,15 @@ public class RequestHandler implements ServerInterface {
         try {
             Document query = new Document();
             query.append(LABEL, label);
+            LOGGER.debug(query.toString());
 
             FindIterable<Document> documents = mongodb
                     .getCollection(COLLECTION_EVIDENCE)
                     .find(query);
 
-            HashMap<Subject, Evidence> evidences
-                    = new HashMap<Subject, Evidence>();
+            LOGGER.debug(documents.toString());
+
+            HashMap<Subject, Evidence> evidences = new HashMap<>();
             for (Document doc : documents) {
                 Evidence evidence = convertEvidence(doc);
 
@@ -345,6 +345,8 @@ public class RequestHandler implements ServerInterface {
 
             Evidence[] evidences_array = evidences.values()
                     .toArray(new Evidence[evidences.size()]);
+
+            Arrays.sort(evidences_array, Collections.reverseOrder());
 
             return evidences_array;
         } catch (Throwable ex) {

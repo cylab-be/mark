@@ -42,7 +42,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jetty.version>9.2.20.v20161216</jetty.version>
+        <jetty.version>9.4.12.v20180830</jetty.version>
         <!-- provide a default value for jvm.options, otherwize surefire will
         crash when combined with jacaco provided options. jvm.options will
         be overridden by command line value when running tests with jdk 9 and

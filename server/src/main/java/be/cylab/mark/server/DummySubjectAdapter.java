@@ -49,7 +49,7 @@ public class DummySubjectAdapter implements SubjectAdapter<DummySubject> {
     @Override
     public DummySubject deserialize(JsonNode node) {
         DummySubject ds = new DummySubject();
-        ds.name = node.get("name").toString();
+        ds.name = node.get("name").textValue();
         return ds;
     }
 }
