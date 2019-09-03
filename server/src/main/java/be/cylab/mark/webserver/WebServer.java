@@ -58,8 +58,7 @@ public class WebServer {
         this.config = config;
 
         this.client = new Client(
-                new URL("http://127.0.0.1:8080"), config.getSubjectAdapter());
-                //config.getDatastoreUrl(), config.getSubjectAdapter());
+                config.getDatastoreUrl(), config.getSubjectAdapter());
     }
 
     /**
