@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %} Report {% endblock %}
+
+{% block content %}
+<h1>{{ report.getSubject() }}</h1>
+
+<p>{{ report.getId() }}</p>
+<p>{{ report.getlabel() }}</p>
+<p>{{ report.getScore() }}</p>
+<p>{{ report.timeFormatted() }}</p>
+<p>{{ report.getReport() }}</p>
+{% endblock %}
+
+

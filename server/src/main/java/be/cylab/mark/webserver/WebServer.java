@@ -82,6 +82,7 @@ public class WebServer {
 
         get("/", new HomeRoute(client), pebble);
         get("/status", new StatusRoute(client), pebble);
+        get("/report/:id", new ReportRoute(client), pebble);
     }
 
     /**
