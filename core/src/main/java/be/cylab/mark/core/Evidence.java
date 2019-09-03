@@ -1,5 +1,7 @@
 package be.cylab.mark.core;
 
+import java.time.Instant;
+
 /**
  *
  * @author Thibault Debatty
@@ -127,5 +129,13 @@ public class Evidence<T extends Subject> implements Comparable<Evidence> {
         }
 
         return -1;
+    }
+
+    /**
+     * ISO8601 representation of this event's timestamp.
+     * @return
+     */
+    public final String timeFormatted() {
+        return Instant.ofEpochMilli(this.time).toString();
     }
 }
