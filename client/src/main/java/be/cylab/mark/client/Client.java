@@ -49,14 +49,15 @@ public class Client<T extends Subject> implements ServerInterface {
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(RawData.class, new RawDataDezerializer(adapter));
+        module.addDeserializer(
+                RawData.class, new RawDataDezerializer(adapter));
         module.addDeserializer(
                 Evidence.class, new EvidenceDeserializer(adapter));
         mapper.registerModule(module);
 
         datastore
                 = new JsonRpcHttpClient(
-                        mapper, server_url, new HashMap<String, String>());
+                        mapper, server_url, new HashMap<>());
         datastore.setConnectionTimeoutMillis(CONNECTION_TIMEOUT);
 
     }
@@ -315,6 +316,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
             Evidence data = new Evidence();
+            data.setId(((TextNode) tree.get("id")).asText());
             data.setReport(((TextNode) tree.get("report")).asText());
             data.setLabel(((TextNode) tree.get("label")).asText());
             data.setScore(((NumericNode) tree.get("score")).asDouble());

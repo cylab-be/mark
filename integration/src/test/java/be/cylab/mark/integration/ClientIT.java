@@ -315,6 +315,7 @@ public class ClientIT extends TestCase {
         // Ask for last evidences
         Evidence[] evidences = datastore.findEvidence(label);
         assertEquals(1, evidences.length);
+        assertNotSame("", evidences[0].getId());
 
         // Check it is indeed the most recent report
         assertEquals(2345, evidences[0].getTime());

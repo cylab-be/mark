@@ -42,10 +42,7 @@ public class DatastoreTest extends TestCase {
 
         Datastore datastore = new Datastore(conf, new DummyActivationContoller());
         datastore.start();
-
-        Thread.sleep(5000);
-
+        Thread.sleep(1000);
         datastore.stop();
-
     }
 }

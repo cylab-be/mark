@@ -24,6 +24,7 @@
 
 package be.cylab.mark.datastore;
 
+import be.cylab.mark.core.Evidence;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import junit.framework.TestCase;
@@ -31,6 +32,9 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.DummySubjectAdapter;
 import be.cylab.mark.server.DummySubject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import org.bson.Document;
 
 /**
@@ -39,11 +43,39 @@ import org.bson.Document;
  */
 public class RequestHandlerTest extends TestCase {
 
-    public RequestHandlerTest(String testName) {
-        super(testName);
+    public void testFindData() {
+
+        RequestHandler rq = this.getRequestHandler();
+
+        RawData<DummySubject> data = new RawData<>();
+        data.setData("1234");
+        data.setSubject(new DummySubject("test"));
+        rq.addRawData(data);
+        rq.addRawData(data);
+
+        Document query = new Document("DATA", "1234");
+        RawData[] result = rq.findData(query);
+        assertEquals(2, result.length);
     }
 
-    public void testFindData() {
+    public void testFindEvidence() throws Throwable {
+
+        RequestHandler rq = this.getRequestHandler();
+
+        Evidence ev = new Evidence();
+        ev.setLabel("test");
+        ev.setReport("Some report...");
+        ev.setScore(0.99);
+        ev.setSubject(new DummySubject("test"));
+        ev.setTime(123456);
+        rq.addEvidence(ev);
+
+        Evidence[] evidences = rq.findEvidence("test");
+        assertEquals(1, evidences.length);
+        assertNotSame("", evidences[0].getId());
+    }
+
+    private RequestHandler getRequestHandler() {
         String mongo_host = System.getenv(Config.ENV_MONGO_HOST);
         if (mongo_host == null) {
             mongo_host = "127.0.0.1";
@@ -58,15 +90,22 @@ public class RequestHandlerTest extends TestCase {
                 new DummyActivationContoller(),
                 new DummySubjectAdapter());
 
-        RawData<DummySubject> data = new RawData<>();
-        data.setData("1234");
-        data.setSubject(new DummySubject("test"));
-        handler.addRawData(data);
-        handler.addRawData(data);
+        return handler;
+    }
 
-        Document query = new Document("DATA", "1234");
-        RawData[] result = handler.findData(query);
-        assertEquals(2, result.length);
+    /**
+     * Jackson is the library used by jsonrpc4j to convert Java objects
+     * to and from json.
+     */
+    public void testJacksonMappings() throws JsonProcessingException, IOException {
+
+        Evidence ev = new Evidence();
+        ev.setId("123456789");
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(ev);
+        System.out.println(json);
+        Evidence result = mapper.readValue(json, Evidence.class);
+        assertEquals(ev.getId(), result.getId());
     }
 
 

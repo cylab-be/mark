@@ -1,5 +1,6 @@
 package be.cylab.mark.core;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 /**
@@ -7,7 +8,8 @@ import java.time.Instant;
  * @author Thibault Debatty
  * @param <T>
  */
-public class Evidence<T extends Subject> implements Comparable<Evidence> {
+public class Evidence<T extends Subject>
+        implements Comparable<Evidence>, Serializable {
 
     private String id = "";
     private String label = "";
@@ -23,7 +25,7 @@ public class Evidence<T extends Subject> implements Comparable<Evidence> {
 
     @Override
     public final String toString() {
-        return label + " : " + report;
+        return id + " : " + label;
     }
 
     /**

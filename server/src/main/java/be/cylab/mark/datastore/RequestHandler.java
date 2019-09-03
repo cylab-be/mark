@@ -240,7 +240,6 @@ public class RequestHandler implements ServerInterface {
         evidence.setId(doc.getObjectId("_id").toString());
 
         return evidence;
-
     }
 
     /**
@@ -317,42 +316,35 @@ public class RequestHandler implements ServerInterface {
 
         LOGGER.debug("findEvidence : " + label);
 
-        try {
-            Document query = new Document();
-            query.append(LABEL, label);
-            LOGGER.debug(query.toString());
+        Document query = new Document();
+        query.append(LABEL, label);
+        LOGGER.debug(query.toString());
 
-            FindIterable<Document> documents = mongodb
-                    .getCollection(COLLECTION_EVIDENCE)
-                    .find(query);
+        FindIterable<Document> documents = mongodb
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
 
-            LOGGER.debug(documents.toString());
+        HashMap<Subject, Evidence> evidences = new HashMap<>();
+        for (Document doc : documents) {
+            Evidence evidence = convertEvidence(doc);
 
-            HashMap<Subject, Evidence> evidences = new HashMap<>();
-            for (Document doc : documents) {
-                Evidence evidence = convertEvidence(doc);
-
-                Evidence inmap = evidences.get(evidence.getSubject());
-                if (inmap == null) {
-                    evidences.put(evidence.getSubject(), evidence);
-                    continue;
-                }
-
-                if (evidence.getTime() > inmap.getTime()) {
-                    evidences.put(evidence.getSubject(), evidence);
-                }
+            Evidence inmap = evidences.get(evidence.getSubject());
+            if (inmap == null) {
+                evidences.put(evidence.getSubject(), evidence);
+                continue;
             }
 
-            Evidence[] evidences_array = evidences.values()
-                    .toArray(new Evidence[evidences.size()]);
-
-            Arrays.sort(evidences_array, Collections.reverseOrder());
-
-            return evidences_array;
-        } catch (Throwable ex) {
-            LOGGER.error("findEvidence : " + label, ex);
-            throw ex;
+            if (evidence.getTime() > inmap.getTime()) {
+                evidences.put(evidence.getSubject(), evidence);
+            }
         }
+
+        Evidence[] evidences_array = evidences.values()
+                .toArray(new Evidence[evidences.size()]);
+
+        Arrays.sort(evidences_array, Collections.reverseOrder());
+
+        return evidences_array;
     }
 
     /**

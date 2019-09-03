@@ -72,7 +72,7 @@ public class Datastore {
                 config.max_threads,
                 config.min_threads,
                 config.idle_timeout,
-                new ArrayBlockingQueue<Runnable>(config.max_pending_requests));
+                new ArrayBlockingQueue<>(config.max_pending_requests));
 
         server = new Server(thread_pool);
 
