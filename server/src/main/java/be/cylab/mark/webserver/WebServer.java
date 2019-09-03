@@ -31,14 +31,8 @@ import be.cylab.mark.server.Config;
 import com.mitchellbosecke.pebble.loader.ClasspathLoader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.ModelAndView;
-import spark.Request;
-import spark.Response;
-import spark.TemplateViewRoute;
 import spark.template.pebble.PebbleTemplateEngine;
 
 /**
@@ -97,23 +91,5 @@ public class WebServer {
      */
     public final void stop() throws Exception {
         spark.Spark.stop();
-    }
-
-    class StatusRoute implements TemplateViewRoute {
-
-        private final Client client;
-
-        public StatusRoute(Client client) {
-            this.client = client;
-        }
-
-        @Override
-        public ModelAndView handle(Request rqst, Response rspns)
-                throws Exception {
-
-            Map<String, Object> attributes = new HashMap<>();
-            attributes.put("mark", this.client);
-            return new ModelAndView(attributes, "status.html");
-        }
     }
 }
