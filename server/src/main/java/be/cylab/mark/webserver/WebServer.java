@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import spark.Route;
 import spark.TemplateViewRoute;
 import spark.template.pebble.PebbleTemplateEngine;
 
