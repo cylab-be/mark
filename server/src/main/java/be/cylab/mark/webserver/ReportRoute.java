@@ -56,6 +56,9 @@ public class ReportRoute implements TemplateViewRoute {
         try {
             Evidence ev = client.findEvidenceById(id);
             model.put("report", ev);
+            model.put(
+                    "history",
+                    client.findEvidence(ev.getLabel(), ev.getSubject()));
         } catch (Throwable ex) {
             LOGGER.error("Failed to get report from datastore");
         }

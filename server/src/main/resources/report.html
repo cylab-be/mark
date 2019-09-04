@@ -5,11 +5,25 @@
 {% block content %}
 <h1>{{ report.getSubject() }}</h1>
 
-<p>{{ report.getId() }}</p>
-<p>{{ report.getlabel() }}</p>
-<p>{{ report.getScore() }}</p>
-<p>{{ report.timeFormatted() }}</p>
+<p>Report id: <b>{{ report.getId() }}</b></p>
+<p>Label: {{ report.getlabel() }}</p>
+<p>Score: <b>{{ report.getScore() }}</b></p>
+<p>Timestamp: {{ report.timeFormatted() }}</p>
 <p>{{ report.getReport() }}</p>
+
+<h2>History</h2>
+<table class="table">
+{% for r in history %}
+<tr>
+    <td>{{ r.getScore() }}</td>
+    <td>{{ r.timeFormatted() }}</td>
+    <td>
+        <a href="/report/{{ r.getId() }}">View</a>
+    </td>
+</tr>
+{% endfor %}
+</table>
+
 {% endblock %}
 
 
