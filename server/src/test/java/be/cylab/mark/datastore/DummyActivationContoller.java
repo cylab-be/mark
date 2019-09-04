@@ -29,6 +29,7 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import java.util.List;
+import java.util.Map;
 import org.apache.ignite.cluster.ClusterMetrics;
 
 /**
@@ -52,12 +53,12 @@ public class DummyActivationContoller implements ActivationControllerInterface {
     }
 
     @Override
-    public int getTaskCount() {
+    public List<DetectionAgentProfile> getProfiles() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public List<DetectionAgentProfile> getProfiles() {
+    public Map getExecutorStatus() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

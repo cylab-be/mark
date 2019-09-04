@@ -244,13 +244,6 @@ public class Client<T extends Subject> implements ServerInterface {
                 new Object[]{key, new_value, old_value}, Boolean.class);
     }
 
-    @Override
-    public final Map<String, Object> status() throws Throwable {
-
-        return datastore.invoke(
-            "status",
-                null, Map.class);
-    }
 
     /**
      *
@@ -260,6 +253,11 @@ public class Client<T extends Subject> implements ServerInterface {
     public final DetectionAgentProfile[] activation() throws Throwable {
         return datastore.invoke(
                 "activation", null, DetectionAgentProfile[].class);
+    }
+
+    @Override
+    public final Map executorStatus() throws Throwable {
+        return datastore.invoke("executorStatus", null, Map.class);
     }
 
     /**

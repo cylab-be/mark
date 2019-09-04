@@ -228,15 +228,6 @@ public class ActivationController<T extends Subject> extends SafeThread
         this.executor.shutdown();
     }
 
-    /**
-     * Get the number of executed jobs.
-     * @return
-     */
-    @Override
-    public int getTaskCount() {
-        return executor.taskCount();
-    }
-
 
     /**
      * Test the profiles: instantiate (without running) one of each task defined
@@ -284,5 +275,10 @@ public class ActivationController<T extends Subject> extends SafeThread
      */
     Map<String, Map<T, Event<T>>> getEvents() {
         return this.events;
+    }
+
+    @Override
+    public Map<String, Object> getExecutorStatus() {
+        return this.executor.getStatus();
     }
 }

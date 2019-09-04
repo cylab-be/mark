@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
@@ -164,7 +165,12 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     }
 
     @Override
-    public Map<String, Object> status() throws Throwable {
+    public Map<String, Object> executorStatus() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DetectionAgentProfile[] activation() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

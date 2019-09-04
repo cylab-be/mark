@@ -23,6 +23,8 @@
  */
 package be.cylab.mark.activation;
 
+import java.util.Map;
+
 /**
  * The actual detection jobs can be executed by any platform that implements
  * this interface. We currently use Apache Ignite.
@@ -33,5 +35,5 @@ public interface ExecutorInterface {
 
     public boolean shutdown() throws InterruptedException;
 
-    public int taskCount();
+    public Map<String, Object> getStatus();
 }

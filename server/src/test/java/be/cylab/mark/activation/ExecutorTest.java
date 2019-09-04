@@ -60,7 +60,7 @@ public class ExecutorTest extends TestCase {
         controller.notifyRawData(data);
         Thread.sleep(2000);
 
-        assertEquals(1, executor.taskCount());
+        assertEquals(1, executor.getStatus().get("executed"));
 
     }
 

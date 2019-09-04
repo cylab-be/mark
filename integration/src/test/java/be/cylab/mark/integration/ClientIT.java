@@ -90,14 +90,14 @@ public class ClientIT extends TestCase {
         assertEquals("1", datastore.test());
     }
 
-    public final void testStatus() throws Throwable {
+    public final void testExecutorStatus() throws Throwable {
         System.out.println("status");
         System.out.println("====");
 
         startDummyServer();
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
-        System.out.println(datastore.status());
+        System.out.println(datastore.executorStatus());
     }
 
     /**

@@ -26,12 +26,14 @@ package be.cylab.mark.activation;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import be.cylab.mark.server.Config;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cluster.ClusterMetrics;
 import org.apache.ignite.configuration.DataStorageConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.collision.fifoqueue.FifoQueueCollisionSpi;
@@ -102,8 +104,17 @@ public class IgniteExecutor implements ExecutorInterface {
     }
 
     @Override
-    public int taskCount() {
-        return ignite.cluster().metrics().getTotalExecutedJobs();
+    public Map<String, Object> getStatus() {
+        HashMap<String, Object> map = new HashMap<>();
+        ClusterMetrics metrics = ignite.cluster().metrics();
+
+        map.put("executed", metrics.getTotalExecutedJobs());
+        map.put("running", metrics.getCurrentActiveJobs());
+        map.put("waiting", metrics.getCurrentWaitingJobs());
+
+        return map;
     }
+
+
 
 }

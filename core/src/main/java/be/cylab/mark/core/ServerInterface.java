@@ -161,9 +161,16 @@ public interface ServerInterface<T extends Subject> {
             Object old_value) throws Throwable;
 
     /**
-     * Get the status of the server (running tasks, activation cascade).
+     * Get the status of the executor service (running tasks etc).
      * @return
-     * @throws Throwable if any error occurs
+     * @throws java.lang.Throwable if something goes wrong
      */
-    Map<String, Object> status() throws Throwable;
+    Map<String, Object> executorStatus() throws Throwable;
+
+    /**
+     * Get the current configuration (activation profiles).
+     * @return
+     * @throws java.lang.Throwable if something goes wrong
+     */
+    DetectionAgentProfile[] activation() throws Throwable;
 }

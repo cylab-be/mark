@@ -1,11 +1,21 @@
 {% extends "layout.html" %}
 
-{% block title %} Home {% endblock %}
+{% block title %} Status {% endblock %}
 
 {% block content %}
 <h2>Status</h2>
 
+<p>
+    Executed jobs: {{ status.get("executed") }}
+</p>
 
+<p>
+    Running jobs: {{ status.get("running") }}
+</p>
+
+<p>
+    Waiting jobs: {{ status.get("waiting") }}
+</p>
 
 <h2>Activation cascade</h2>
 <div id="activation-graph"></div>
@@ -14,7 +24,7 @@
 <script>
     var mark_url = "{{ mark.getURL() }}";
     var json_request_body = {"jsonrpc": "2.0",
-        "method": "status",
+        "method": "activation",
         "params": {},
         "id": 123
     };
@@ -28,7 +38,7 @@
         if (request.readyState == 4 && request.status == 200) {
             // Request succeeded => draw graph
             var json_response = JSON.parse(request.responseText);
-            draw(json_response.result.activation);
+            draw(json_response.result);
         } else {
 
         }

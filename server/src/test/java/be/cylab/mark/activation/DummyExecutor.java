@@ -24,7 +24,9 @@
 package be.cylab.mark.activation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A mockup for the ExecutorInterface. Allows to count the number of submitted
@@ -46,8 +48,9 @@ public class DummyExecutor implements ExecutorInterface {
     }
 
     @Override
-    public int taskCount() {
-        return jobs.size();
+    public Map<String, Object> getStatus() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("executed", jobs.size());
+        return map;
     }
-
 }

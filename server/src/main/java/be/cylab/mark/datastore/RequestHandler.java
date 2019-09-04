@@ -184,25 +184,17 @@ public class RequestHandler implements ServerInterface {
      *
      * @return
      */
-    public final Map<String, Object> status() {
-        HashMap<String, Object> status = new HashMap<>();
-        status.put("activation", activation_controller.getProfiles());
-        status.put("executed", activation_controller.getTaskCount());
-        return status;
+    @Override
+    public final Map<String, Object> executorStatus() {
+        return activation_controller.getExecutorStatus();
     }
 
+    @Override
     public final DetectionAgentProfile[] activation() {
         List<DetectionAgentProfile> profiles =
                 activation_controller.getProfiles();
         return profiles.toArray(
                 new DetectionAgentProfile[profiles.size()]);
-    }
-
-    public final Document mongoStatus() {
-        return mongodb.runCommand(
-                new Document("serverStatus", 1)
-                        .append("shardConnPoolStats", 1)
-                        .append("dbStats", 1));
     }
 
     private static final String LABEL = "LABEL";
