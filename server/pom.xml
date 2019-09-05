@@ -13,6 +13,9 @@
     <name>server</name>
     <description>The main MARK server.</description>
 
+    <properties>
+    </properties>
+
     <build>
         <plugins>
             <!-- To define the main class -->
@@ -157,20 +160,19 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
-            <version>3.4.2</version>
+            <version>${mongodb.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-core</artifactId>
-            <version>3.4.2</version>
+            <version>${mongodb.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
-            <version>3.4.2</version>
-            <type>jar</type>
+            <version>${mongodb.version}</version>
         </dependency>
 
         <dependency>

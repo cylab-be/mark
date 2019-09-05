@@ -37,7 +37,7 @@ public class Datastore {
      *
      * @param config
      * @param activation_controller
-     * @throws mark.server.InvalidProfileException
+     * @throws be.cylab.mark.server.InvalidProfileException
      */
     @Inject
     public Datastore(

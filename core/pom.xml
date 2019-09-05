@@ -109,8 +109,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>bson</artifactId>
-            <version>3.4.2</version>
-            <type>jar</type>
+            <version>${mongodb.version}</version>
         </dependency>
 
         <dependency>
