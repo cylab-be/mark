@@ -36,4 +36,10 @@
   </tr>
   {% endfor %}
 </table>
+
+<div class="text-center">
+    <a href="/?label={{ label }}&page={{ (page - 1) }}" class="btn btn-sm btn-primary">&lt; pref</a>
+    <span class="p-lr-5">{{ page }}</span>
+    <a href="/?label={{ label }}&page={{ (page + 1) }}" class="btn btn-sm btn-primary">next &gt;</a>
+</div>
 {% endblock %}

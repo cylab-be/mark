@@ -80,14 +80,24 @@ public interface ServerInterface<T extends Subject> {
     Evidence<T>[] findEvidence(String label, T subject) throws Throwable;
 
     /**
-     * Find evidence of given label, for all subjects. Useful for displaying
-     * ranked list of subjects.
+     * Find the evidences with highest score, for given label and for all
+     * subjects. Used to display the most suspicious subjects.
      *
      * @param label
      * @return
      * @throws java.lang.Throwable if request fails
      */
     Evidence<T>[] findEvidence(String label) throws Throwable;
+
+    /**
+     * Find evidence of given label, for all subjects.
+     *
+     * @param label
+     * @param page
+     * @return
+     * @throws java.lang.Throwable if request fails
+     */
+    Evidence<T>[] findEvidence(String label, int page) throws Throwable;
 
     /**
      * Get a single evidence by id.

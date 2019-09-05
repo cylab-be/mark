@@ -1,3 +1,9 @@
+
+.p-lr-5 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 path.link {
   fill: none;
 /*  stroke: #666;*/

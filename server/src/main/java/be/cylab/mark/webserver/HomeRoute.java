@@ -55,21 +55,26 @@ public class HomeRoute implements TemplateViewRoute {
     @Override
     public ModelAndView handle(Request rqst, Response rspns) throws Exception {
         Map<String, Object> attributes = new HashMap<>();
-        String label = "detection.counter";
+        String label = "";
         try {
             String[] labels = this.getLabels();
-            LOGGER.info("Found " + labels.length + " labels");
             attributes.put("labels", this.getLabels());
+
+            int page = Integer.valueOf(rqst.queryParamOrDefault("page", "0"));
+            attributes.put("page", page);
+
+            if (labels.length > 0) {
+                label = labels[0];
+            }
 
             label = rqst.queryParamOrDefault(
                     "label",
-                    labels[0]);
-            Evidence[] evidences = this.client.findEvidence(label);
-            LOGGER.info("Found " + evidences.length + " evidences");
+                    label);
+            Evidence[] evidences = this.client.findEvidence(label, page);
             attributes.put("evidences", evidences);
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from datastore!", ex);
-            halt(505);
+            halt(500);
         }
         return new ModelAndView(attributes, "index.html");
     }

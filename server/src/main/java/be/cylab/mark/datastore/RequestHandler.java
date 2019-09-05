@@ -295,6 +295,14 @@ public class RequestHandler implements ServerInterface {
         return results.toArray(new Evidence[results.size()]);
     }
 
+    @Override
+    public final Evidence[] findEvidence(final String label)
+            throws Throwable {
+        return this.findEvidence(label, 0);
+    }
+
+    private final static int RESULTS_PER_PAGE = 100;
+
     /**
      * Keep only one evidence per subject: the most recent one.
      *
@@ -303,7 +311,7 @@ public class RequestHandler implements ServerInterface {
      * @throws Throwable if request fails
      */
     @Override
-    public final Evidence[] findEvidence(final String label)
+    public final Evidence[] findEvidence(final String label, final int page)
             throws Throwable {
 
         LOGGER.debug("findEvidence : " + label);
@@ -315,6 +323,8 @@ public class RequestHandler implements ServerInterface {
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
+
+        documents.skip(page * RESULTS_PER_PAGE).limit(RESULTS_PER_PAGE);
 
         HashMap<Subject, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {

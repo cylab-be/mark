@@ -173,4 +173,9 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     public DetectionAgentProfile[] activation() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public Evidence<T>[] findEvidence(String label, int page) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

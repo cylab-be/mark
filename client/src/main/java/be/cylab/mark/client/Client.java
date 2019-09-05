@@ -207,6 +207,24 @@ public class Client<T extends Subject> implements ServerInterface {
                 Evidence[].class);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param label
+     * @param page
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public final Evidence[] findEvidence(final String label, final int page)
+            throws Throwable {
+
+        return datastore.invoke(
+                "findEvidence",
+                new Object[]{label, page},
+                Evidence[].class);
+    }
+
     @Override
     public final Evidence[] findLastEvidences(
             final String label, final Subject subject)
