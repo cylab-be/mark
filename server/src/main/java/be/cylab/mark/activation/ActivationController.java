@@ -1,5 +1,6 @@
 package be.cylab.mark.activation;
 
+import be.cylab.mark.core.Event;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.net.MalformedURLException;
@@ -201,12 +202,10 @@ public class ActivationController<T extends Subject> extends SafeThread
                     profile.getClassName(),
                     event.getSubject().toString());
             executor.submit(
-                    new DetectionAgentContainer(
-                            event.getSubject(),
-                            event.getTimestamp(),
+                    new DetectionAgentContainer<T>(
+                            event,
                             config.getDatastoreUrl(),
                             config.getSubjectAdapter(),
-                            event.getLabel(),
                             profile,
                             profile.createInstance()));
 

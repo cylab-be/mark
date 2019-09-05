@@ -34,17 +34,14 @@ public interface DetectionAgentInterface<T extends Subject> {
     /**
      * Perform the analysis.
      *
-     * @param subject
-     * @param timestamp
-     * @param actual_trigger_label
+     * @param event the event (label, subject, time) that triggered this
+     * detector
      * @param profile
      * @param datastore
      * @throws Throwable if an error occured during analysis
      */
     void analyze(
-            T subject,
-            long timestamp,
-            String actual_trigger_label,
+            Event<T> event,
             DetectionAgentProfile profile,
             ServerInterface<T> datastore) throws Throwable;
 

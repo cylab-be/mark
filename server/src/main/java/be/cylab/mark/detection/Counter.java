@@ -25,34 +25,34 @@ package be.cylab.mark.detection;
 
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 
 /**
  *
  * @author tibo
  */
-public class Counter implements DetectionAgentInterface<Subject> {
+public class Counter implements DetectionAgentInterface {
 
     @Override
     public void analyze(
-            final Subject subject,
-            final long timestamp,
-            final String actual_trigger_label,
+            final Event event,
             final DetectionAgentProfile profile,
-            final ServerInterface<Subject> datastore) throws Throwable {
+            final ServerInterface datastore) throws Throwable {
 
-        int count = datastore.findRawData(actual_trigger_label, subject).length;
+        int count = datastore.findRawData(
+                event.getLabel(), event.getSubject()).length;
 
         Evidence ev = new Evidence();
         ev.setLabel("detection.counter");
         ev.setReport(
-                "Found " + count + " data entries for " + subject.toString());
+                "Found " + count + " data entries for "
+                + event.getSubject().toString());
 
         ev.setScore(count);
-        ev.setSubject(subject);
-        ev.setTime(timestamp);
+        ev.setSubject(event.getSubject());
+        ev.setTime(event.getTimestamp());
         datastore.addEvidence(ev);
 
     }

@@ -21,19 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package be.cylab.mark.activation;
+package be.cylab.mark.core;
 
 /**
- * Represents an events of data (or evidence) inserted in the database.
- * Contains the label of inserted data, subject and timestamp. Used to compute
- * detectors that have to be scheduled.
+ * Represents an event of data (or evidence) inserted in the database. Contains
+ * the label of inserted data, subject and timestamp. Used to trigger detectors
+ * that have to be scheduled.
+ *
  * @author tibo
+ * @param <T> the actual subject class
  */
-public class Event<T> {
+public class Event<T extends Subject> {
     private final String label;
     private final T subject;
     private final long timestamp;
 
+    /**
+     *
+     * @param label
+     * @param subject
+     * @param timestamp
+     */
     public Event(final String label, final T subject, final long timestamp) {
         this.label = label;
         this.subject = subject;
@@ -63,12 +71,4 @@ public class Event<T> {
     public final long getTimestamp() {
         return timestamp;
     }
-
-
-
-
-
-
-
-
 }

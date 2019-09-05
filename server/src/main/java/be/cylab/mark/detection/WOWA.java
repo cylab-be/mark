@@ -26,6 +26,7 @@ package be.cylab.mark.detection;
 
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Subject;
@@ -38,14 +39,12 @@ public class WOWA implements DetectionAgentInterface {
 
     @Override
     public void analyze(
-            final Subject subject,
-            final long timestamp,
-            final String actual_trigger_label,
+            final Event event,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
         Evidence[] evidences = datastore.findEvidence(
-                actual_trigger_label, subject);
+                event.getLabel(), event.getSubject());
 
         // Each detector has the same weight
         double[] weights = new double[evidences.length];

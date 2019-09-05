@@ -32,8 +32,8 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Event;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 
 /**
  * Detection agent that runs an external command.
@@ -75,13 +75,11 @@ public class Run implements DetectionAgentInterface {
 
     @Override
     public final void analyze(
-            final Subject subject,
-            final long timestamp,
-            final String actual_trigger_label,
+            final Event event,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
-        LinkedList<String> command = new LinkedList<String>();
+        LinkedList<String> command = new LinkedList<>();
         command.add(profile.getParameter(KEY_COMMAND));
 
         command.add("-d");

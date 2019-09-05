@@ -28,9 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 
 /**
  *
@@ -43,9 +43,7 @@ public class Average implements DetectionAgentInterface {
 
     @Override
     public void analyze(
-            final Subject subject,
-            final long timestamp,
-            final String actual_trigger_label,
+            final Event event,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
@@ -62,7 +60,7 @@ public class Average implements DetectionAgentInterface {
         }
 
         Evidence[] evidences = datastore.findLastEvidences(
-                profile.getTriggerLabel(), subject);
+                profile.getTriggerLabel(), event.getSubject());
 
         //check if the amount of evidences gotten from the DB is equal or higher
         //to the minimum needed to aggregate. If not the case, use the default
@@ -100,7 +98,7 @@ public class Average implements DetectionAgentInterface {
         Evidence ev = new Evidence();
         ev.setLabel(profile.getLabel());
         ev.setScore(score);
-        ev.setSubject(subject);
+        ev.setSubject(event.getSubject());
         ev.setTime(last_time);
         ev.setReport("Average Aggregation generated for evidences with"
                 + " label " + profile.getTriggerLabel()

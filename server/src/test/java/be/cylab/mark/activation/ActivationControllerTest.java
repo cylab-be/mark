@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.activation;
 
+import be.cylab.mark.core.Event;
 import java.util.Map;
 import junit.framework.TestCase;
 import be.cylab.mark.core.Evidence;

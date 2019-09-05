@@ -2,8 +2,8 @@ package be.cylab.mark.integration;
 
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Event;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 
 /**
  * Dummy detection agent, which does not try to read or write to the datastore.
@@ -17,9 +17,7 @@ public class DummyDetector implements DetectionAgentInterface {
 
     @Override
     public void analyze(
-            final Subject subject,
-            final long timestamp,
-            final String actual_trigger_label,
+            final Event ev,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
