@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import static spark.Spark.halt;
 import spark.TemplateViewRoute;
 
 /**
@@ -56,15 +57,19 @@ public class HomeRoute implements TemplateViewRoute {
         Map<String, Object> attributes = new HashMap<>();
         String label = "detection.counter";
         try {
+            String[] labels = this.getLabels();
+            LOGGER.info("Found " + labels.length + " labels");
+            attributes.put("labels", this.getLabels());
+
+            label = rqst.queryParamOrDefault(
+                    "label",
+                    labels[0]);
             Evidence[] evidences = this.client.findEvidence(label);
             LOGGER.info("Found " + evidences.length + " evidences");
             attributes.put("evidences", evidences);
-
-            String[] labels = this.getLabels();
-            LOGGER.info("Found " + labels.length + " labels");
-            attributes.put("detectors", this.getLabels());
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from datastore!", ex);
+            halt(505);
         }
         return new ModelAndView(attributes, "index.html");
     }

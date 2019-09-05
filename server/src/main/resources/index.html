@@ -8,9 +8,9 @@
 <form style="margin-bottom: 10px" method="GET" class="form-inline">
   <div class="form-group">
     <label for="agent">Detector : </label>
-    <select class="form-control" id="agent" name="agent">
-      {% for detector in detectors %}
-      <option>{{ detector }}</option>
+    <select class="form-control" id="label" name="label">
+      {% for label in labels %}
+      <option>{{ label }}</option>
       {% endfor %}
     </select>
   </div>

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import static spark.Spark.halt;
 import spark.TemplateViewRoute;
 
 /**
@@ -55,6 +56,10 @@ public class ReportRoute implements TemplateViewRoute {
         Map<String, Object> model = new HashMap<>();
         try {
             Evidence ev = client.findEvidenceById(id);
+
+            if (ev == null) {
+                halt(404);
+            }
             model.put("report", ev);
             model.put(
                     "history",
