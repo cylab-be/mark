@@ -23,7 +23,6 @@
  */
 package be.cylab.mark.datastore;
 
-import java.util.Arrays;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -34,7 +33,6 @@ import org.bson.types.ObjectId;
 public final class Person {
     private ObjectId id;
     private String name;
-    private Address address;
     public List<String> references;
 
     public Person() {
@@ -56,14 +54,6 @@ public final class Person {
         this.name = name;
     }
 
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(final Address address) {
-        this.address = address;
-    }
-
     public List<String> getReferences() {
         return references;
     }
@@ -72,14 +62,11 @@ public final class Person {
         this.references = references;
     }
 
-
-
     @Override
     public String toString() {
         return "Person{"
                 + "id='" + id + "'"
                 + ", name='" + name + "'"
-                + ", address=" + address
                 + ", references=" + references
                 + "}";
     }

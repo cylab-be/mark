@@ -21,16 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package be.cylab.mark.datastore;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import junit.framework.TestCase;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -38,42 +37,44 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 /**
+ * https://github.com/mongodb/mongo-java-driver/blob/master/driver-sync/src/examples/tour/PojoQuickTour.java
  *
  * @author Thibault Debatty
  */
 public class MongoTest extends TestCase {
 
-    public static void Main() {
-        MongoTest test = new MongoTest();
-        test.testPojo();
-    }
+    public String mongo_host;
 
     public void testPojo() {
+
+        mongo_host = System.getenv("MARK_MONGO_HOST");
+        if (mongo_host == null) {
+            mongo_host = "127.0.0.1";
+        }
 
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build()));
 
         MongoClientSettings settings = MongoClientSettings.builder()
-        .codecRegistry(pojoCodecRegistry)
-        .build();
+                .codecRegistry(pojoCodecRegistry)
+                .applyToClusterSettings(builder ->
+                        builder.hosts(Arrays.asList(new ServerAddress(mongo_host))))
+                .build();
 
         MongoClient mongo = MongoClients.create(settings);
         MongoDatabase db = mongo.getDatabase("mytestdb");
 
-        MongoCollection<Person> collection =
-                db.getCollection("people", Person.class);
+        MongoCollection<Person> collection
+                = db.getCollection("people", Person.class);
         collection.drop();
 
         Person me = new Person();
         me.setName("Tibo");
 
         // a simple array of String is not serialized automatically...
-        // => use a list
-        List<String> refs = new ArrayList<>();
-        refs.add("abc");
-        refs.add("def");
-        me.setReferences(refs);
+        // => we have to use a list
+        me.setReferences(Arrays.asList("abc", "def"));
         collection.insertOne(me);
 
         System.out.println("Mutated Person Model: " + me);

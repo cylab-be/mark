@@ -35,6 +35,10 @@ public final class Address {
 
     }
 
+    public Address(final String name) {
+        this.name = name;
+    }
+
     private ObjectId id;
     private String name;
 
