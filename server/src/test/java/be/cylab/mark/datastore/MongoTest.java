@@ -29,8 +29,11 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import junit.framework.TestCase;
+import org.bson.Document;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -45,12 +48,51 @@ public class MongoTest extends TestCase {
 
     public String mongo_host;
 
-    public void testPojo() {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
         mongo_host = System.getenv("MARK_MONGO_HOST");
         if (mongo_host == null) {
             mongo_host = "127.0.0.1";
         }
+    }
+
+    /**
+     * Typed classes (like Evidence<T extends Subject>) cannot be saved using
+     * the automatic PojoCodeProvider.
+     *
+     */
+    public void testTypedClasses() {
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyToClusterSettings(builder ->
+                        builder.hosts(Arrays.asList(new ServerAddress(mongo_host))))
+                .build();
+
+        MongoClient mongo = MongoClients.create(settings);
+        MongoDatabase db = mongo.getDatabase("mytestdb");
+        MongoCollection<Document> coll = db.getCollection("tests");
+        coll.drop();
+
+        Test<String> t = new Test<>("mytest");
+        t.setData("my data...");
+        t.references().add("abc");
+        t.references().add("def");
+
+        Document doc = new Document();
+        t.toDocument(doc);
+        coll.insertOne(doc);
+
+        Document first = coll.find().first();
+        System.out.println("In Mongo: " + first);
+
+        Test fetched = new Test();
+        fetched.fromDocument(first);
+        System.out.println("Parsed: " + fetched);
+
+    }
+
+    public void testPojo() {
 
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
@@ -74,7 +116,8 @@ public class MongoTest extends TestCase {
 
         // a simple array of String is not serialized automatically...
         // => we have to use a list
-        me.setReferences(Arrays.asList("abc", "def"));
+        me.references.add("abc");
+        me.references.add("def");
         collection.insertOne(me);
 
         System.out.println("Mutated Person Model: " + me);
@@ -82,5 +125,49 @@ public class MongoTest extends TestCase {
         Person first = collection.find().first();
         System.out.println("In MongoDB: " + first);
 
+    }
+}
+
+class Test<T> {
+    private String name;
+    private T data;
+    private List<String> references = new ArrayList<>();
+
+    public Test(String name) {
+        this.name = name;
+    }
+
+    Test() {
+
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public List<String> references() {
+        return references;
+    }
+
+    public Document toDocument(Document doc) {
+        doc.append("name", name);
+        doc.append("data", data);
+        doc.append("references", references);
+
+        return doc;
+    }
+
+    public void fromDocument(Document doc) {
+        this.name = doc.get("name", String.class);
+        this.references = doc.get("references", references);
+
+        // data cannot be parsed as we don't know the runtime type...
+        //this.data = doc.get("data", data);
+
+    }
+
+    @Override
+    public String toString() {
+        return name + " : " + data + " : " + references;
     }
 }

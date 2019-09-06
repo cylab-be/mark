@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.datastore;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -33,7 +34,7 @@ import org.bson.types.ObjectId;
 public final class Person {
     private ObjectId id;
     private String name;
-    public List<String> references;
+    public List<String> references = new ArrayList<>();
 
     public Person() {
     }
@@ -60,6 +61,10 @@ public final class Person {
 
     public void setReferences(List<String> references) {
         this.references = references;
+    }
+
+    public List<String> references() {
+        return this.references;
     }
 
     @Override
