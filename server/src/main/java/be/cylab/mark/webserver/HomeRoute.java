@@ -70,6 +70,9 @@ public class HomeRoute implements TemplateViewRoute {
             label = rqst.queryParamOrDefault(
                     "label",
                     label);
+
+            attributes.put("label", label);
+
             Evidence[] evidences = this.client.findEvidence(label, page);
             attributes.put("evidences", evidences);
         } catch (Throwable ex) {
