@@ -1,0 +1,6 @@
+# Launch a single Dummy agent for every
+# new http data
+---
+class_name:     be.cylab.mark.detection.TimeAverage
+label:          detection.timeaverage
+trigger_label:  detection.counter

@@ -25,7 +25,9 @@ package be.cylab.mark.webserver;
 
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.Evidence;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
@@ -56,19 +58,30 @@ public class ReportRoute implements TemplateViewRoute {
         Map<String, Object> model = new HashMap<>();
         try {
             Evidence ev = client.findEvidenceById(id);
-
-            if (ev == null) {
-                halt(404);
-            }
             model.put("report", ev);
-            model.put(
-                    "history",
-                    client.findEvidence(ev.getLabel(), ev.getSubject()));
+            model.put("references", getReferences(ev));
+            model.put("history", getHistory(ev));
         } catch (Throwable ex) {
             LOGGER.error("Failed to get report from datastore");
+            halt(404);
         }
 
         return new ModelAndView(model, "report.html");
     }
 
+    private Evidence[] getHistory(Evidence ev) throws Throwable {
+        return client.findEvidence(ev.getLabel(), ev.getSubject());
+    }
+
+    private Evidence[] getReferences(Evidence ev) throws Throwable {
+        List<Evidence> evidences = new ArrayList<>();
+
+        LOGGER.info("Report has " + ev.getReferences().size() + " references");
+        for (String ref_id : (List<String>) ev.getReferences()) {
+            LOGGER.info(ref_id);
+            evidences.add(client.findEvidenceById(ref_id));
+        }
+
+        return evidences.toArray(new Evidence[evidences.size()]);
+    }
 }

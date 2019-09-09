@@ -203,6 +203,7 @@ public class RequestHandler implements ServerInterface {
     private static final String DATA = "DATA";
     private static final String SCORE = "SCORE";
     private static final String REPORT = "REPORT";
+    private static final String REFERENCES = "references";
 
     /**
      * Convert from MongoDB document to RawData.
@@ -231,6 +232,7 @@ public class RequestHandler implements ServerInterface {
         evidence.setLabel(doc.getString(LABEL));
         evidence.setReport(doc.getString(REPORT));
         evidence.setId(doc.getObjectId("_id").toString());
+        evidence.setReferences(doc.getList(REFERENCES, String.class));
 
         return evidence;
     }
@@ -263,7 +265,8 @@ public class RequestHandler implements ServerInterface {
                 .append(TIME, evidence.getTime())
                 .append(SCORE, evidence.getScore())
                 .append(TIME, evidence.getTime())
-                .append(REPORT, evidence.getReport());
+                .append(REPORT, evidence.getReport())
+                .append(REFERENCES, evidence.getReferences());
 
         adapter.writeToMongo(evidence.getSubject(), doc);
         return doc;

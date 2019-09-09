@@ -20,6 +20,9 @@ import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -342,16 +345,28 @@ public class Client<T extends Subject> implements ServerInterface {
                 throws IOException, JsonProcessingException {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
-            Evidence data = new Evidence();
-            data.setId(((TextNode) tree.get("id")).asText());
-            data.setReport(((TextNode) tree.get("report")).asText());
-            data.setLabel(((TextNode) tree.get("label")).asText());
-            data.setScore(((NumericNode) tree.get("score")).asDouble());
-            data.setTime(((NumericNode) tree.get("time")).asLong());
-            data.setSubject(
+
+            Evidence ev = new Evidence();
+            ev.setId(((TextNode) tree.get("id")).asText());
+            ev.setReport(((TextNode) tree.get("report")).asText());
+            ev.setLabel(((TextNode) tree.get("label")).asText());
+            ev.setScore(((NumericNode) tree.get("score")).asDouble());
+            ev.setTime(((NumericNode) tree.get("time")).asLong());
+            ev.setReferences(
+                    deserializeList(((ArrayNode) tree.get("references"))));
+
+            ev.setSubject(
                     adapter.deserialize((JsonNode) tree.get("subject")));
 
-            return data;
+            return ev;
+        }
+
+        private List<String> deserializeList(final ArrayNode node) {
+            List<String> values = new ArrayList<>();
+            for (JsonNode element : node) {
+                values.add(element.asText());
+            }
+            return values;
         }
     }
 }
