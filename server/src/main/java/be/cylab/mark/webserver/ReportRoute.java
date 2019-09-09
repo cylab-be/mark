@@ -75,10 +75,7 @@ public class ReportRoute implements TemplateViewRoute {
 
     private Evidence[] getReferences(Evidence ev) throws Throwable {
         List<Evidence> evidences = new ArrayList<>();
-
-        LOGGER.info("Report has " + ev.getReferences().size() + " references");
         for (String ref_id : (List<String>) ev.getReferences()) {
-            LOGGER.info(ref_id);
             evidences.add(client.findEvidenceById(ref_id));
         }
 
