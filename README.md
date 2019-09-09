@@ -9,10 +9,10 @@ The **multi-agent ranking framework (MARK)** aims to provide all the building bl
 ![](./documentation/architecture.png)
 
 ![](./documentation/home.png)
+![](./documentation/report.png)
 
 ![](./documentation/status.png)
 
-![](./documentation/report.png)
 
 ## Requirements
 
