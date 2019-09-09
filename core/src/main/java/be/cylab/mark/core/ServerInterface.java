@@ -80,6 +80,18 @@ public interface ServerInterface<T extends Subject> {
     Evidence<T>[] findEvidence(String label, T subject) throws Throwable;
 
     /**
+     *
+     * @param label
+     * @param subject
+     * @param time
+     * @return
+     * @throws Throwable if something goes wrong
+     */
+    Evidence<T>[] findEvidenceSince(String label, T subject, long time)
+            throws Throwable;
+
+
+    /**
      * Find the evidences with highest score, for given label and for all
      * subjects. Used to display the most suspicious subjects.
      *

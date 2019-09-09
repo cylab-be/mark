@@ -75,6 +75,33 @@ public class RequestHandlerTest extends TestCase {
         assertNotSame("", evidences[0].getId());
     }
 
+    public void testFindEvidenceSince() throws Throwable {
+        RequestHandler rq = this.getRequestHandler();
+
+        String label = "test";
+        DummySubject subject = new DummySubject("test");
+
+        Evidence ev = new Evidence();
+        ev.setLabel(label);
+        ev.setReport("Some report...");
+        ev.setScore(0.99);
+        ev.setSubject(subject);
+        ev.setTime(123456);
+        rq.addEvidence(ev);
+
+        ev.setTime(123000);
+        rq.addEvidence(ev);
+
+        Evidence[] evidences = rq.findEvidenceSince(label, subject, 0);
+        assertEquals(2, evidences.length);
+
+        evidences = rq.findEvidenceSince(label, subject, 123400);
+        assertEquals(1, evidences.length);
+
+        evidences = rq.findEvidenceSince(label, subject, 123500);
+        assertEquals(0, evidences.length);
+    }
+
     private RequestHandler getRequestHandler() {
         String mongo_host = System.getenv(Config.ENV_MONGO_HOST);
         if (mongo_host == null) {

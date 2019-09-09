@@ -20,6 +20,7 @@ import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
+import com.mongodb.BasicDBObject;
 import java.util.Collections;
 import java.util.List;
 import org.apache.ignite.cluster.ClusterMetrics;
@@ -288,11 +289,7 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        ArrayList<Evidence> results = new ArrayList<>();
-        for (Document doc : documents) {
-            results.add(convertEvidence(doc));
-        }
-        return results.toArray(new Evidence[results.size()]);
+        return this.parseEvidences(documents);
     }
 
     @Override
@@ -318,7 +315,6 @@ public class RequestHandler implements ServerInterface {
 
         Document query = new Document();
         query.append(LABEL, label);
-        LOGGER.debug(query.toString());
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
@@ -341,12 +337,11 @@ public class RequestHandler implements ServerInterface {
             }
         }
 
-        Evidence[] evidences_array = evidences.values()
-                .toArray(new Evidence[evidences.size()]);
+        Evidence[] ev_array =
+                evidences.values().toArray(new Evidence[evidences.size()]);
 
-        Arrays.sort(evidences_array, Collections.reverseOrder());
-
-        return evidences_array;
+        Arrays.sort(ev_array, Collections.reverseOrder());
+        return ev_array;
     }
 
     /**
@@ -491,5 +486,31 @@ public class RequestHandler implements ServerInterface {
         }
         return swaped;
     }
+
+    @Override
+    public Evidence[] findEvidenceSince(
+            String label, Subject subject, long time) throws Throwable {
+        Document query = new Document();
+        query.append(LABEL, label);
+        query.append(TIME, new BasicDBObject("$gt", time));
+        adapter.writeToMongo(subject, query);
+
+        FindIterable<Document> documents = mongodb
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
+
+        return this.parseEvidences(documents);
+    }
+
+    private Evidence[] parseEvidences(FindIterable<Document> documents) {
+        List<Evidence> evidences = new ArrayList<>();
+
+        for (Document doc : documents) {
+            evidences.add(convertEvidence(doc));
+        }
+
+        return evidences.toArray(new Evidence[evidences.size()]);
+    }
+
 
 }

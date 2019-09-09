@@ -278,6 +278,17 @@ public class Client<T extends Subject> implements ServerInterface {
         return datastore.invoke("executorStatus", null, Map.class);
     }
 
+    @Override
+    public final Evidence[] findEvidenceSince(
+            final String label, final Subject subject, final long time)
+            throws Throwable {
+
+        return datastore.invoke(
+                "findEvidenceSince",
+                new Object[]{label, subject, time},
+                Evidence[].class);
+    }
+
     /**
      * Helper class to deserialize raw data, using the subject adapter.
      *

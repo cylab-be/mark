@@ -4,18 +4,10 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
-import junit.framework.TestCase;
-import be.cylab.mark.activation.ActivationController;
-import be.cylab.mark.activation.ExecutorInterface;
-import be.cylab.mark.activation.IgniteExecutor;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.datastore.Datastore;
-import be.cylab.mark.server.Config;
-import be.cylab.mark.server.Server;
-import be.cylab.mark.webserver.WebServer;
 import org.bson.Document;
 
 /**
@@ -24,56 +16,7 @@ import org.bson.Document;
  *
  * @author Thibault Debatty
  */
-public class ClientIT extends TestCase {
-
-    private Server server;
-
-    @Override
-    protected final void tearDown() throws Exception {
-        if (server != null) {
-            server.stop();
-        }
-        super.tearDown();
-    }
-
-    /**
-     * Set up normal server.
-     *
-     * @return server.
-     * @throws Throwable
-     */
-    protected final Server getServer() throws Throwable {
-        Config config = Config.getTestConfig();
-        config.adapter_class = LinkAdapter.class.getName();
-
-
-        ExecutorInterface executor = new IgniteExecutor(config);
-
-        ActivationController activation_controller
-                = new ActivationController(config, executor);
-        return new Server(
-                config,
-                new WebServer(config),
-                activation_controller,
-                new Datastore(config, activation_controller));
-    }
-
-    /**
-     * Set up and start dummy server.
-     *
-     * @throws Throwable
-     */
-    protected final void startDummyServer()
-            throws Throwable {
-
-        server = getServer();
-
-        // Activate the dummy activation profile
-        server.addDetectionAgent(DetectionAgentProfile.fromInputStream(
-                getClass()
-                        .getResourceAsStream("/detection.dummy.yml")));
-        server.start();
-    }
+public class ClientIT extends MarkCase {
 
     /**
      * Test of Test method, of class DatastoreClient.
@@ -320,6 +263,40 @@ public class ClientIT extends TestCase {
         // Check it is indeed the most recent report
         assertEquals(2345, evidences[0].getTime());
     }
+
+    public final void testFindEvidenceSince() throws Throwable {
+        System.out.println("findEvidenceSince");
+        System.out.println("=================");
+
+        server = getServer();
+        server.start();
+
+        // Count the original number of evidences
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
+        String label = "my.test";
+
+        Evidence<Link> evidence = new Evidence<>();
+        Link subject = new Link("1.2.3.4", "test.me");
+        evidence.setLabel(label);
+        evidence.setScore(0.9);
+        evidence.setTime(12345);
+        evidence.setSubject(subject);
+        datastore.addEvidence(evidence);
+
+        evidence.setTime(12000);
+
+
+        // Ask for last evidences
+        Evidence[] evidences = datastore.findEvidenceSince(
+                label, subject, 12300);
+
+        assertEquals(1, evidences.length);
+        assertEquals(12345, evidences[0].getTime());
+    }
+
+
 
     /**
      *

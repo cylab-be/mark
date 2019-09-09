@@ -2,6 +2,8 @@ package be.cylab.mark.core;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -13,15 +15,12 @@ public class Evidence<T extends Subject>
 
     private String id = "";
     private String label = "";
-
-    /**
-     * The time variable is the timestamp attributed to the Evidence and is in
-     * format: number of milliseconds since January 1, 1970, 00:00:00 GMT.
-     */
     private long time;
     private T subject;
     private double score;
     private String report = "";
+    private List<String> references = new ArrayList<>();
+
 
     @Override
     public final String toString() {
@@ -61,6 +60,7 @@ public class Evidence<T extends Subject>
     }
 
     /**
+     * Unix timestamp in milliseconds.
      *
      * @return
      */
@@ -69,7 +69,7 @@ public class Evidence<T extends Subject>
     }
 
     /**
-     *
+     * Unix timestamp in milliseconds.
      * @param time
      */
     public final void setTime(final long time) {
@@ -123,6 +123,31 @@ public class Evidence<T extends Subject>
     public final void setReport(final String report) {
         this.report = report;
     }
+
+    /**
+     *
+     * @return
+     */
+    public final List<String> getReferences() {
+        return references;
+    }
+
+    /**
+     *
+     * @param references
+     */
+    public final void setReferences(final List<String> references) {
+        this.references = references;
+    }
+
+    /**
+     * Get or set the ID of related Evidences.
+     * @return
+     */
+    public final List<String> references() {
+        return references;
+    }
+
 
     @Override
     public final int compareTo(final Evidence other) {
