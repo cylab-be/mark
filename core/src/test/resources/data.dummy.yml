@@ -1,0 +1,6 @@
+## YAML Template.
+---
+class_name:     mark.core.DummyData
+label:          data.dummy
+parameters:
+    file:  dummy_file.txt

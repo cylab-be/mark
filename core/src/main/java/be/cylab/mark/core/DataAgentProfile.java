@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -27,7 +28,7 @@ public class DataAgentProfile {
     /**
      * Additional parameters to pass to the agent (e.g time range).
      */
-    private Map<String, String> parameters;
+    private Map<String, String> parameters = new HashMap<>();
 
     /**
      * The path to the profile file, can be used to compute relative paths.
@@ -73,6 +74,14 @@ public class DataAgentProfile {
      */
     public final Map<String, String> getParameters() {
         return parameters;
+    }
+
+        /**
+     *
+     * @param parameters
+     */
+    public final void setParameters(final HashMap<String, String> parameters) {
+        this.parameters = parameters;
     }
 
     /**
