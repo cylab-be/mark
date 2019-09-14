@@ -213,6 +213,7 @@ public class Config {
         conf.update_interval = 1;
         conf.mongo_clean = true;
         conf.ignite_autodiscovery = false;
+        conf.log_directory = "/tmp";
         conf.max_threads = TEST_MAX_THREADS;
 
         return conf;

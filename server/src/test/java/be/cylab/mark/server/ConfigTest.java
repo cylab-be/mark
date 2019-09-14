@@ -55,16 +55,6 @@ public class ConfigTest extends TestCase {
         System.out.println("getLogDiretory");
         Config conf = Config.getTestConfig();
 
-        try {
-            System.out.println(conf.getLogDiretory().getPath());
-            fail("Should throw a file not found exception!");
-        } catch (FileNotFoundException ex) {
-            assertEquals(
-                    ex.getClass().getSimpleName(),
-                    "FileNotFoundException");
-        }
-
-        conf.log_directory = "/tmp";
         assertEquals("/tmp", conf.getLogDiretory().getAbsolutePath());
 
         conf.log_directory = "./logs";

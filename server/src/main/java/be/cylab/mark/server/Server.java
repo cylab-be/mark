@@ -169,7 +169,9 @@ public class Server {
 
         try {
             Logger.getRootLogger().addAppender(
-                    getFileAppender("mark-server.log", Level.DEBUG));
+                    getFileAppender("mark.log", Level.INFO));
+            Logger.getLogger("be.cylab.mark.server").addAppender(
+                    getFileAppender("mark-server.log", Level.INFO));
             Logger.getLogger("org.apache.ignite").addAppender(
                     getFileAppender("mark-ignite.log", Level.INFO));
             Logger.getLogger("org.eclipse.jetty").addAppender(
