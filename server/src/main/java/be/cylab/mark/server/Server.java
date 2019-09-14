@@ -13,6 +13,10 @@ import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.data.DataAgentContainer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
@@ -51,58 +55,14 @@ public class Server {
     public Server(final Config config, final WebServer web_server,
             final ActivationController activation_controller,
             final Datastore datastore) throws Throwable {
+
         this.config = config;
-
-        startLogging();
-
         this.web_server = web_server;
         this.activation_controller = activation_controller;
         this.datastore = datastore;
         this.data_agents = new LinkedList<>();
 
-        LOGGER.info("Parsing modules directory ");
-        File modules_dir;
-        try {
-            modules_dir = config.getModulesDirectory();
-        } catch (FileNotFoundException ex) {
-            LOGGER.warn(ex.getMessage());
-            return;
-        }
-
-        LOGGER.info(modules_dir.getAbsolutePath());
-        // Parse *.data.yml files
-        File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".data.yml");
-            }
-        });
-        //Instanciate DataAgentProfiles for each previously parsed files.
-        for (File file : data_agent_files) {
-            data_agents.add(
-                    new DataAgentContainer(
-                            DataAgentProfile.fromFile(file),
-                            config));
-        }
-        LOGGER.info("Found " + data_agents.size() + " data agents ...");
-
-        // Parse *.detection.yml files
-        File[] detection_agent_files
-                = modules_dir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return name.endsWith(".detection.yml");
-                    }
-                });
-
-        for (File file : detection_agent_files) {
-            activation_controller.addAgent(
-                    DetectionAgentProfile.fromFile(file));
-        }
-        LOGGER.info(
-                "Found " + activation_controller.getProfiles().size()
-                        + " detection agents ...");
-
+        this.startLogging();
     }
 
     /**
@@ -119,14 +79,11 @@ public class Server {
 
         LOGGER.info("Starting server...");
 
-        // Start the web server...
-        web_server.start();
+        this.parseModules();
 
-        // Start the activation controller...
+        web_server.start();
         activation_controller.testProfiles();
         activation_controller.start();
-
-        // Start the datastore...
         datastore.start();
 
         // Start data agents...
@@ -239,5 +196,103 @@ public class Server {
         fa.activateOptions();
 
         return fa;
+    }
+
+    private void parseModules() throws FileNotFoundException {
+        LOGGER.info("Parsing modules directory ");
+        File modules_dir;
+        try {
+            modules_dir = config.getModulesDirectory();
+        } catch (FileNotFoundException ex) {
+            LOGGER.warn(ex.getMessage());
+            return;
+        }
+
+        LOGGER.info(modules_dir.getAbsolutePath());
+        this.loadJars(modules_dir);
+        this.loadDataAgents(modules_dir);
+        this.loadDetectionAgents(modules_dir);
+    }
+
+
+    /**
+     * Load jars from specified directory.
+     *
+     * @param directory
+     */
+    public void loadJars(final File directory) {
+
+        LOGGER.info("Load jars...");
+
+
+        try {
+            // List *.jar and update the class path
+            // this is a hack that allows to modify the global (system) class
+            // loader.
+            URLClassLoader class_loader
+                    = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Method method = URLClassLoader.class.getDeclaredMethod(
+                    "addURL", URL.class);
+            method.setAccessible(true);
+
+            File[] jar_files;
+            jar_files = directory
+                    .listFiles(new FilenameFilter() {
+                        @Override
+                        public boolean accept(final File dir, final String name) {
+                            return name.endsWith(".jar");
+                        }
+                    });
+
+            for (File jar_file : jar_files) {
+                LOGGER.info(jar_file.getAbsolutePath());
+                method.invoke(class_loader, jar_file.toURI().toURL());
+            }
+        } catch (IllegalAccessException | IllegalArgumentException
+                | NoSuchMethodException | SecurityException
+                | InvocationTargetException | MalformedURLException ex) {
+
+            LOGGER.warn("Unable to load jar: " + ex.getMessage());
+
+        }
+
+    }
+
+    private void loadDataAgents(File modules_dir) throws FileNotFoundException {
+                // Parse *.data.yml files
+        File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return name.endsWith(".data.yml");
+            }
+        });
+        //Instanciate DataAgentProfiles for each previously parsed files.
+        for (File file : data_agent_files) {
+            data_agents.add(
+                    new DataAgentContainer(
+                            DataAgentProfile.fromFile(file),
+                            config));
+        }
+        LOGGER.info("Found " + data_agents.size() + " data agents ...");
+    }
+
+    private void loadDetectionAgents(File modules_dir)
+            throws FileNotFoundException {
+        // Parse *.detection.yml files
+        File[] detection_agent_files
+                = modules_dir.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(final File dir, final String name) {
+                        return name.endsWith(".detection.yml");
+                    }
+                });
+
+        for (File file : detection_agent_files) {
+            activation_controller.addAgent(
+                    DetectionAgentProfile.fromFile(file));
+        }
+        LOGGER.info(
+                "Found " + activation_controller.getProfiles().size()
+                        + " detection agents ...");
     }
 }

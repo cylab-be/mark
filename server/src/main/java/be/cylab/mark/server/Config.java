@@ -198,8 +198,6 @@ public class Config {
     public static final Config fromInputStream(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
         Config config = yaml.loadAs(input, Config.class);
-        config.parseConfig();
-
         return config;
     }
 
@@ -354,51 +352,6 @@ public class Config {
         }
 
         return logdir_file;
-    }
-
-    /**
-     * Analyze the module folder. - modify the class path - parse data agent
-     * profiles - parse detection agent profiles
-     *
-     * @throws MalformedURLException
-     */
-    private void parseConfig() {
-
-        LOGGER.info("Parse configuration...");
-
-
-        File modules_dir;
-        try {
-            modules_dir = this.getModulesDirectory();
-        } catch (FileNotFoundException ex) {
-            return;
-        }
-
-        // List *.jar and update the class path
-        // this is a hack that allows to modify the global (system) class
-        // loader.
-        try {
-            URLClassLoader class_loader
-                    = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Method method = URLClassLoader.class.getDeclaredMethod(
-                    "addURL", URL.class);
-            method.setAccessible(true);
-
-            File[] jar_files;
-            jar_files = modules_dir
-                    .listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(final File dir, final String name) {
-                            return name.endsWith(".jar");
-                        }
-                    });
-
-            for (File jar_file : jar_files) {
-                method.invoke(class_loader, jar_file.toURI().toURL());
-            }
-        } catch (Throwable exc) {
-            exc.printStackTrace();
-        }
     }
 
     public int getMaxThreads() {
