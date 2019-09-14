@@ -155,7 +155,8 @@ public class DetectionAgentProfile {
                 | IllegalAccessException ex) {
 
             throw new InvalidProfileException(
-                    "Cannot instantiate detection agent " + class_name,
+                    "Cannot instantiate detection agent " + class_name + " : "
+                    + ex.getMessage(),
                     ex);
         }
     }

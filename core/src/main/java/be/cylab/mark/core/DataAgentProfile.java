@@ -132,7 +132,8 @@ public class DataAgentProfile {
         } catch (ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name,
+                    "Cannot instantiate data agent " + class_name + " : "
+                    + ex.getMessage(),
                     ex);
         }
     }
