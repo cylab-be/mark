@@ -35,7 +35,7 @@ public class Datastore {
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(Datastore.class);
 
-    private final Server server;
+    private Server server;
     private final Config config;
     private final ActivationControllerInterface activation_controller;
 
@@ -53,10 +53,6 @@ public class Datastore {
 
         this.config = config;
         this.activation_controller = activation_controller;
-
-        MongoDatabase mongodb = this.connectToMongodb(config);
-        server = this.createJsonRPCServer(mongodb);
-
     }
 
     /**
@@ -69,6 +65,9 @@ public class Datastore {
 
         LOGGER.info("Starting JSON-RPC datastore on " + config.getServerHost()
                 + " : " + config.getServerPort());
+
+        MongoDatabase mongodb = this.connectToMongodb(config);
+        server = this.createJsonRPCServer(mongodb);
         server.start();
 
         while (!server.isStarted()) {

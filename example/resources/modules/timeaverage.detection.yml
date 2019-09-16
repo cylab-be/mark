@@ -3,4 +3,4 @@
 ---
 class_name:     be.cylab.mark.detection.TimeAverage
 label:          detection.timeaverage
-trigger_label:  detection.counter
+trigger_label:  detection.example

@@ -30,7 +30,6 @@ import com.google.inject.Inject;
 import be.cylab.mark.server.Config;
 import com.mitchellbosecke.pebble.loader.ClasspathLoader;
 import java.net.MalformedURLException;
-import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.template.pebble.PebbleTemplateEngine;
@@ -45,7 +44,6 @@ public class WebServer {
             WebServer.class);
 
     private final Config config;
-    private final Client client;
 
     /**
      * Instantiate a web server with provided config.
@@ -53,12 +51,9 @@ public class WebServer {
      * @param config
      */
     @Inject
-    public WebServer(final Config config)
-            throws MalformedURLException, InvalidProfileException {
-        this.config = config;
+    public WebServer(final Config config) {
 
-        this.client = new Client(
-                config.getDatastoreUrl(), config.getSubjectAdapter());
+        this.config = config;
     }
 
     /**
@@ -72,6 +67,9 @@ public class WebServer {
         }
 
         LOGGER.info("Starting web interface at port 8000");
+
+        Client client = new Client(
+                config.getDatastoreUrl(), config.getSubjectAdapter());
 
 
         PebbleTemplateEngine pebble = new PebbleTemplateEngine(

@@ -21,13 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package be.cylab.mark.demo;
+package be.cylab.mark.example;
 
 import be.cylab.mark.core.DataAgentInterface;
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.server.DummySubject;
 import java.util.Random;
 
 /**
@@ -35,18 +34,20 @@ import java.util.Random;
  *
  * @author tibo
  */
-public class DummyData implements DataAgentInterface {
+public class ExampleDataSource implements DataAgentInterface {
 
-    private final String[] names = {"Thibault", "Wim", "Georgi", "Alex", "Fred"};
-    private Random rand = new Random();
+    private final String[] names =
+            {"Thibault", "Wim", "Georgi", "Alex", "Fred"};
+    private final Random rand = new Random();
 
     @Override
-    public void run(DataAgentProfile profile, ServerInterface datastore)
+    public final void run(
+            final DataAgentProfile profile, final ServerInterface datastore)
             throws Throwable {
 
         while (true) {
 
-            DummySubject subject = new DummySubject(
+            ExampleSubject subject = new ExampleSubject(
                     names[rand.nextInt(names.length)]);
 
             RawData data = new RawData();
@@ -58,7 +59,6 @@ public class DummyData implements DataAgentInterface {
 
             Thread.sleep(1000);
         }
-
     }
 
 }

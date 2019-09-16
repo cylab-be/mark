@@ -1,6 +1,0 @@
-# Launch a single Dummy agent for every
-# new http data
----
-class_name:     be.cylab.mark.detection.Counter
-label:          detection.counter
-trigger_label:  data

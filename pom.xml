@@ -13,6 +13,7 @@
         <module>client</module>
         <module>server</module>
         <module>integration</module>
+        <module>example</module>
     </modules>
 
     <url>https://gitlab.cylab.be/cylab/mark</url>
