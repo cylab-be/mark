@@ -1,5 +1,14 @@
 # MARK Releases
 
+## 0.0.22
+
+* fix data agents starting bug
+* fix loading of jars from modules directory
+* multiple code cleaning
+* to run demo: ./example/run.sh
+* automated deployment test
+
+
 ## 0.0.20
 
 * multiple cleaning

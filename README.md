@@ -1,6 +1,7 @@
 # MARK - Easy BigData Ranking
 
 [![pipeline status](https://gitlab.cylab.be/cylab/mark/badges/master/pipeline.svg)](https://gitlab.cylab.be/cylab/mark/commits/master)
+![Maven Central](https://img.shields.io/maven-central/v/be.cylab.mark/server)
 
 Developement now takes place at https://gitlab.cylab.be/cylab/mark
 
