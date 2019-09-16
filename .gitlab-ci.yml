@@ -22,8 +22,8 @@ test:jdk-8:mongo-3.6:
   script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2    
   artifacts:
     paths:
-    - "server/target/server-*-standalone.zip"
-    - "server/target/site/jacoco"
+    - "server/target"
+    - "example/target"
 
 test:jdk-9:mongo-3.6:
   stage: test
