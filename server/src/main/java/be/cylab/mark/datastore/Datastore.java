@@ -14,14 +14,15 @@ import com.mongodb.client.MongoDatabase;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import be.cylab.mark.activation.ActivationControllerInterface;
+import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.server.Config;
-import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.SubjectAdapter;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,19 +32,66 @@ public class Datastore {
 
     private static final int STARTUP_DELAY = 100;
 
+    private static final org.slf4j.Logger LOGGER
+            = LoggerFactory.getLogger(Datastore.class);
+
     private final Server server;
+    private final Config config;
+    private final ActivationControllerInterface activation_controller;
 
     /**
      *
      * @param config
      * @param activation_controller
-     * @throws be.cylab.mark.server.InvalidProfileException
+     * @throws be.cylab.mark.core.InvalidProfileException
      */
     @Inject
     public Datastore(
             final Config config,
             final ActivationControllerInterface activation_controller)
             throws InvalidProfileException {
+
+        this.config = config;
+        this.activation_controller = activation_controller;
+
+        MongoDatabase mongodb = this.connectToMongodb(config);
+        server = this.createJsonRPCServer(mongodb);
+
+    }
+
+    /**
+     * Start the datastore. This will start the json-rpc server in a separate
+     * thread and return when the server is ready.
+     *
+     * @throws Exception
+     */
+    public final void start() throws Exception {
+
+        LOGGER.info("Starting JSON-RPC datastore on " + config.getServerHost()
+                + " : " + config.getServerPort());
+        server.start();
+
+        while (!server.isStarted()) {
+            Thread.sleep(STARTUP_DELAY);
+        }
+
+        LOGGER.info("Datastore started...");
+    }
+
+    /**
+     * Stop the datastore.
+     *
+     * @throws Exception if jetty fails to stop.
+     */
+    public final void stop() throws Exception {
+        if (server == null) {
+            return;
+        }
+
+        server.stop();
+    }
+
+    private MongoDatabase connectToMongodb(Config config) {
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
                 config.mongo_host, config.mongo_port);
@@ -52,7 +100,12 @@ public class Datastore {
         if (config.mongo_clean) {
             mongodb.drop();
         }
-        // Create and run HTTP / JSON-RPC server
+
+        return mongodb;
+    }
+
+    private Server createJsonRPCServer(MongoDatabase mongodb)
+            throws InvalidProfileException {
         RequestHandler datastore_handler = new RequestHandler(
                 mongodb,
                 activation_controller,
@@ -74,42 +127,16 @@ public class Datastore {
                 config.idle_timeout,
                 new ArrayBlockingQueue<>(config.max_pending_requests));
 
-        server = new Server(thread_pool);
+        Server jetty = new Server(thread_pool);
 
-        ServerConnector http_connector = new ServerConnector(server);
+        ServerConnector http_connector = new ServerConnector(jetty);
         http_connector.setHost(config.server_host);
         http_connector.setPort(config.server_port);
 
-        server.setConnectors(new Connector[]{http_connector});
-        server.setHandler(new JettyHandler(jsonrpc_server));
-    }
+        jetty.setConnectors(new Connector[]{http_connector});
+        jetty.setHandler(new JettyHandler(jsonrpc_server));
 
-    /**
-     * Start the datastore. This will start the json-rpc server in a separate
-     * thread and return when the server is ready.
-     *
-     * @throws Exception
-     */
-    public final void start() throws Exception {
-
-        server.start();
-
-        while (!server.isStarted()) {
-            Thread.sleep(STARTUP_DELAY);
-        }
-    }
-
-    /**
-     * Stop the datastore.
-     *
-     * @throws Exception if jetty fails to stop.
-     */
-    public final void stop() throws Exception {
-        if (server == null) {
-            return;
-        }
-
-        server.stop();
+        return jetty;
     }
 }
 
