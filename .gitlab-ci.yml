@@ -1,5 +1,6 @@
 stages:
   - test
+  - test-deploy
   - release
 
 cache:
@@ -18,14 +19,7 @@ test:jdk-8:mongo-3.6:
   image: maven:3.5.3-jdk-8
   services:
     - mongo:3.6
-  script: 
-    - export MARK_MONGO_HOST="mongo"
-    - mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
-    # test deployment
-    - bash example/run.sh &
-    - sleep 30
-    - kill %1
-    - bash example/test.sh
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2    
   artifacts:
     paths:
     - "server/target/server-*-standalone.zip"
@@ -52,6 +46,26 @@ test:jdk-11:mongo-3.6:
   services:
     - mongo:3.6
   script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2 -Djvm.options="--illegal-access=permit"
+
+
+test:deploy:
+  stage: test-deploy
+  image: ubuntu:18.04
+  dependencies:
+    # so we don't have to compile the code ourselfs..
+    - test:jdk-8:mongo-3.6
+  script:
+    # install what we need
+    - apt-get update
+    - apt-get install -y mongodb openjdk-8-jdk
+    - service mongodb start
+    # run example server
+    - bash example/run.sh &
+    - sleep 30
+    - kill %1
+    # test we have some results...
+    - bash example/test.sh
+
 
 
 release:
