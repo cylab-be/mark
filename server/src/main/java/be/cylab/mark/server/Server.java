@@ -226,7 +226,6 @@ public class Server {
 
         LOGGER.info("Load jars...");
 
-
         try {
             // List *.jar and update the class path
             // this is a hack that allows to modify the global (system) class
@@ -237,8 +236,7 @@ public class Server {
                     "addURL", URL.class);
             method.setAccessible(true);
 
-            File[] jar_files;
-            jar_files = directory
+            File[] jar_files = directory
                     .listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(final File dir, final String name) {
