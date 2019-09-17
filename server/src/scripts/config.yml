@@ -14,4 +14,4 @@ webserver_root: ./ui
 log_directory:  ./logs
 modules:        ./modules
 
-adapter_class:  mark.server.DummySubjectAdapter
+adapter_class:  be.cylab.mark.server.DummySubjectAdapter
