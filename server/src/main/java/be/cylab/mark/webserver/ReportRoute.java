@@ -25,6 +25,8 @@ package be.cylab.mark.webserver;
 
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.Evidence;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +62,11 @@ public class ReportRoute implements TemplateViewRoute {
             Evidence ev = client.findEvidenceById(id);
             model.put("report", ev);
             model.put("references", getReferences(ev));
-            model.put("history", getHistory(ev));
+
+            Evidence[] history = getHistory(ev);
+            model.put("history", history);
+
+            model.put("history_json", jsonEncode(history));
         } catch (Throwable ex) {
             LOGGER.error("Failed to get report from datastore");
             halt(404);
@@ -80,5 +86,15 @@ public class ReportRoute implements TemplateViewRoute {
         }
 
         return evidences.toArray(new Evidence[evidences.size()]);
+    }
+
+    private String jsonEncode(Evidence[] history) throws JsonProcessingException {
+        List<Point> points = new ArrayList<>();
+        for (Evidence ev : history) {
+            points.add(new Point(ev.getTime(), ev.getScore()));
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(points);
     }
 }

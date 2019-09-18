@@ -5,26 +5,14 @@
 {% block content %}
 <h1>{{ report.getSubject() }}</h1>
 
-<p>Report id: <b>{{ report.getId() }}</b></p>
-<p>Label: {{ report.getlabel() }}</p>
-<p>Score: <b>{{ report.getScore() }}</b></p>
-<p>Timestamp: {{ report.timeFormatted() }}</p>
-<p>{{ report.getReport() }}</p>
-
 <div class="row">
+
     <div class="col-md-6">
-        <h3>History</h3>
-        <table class="table">
-        {% for r in history %}
-        <tr>
-            <td>{{ r.getScore() }}</td>
-            <td>{{ r.timeFormatted() }}</td>
-            <td>
-                <a href="/report/{{ r.getId() }}">View</a>
-            </td>
-        </tr>
-        {% endfor %}
-        </table>
+        <p>Report id: <b>{{ report.getId() }}</b></p>
+        <p>Label: {{ report.getlabel() }}</p>
+        <p>Score: <b>{{ report.getScore() }}</b></p>
+        <p>Timestamp: {{ report.timeFormatted() }}</p>
+        <p>{{ report.getReport() }}</p>
     </div>
 
     <div class="col-md-6">
@@ -42,6 +30,73 @@
         </table>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h3>History</h3>
+
+        <canvas id="chart-report-history"></canvas>
+
+        <table class="table">
+        {% for r in history %}
+        <tr>
+            <td>{{ r.getScore() }}</td>
+            <td>{{ r.timeFormatted() }}</td>
+            <td>
+                <a href="/report/{{ r.getId() }}">View</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+</div>
+
+<script>
+var ctx = document.getElementById('chart-report-history').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        datasets: [{
+            borderColor: 'rgb(255, 99, 132)',
+            data: {{ history_json | raw }}
+        }]
+    },
+
+    // Configuration options go here
+    options: {
+        legend: {
+            display: false,
+        },
+        elements: {
+            line: {
+                tension: 0 // disables bezier curves
+            }
+        },
+        scales: {
+            xAxes: [{
+                type: 'time',
+                display: true,
+                scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Score'
+                }
+            }]
+        }
+    }
+});
+</script>
 
 {% endblock %}
 
