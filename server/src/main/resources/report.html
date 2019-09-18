@@ -12,7 +12,7 @@
         <p>Label: {{ report.getlabel() }}</p>
         <p>Score: <b>{{ report.getScore() }}</b></p>
         <p>Timestamp: {{ report.timeFormatted() }}</p>
-        <p>{{ report.getReport() }}</p>
+        <p>{{ report.getReport() | raw }}</p>
     </div>
 
     <div class="col-md-6">

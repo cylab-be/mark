@@ -22,6 +22,7 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.bson.Document;
@@ -159,10 +160,14 @@ public class Client<T extends Subject> implements ServerInterface {
             final String label, final Subject subject)
             throws Throwable {
 
-        return datastore.invoke(
+        Evidence[] evidences = datastore.invoke(
                 "findEvidence",
                 new Object[]{label, subject},
                 Evidence[].class);
+
+        Arrays.sort(evidences, new EvidenceTimeComparator());
+
+        return evidences;
     }
 
     /**
@@ -286,10 +291,14 @@ public class Client<T extends Subject> implements ServerInterface {
             final String label, final Subject subject, final long time)
             throws Throwable {
 
-        return datastore.invoke(
+        Evidence[] evidences = datastore.invoke(
                 "findEvidenceSince",
                 new Object[]{label, subject, time},
                 Evidence[].class);
+
+        Arrays.sort(evidences, new EvidenceTimeComparator());
+
+        return evidences;
     }
 
     /**
