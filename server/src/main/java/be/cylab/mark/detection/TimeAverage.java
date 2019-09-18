@@ -29,6 +29,7 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Subject;
+import java.time.Instant;
 
 /**
  *
@@ -36,7 +37,7 @@ import be.cylab.mark.core.Subject;
  */
 public class TimeAverage implements DetectionAgentInterface {
 
-    private static final long DEFAULT_WINDOW = 7 * 24 * 3600;
+    private static final String DEFAULT_WINDOW = String.valueOf(7 * 24 * 3600);
 
     @Override
     public final void analyze(
@@ -46,10 +47,14 @@ public class TimeAverage implements DetectionAgentInterface {
 
         String label = event.getLabel();
         Subject subject = event.getSubject();
-        long time = event.getTimestamp() - DEFAULT_WINDOW * 1000;
+
+        long window = Long.valueOf(
+                profile.getParameterOrDefault("window", DEFAULT_WINDOW));
+
+        long start_time = event.getTimestamp() - window * 1000;
 
         Evidence[] evidences =
-                datastore.findEvidenceSince(label, subject, time);
+                datastore.findEvidenceSince(label, subject, start_time);
 
         Evidence new_ev = new Evidence();
         double sum = 0;
@@ -61,7 +66,8 @@ public class TimeAverage implements DetectionAgentInterface {
 
         String report =
                 "Found <b>" + evidences.length + "</b> evidences with label "
-                + "<b>" + event.getLabel() + "</b><br>"
+                + "<b>" + event.getLabel() + "</b> since "
+                + Instant.ofEpochMilli(start_time).toString() + "<br>"
                 + "Average = " + sum + " / " + evidences.length + " = "
                 + score;
 

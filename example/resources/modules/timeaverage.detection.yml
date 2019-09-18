@@ -4,3 +4,5 @@
 class_name:     be.cylab.mark.detection.TimeAverage
 label:          detection.timeaverage
 trigger_label:  detection.example
+parameters:
+  window: 3600

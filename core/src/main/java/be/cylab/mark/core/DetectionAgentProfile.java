@@ -111,6 +111,17 @@ public class DetectionAgentProfile {
         return parameters.get(name);
     }
 
+    /**
+     * Get the value of this parameter, of return default_value if not set.
+     * @param name
+     * @param default_value
+     * @return
+     */
+    public final String getParameterOrDefault(
+            final String name, final String default_value) {
+        return parameters.getOrDefault(name, default_value);
+    }
+
     private static final Yaml PARSER
             = new Yaml(new Constructor(DetectionAgentProfile.class));
 
