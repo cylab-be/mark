@@ -18,19 +18,19 @@ public class DetectionAgentProfile {
      * The label attached to the evidence produced by this detection agent. Ex:
      * evidence.http.frequency.1week or aggregation
      */
-    private String label;
+    private String label = "";
 
     /**
      * The label that will trigger this detection agent. Ex: http frequency
      * could be triggered by data.http and aggregation could be triggered by
      * evidence.
      */
-    private String trigger_label;
+    private String trigger_label = "";
 
     /**
      * The class of the detection agent to trigger.
      */
-    private String class_name;
+    private String class_name = "";
 
     /**
      * The parameters that will be provided to the detector.

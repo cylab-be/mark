@@ -363,6 +363,7 @@ public class Client<T extends Subject> implements ServerInterface {
             ev.setTime(((NumericNode) tree.get("time")).asLong());
             ev.setReferences(
                     deserializeList(((ArrayNode) tree.get("references"))));
+            ev.setProfile(deserializeProfile(tree.get("profile")));
 
             ev.setSubject(
                     adapter.deserialize((JsonNode) tree.get("subject")));
@@ -376,6 +377,22 @@ public class Client<T extends Subject> implements ServerInterface {
                 values.add(element.asText());
             }
             return values;
+        }
+
+        private DetectionAgentProfile deserializeProfile(final TreeNode node)
+                throws JsonProcessingException {
+            DetectionAgentProfile profile = new DetectionAgentProfile();
+            profile.setClassName(((TextNode) node.get("className")).asText());
+            profile.setLabel(((TextNode) node.get("label")).asText());
+            profile.setTriggerLabel(
+                    ((TextNode) node.get("triggerLabel")).asText());
+
+            ObjectMapper mapper = new ObjectMapper();
+            HashMap parameters = mapper.treeToValue(
+                    node.get("parameters"), HashMap.class);
+            profile.setParameters(parameters);
+
+            return profile;
         }
     }
 }

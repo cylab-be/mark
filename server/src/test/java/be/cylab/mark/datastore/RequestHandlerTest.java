@@ -24,6 +24,7 @@
 
 package be.cylab.mark.datastore;
 
+import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -34,8 +35,19 @@ import be.cylab.mark.server.DummySubjectAdapter;
 import be.cylab.mark.server.DummySubject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoClientOptions;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import org.bson.BsonReader;
+import org.bson.BsonWriter;
 import org.bson.Document;
+import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
+import org.bson.codecs.EncoderContext;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
 
 /**
  *
@@ -121,6 +133,32 @@ public class RequestHandlerTest extends TestCase {
     }
 
     /**
+     * Test that the profile field of an evidence (that contains the
+     * detection agent profile of the detector) is correctly stored in mongodb.
+     *
+     */
+    public void testEvidenceProfile() throws Throwable {
+        System.out.println("testEvidenceProfile");
+        RequestHandler rq = getRequestHandler();
+
+        DetectionAgentProfile profile = new DetectionAgentProfile();
+        profile.setClassName("mark.detector");
+        profile.setLabel("save.label");
+        profile.setTriggerLabel("trigger.label");
+        profile.getParameters().put("key", "value");
+
+        Evidence<DummySubject> ev = new Evidence<>();
+        ev.setLabel("test");
+        ev.setSubject(new DummySubject("me"));
+        ev.setProfile(profile);
+        rq.addEvidence(ev);
+
+        Evidence other = rq.findEvidence("test", new DummySubject("me"))[0];
+        assertEquals("mark.detector", other.getProfile().getClassName());
+        assertEquals("value", other.getProfile().getParameter("key"));
+    }
+
+    /**
      * Jackson is the library used by jsonrpc4j to convert Java objects
      * to and from json.
      */
@@ -135,5 +173,15 @@ public class RequestHandlerTest extends TestCase {
         assertEquals(ev.getId(), result.getId());
     }
 
+    public void testBsonMappings() {
+        Document doc = new Document();
+        doc.append("name", "test");
+        doc.append("profile", new Document().append("class", "a.b.c.d"));
 
+        assertEquals(
+                "a.b.c.d",
+                ((Document) doc.get("profile")).get("class"));
+
+
+    }
 }

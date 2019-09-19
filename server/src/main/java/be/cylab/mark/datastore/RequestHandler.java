@@ -234,7 +234,32 @@ public class RequestHandler implements ServerInterface {
         evidence.setId(doc.getObjectId("_id").toString());
         evidence.setReferences(doc.getList(REFERENCES, String.class));
 
+        Document profile_doc = doc.get("profile", Document.class);
+
+        if (profile_doc != null) {
+            DetectionAgentProfile profile = new DetectionAgentProfile();
+            profile.setClassName(profile_doc.getString("class_name"));
+            profile.setLabel(profile_doc.getString("label"));
+            profile.setTriggerLabel(profile_doc.getString("trigger_label"));
+            profile.setParameters(this.convertToMap(profile_doc.get("parameters", Document.class)));
+            evidence.setProfile(profile);
+        }
+
         return evidence;
+    }
+
+    public Document convert(Map map) {
+        return new Document(map);
+    }
+
+    public HashMap convertToMap (Document doc) {
+        HashMap map = new HashMap();
+
+        for (Map.Entry<String, Object> entry : doc.entrySet()) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+
+        return map;
     }
 
     /**
@@ -260,6 +285,7 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     private Document convert(final Evidence evidence) {
+
         Document doc = new Document()
                 .append(LABEL, evidence.getLabel())
                 .append(TIME, evidence.getTime())
@@ -267,6 +293,15 @@ public class RequestHandler implements ServerInterface {
                 .append(TIME, evidence.getTime())
                 .append(REPORT, evidence.getReport())
                 .append(REFERENCES, evidence.getReferences());
+
+        if (evidence.getProfile() != null) {
+            Document profile_doc = new Document()
+                .append("class_name", evidence.getProfile().getClassName())
+                .append("label", evidence.getProfile().getLabel())
+                .append("trigger_label", evidence.getProfile().getTriggerLabel())
+                .append("parameters", convert(evidence.getProfile().getParameters()));
+            doc.append("profile", profile_doc);
+        }
 
         adapter.writeToMongo(evidence.getSubject(), doc);
         return doc;
@@ -514,6 +549,4 @@ public class RequestHandler implements ServerInterface {
 
         return evidences.toArray(new Evidence[evidences.size()]);
     }
-
-
 }

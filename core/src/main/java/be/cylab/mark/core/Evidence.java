@@ -20,6 +20,7 @@ public class Evidence<T extends Subject>
     private double score;
     private String report = "";
     private List<String> references = new ArrayList<>();
+    private DetectionAgentProfile profile = new DetectionAgentProfile();
 
 
     @Override
@@ -146,6 +147,24 @@ public class Evidence<T extends Subject>
      */
     public final List<String> references() {
         return references;
+    }
+
+    /**
+     * The DetectionAgentProfile of the detector that produced this reports.
+     * Includes stuff like class name and configuration parameters of this
+     * detector.
+     * @return
+     */
+    public final DetectionAgentProfile getProfile() {
+        return profile;
+    }
+
+    /**
+     *
+     * @param profile
+     */
+    public final void setProfile(final DetectionAgentProfile profile) {
+        this.profile = profile;
     }
 
 
