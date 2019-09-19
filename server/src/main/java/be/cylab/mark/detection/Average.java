@@ -96,7 +96,6 @@ public class Average implements DetectionAgentInterface {
         }
 
         Evidence ev = new Evidence();
-        ev.setLabel(profile.getLabel());
         ev.setScore(score);
         ev.setSubject(event.getSubject());
         ev.setTime(last_time);

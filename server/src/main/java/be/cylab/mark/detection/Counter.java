@@ -45,7 +45,6 @@ public class Counter implements DetectionAgentInterface {
                 event.getLabel(), event.getSubject()).length;
 
         Evidence ev = new Evidence();
-        ev.setLabel("detection.counter");
         ev.setReport(
                 "Found " + count + " data entries for "
                 + event.getSubject().toString());

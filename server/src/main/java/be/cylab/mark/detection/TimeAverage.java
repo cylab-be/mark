@@ -71,7 +71,6 @@ public class TimeAverage implements DetectionAgentInterface {
                 + "Average = " + sum + " / " + evidences.length + " = "
                 + score;
 
-        new_ev.setLabel(profile.getLabel());
         new_ev.setSubject(subject);
         new_ev.setTime(event.getTimestamp());
         new_ev.setScore(score);

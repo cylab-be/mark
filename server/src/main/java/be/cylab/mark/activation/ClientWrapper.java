@@ -65,6 +65,7 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     @Override
     public void addEvidence(final Evidence evidence) throws Throwable {
         evidence.setProfile(profile);
+        evidence.setLabel(profile.getLabel());
         client.addEvidence(evidence);
     }
 
