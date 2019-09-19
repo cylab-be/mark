@@ -55,8 +55,8 @@ public class DetectionAgentContainer <T extends Subject>
      */
     @Override
     public final void run() {
-        ServerInterface<T> datastore = new Client<T>(
-                datastore_url, subject_adapter);
+        ServerInterface<T> datastore = new ClientWrapper<T>(
+                datastore_url, subject_adapter, profile);
 
         try {
             agent.analyze(event, profile, datastore);

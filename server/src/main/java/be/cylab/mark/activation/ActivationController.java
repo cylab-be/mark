@@ -202,7 +202,7 @@ public class ActivationController<T extends Subject> extends SafeThread
                     profile.getClassName(),
                     event.getSubject().toString());
             executor.submit(
-                    new DetectionAgentContainer<T>(
+                    new DetectionAgentContainer<>(
                             event,
                             config.getDatastoreUrl(),
                             config.getSubjectAdapter(),
