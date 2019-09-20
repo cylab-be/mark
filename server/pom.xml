@@ -152,9 +152,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.briandilley.jsonrpc4j</groupId>
+            <groupId>be.cylab</groupId>
             <artifactId>jsonrpc4j</artifactId>
-            <version>1.5.3</version>
+            <version>${jsonrpc4J.version}</version>
         </dependency>
 
         <dependency>

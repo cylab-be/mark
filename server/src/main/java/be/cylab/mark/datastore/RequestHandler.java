@@ -233,6 +233,7 @@ public class RequestHandler implements ServerInterface {
         evidence.setReport(doc.getString(REPORT));
         evidence.setId(doc.getObjectId("_id").toString());
         evidence.setReferences(doc.getList(REFERENCES, String.class));
+        evidence.setRequests(doc.getList("requests", String.class));
 
         Document profile_doc = doc.get("profile", Document.class);
 
@@ -292,7 +293,8 @@ public class RequestHandler implements ServerInterface {
                 .append(SCORE, evidence.getScore())
                 .append(TIME, evidence.getTime())
                 .append(REPORT, evidence.getReport())
-                .append(REFERENCES, evidence.getReferences());
+                .append(REFERENCES, evidence.getReferences())
+                .append("requests", evidence.getRequests());
 
         if (evidence.getProfile() != null) {
             Document profile_doc = new Document()

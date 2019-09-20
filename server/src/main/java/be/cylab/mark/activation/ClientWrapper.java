@@ -31,6 +31,7 @@ import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.SubjectAdapter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -51,6 +52,8 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
 
     private final DetectionAgentProfile profile;
     private final Client<Subject> client;
+    private final JsonRequestListener request_listener;
+    private final ArrayList<String> requests = new ArrayList<>();
 
     public ClientWrapper(
             final URL server_url,
@@ -59,6 +62,8 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
 
         this.client = new Client<>(server_url, adapter);
         this.profile = profile;
+        this.request_listener = new JsonRequestListener();
+        this.client.getJsonRpcClient().setRequestListener(request_listener);
     }
 
 
@@ -66,6 +71,7 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     public void addEvidence(final Evidence evidence) throws Throwable {
         evidence.setProfile(profile);
         evidence.setLabel(profile.getLabel());
+        evidence.setRequests(requests);
         client.addEvidence(evidence);
     }
 
@@ -95,8 +101,17 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     }
 
     @Override
+    public RawData[] findData(Document query) throws Throwable {
+        RawData[] data = client.findData(query);
+        requests.add(request_listener.getLastRequest());
+        return data;
+    }
+
+    @Override
     public RawData[] findRawData(String type, Subject subject) throws Throwable {
-        return client.findRawData(type, subject);
+        RawData[] data = client.findRawData(type, subject);
+        requests.add(request_listener.getLastRequest());
+        return data;
     }
 
     @Override
@@ -132,11 +147,6 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     @Override
     public Evidence[] findLastEvidences(String label, Subject subject) throws Throwable {
         return client.findLastEvidences(label, subject);
-    }
-
-    @Override
-    public RawData[] findData(Document query) throws Throwable {
-        return client.findData(query);
     }
 
     @Override

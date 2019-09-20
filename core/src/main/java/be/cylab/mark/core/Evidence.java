@@ -20,6 +20,7 @@ public class Evidence<T extends Subject>
     private double score;
     private String report = "";
     private List<String> references = new ArrayList<>();
+    private List<String> requests = new ArrayList<>();
     private DetectionAgentProfile profile = new DetectionAgentProfile();
 
 
@@ -148,6 +149,24 @@ public class Evidence<T extends Subject>
     public final List<String> references() {
         return references;
     }
+
+    /**
+     * findData requests that have be executed by this detector.
+     *
+     * @return
+     */
+    public final List<String> getRequests() {
+        return requests;
+    }
+
+    /**
+     *
+     * @param requests
+     */
+    public final void setRequests(final List<String> requests) {
+        this.requests = requests;
+    }
+
 
     /**
      * The DetectionAgentProfile of the detector that produced this reports.

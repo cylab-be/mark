@@ -19,6 +19,18 @@
 <p>Trigger label: {{ report.getProfile().getTriggerLabel() }}</p>
 <p>Parameters: {{ report.getProfile().getParameters() }}</p>
 
+<h3>Data requests</h3>
+
+<p>This detector has processed following data:</p>
+
+<table class="table">
+{% for r in report.getRequests() %}
+<tr>
+    <td>{{ r }}</td>
+</tr>
+{% endfor %}
+</table>
+
 <h3>History</h3>
 
 <canvas id="chart-report-history"></canvas>

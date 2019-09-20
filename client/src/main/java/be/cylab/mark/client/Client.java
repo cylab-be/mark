@@ -21,6 +21,7 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.googlecode.jsonrpc4j.JsonRpcClient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +38,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
     private static final int CONNECTION_TIMEOUT = 5000;
 
-    private final JsonRpcHttpClient datastore;
+    private final JsonRpcHttpClient json_rpc_client;
     private final URL server_url;
 
     /**
@@ -59,11 +60,10 @@ public class Client<T extends Subject> implements ServerInterface {
                 Evidence.class, new EvidenceDeserializer(adapter));
         mapper.registerModule(module);
 
-        datastore
+        json_rpc_client
                 = new JsonRpcHttpClient(
                         mapper, server_url, new HashMap<>());
-        datastore.setConnectionTimeoutMillis(CONNECTION_TIMEOUT);
-
+        json_rpc_client.setConnectionTimeoutMillis(CONNECTION_TIMEOUT);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Client<T extends Subject> implements ServerInterface {
      */
     @Override
     public final String test() throws Throwable {
-        return datastore.invoke("test", null, String.class);
+        return json_rpc_client.invoke("test", null, String.class);
 
     }
 
@@ -83,7 +83,7 @@ public class Client<T extends Subject> implements ServerInterface {
     @Override
     public final void addRawData(final RawData data) throws Throwable {
 
-        datastore.invoke("addRawData", new Object[]{data});
+        json_rpc_client.invoke("addRawData", new Object[]{data});
 
     }
 
@@ -94,7 +94,7 @@ public class Client<T extends Subject> implements ServerInterface {
      */
     public final ObjectId addFile(final byte[] bytes, final String filename)
             throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "addFile", new Object[]{bytes, filename}, ObjectId.class);
     }
 
@@ -105,7 +105,7 @@ public class Client<T extends Subject> implements ServerInterface {
      */
     @Override
     public final byte[] findFile(final ObjectId file_id) throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findFile", new Object[]{file_id}, byte[].class);
     }
 
@@ -117,12 +117,12 @@ public class Client<T extends Subject> implements ServerInterface {
     @Override
     public final void testString(final String data) throws Throwable {
 
-        datastore.invoke("testString", new Object[]{data});
+        json_rpc_client.invoke("testString", new Object[]{data});
     }
 
     @Override
     public final RawData[] findData(final Document query) throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findData",
                 new Object[]{query},
                 RawData[].class);
@@ -141,7 +141,7 @@ public class Client<T extends Subject> implements ServerInterface {
             final String label, final Subject subject)
             throws Throwable {
 
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findRawData",
                 new Object[]{label, subject},
                 RawData[].class);
@@ -160,7 +160,7 @@ public class Client<T extends Subject> implements ServerInterface {
             final String label, final Subject subject)
             throws Throwable {
 
-        Evidence[] evidences = datastore.invoke(
+        Evidence[] evidences = json_rpc_client.invoke(
                 "findEvidence",
                 new Object[]{label, subject},
                 Evidence[].class);
@@ -180,7 +180,7 @@ public class Client<T extends Subject> implements ServerInterface {
     @Override
     public final Evidence findEvidenceById(final String id) throws Throwable {
 
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findEvidenceById",
                 new Object[]{id},
                 Evidence.class);
@@ -195,7 +195,7 @@ public class Client<T extends Subject> implements ServerInterface {
     @Override
     public final void addEvidence(final Evidence evidence) throws Throwable {
 
-        datastore.invoke("addEvidence", new Object[]{evidence});
+        json_rpc_client.invoke("addEvidence", new Object[]{evidence});
     }
 
     /**
@@ -209,7 +209,7 @@ public class Client<T extends Subject> implements ServerInterface {
     public final Evidence[] findEvidence(final String label)
             throws Throwable {
 
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findEvidence",
                 new Object[]{label},
                 Evidence[].class);
@@ -227,7 +227,7 @@ public class Client<T extends Subject> implements ServerInterface {
     public final Evidence[] findEvidence(final String label, final int page)
             throws Throwable {
 
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findEvidence",
                 new Object[]{label, page},
                 Evidence[].class);
@@ -237,7 +237,7 @@ public class Client<T extends Subject> implements ServerInterface {
     public final Evidence[] findLastEvidences(
             final String label, final Subject subject)
             throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "findLastEvidences",
                 new Object[]{label, subject},
                 Evidence[].class);
@@ -250,14 +250,14 @@ public class Client<T extends Subject> implements ServerInterface {
 
     @Override
     public final Object getFromCache(final String key) throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "getFromCache", new Object[]{key}, Object.class);
     }
 
     @Override
     public final void storeInCache(final String key, final Object value)
             throws Throwable {
-        datastore.invoke(
+        json_rpc_client.invoke(
                 "storeInCache", new Object[]{key, value}, Object.class);
     }
 
@@ -265,7 +265,7 @@ public class Client<T extends Subject> implements ServerInterface {
     public final boolean compareAndSwapInCache(
             final String key, final Object new_value, final Object old_value)
             throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "compareAndSwapInCache",
                 new Object[]{key, new_value, old_value}, Boolean.class);
     }
@@ -277,13 +277,13 @@ public class Client<T extends Subject> implements ServerInterface {
      * @throws Throwable if anything goes wrong
      */
     public final DetectionAgentProfile[] activation() throws Throwable {
-        return datastore.invoke(
+        return json_rpc_client.invoke(
                 "activation", null, DetectionAgentProfile[].class);
     }
 
     @Override
     public final Map executorStatus() throws Throwable {
-        return datastore.invoke("executorStatus", null, Map.class);
+        return json_rpc_client.invoke("executorStatus", null, Map.class);
     }
 
     @Override
@@ -291,7 +291,7 @@ public class Client<T extends Subject> implements ServerInterface {
             final String label, final Subject subject, final long time)
             throws Throwable {
 
-        Evidence[] evidences = datastore.invoke(
+        Evidence[] evidences = json_rpc_client.invoke(
                 "findEvidenceSince",
                 new Object[]{label, subject, time},
                 Evidence[].class);
@@ -299,6 +299,17 @@ public class Client<T extends Subject> implements ServerInterface {
         Arrays.sort(evidences, new EvidenceTimeComparator());
 
         return evidences;
+    }
+
+    /**
+     * Get the internal json_rpc_client.
+     *
+     * Can be used to set a listener...
+     *
+     * @return
+     */
+    public final JsonRpcClient getJsonRpcClient() {
+        return this.json_rpc_client;
     }
 
     /**
@@ -363,6 +374,8 @@ public class Client<T extends Subject> implements ServerInterface {
             ev.setTime(((NumericNode) tree.get("time")).asLong());
             ev.setReferences(
                     deserializeList(((ArrayNode) tree.get("references"))));
+            ev.setRequests(
+                    deserializeList(((ArrayNode) tree.get("requests"))));
             ev.setProfile(deserializeProfile(tree.get("profile")));
 
             ev.setSubject(

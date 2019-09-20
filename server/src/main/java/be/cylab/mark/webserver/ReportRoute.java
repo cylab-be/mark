@@ -68,7 +68,8 @@ public class ReportRoute implements TemplateViewRoute {
 
             model.put("history_json", jsonEncode(history));
         } catch (Throwable ex) {
-            LOGGER.error("Failed to get report from datastore");
+            LOGGER.error("Failed to get report from datastore : "
+                    + ex.getMessage());
             halt(404);
         }
 
