@@ -1,5 +1,14 @@
 # MARK Releases
 
+## 0.0.25
+
+* fix default config file
+* show chart of score computed by a detector for given subject
+* reports shows profile (parameters) of detector
+* reports show data query executed by detector
+* allow to inspect data queried by detector
+* fix pagination bug
+
 ## 0.0.22
 
 * fix data agents starting bug
