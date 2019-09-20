@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %} Report {% endblock %}
+
+{% block content %}
+<h1>{{ report.getSubject() }}</h1>
+
+
+<p>Report id: <b>{{ report.getId() }}</b></p>
+<p>Subject: <b>{{ report.getSubject() }}</b></p>
+<p>Score: <b>{{ report.getScore() }}</b></p>
+<p>Label: {{ report.getlabel() }}</p>
+<p>Timestamp: {{ report.timeFormatted() }}</p>
+<p>{{ report.getReport() | raw }}</p>
+
+<h3>Detector</h3>
+<p>Detector algorithm: {{ report.getProfile().getClassName() }}</p>
+<p>Label: {{ report.getProfile().getLabel() }}</p>
+<p>Trigger label: {{ report.getProfile().getTriggerLabel() }}</p>
+<p>Parameters: {{ report.getProfile().getParameters() }}</p>
+
+<h3>{{ query }}</h3>
+
+
+<table class="table table-striped">
+{% for d in data %}
+<tr>
+    <td>{{ d.timeFormatted() }}</td>
+    <td>{{ d.getData() }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
+
+

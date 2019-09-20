@@ -21,6 +21,7 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,6 +93,7 @@ public class Client<T extends Subject> implements ServerInterface {
      *
      * @param bytes {@inheritDoc}
      */
+    @Override
     public final ObjectId addFile(final byte[] bytes, final String filename)
             throws Throwable {
         return json_rpc_client.invoke(
@@ -126,6 +128,20 @@ public class Client<T extends Subject> implements ServerInterface {
                 "findData",
                 new Object[]{query},
                 RawData[].class);
+    }
+
+    /**
+     * Allow to pass a json string to search RawData.
+     *
+     * @param json_query
+     * @return
+     * @throws Throwable if something went wrong...
+     */
+    public final RawData[] findData(final String json_query) throws Throwable {
+
+        ObjectNode node = new ObjectMapper().readValue(
+                json_query, ObjectNode.class);
+        return json_rpc_client.invoke(node, RawData[].class, new HashMap<>());
     }
 
     /**
@@ -276,6 +292,7 @@ public class Client<T extends Subject> implements ServerInterface {
      * @return
      * @throws Throwable if anything goes wrong
      */
+    @Override
     public final DetectionAgentProfile[] activation() throws Throwable {
         return json_rpc_client.invoke(
                 "activation", null, DetectionAgentProfile[].class);

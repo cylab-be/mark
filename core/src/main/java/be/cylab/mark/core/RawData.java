@@ -1,5 +1,7 @@
 package be.cylab.mark.core;
 
+import java.time.Instant;
+
 /**
  *
  * @author Thibault Debatty
@@ -78,6 +80,14 @@ public class RawData<T extends Subject> {
      */
     public final void setData(final String data) {
         this.data = data;
+    }
+
+    /**
+     * ISO8601 representation of this event's timestamp.
+     * @return
+     */
+    public final String timeFormatted() {
+        return Instant.ofEpochMilli(this.time).toString();
     }
 
 }

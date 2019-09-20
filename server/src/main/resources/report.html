@@ -23,38 +23,46 @@
 
 <p>This detector has processed following data:</p>
 
-<table class="table">
+<table class="table table-striped">
 {% for r in report.getRequests() %}
 <tr>
     <td>{{ r }}</td>
+    <td class="text-right">
+        <a href="/report/{{ report.getId() }}/data/{{ loop.index }} " class="btn btn-primary btn-xs">Inspect</a>
+    </td>
 </tr>
 {% endfor %}
 </table>
 
 <h3>History</h3>
 
+<p>This detector also produced following scores for subject {{ report.getSubject() }}...</p>
+
 <canvas id="chart-report-history"></canvas>
 
-<table class="table">
+<table class="table table-striped">
 {% for r in history %}
 <tr>
     <td>{{ r.getScore() }}</td>
     <td>{{ r.timeFormatted() }}</td>
-    <td>
-        <a href="/report/{{ r.getId() }}">View</a>
+    <td class="text-right">
+        <a href="/report/{{ r.getId() }}" class="btn btn-xs btn-primary">View</a>
     </td>
 </tr>
 {% endfor %}
 </table>
 
 <h3>References</h3>
-<table class="table">
+
+This detector used following other reports to compute a score.
+
+<table class="table table-striped">
 {% for r in references %}
 <tr>
     <td>{{ r.getScore() }}</td>
     <td>{{ r.timeFormatted() }}</td>
-    <td>
-        <a href="/report/{{ r.getId() }}">View</a>
+    <td class="text-right">
+        <a href="/report/{{ r.getId() }}" class="btn btn-xs btn-primary">View</a>
     </td>
 </tr>
 {% endfor %}

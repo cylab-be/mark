@@ -24,12 +24,10 @@
 package be.cylab.mark.webserver;
 
 import be.cylab.mark.client.Client;
-import be.cylab.mark.core.InvalidProfileException;
 import static spark.Spark.*;
 import com.google.inject.Inject;
 import be.cylab.mark.server.Config;
 import com.mitchellbosecke.pebble.loader.ClasspathLoader;
-import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.template.pebble.PebbleTemplateEngine;
@@ -80,6 +78,7 @@ public class WebServer {
 
         get("/", new HomeRoute(client), pebble);
         get("/status", new StatusRoute(client), pebble);
+        get("/report/:id/data/:rq", new ReportDataRoute(client), pebble);
         get("/report/:id", new ReportRoute(client), pebble);
     }
 
