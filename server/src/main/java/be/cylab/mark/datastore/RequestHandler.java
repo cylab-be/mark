@@ -360,8 +360,6 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        documents.skip(page * RESULTS_PER_PAGE).limit(RESULTS_PER_PAGE);
-
         HashMap<Subject, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {
             Evidence evidence = convertEvidence(doc);
@@ -381,7 +379,17 @@ public class RequestHandler implements ServerInterface {
                 evidences.values().toArray(new Evidence[evidences.size()]);
 
         Arrays.sort(ev_array, Collections.reverseOrder());
-        return ev_array;
+
+        int start_index = page * RESULTS_PER_PAGE;
+        if (start_index > ev_array.length) {
+            return new Evidence[]{};
+        }
+
+        int end_index = start_index + RESULTS_PER_PAGE;
+        if (end_index > ev_array.length) {
+            end_index = ev_array.length;
+        }
+        return Arrays.copyOfRange(ev_array, start_index, end_index);
     }
 
     /**
