@@ -340,21 +340,6 @@ public class RequestHandler implements ServerInterface {
     @Override
     public final Evidence[] findEvidence(final String label)
             throws Throwable {
-        return this.findEvidence(label, 0);
-    }
-
-    private final static int RESULTS_PER_PAGE = 100;
-
-    /**
-     * Keep only one evidence per subject: the most recent one.
-     *
-     * @param label
-     * @return
-     * @throws Throwable if request fails
-     */
-    @Override
-    public final Evidence[] findEvidence(final String label, final int page)
-            throws Throwable {
 
         LOGGER.debug("findEvidence : " + label);
 
@@ -384,17 +369,34 @@ public class RequestHandler implements ServerInterface {
                 evidences.values().toArray(new Evidence[evidences.size()]);
 
         Arrays.sort(ev_array, Collections.reverseOrder());
+        return ev_array;
+    }
+
+    private final static int RESULTS_PER_PAGE = 100;
+
+    /**
+     * Keep only one evidence per subject: the most recent one.
+     *
+     * @param label
+     * @return
+     * @throws Throwable if request fails
+     */
+    @Override
+    public final Evidence[] findEvidence(final String label, final int page)
+            throws Throwable {
+
+        Evidence[] evidences = this.findEvidence(label);
 
         int start_index = page * RESULTS_PER_PAGE;
-        if (start_index > ev_array.length) {
+        if (start_index > evidences.length) {
             return new Evidence[]{};
         }
 
         int end_index = start_index + RESULTS_PER_PAGE;
-        if (end_index > ev_array.length) {
-            end_index = ev_array.length;
+        if (end_index > evidences.length) {
+            end_index = evidences.length;
         }
-        return Arrays.copyOfRange(ev_array, start_index, end_index);
+        return Arrays.copyOfRange(evidences, start_index, end_index);
     }
 
     /**

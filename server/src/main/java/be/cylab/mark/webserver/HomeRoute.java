@@ -60,7 +60,7 @@ public class HomeRoute implements TemplateViewRoute {
             String[] labels = this.getLabels();
             attributes.put("labels", this.getLabels());
 
-            int page = Integer.valueOf(rqst.queryParamOrDefault("page", "0"));
+            int page = Integer.valueOf(rqst.queryParamOrDefault("page", "1"));
             attributes.put("page", page);
 
             if (labels.length > 0) {
