@@ -385,9 +385,13 @@ public class RequestHandler implements ServerInterface {
     public final Evidence[] findEvidence(final String label, final int page)
             throws Throwable {
 
+        if (page < 1) {
+            throw new IllegalArgumentException("page must be  >= 1");
+        }
+
         Evidence[] evidences = this.findEvidence(label);
 
-        int start_index = page * RESULTS_PER_PAGE;
+        int start_index = (page - 1) * RESULTS_PER_PAGE;
         if (start_index > evidences.length) {
             return new Evidence[]{};
         }
