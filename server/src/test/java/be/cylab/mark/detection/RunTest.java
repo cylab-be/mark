@@ -49,10 +49,11 @@ public class RunTest extends TestCase {
                 .getResourceAsStream("/detection.run.yml"));
 
         run_detector.analyze(
-                new Event<DummySubject>(
+                new Event<>(
                         "actual.trigger",
                         new DummySubject("Tibo"),
-                        123456),
+                        123456,
+                        "1234"),
                 agent,
                 new DummyClient());
     }

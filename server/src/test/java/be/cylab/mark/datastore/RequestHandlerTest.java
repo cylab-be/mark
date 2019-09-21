@@ -52,6 +52,9 @@ public class RequestHandlerTest extends TestCase {
         data.setData("1234");
         data.setSubject(new DummySubject("test"));
         rq.addRawData(data);
+
+        assertNotSame("", data.getId());
+
         rq.addRawData(data);
 
         Document query = new Document("DATA", "1234");

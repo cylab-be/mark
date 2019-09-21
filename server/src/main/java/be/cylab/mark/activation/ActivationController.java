@@ -75,7 +75,8 @@ public class ActivationController<T extends Subject> extends SafeThread
                 new Event(
                         data.getLabel(),
                         data.getSubject(),
-                        data.getTime()));
+                        data.getTime(),
+                        data.getId()));
     }
 
     /**
@@ -89,7 +90,8 @@ public class ActivationController<T extends Subject> extends SafeThread
                 new Event(
                         evidence.getLabel(),
                         evidence.getSubject(),
-                        evidence.getTime()));
+                        evidence.getTime(),
+                        evidence.getId()));
     }
 
     /**

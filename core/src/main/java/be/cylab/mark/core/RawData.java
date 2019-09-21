@@ -17,6 +17,24 @@ public class RawData<T extends Subject> {
     private long time;
     private T subject;
     private String data = "";
+    private String id = "";
+
+    /**
+     *
+     * @return
+     */
+    public final String getId() {
+        return id;
+    }
+
+    /**
+     *
+     * @param id
+     */
+    public final void setId(final String id) {
+        this.id = id;
+    }
+
 
     /**
      *

@@ -352,6 +352,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
             TreeNode tree = jparser.getCodec().readTree(jparser);
             RawData<T> data = new RawData<>();
+            data.setId(((TextNode) tree.get("id")).asText());
             data.setData(((TextNode) tree.get("data")).asText());
             data.setLabel(((TextNode) tree.get("label")).asText());
             data.setTime(((NumericNode) tree.get("time")).asLong());

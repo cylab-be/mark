@@ -1,0 +1,8 @@
+# Launch a single Dummy agent for every
+# new http data
+---
+class_name:     be.cylab.mark.detection.Threshold
+label:          detection.filtered.max.1h
+trigger_label:  detection.max.1h
+parameters:
+  value: 0.8

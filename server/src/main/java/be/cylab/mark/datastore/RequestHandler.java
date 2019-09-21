@@ -105,8 +105,12 @@ public class RequestHandler implements ServerInterface {
     @Override
     public final void addRawData(final RawData data) {
 
+        Document document = convert(data);
         mongodb.getCollection(COLLECTION_DATA)
-                .insertOne(convert(data));
+                .insertOne(document);
+
+        ObjectId id = (ObjectId)document.get( "_id" );
+        data.setId(id.toString());
 
         activation_controller.notifyRawData(data);
     }
@@ -156,8 +160,12 @@ public class RequestHandler implements ServerInterface {
      * @param evidence
      */
     public final void addEvidence(final Evidence evidence) {
+
+        Document document = convert(evidence);
         mongodb.getCollection(COLLECTION_EVIDENCE)
-                .insertOne(convert(evidence));
+                .insertOne(document);
+        ObjectId id = (ObjectId)document.get( "_id" );
+        evidence.setId(id.toString());
 
         activation_controller.notifyEvidence(evidence);
     }

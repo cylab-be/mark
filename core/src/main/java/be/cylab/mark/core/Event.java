@@ -35,17 +35,22 @@ public class Event<T extends Subject> {
     private final String label;
     private final T subject;
     private final long timestamp;
+    private final String id;
 
     /**
      *
      * @param label
      * @param subject
      * @param timestamp
+     * @param id
      */
-    public Event(final String label, final T subject, final long timestamp) {
+    public Event(
+            final String label, final T subject, final long timestamp,
+            final String id) {
         this.label = label;
         this.subject = subject;
         this.timestamp = timestamp;
+        this.id = id;
     }
 
     /**
@@ -71,4 +76,14 @@ public class Event<T extends Subject> {
     public final long getTimestamp() {
         return timestamp;
     }
+
+    /**
+     * Get the id of the data or evidence that caused this event.
+     * @return
+     */
+    public final String getId() {
+        return id;
+    }
+
+
 }
