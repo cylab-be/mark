@@ -92,6 +92,7 @@ public class RequestHandler implements ServerInterface {
      *
      * @param data
      */
+    @Override
     public final void testString(final String data) {
         System.out.println(data);
     }
@@ -101,6 +102,7 @@ public class RequestHandler implements ServerInterface {
      *
      * @param data {@inheritDoc}
      */
+    @Override
     public final void addRawData(final RawData data) {
 
         mongodb.getCollection(COLLECTION_DATA)
@@ -109,6 +111,7 @@ public class RequestHandler implements ServerInterface {
         activation_controller.notifyRawData(data);
     }
 
+    @Override
     public final RawData[] findData(Document query) {
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_DATA)
@@ -129,10 +132,12 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     public final RawData[] findRawData(
-            final String label, final Subject subject) {
+            final String label, final Subject subject, final long from,
+            final long till) {
 
         Document query = new Document();
         query.append(LABEL, label);
+        query.append(TIME, new Document("$gte", from).append("$lte", till));
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb

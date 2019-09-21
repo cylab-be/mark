@@ -154,12 +154,13 @@ public class Client<T extends Subject> implements ServerInterface {
      */
     @Override
     public final RawData[] findRawData(
-            final String label, final Subject subject)
+            final String label, final Subject subject, final long from,
+            final long till)
             throws Throwable {
 
         return json_rpc_client.invoke(
                 "findRawData",
-                new Object[]{label, subject},
+                new Object[]{label, subject, from, till},
                 RawData[].class);
     }
 

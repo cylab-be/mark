@@ -41,8 +41,11 @@ public class Counter implements DetectionAgentInterface {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
+        long till = event.getTimestamp();
+        long from = till - 24 * 3600;
+
         int count = datastore.findRawData(
-                event.getLabel(), event.getSubject()).length;
+                event.getLabel(), event.getSubject(), from, till).length;
 
         Evidence ev = new Evidence();
         ev.setReport(

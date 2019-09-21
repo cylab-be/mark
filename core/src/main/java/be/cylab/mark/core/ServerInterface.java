@@ -63,12 +63,15 @@ public interface ServerInterface<T extends Subject> {
 
     /**
      *
-     * @param type
+     * @param label
      * @param subject
+     * @param from
+     * @param till
      * @return
      * @throws java.lang.Throwable if request fails
      */
-    RawData<T>[] findRawData(String type, T subject) throws Throwable;
+    RawData<T>[] findRawData(String label, T subject, long from, long till)
+            throws Throwable;
 
     /**
      *

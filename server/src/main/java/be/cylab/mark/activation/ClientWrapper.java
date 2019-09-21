@@ -108,8 +108,10 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public RawData[] findRawData(String type, Subject subject) throws Throwable {
-        RawData[] data = client.findRawData(type, subject);
+    public RawData[] findRawData(
+            final String type, final Subject subject, final long from,
+            final long till) throws Throwable {
+        RawData[] data = client.findRawData(type, subject, from, till);
         requests.add(request_listener.getLastRequest());
         return data;
     }

@@ -11,7 +11,7 @@ import be.cylab.mark.core.Subject;
 
 /**
  * Dummy detection agent that reads some data from datastore and writes
- * two evidences.
+ * one evidence.
  * @author Thibault Debatty
  * @param <T> The type of subject we deal with
  */
@@ -27,7 +27,8 @@ public class ExampleDetector<T extends Subject>
 
         RawData[] data = datastore.findRawData(
                 ev.getLabel(),
-                ev.getSubject());
+                ev.getSubject(),
+                0, System.currentTimeMillis());
 
         if (data.length < 1) {
             return;

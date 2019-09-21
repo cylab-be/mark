@@ -70,7 +70,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
 
-    public RawData[] findRawData(String type, T subject)
+    public RawData[] findRawData(String type, T subject, long from, long till)
             throws Throwable {
 
         int start = 123456;

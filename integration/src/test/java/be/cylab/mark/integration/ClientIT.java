@@ -72,16 +72,18 @@ public class ClientIT extends MarkCase {
 
         Client<Link> datastore = new Client<>(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
-        RawData[] original_data = datastore.findRawData(label, link);
+        RawData[] original_data = datastore.findRawData(
+                label, link, 0, System.currentTimeMillis());
 
         RawData new_data = new RawData();
         new_data.setLabel(label);
         new_data.setSubject(link);
-        new_data.setTime((System.currentTimeMillis() / 1000L));
+        new_data.setTime(System.currentTimeMillis());
         new_data.setData("A proxy log line...");
         datastore.addRawData(new_data);
 
-        RawData[] final_data = datastore.findRawData(label, link);
+        RawData[] final_data = datastore.findRawData(
+                label, link, 0, System.currentTimeMillis());
 
         assertEquals(
                 original_data.length + 1,

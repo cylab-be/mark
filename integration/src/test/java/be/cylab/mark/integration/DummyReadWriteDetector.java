@@ -27,7 +27,7 @@ public class DummyReadWriteDetector<T extends Subject>
 
         RawData[] data = datastore.findRawData(
                 ev.getLabel(),
-                ev.getSubject());
+                ev.getSubject(), 0, System.currentTimeMillis());
 
         if (data.length < 1) {
             return;
