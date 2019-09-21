@@ -75,6 +75,8 @@ public class HomeRoute implements TemplateViewRoute {
 
             Evidence[] evidences = this.client.findEvidence(label, page);
             attributes.put("evidences", evidences);
+
+            attributes.put("markversion", getClass().getPackage().getImplementationVersion());
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from datastore!", ex);
             halt(500);
