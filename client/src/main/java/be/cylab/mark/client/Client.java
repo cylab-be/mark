@@ -332,17 +332,17 @@ public class Client<T extends Subject> implements ServerInterface {
 
 
     @Override
-    public void pause() throws Throwable {
+    public final void pause() throws Throwable {
         json_rpc_client.invoke("pause", null);
     }
 
     @Override
-    public void resume() throws Throwable {
+    public final void resume() throws Throwable {
         json_rpc_client.invoke("resume", null);
     }
 
     @Override
-    public Map status() throws Throwable {
+    public final Map status() throws Throwable {
         return json_rpc_client.invoke("status", null, Map.class);
     }
 
