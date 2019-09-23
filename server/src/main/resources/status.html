@@ -3,33 +3,47 @@
 {% block title %} Status {% endblock %}
 
 {% block content %}
-<h2>Status</h2>
 
-<p>MARK version {{ status.get("version") }}</p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Status</h2>
 
-<p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
+                <p>MARK version {{ status.get("version") }}</p>
 
-<p>Running: {{ status.get("running") }}</p>
+                <p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
 
-<div>
-    {% if (status.get("running")) %}
-    <a href="/status/pause" class="btn btn-warning">
-        <i class="fas fa-pause"></i> Pause
-    </a>
-    {% else %}
-    <a href="/status/resume" class="btn btn-success">
-        <i class="fas fa-play"></i> Resume
-    </a>
-    {% endif %}
+                <p>Running: {{ status.get("running") }}</p>
+
+                <div>
+                    {% if (status.get("running")) %}
+                    <a href="/status/pause" class="btn btn-warning">
+                        <i class="fas fa-pause"></i> Pause
+                    </a>
+                    {% else %}
+                    <a href="/status/resume" class="btn btn-success">
+                        <i class="fas fa-play"></i> Resume
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2>Executor Status</h2>
+
+                <p>Executed jobs: {{ executor.get("executed") }}</p>
+                <p>Running jobs: {{ executor.get("running") }}</p>
+                <p>Waiting jobs: {{ executor.get("waiting") }}</p>
+            </div>
+        </div>
+
+    </div>
 </div>
-
-
-<h2>Executor Status</h2>
-
-<p>Executed jobs: {{ executor.get("executed") }}</p>
-<p>Running jobs: {{ executor.get("running") }}</p>
-<p>Waiting jobs: {{ executor.get("waiting") }}</p>
-
 
 <h2>Activation cascade</h2>
 <div id="activation-graph"></div>
