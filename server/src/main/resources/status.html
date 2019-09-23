@@ -5,7 +5,10 @@
 {% block content %}
 <h2>Status</h2>
 
-<p>Version {{ status.get("version") }}</p>
+<p>MARK version {{ status.get("version") }}</p>
+
+<p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
+
 <p>Running: {{ status.get("running") }}</p>
 
 <div>
@@ -30,6 +33,23 @@
 
 <h2>Activation cascade</h2>
 <div id="activation-graph"></div>
+
+<div class="text-muted bottom-right">
+    Reload in <span id="reload-countdown">60</span> seconds
+</div>
+
+<script type="text/javascript">
+    var reload_countdown = 60;
+    setInterval(function() {
+        reload_countdown -= 1;
+        $('#reload-countdown').text(reload_countdown);
+
+        if (reload_countdown === 0) {
+            console.log('reload...');
+            location.reload();
+        }
+    }, 1000);
+</script>
 
 <script src="/js/viz.js"></script>
 <script>

@@ -48,3 +48,9 @@ text {
   background-color: #f5f5f5;
   z-index: 0;
 }
+
+div.bottom-right {
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+}

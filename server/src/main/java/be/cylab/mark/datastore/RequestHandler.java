@@ -21,6 +21,8 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
 import com.mongodb.BasicDBObject;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.Collections;
 import java.util.List;
 import org.bson.Document;
@@ -588,6 +590,15 @@ public class RequestHandler implements ServerInterface {
         Map<String, Object> status = new HashMap<>();
         status.put("running", activation_controller.isRunning());
         status.put("version", getClass().getPackage().getImplementationVersion());
+
+        OperatingSystemMXBean os =
+         (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+
+        status.put("arch", os.getArch());
+        status.put("processors", os.getAvailableProcessors());
+        status.put("load", os.getSystemLoadAverage());
+        status.put("os-name", os.getName());
+        status.put("os-version", os.getVersion());
 
         return status;
     }
