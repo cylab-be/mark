@@ -200,6 +200,13 @@ public interface ServerInterface<T extends Subject> {
     Map<String, Object> executorStatus() throws Throwable;
 
     /**
+     * Get the status of the database (mongo).
+     * @return
+     * @throws Throwable if something goes wrong
+     */
+    Map<String, Object> dbStatus() throws Throwable;
+
+    /**
      * Get the current configuration (activation profiles).
      * @return
      * @throws java.lang.Throwable if something goes wrong

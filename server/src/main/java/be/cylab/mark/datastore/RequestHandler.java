@@ -606,4 +606,19 @@ public class RequestHandler implements ServerInterface {
 
         return status;
     }
+
+    @Override
+    public Map<String, Object> dbStatus() throws Throwable {
+        Map<String, Object> status = new HashMap<>();
+        status.put("data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
+        status.put("evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
+
+        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1}"));
+        status.put("data.size", stats.getInteger("size"));
+
+        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1}"));
+        status.put("evidence.size", stats.getInteger("size"));
+
+        return status;
+    }
 }

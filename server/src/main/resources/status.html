@@ -54,6 +54,22 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-6">
+        <div class="card my-4">
+            <div class="card-body">
+                <h2>DB Status</h2>
+
+                <p>Data records: {{ dbstatus.get("data.count") }}</p>
+                <p>Evidence records: {{ dbstatus.get("evidence.count") }}</p>
+
+                <p>Data size {{ (dbstatus.get("data.size") / 1024 / 1024) | numberformat("#") }}MB</p>
+                <p>Evidence size {{ (dbstatus.get("evidence.size") / 1024 / 1024) | numberformat("#") }}MB</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <h2>Activation cascade</h2>
 <div id="activation-graph"></div>
 

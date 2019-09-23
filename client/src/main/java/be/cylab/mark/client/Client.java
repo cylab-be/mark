@@ -346,6 +346,11 @@ public class Client<T extends Subject> implements ServerInterface {
         return json_rpc_client.invoke("status", null, Map.class);
     }
 
+    @Override
+    public final Map dbStatus() throws Throwable {
+        return json_rpc_client.invoke("dbStatus", null, Map.class);
+    }
+
     /**
      * Helper class to deserialize raw data, using the subject adapter.
      *

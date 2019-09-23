@@ -191,4 +191,9 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
         return client.status();
     }
 
+    @Override
+    public Map dbStatus() throws Throwable {
+        return client.dbStatus();
+    }
+
 }

@@ -26,9 +26,11 @@ package be.cylab.mark.webserver;
 import be.cylab.mark.client.Client;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import static spark.Spark.halt;
 import spark.TemplateViewRoute;
 
 /**
@@ -38,6 +40,9 @@ import spark.TemplateViewRoute;
 class StatusRoute implements TemplateViewRoute {
 
     private final Client client;
+
+    private static final org.slf4j.Logger LOGGER
+            = LoggerFactory.getLogger(StatusRoute.class);
 
     public StatusRoute(final Client client) {
         this.client = client;
@@ -52,8 +57,10 @@ class StatusRoute implements TemplateViewRoute {
         try {
             attributes.put("status", this.client.status());
             attributes.put("executor", this.client.executorStatus());
+            attributes.put("dbstatus", this.client.dbStatus());
         } catch (Throwable ex) {
-
+            LOGGER.error("Failed to read from client: " + ex.getMessage());
+            halt(500);
         }
         return new ModelAndView(attributes, "status.html");
     }

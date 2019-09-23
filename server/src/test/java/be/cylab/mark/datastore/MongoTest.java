@@ -92,6 +92,26 @@ public class MongoTest extends TestCase {
 
     }
 
+    /**
+     * Insert / count simple documents.
+     */
+    public void testDocument() {
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyToClusterSettings(builder ->
+                        builder.hosts(Arrays.asList(new ServerAddress(mongo_host))))
+                .build();
+
+        MongoClient mongo = MongoClients.create(settings);
+        MongoDatabase db = mongo.getDatabase("mytestdb");
+        MongoCollection<Document> coll = db.getCollection("tests");
+        coll.drop();
+
+        Document doc = new Document().append("name", "Tibo");
+        coll.insertOne(doc);
+        System.out.println(coll.countDocuments());
+
+    }
+
     public void testPojo() {
 
         CodecRegistry pojoCodecRegistry = fromRegistries(

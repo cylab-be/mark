@@ -199,4 +199,9 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     public Map<String, Object> status() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public Map<String, Object> dbStatus() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
