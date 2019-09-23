@@ -10,9 +10,13 @@
 
 <div>
     {% if (status.get("running")) %}
-    <a href="/status/pause" class="btn btn-warning">Pause</a>
+    <a href="/status/pause" class="btn btn-warning">
+        <i class="fas fa-pause"></i> Pause
+    </a>
     {% else %}
-    <a href="/status/resume" class="btn btn-success">Resume</a>
+    <a href="/status/resume" class="btn btn-success">
+        <i class="fas fa-play"></i> Resume
+    </a>
     {% endif %}
 </div>
 
