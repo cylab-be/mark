@@ -597,8 +597,12 @@ public class RequestHandler implements ServerInterface {
         status.put("arch", os.getArch());
         status.put("processors", os.getAvailableProcessors());
         status.put("load", os.getSystemLoadAverage());
-        status.put("os-name", os.getName());
-        status.put("os-version", os.getVersion());
+        status.put("os.name", os.getName());
+        status.put("os.version", os.getVersion());
+
+        Runtime rt = Runtime.getRuntime();
+        status.put("memory.total", rt.maxMemory());
+        status.put("memory.used", rt.totalMemory() - rt.freeMemory());
 
         return status;
     }

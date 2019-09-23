@@ -112,6 +112,13 @@ public class IgniteExecutor implements ExecutorInterface {
         map.put("running", metrics.getCurrentActiveJobs());
         map.put("waiting", metrics.getCurrentWaitingJobs());
 
+        map.put("job.waittime", metrics.getAverageJobWaitTime());
+        map.put("job.executetime", metrics.getAverageJobExecuteTime());
+
+        map.put("nodes", metrics.getTotalNodes());
+        map.put("cpus", metrics.getTotalCpus());
+
+
         return map;
     }
 

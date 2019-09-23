@@ -13,6 +13,8 @@
                 <p>MARK version {{ status.get("version") }}</p>
 
                 <p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
+                <p>Memory: {{ (status.get("memory.total") / 1024 / 1024) | numberformat("#") }}MB</p>
+                <p>Used: {{ (status.get("memory.used") / 1024 / 1024) | numberformat("#") }}MB</p>
 
                 <p>Running: {{ status.get("running") }}</p>
 
@@ -39,6 +41,13 @@
                 <p>Executed jobs: {{ executor.get("executed") }}</p>
                 <p>Running jobs: {{ executor.get("running") }}</p>
                 <p>Waiting jobs: {{ executor.get("waiting") }}</p>
+
+
+                <p>Job wait time: {{ executor.get("job.waittime") | numberformat("#") }}ms</p>
+                <p>Job execution time: {{ executor.get("job.executetime") | numberformat("#") }}ms</p>
+
+                <p>Total nodes: {{ executor.get("nodes") }}</p>
+                <p>Total CPU's: {{ executor.get("cpus") }}</p>
             </div>
         </div>
 
