@@ -60,11 +60,25 @@
             <div class="card-body">
                 <h2>DB Status</h2>
 
-                <p>Data records: {{ dbstatus.get("data.count") }}</p>
-                <p>Evidence records: {{ dbstatus.get("evidence.count") }}</p>
+                <table class='table table-striped'>
+                    <tr>
+                        <th></th>
+                        <th>Records</th>
+                        <th>Size (MB)</th>
+                    </tr>
 
-                <p>Data size {{ (dbstatus.get("data.size") / 1024 / 1024) | numberformat("#") }}MB</p>
-                <p>Evidence size {{ (dbstatus.get("evidence.size") / 1024 / 1024) | numberformat("#") }}MB</p>
+                    <tr>
+                        <th>Data</th>
+                        <td>{{ dbstatus.get("data.count") }}</td>
+                        <td>{{ (dbstatus.get("data.size") / 1024 / 1024) | numberformat("#") }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Evidence</th>
+                        <td>{{ dbstatus.get("evidence.count") }}</td>
+                        <td>{{ (dbstatus.get("evidence.size") / 1024 / 1024) | numberformat("#") }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
