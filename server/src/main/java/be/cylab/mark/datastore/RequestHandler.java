@@ -23,7 +23,6 @@ import be.cylab.mark.core.SubjectAdapter;
 import com.mongodb.BasicDBObject;
 import java.util.Collections;
 import java.util.List;
-import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -434,11 +433,6 @@ public class RequestHandler implements ServerInterface {
         return convertEvidence(document);
     }
 
-    public final ClusterMetrics igniteStatus() {
-        // return activation_controller.getIgniteMetrics();
-        throw new UnsupportedOperationException("Not supported...");
-    }
-
     public URL getURL() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -577,5 +571,24 @@ public class RequestHandler implements ServerInterface {
         }
 
         return evidences.toArray(new Evidence[evidences.size()]);
+    }
+
+    @Override
+    public void pause() throws Throwable {
+        this.activation_controller.pauseExecution();
+    }
+
+    @Override
+    public void resume() throws Throwable {
+        this.activation_controller.resumeExecution();
+    }
+
+    @Override
+    public Map<String, Object> status() throws Throwable {
+        Map<String, Object> status = new HashMap<>();
+        status.put("running", activation_controller.isRunning());
+        status.put("version", getClass().getPackage().getImplementationVersion());
+
+        return status;
     }
 }

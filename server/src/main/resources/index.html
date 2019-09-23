@@ -40,7 +40,9 @@
 </table>
 
 <div class="text-center">
+    {% if page > 1 %}
     <a href="/?label={{ label }}&page={{ (page - 1) }}" class="btn btn-sm btn-primary">&lt; prev</a>
+    {% endif %}
     <span class="p-lr-5">{{ page }}</span>
     <a href="/?label={{ label }}&page={{ (page + 1) }}" class="btn btn-sm btn-primary">next &gt;</a>
 </div>

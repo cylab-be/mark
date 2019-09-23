@@ -26,8 +26,6 @@ package be.cylab.mark.webserver;
 import be.cylab.mark.client.Client;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -52,9 +50,10 @@ class StatusRoute implements TemplateViewRoute {
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("mark", this.client);
         try {
-            attributes.put("status", this.client.executorStatus());
+            attributes.put("status", this.client.status());
+            attributes.put("executor", this.client.executorStatus());
         } catch (Throwable ex) {
-            
+
         }
         return new ModelAndView(attributes, "status.html");
     }

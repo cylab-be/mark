@@ -330,6 +330,22 @@ public class Client<T extends Subject> implements ServerInterface {
         return this.json_rpc_client;
     }
 
+
+    @Override
+    public final void pause() throws Throwable {
+        json_rpc_client.invoke("pause", null);
+    }
+
+    @Override
+    public final void resume() throws Throwable {
+        json_rpc_client.invoke("resume", null);
+    }
+
+    @Override
+    public final Map status() throws Throwable {
+        return json_rpc_client.invoke("status", null, Map.class);
+    }
+
     /**
      * Helper class to deserialize raw data, using the subject adapter.
      *

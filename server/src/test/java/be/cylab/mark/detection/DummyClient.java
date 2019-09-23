@@ -184,4 +184,19 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
             throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void pause() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void resume() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<String, Object> status() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -54,4 +54,10 @@ public interface ActivationControllerInterface<T extends Subject> {
 
     public Map<String, Object> getExecutorStatus();
 
+    public void pauseExecution();
+
+    public void resumeExecution();
+
+    public boolean isRunning();
+
 }

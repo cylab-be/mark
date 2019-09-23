@@ -77,6 +77,26 @@ public class WebServer {
         port(8000);
 
         get("/", new HomeRoute(client), pebble);
+        get("/status/pause", (rqst, rspns) -> {
+            try {
+                client.pause();
+            } catch (Throwable ex) {
+                LOGGER.error("Failed to pause server!: " + ex.getMessage());
+            }
+            rspns.redirect("/status");
+            return null;
+        });
+
+        get("/status/resume", (rqst, rspns) -> {
+            try {
+                client.resume();
+            } catch (Throwable ex) {
+                LOGGER.error("Failed to resume server!: " + ex.getMessage());
+            }
+            rspns.redirect("/status");
+            return null;
+        });
+
         get("/status", new StatusRoute(client), pebble);
         get("/report/:id/data/:rq", new ReportDataRoute(client), pebble);
         get("/report/:id", new ReportRoute(client), pebble);
