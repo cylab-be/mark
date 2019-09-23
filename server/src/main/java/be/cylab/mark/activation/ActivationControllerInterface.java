@@ -58,4 +58,6 @@ public interface ActivationControllerInterface<T extends Subject> {
 
     public void resumeExecution();
 
+    public boolean isRunning();
+
 }

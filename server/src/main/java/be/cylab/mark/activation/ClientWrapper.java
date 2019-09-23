@@ -186,4 +186,9 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
         client.resume();
     }
 
+    @Override
+    public Map status() throws Throwable {
+        return client.status();
+    }
+
 }

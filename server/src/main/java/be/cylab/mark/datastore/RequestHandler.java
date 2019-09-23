@@ -23,7 +23,6 @@ import be.cylab.mark.core.SubjectAdapter;
 import com.mongodb.BasicDBObject;
 import java.util.Collections;
 import java.util.List;
-import org.apache.ignite.cluster.ClusterMetrics;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -582,5 +581,14 @@ public class RequestHandler implements ServerInterface {
     @Override
     public void resume() throws Throwable {
         this.activation_controller.resumeExecution();
+    }
+
+    @Override
+    public Map<String, Object> status() throws Throwable {
+        Map<String, Object> status = new HashMap<>();
+        status.put("running", activation_controller.isRunning());
+        status.put("version", getClass().getPackage().getImplementationVersion());
+
+        return status;
     }
 }

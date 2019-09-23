@@ -186,6 +186,13 @@ public interface ServerInterface<T extends Subject> {
             Object old_value) throws Throwable;
 
     /**
+     * Get the status of MARK (running, ram, CPU load, version ...).
+     * @return
+     * @throws Throwable if something went wrong
+     */
+    Map<String, Object> status() throws Throwable;
+
+    /**
      * Get the status of the executor service (running tasks etc).
      * @return
      * @throws java.lang.Throwable if something goes wrong
@@ -202,13 +209,13 @@ public interface ServerInterface<T extends Subject> {
     /**
      * Pause execution (no algorithm will be scheduled).
      *
-     * @throws Throwable
+     * @throws Throwable if something went wrong
      */
     void pause() throws Throwable;
 
     /**
      * Resume execution.
-     * @throws Throwable
+     * @throws Throwable if something went wrong
      */
     void resume() throws Throwable;
 
