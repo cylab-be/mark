@@ -47,7 +47,7 @@ public class ActivationController<T extends Subject> extends SafeThread
     private volatile Map<String, Map<T, Event<T>>> events;
     private final Config config;
 
-    private volatile boolean running = false;
+    private volatile boolean running = true;
 
     /**
      *
