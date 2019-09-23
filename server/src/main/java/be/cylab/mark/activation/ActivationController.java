@@ -47,6 +47,8 @@ public class ActivationController<T extends Subject> extends SafeThread
     private volatile Map<String, Map<T, Event<T>>> events;
     private final Config config;
 
+    private volatile boolean paused = false;
+
     /**
      *
      * @param config
@@ -129,6 +131,10 @@ public class ActivationController<T extends Subject> extends SafeThread
 
         while (true) {
             Thread.sleep(1000 * config.update_interval);
+
+            if (this.paused) {
+                continue;
+            }
 
             if (isInterrupted()) {
                 return;
@@ -281,5 +287,19 @@ public class ActivationController<T extends Subject> extends SafeThread
     @Override
     public Map<String, Object> getExecutorStatus() {
         return this.executor.getStatus();
+    }
+
+    @Override
+    public void pauseExecution() {
+        synchronized (this) {
+            this.paused = true;
+        }
+    }
+
+    @Override
+    public void resumeExecution() {
+        synchronized (this) {
+            this.paused = false;
+        }
     }
 }

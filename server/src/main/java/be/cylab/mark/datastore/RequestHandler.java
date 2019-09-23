@@ -434,11 +434,6 @@ public class RequestHandler implements ServerInterface {
         return convertEvidence(document);
     }
 
-    public final ClusterMetrics igniteStatus() {
-        // return activation_controller.getIgniteMetrics();
-        throw new UnsupportedOperationException("Not supported...");
-    }
-
     public URL getURL() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -577,5 +572,15 @@ public class RequestHandler implements ServerInterface {
         }
 
         return evidences.toArray(new Evidence[evidences.size()]);
+    }
+
+    @Override
+    public void pause() throws Throwable {
+        this.activation_controller.pauseExecution();
+    }
+
+    @Override
+    public void resume() throws Throwable {
+        this.activation_controller.resumeExecution();
     }
 }

@@ -176,4 +176,14 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
         return client.activation();
     }
 
+    @Override
+    public void pause() throws Throwable {
+        client.pause();
+    }
+
+    @Override
+    public void resume() throws Throwable {
+        client.resume();
+    }
+
 }

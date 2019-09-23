@@ -198,4 +198,18 @@ public interface ServerInterface<T extends Subject> {
      * @throws java.lang.Throwable if something goes wrong
      */
     DetectionAgentProfile[] activation() throws Throwable;
+
+    /**
+     * Pause execution (no algorithm will be scheduled).
+     *
+     * @throws Throwable
+     */
+    void pause() throws Throwable;
+
+    /**
+     * Resume execution.
+     * @throws Throwable
+     */
+    void resume() throws Throwable;
+
 }
