@@ -8,6 +8,14 @@
 <p>Version {{ status.get("version") }}</p>
 <p>Running: {{ status.get("running") }}</p>
 
+<div>
+    {% if (status.get("running")) %}
+    <a href="/status/pause" class="btn btn-warning">Pause</a>
+    {% else %}
+    <a href="/status/resume" class="btn btn-success">Resume</a>
+    {% endif %}
+</div>
+
 
 <h2>Executor Status</h2>
 
