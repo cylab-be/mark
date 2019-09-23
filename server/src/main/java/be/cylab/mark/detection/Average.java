@@ -87,15 +87,17 @@ public class Average implements DetectionAgentInterface {
                     new String[]{Double.toString(ev.getScore()), ev.getId()});
         }
 
+        //create the evidence
+        Evidence ev = new Evidence();
         //create a string of the agent_labels to be added to the report
         String agents_output = "";
         for (String key : agent_labels.keySet()) {
             agents_output = agents_output + "<br />Agent("
                     + key + ") : Score(" + agent_labels.get(key)[0]
                     + ") : Id(" + agent_labels.get(key)[1] + ")";
+            ev.references().add(agent_labels.get(key)[1]);
         }
 
-        Evidence ev = new Evidence();
         ev.setScore(score);
         ev.setSubject(event.getSubject());
         ev.setTime(last_time);
