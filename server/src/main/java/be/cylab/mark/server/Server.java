@@ -40,6 +40,7 @@ public class Server {
     private final WebServer web_server;
     private final LinkedList<DataAgentContainer> data_agents;
     private final ActivationController activation_controller;
+    private final Thread monitor;
 
     /**
      * Initialize a server with default configuration, dummy subject adapter, no
@@ -61,6 +62,8 @@ public class Server {
         this.activation_controller = activation_controller;
         this.datastore = datastore;
         this.data_agents = new LinkedList<>();
+
+        this.monitor = new Thread(new Monitor(datastore));
 
         this.startLogging();
     }
@@ -85,6 +88,8 @@ public class Server {
         activation_controller.testProfiles();
         activation_controller.start();
         datastore.start();
+        monitor.start();
+
 
         // Start data agents...
         for (DataAgentContainer agent : data_agents) {

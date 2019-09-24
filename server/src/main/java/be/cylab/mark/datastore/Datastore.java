@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import be.cylab.mark.activation.ActivationControllerInterface;
 import be.cylab.mark.core.InvalidProfileException;
+import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.core.SubjectAdapter;
@@ -38,6 +39,8 @@ public class Datastore {
     private Server server;
     private final Config config;
     private final ActivationControllerInterface activation_controller;
+    private ServerInterface request_handler;
+    private MongoDatabase mongodb;
 
     /**
      *
@@ -66,7 +69,7 @@ public class Datastore {
         LOGGER.info("Starting JSON-RPC datastore on " + config.getServerHost()
                 + " : " + config.getServerPort());
 
-        MongoDatabase mongodb = this.connectToMongodb(config);
+        mongodb = this.connectToMongodb(config);
         server = this.createJsonRPCServer(mongodb);
         server.start();
 
@@ -94,18 +97,19 @@ public class Datastore {
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
                 config.mongo_host, config.mongo_port);
-        MongoDatabase mongodb = mongo.getDatabase(config.mongo_db);
+        MongoDatabase db = mongo.getDatabase(config.mongo_db);
 
         if (config.mongo_clean) {
-            mongodb.drop();
+            db.drop();
         }
 
-        return mongodb;
+        return db;
     }
 
     private Server createJsonRPCServer(MongoDatabase mongodb)
             throws InvalidProfileException {
-        RequestHandler datastore_handler = new RequestHandler(
+
+        request_handler = new RequestHandler(
                 mongodb,
                 activation_controller,
                 config.getSubjectAdapter());
@@ -118,7 +122,7 @@ public class Datastore {
         object_mapper.registerModule(module);
 
         JsonRpcServer jsonrpc_server
-                = new JsonRpcServer(object_mapper, datastore_handler);
+                = new JsonRpcServer(object_mapper, request_handler);
 
         QueuedThreadPool thread_pool = new QueuedThreadPool(
                 config.max_threads,
@@ -136,6 +140,14 @@ public class Datastore {
         jetty.setHandler(new JettyHandler(jsonrpc_server));
 
         return jetty;
+    }
+
+    public ServerInterface getRequestHandler() {
+        return this.request_handler;
+    }
+
+    public MongoDatabase getMongodb() {
+        return this.mongodb;
     }
 }
 
