@@ -38,16 +38,16 @@
             <div class="card-body">
                 <h2>Executor Status</h2>
 
-                <p>Executed jobs: {{ executor.get("executed") }}</p>
-                <p>Running jobs: {{ executor.get("running") }}</p>
-                <p>Waiting jobs: {{ executor.get("waiting") }}</p>
+                <p>Executed jobs: {{ status.get("executor.job.executed") }}</p>
+                <p>Running jobs: {{ status.get("executor.job.running") }}</p>
+                <p>Waiting jobs: {{ status.get("executor.job.waiting") }}</p>
 
 
-                <p>Job wait time: {{ executor.get("job.waittime") | numberformat("#") }}ms</p>
-                <p>Job execution time: {{ executor.get("job.executetime") | numberformat("#") }}ms</p>
+                <p>Job wait time: {{ status.get("executor.job.waittime") | numberformat("#") }}ms</p>
+                <p>Job execution time: {{ status.get("executor.job.executetime") | numberformat("#") }}ms</p>
 
-                <p>Total nodes: {{ executor.get("nodes") }}</p>
-                <p>Total CPU's: {{ executor.get("cpus") }}</p>
+                <p>Total nodes: {{ status.get("executor.nodes") }}</p>
+                <p>Total CPU's: {{ status.get("executor.cpus") }}</p>
             </div>
         </div>
 
@@ -69,14 +69,14 @@
 
                     <tr>
                         <th>Data</th>
-                        <td>{{ dbstatus.get("data.count") }}</td>
-                        <td>{{ (dbstatus.get("data.size") / 1024 / 1024) | numberformat("#") }}</td>
+                        <td>{{ status.get("db.data.count") }}</td>
+                        <td>{{ (status.get("db.data.size") / 1024 / 1024) | numberformat("#") }}</td>
                     </tr>
 
                     <tr>
                         <th>Evidence</th>
-                        <td>{{ dbstatus.get("evidence.count") }}</td>
-                        <td>{{ (dbstatus.get("evidence.size") / 1024 / 1024) | numberformat("#") }}</td>
+                        <td>{{ status.get("db.evidence.count") }}</td>
+                        <td>{{ (status.get("db.evidence.size") / 1024 / 1024) | numberformat("#") }}</td>
                     </tr>
                 </table>
             </div>

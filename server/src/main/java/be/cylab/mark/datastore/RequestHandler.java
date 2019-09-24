@@ -195,15 +195,6 @@ public class RequestHandler implements ServerInterface {
         return data;
     }
 
-    /**
-     *
-     * @return
-     */
-    @Override
-    public final Map<String, Object> executorStatus() {
-        return activation_controller.getExecutorStatus();
-    }
-
     @Override
     public final DetectionAgentProfile[] activation() {
         List<DetectionAgentProfile> profiles =
@@ -588,6 +579,19 @@ public class RequestHandler implements ServerInterface {
     @Override
     public Map<String, Object> status() throws Throwable {
         Map<String, Object> status = new HashMap<>();
+        status.putAll(this.markStatus());
+        status.putAll(this.dbStatus());
+        status.putAll(this.executorStatus());
+        return status;
+    }
+
+    private Map<String, Object> executorStatus() {
+        return activation_controller.getExecutorStatus();
+    }
+
+    private Map<String, Object> markStatus() throws Throwable {
+        Map<String, Object> status = new HashMap<>();
+
         status.put("running", activation_controller.isRunning());
         status.put("version", getClass().getPackage().getImplementationVersion());
 
@@ -607,17 +611,16 @@ public class RequestHandler implements ServerInterface {
         return status;
     }
 
-    @Override
-    public Map<String, Object> dbStatus() throws Throwable {
+    private Map<String, Object> dbStatus() throws Throwable {
         Map<String, Object> status = new HashMap<>();
-        status.put("data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
-        status.put("evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
+        status.put("db.data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
+        status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
         Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1}"));
-        status.put("data.size", stats.getInteger("size"));
+        status.put("db.data.size", stats.getInteger("size"));
 
         stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1}"));
-        status.put("evidence.size", stats.getInteger("size"));
+        status.put("db.evidence.size", stats.getInteger("size"));
 
         return status;
     }

@@ -167,11 +167,6 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public Map executorStatus() throws Throwable {
-        return client.executorStatus();
-    }
-
-    @Override
     public DetectionAgentProfile[] activation() throws Throwable {
         return client.activation();
     }
@@ -189,11 +184,6 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     @Override
     public Map status() throws Throwable {
         return client.status();
-    }
-
-    @Override
-    public Map dbStatus() throws Throwable {
-        return client.dbStatus();
     }
 
 }

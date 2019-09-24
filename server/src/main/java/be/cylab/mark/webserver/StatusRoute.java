@@ -56,8 +56,6 @@ class StatusRoute implements TemplateViewRoute {
         attributes.put("mark", this.client);
         try {
             attributes.put("status", this.client.status());
-            attributes.put("executor", this.client.executorStatus());
-            attributes.put("dbstatus", this.client.dbStatus());
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from client: " + ex.getMessage());
             halt(500);

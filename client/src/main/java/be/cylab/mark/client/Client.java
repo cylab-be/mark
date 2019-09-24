@@ -300,11 +300,6 @@ public class Client<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public final Map executorStatus() throws Throwable {
-        return json_rpc_client.invoke("executorStatus", null, Map.class);
-    }
-
-    @Override
     public final Evidence[] findEvidenceSince(
             final String label, final Subject subject, final long time)
             throws Throwable {
@@ -346,10 +341,7 @@ public class Client<T extends Subject> implements ServerInterface {
         return json_rpc_client.invoke("status", null, Map.class);
     }
 
-    @Override
-    public final Map dbStatus() throws Throwable {
-        return json_rpc_client.invoke("dbStatus", null, Map.class);
-    }
+
 
     /**
      * Helper class to deserialize raw data, using the subject adapter.

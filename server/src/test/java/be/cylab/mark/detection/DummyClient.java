@@ -165,11 +165,6 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     }
 
     @Override
-    public Map<String, Object> executorStatus() throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public DetectionAgentProfile[] activation() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -197,11 +192,6 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
     @Override
     public Map<String, Object> status() throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<String, Object> dbStatus() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
