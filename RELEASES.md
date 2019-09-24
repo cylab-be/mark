@@ -1,5 +1,27 @@
 # MARK Releases
 
+## 0.0.26
+
+JSON-RPC:
+
+* findData must provide time limits
+* findEvidence(label) without page returns all evidences
+* add pause and resume methods
+
+UI:
+
+* pagination starts at page 1
+* add button to pause / resume detection
+* add fontawesome
+* updated to bootstrap 4
+* show much more stats
+
+Detection:
+
+* added "max" detector
+* added "threshold" detector
+
+
 ## 0.0.25
 
 * fix default config file
