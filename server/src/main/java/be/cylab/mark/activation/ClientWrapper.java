@@ -32,6 +32,7 @@ import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.SubjectAdapter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -184,6 +185,11 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     @Override
     public Map status() throws Throwable {
         return client.status();
+    }
+
+    @Override
+    public List history() throws Throwable {
+        return client.history();
     }
 
 }

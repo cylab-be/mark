@@ -24,6 +24,7 @@ import com.mongodb.BasicDBObject;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -623,5 +624,23 @@ public class RequestHandler implements ServerInterface {
         status.put("db.evidence.size", stats.getInteger("size"));
 
         return status;
+    }
+
+    @Override
+    public List<Map> history() throws Throwable {
+        Document query = new Document();
+
+        FindIterable<Document> documents = mongodb
+                .getCollection("statistics")
+                .find(query);
+
+
+        List<Map> history = new LinkedList<>();
+
+        for (Document doc : documents) {
+            history.add(convertToMap(doc));
+        }
+
+        return history;
     }
 }

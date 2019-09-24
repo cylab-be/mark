@@ -1,6 +1,7 @@
 package be.cylab.mark.core;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -212,5 +213,12 @@ public interface ServerInterface<T extends Subject> {
      * @throws Throwable if something went wrong
      */
     void resume() throws Throwable;
+
+    /**
+     * Get the last previous status objects.
+     * @return
+     * @throws Throwable if something goes wrong
+     */
+    List<Map> history() throws Throwable;
 
 }

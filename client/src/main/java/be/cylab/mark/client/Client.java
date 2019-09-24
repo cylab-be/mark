@@ -341,6 +341,11 @@ public class Client<T extends Subject> implements ServerInterface {
         return json_rpc_client.invoke("status", null, Map.class);
     }
 
+    @Override
+    public final List<Map> history() throws Throwable {
+        return json_rpc_client.invoke("history", null, List.class);
+    }
+
 
 
     /**

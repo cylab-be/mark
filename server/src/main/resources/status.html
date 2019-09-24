@@ -16,7 +16,7 @@
 
         <p>Running: {{ status.get("running") }}</p>
 
-        <div>
+        <div class='my-4'>
             {% if (status.get("running")) %}
             <a href="/status/pause" class="btn btn-warning">
                 <i class="fas fa-pause"></i> Pause
@@ -27,6 +27,8 @@
             </a>
             {% endif %}
         </div>
+
+        <canvas id="chart-history-memory" class='my-4'></canvas>
     </div>
 </div>
 
@@ -45,9 +47,11 @@
         <p>Total nodes: {{ status.get("executor.nodes") }}</p>
         <p>Total CPU's: {{ status.get("executor.cpus") }}</p>
 
-        
+        <canvas id="chart-history-job-executetime" class='my-4'></canvas>
     </div>
 </div>
+
+
 
 <div class="card my-4">
     <div class="card-body">
@@ -81,6 +85,99 @@
 <div class="text-muted bottom-right">
     Reload in <span id="reload-countdown">60</span> seconds
 </div>
+
+<script>
+
+var ctx = document.getElementById('chart-history-job-executetime').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        datasets: [{
+            borderColor: 'rgb(255, 99, 132)',
+            data: {{ history_job_executetime | raw }}
+        }]
+    },
+
+    // Configuration options go here
+    options: {
+        legend: {
+            display: false,
+        },
+        elements: {
+            line: {
+                tension: 0 // disables bezier curves
+            }
+        },
+        scales: {
+            xAxes: [{
+                type: 'time',
+                display: true,
+                scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Used memory'
+                }
+            }]
+        }
+    }
+});
+
+var ctx = document.getElementById('chart-history-memory').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        datasets: [{
+            borderColor: 'rgb(255, 99, 132)',
+            data: {{ history_memory | raw }}
+        }]
+    },
+
+    // Configuration options go here
+    options: {
+        legend: {
+            display: false,
+        },
+        elements: {
+            line: {
+                tension: 0 // disables bezier curves
+            }
+        },
+        scales: {
+            xAxes: [{
+                type: 'time',
+                display: true,
+                scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                }
+            }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Average job execution time [ms]'
+                }
+            }]
+        }
+    }
+});
+</script>
 
 <script type="text/javascript">
     var reload_countdown = 60;

@@ -24,7 +24,11 @@
 package be.cylab.mark.webserver;
 
 import be.cylab.mark.client.Client;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
@@ -56,10 +60,42 @@ class StatusRoute implements TemplateViewRoute {
         attributes.put("mark", this.client);
         try {
             attributes.put("status", this.client.status());
+            List history = this.client.history();
+            attributes.put("history_memory", extractAndEncode(history, "memory_used"));
+            attributes.put("history_job_executetime", extractAndEncodeDouble(history, "executor_job_executetime"));
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from client: " + ex.getMessage());
             halt(500);
         }
         return new ModelAndView(attributes, "status.html");
+    }
+
+    private String extractAndEncode(List<Map> history, String field)
+            throws JsonProcessingException {
+        List<Point> points = new ArrayList<>();
+
+        for (Map<String, Object> status : history) {
+            points.add(
+                    new Point(
+                            (long) status.get("time"),
+                            (int) status.get(field)));
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(points);
+    }
+
+    private String extractAndEncodeDouble(List<Map> history, String field) throws JsonProcessingException {
+        List<Point> points = new ArrayList<>();
+
+        for (Map<String, Object> status : history) {
+            points.add(
+                    new Point(
+                            (long) status.get("time"),
+                            (double) status.get(field)));
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(points);
     }
 }
