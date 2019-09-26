@@ -5,23 +5,31 @@
 {% block content %}
 <h1>{{ report.getSubject() }}</h1>
 
-
 <p>Report id: <b>{{ report.getId() }}</b></p>
 <p>Subject: <b>{{ report.getSubject() }}</b></p>
 <p>Score: <b>{{ report.getScore() }}</b></p>
-<p>Label: {{ report.getlabel() }}</p>
 <p>Timestamp: {{ report.timeFormatted() }}</p>
-<p>{{ report.getReport() | raw }}</p>
 
-<h3>Detector</h3>
-<p>Detector algorithm: {{ report.getProfile().getClassName() }}</p>
-<p>Label: {{ report.getProfile().getLabel() }}</p>
+<div class="card my-4">
+    <div class="card-body">
+        {{ report.getReport() | raw }}
+    </div>
+</div>
+
+<h3>Detector : {{ report.getProfile().getLabel() }}</h3>
+<p>Algorithm: {{ report.getProfile().getClassName() }}</p>
 <p>Trigger label: {{ report.getProfile().getTriggerLabel() }}</p>
-<p>Parameters: {{ report.getProfile().getParameters() }}</p>
+<p>Parameters:</p>
+
+<ul>
+    {% for p in report.getProfile().getParameters() %}
+    <li>{{ p.getKey() }} : {{ p.getValue() }}</li>
+    {% endfor %}
+</ul>
 
 <h3>Data requests</h3>
 
-<p>This detector has processed following data:</p>
+<p>This detector has queried following data:</p>
 
 <table class="table table-striped">
 {% for r in report.getRequests() %}
