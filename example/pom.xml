@@ -6,7 +6,7 @@
     <parent>
         <groupId>be.cylab.mark</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.27-SNAPSHOT</version>
+        <version>0.0.27</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
