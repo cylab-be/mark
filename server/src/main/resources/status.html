@@ -11,8 +11,11 @@
         <p>MARK version {{ status.get("version") }}</p>
 
         <p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
-        <p>Memory: {{ (status.get("memory.total") / 1024 / 1024) | numberformat("#") }}MB</p>
-        <p>Used: {{ (status.get("memory.used") / 1024 / 1024) | numberformat("#") }}MB</p>
+        <p>
+            Memory:
+            {{ (status.get("memory.used") / 1024 / 1024) | numberformat("#") }}MB
+            ({{ (status.get("memory.total") / 1024 / 1024) | numberformat("#") }}MB available)
+        </p>
 
         <p>Running: {{ status.get("running") }}</p>
 
@@ -88,6 +91,21 @@
 
 <script>
 
+window.colors = {
+    red: 'rgba(255, 99, 132, 0.4)',
+    orange: 'rgba(255, 165, 0, 0.6)',
+    yellow: 'rgba(255, 205, 86, 0.4)',
+    green: 'rgba(0, 178, 0, 0.6)',
+    blue: 'rgba(54, 162, 235, 0.4)',
+    purple: 'rgba(153, 102, 255, 0.4)',
+    grey: 'rgba(201, 203, 207, 0.4)'
+};
+
+window.colorNames = Object.keys(window.colors);
+
+window.transparent = "rgba(255, 255, 255, 0.0)";
+
+// ------ job execution time
 var ctx = document.getElementById('chart-history-job-executetime').getContext('2d');
 var chart = new Chart(ctx, {
     // The type of chart we want to create
@@ -96,15 +114,22 @@ var chart = new Chart(ctx, {
     // The data for our dataset
     data: {
         datasets: [{
-            borderColor: 'rgb(255, 99, 132)',
-            data: {{ history_job_executetime | raw }}
+            borderColor: colors.blue,
+            backgroundColor: transparent,
+            data: {{ history_job_executetime | raw }},
+            label: 'Job execution time'},
+        {
+            borderColor: colors.orange,
+            backgroundColor: transparent,
+            data: {{ history_job_waittime | raw }},
+            label: 'Job wait time'
         }]
     },
 
     // Configuration options go here
     options: {
         legend: {
-            display: false,
+            display: true,
         },
         elements: {
             line: {
@@ -126,31 +151,42 @@ var chart = new Chart(ctx, {
                 },
                 scaleLabel: {
                     display: true,
-                    labelString: 'Average job execution time [ms]'
+                    labelString: 'Time [ms]'
                 }
             }]
         }
     }
 });
 
-var ctx = document.getElementById('chart-history-memory').getContext('2d');
-var chart = new Chart(ctx, {
+// ------ load and memory
+ctx = document.getElementById('chart-history-memory').getContext('2d');
+chart = new Chart(ctx, {
     // The type of chart we want to create
     type: 'line',
 
     // The data for our dataset
     data: {
         datasets: [{
-            borderColor: 'rgb(255, 99, 132)',
-            data: {{ history_memory | raw }}
+            borderColor: colors.blue,
+            backgroundColor: transparent,
+            data: {{ history_memory | raw }},
+            label: 'Memory usage',
+            yAxisID: 'memory',
+        },
+        {
+            borderColor: colors.orange,
+            backgroundColor: transparent,
+            data: {{ history_load | raw }},
+            label: 'Load',
+            yAxisID: 'load',
         }]
     },
 
     // Configuration options go here
     options: {
         legend: {
-            display: false,
-        },
+            display: true
+,        },
         elements: {
             line: {
                 tension: 0 // disables bezier curves
@@ -166,6 +202,7 @@ var chart = new Chart(ctx, {
                 }
             }],
             yAxes: [{
+                id: 'memory',
                 ticks: {
                     beginAtZero:true
                 },
@@ -173,7 +210,54 @@ var chart = new Chart(ctx, {
                     display: true,
                     labelString: 'Used memory [MB]'
                 }
+            },
+                {
+                id: 'load',
+                ticks: {
+                    beginAtZero:true
+                },
+                position: 'right',
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Load'
+                }
             }]
+        },
+        annotation: {
+            annotations: [
+                {
+                    label: {
+                        content: 'Available memory',
+                        backgroundColor: colors.blue,
+                        yAdjust: 20,
+                        xAdjust: -50,
+                        enabled: true,
+                    },
+                    drawTime: 'afterDraw', // overrides annotation.drawTime if set
+                    type: 'line',
+                    mode: 'horizontal',
+                    scaleID: 'memory',
+                    value: {{ (status.get("memory.total") / 1024 / 1024) | numberformat("#") }},
+                    borderColor: colors.blue,
+                    borderWidth: 2
+                },
+                {
+                    label: {
+                        content: 'CPUs',
+                        backgroundColor: colors.orange,
+                        yAdjust: 20,
+                        xAdjust: 50,
+                        enabled: true,
+                    },
+                    drawTime: 'afterDraw', // overrides annotation.drawTime if set
+                    type: 'line',
+                    mode: 'horizontal',
+                    scaleID: 'load',
+                    value: {{ status.get("processors") }},
+                    borderColor: colors.orange,
+                    borderWidth: 2
+                }
+            ]
         }
     }
 });

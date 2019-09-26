@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
@@ -71,10 +70,18 @@ class StatusRoute implements TemplateViewRoute {
                     .collect(Collectors.toList());
             attributes.put("history_memory", encode(history_memory));
 
+            attributes.put(
+                    "history_load",
+                    encode(extractDouble(history, "load")));
+
 
             attributes.put(
                     "history_job_executetime",
                     encode(extractDouble(history, "executor_job_executetime")));
+
+            attributes.put(
+                    "history_job_waittime",
+                    encode(extractDouble(history, "executor_job_waittime")));
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from client: " + ex.getMessage());
             halt(500);
