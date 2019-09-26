@@ -628,7 +628,11 @@ public class RequestHandler implements ServerInterface {
 
     @Override
     public List<Map> history() throws Throwable {
-        Document query = new Document();
+
+        // 1h
+        long start_time = System.currentTimeMillis() - 1000 * 3600;
+        Document query = new Document()
+                .append("time", new Document("$gt", start_time));
 
         FindIterable<Document> documents = mongodb
                 .getCollection("statistics")

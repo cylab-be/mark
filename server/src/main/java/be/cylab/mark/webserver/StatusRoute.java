@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
@@ -61,8 +63,18 @@ class StatusRoute implements TemplateViewRoute {
         try {
             attributes.put("status", this.client.status());
             List history = this.client.history();
-            attributes.put("history_memory", extractAndEncode(history, "memory_used"));
-            attributes.put("history_job_executetime", extractAndEncodeDouble(history, "executor_job_executetime"));
+
+            List<Point> history_memory = extractInt(history, "memory_used");
+
+            history_memory = history_memory.stream()
+                    .map((Point t) -> new Point(t.getT(), t.getY() / 1024 / 1024))
+                    .collect(Collectors.toList());
+            attributes.put("history_memory", encode(history_memory));
+
+
+            attributes.put(
+                    "history_job_executetime",
+                    encode(extractDouble(history, "executor_job_executetime")));
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from client: " + ex.getMessage());
             halt(500);
@@ -70,8 +82,7 @@ class StatusRoute implements TemplateViewRoute {
         return new ModelAndView(attributes, "status.html");
     }
 
-    private String extractAndEncode(List<Map> history, String field)
-            throws JsonProcessingException {
+    private List<Point> extractInt(List<Map> history, String field) {
         List<Point> points = new ArrayList<>();
 
         for (Map<String, Object> status : history) {
@@ -81,11 +92,10 @@ class StatusRoute implements TemplateViewRoute {
                             (int) status.get(field)));
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(points);
+        return points;
     }
 
-    private String extractAndEncodeDouble(List<Map> history, String field) throws JsonProcessingException {
+    private List<Point> extractDouble(List<Map> history, String field) {
         List<Point> points = new ArrayList<>();
 
         for (Map<String, Object> status : history) {
@@ -95,6 +105,10 @@ class StatusRoute implements TemplateViewRoute {
                             (double) status.get(field)));
         }
 
+        return points;
+    }
+
+    private String encode(List<Point> points) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(points);
     }
