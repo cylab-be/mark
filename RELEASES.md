@@ -1,5 +1,17 @@
 # MARK Releases
 
+## 0.0.27
+
+JSON-RPC:
+
+* only one status() method that replaces executorStatus() and dbStatus()
+* added history() method that return status for the last 24h (used to show graphs on the UI)
+
+
+UI:
+
+* multiple graphs and info on the status page
+
 ## 0.0.26
 
 JSON-RPC:
