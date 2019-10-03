@@ -21,6 +21,7 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.SubjectAdapter;
 import com.mongodb.BasicDBObject;
+import com.mongodb.client.MongoCursor;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.Collections;
@@ -487,6 +488,23 @@ public class RequestHandler implements ServerInterface {
                 unique_subjects += 1;
         }
         return unique_subjects;
+    }
+
+    public final String[] findDistinctEntries(final String field) {
+        List<String> entries = new ArrayList<>();
+
+        try (MongoCursor<String> cursor = mongodb
+                .getCollection(COLLECTION_EVIDENCE)
+                .distinct(field, String.class).iterator()) {
+
+            while (cursor.hasNext()) {
+                String temp_entry = cursor.next();
+                entries.add(temp_entry);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return entries.toArray(new String[entries.size()]);
     }
 
     /**

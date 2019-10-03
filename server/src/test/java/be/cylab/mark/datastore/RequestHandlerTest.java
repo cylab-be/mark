@@ -106,6 +106,30 @@ public class RequestHandlerTest extends TestCase {
         assertEquals(0, evidences.length);
     }
 
+    public void testfindDistinctEntries() throws Throwable {
+        RequestHandler rq = this.getRequestHandler();
+        String label_field = "LABEL";
+        String name_field = "name";
+
+        Evidence ev = new Evidence();
+        ev.setLabel("test");
+        ev.setReport("Some report...");
+        ev.setScore(0.99);
+        ev.setSubject(new DummySubject("test"));
+        ev.setTime(123456);
+        rq.addEvidence(ev);
+
+        ev.setLabel("test2");
+        ev.setSubject(new DummySubject("test"));
+        rq.addEvidence(ev);
+
+        String[] distinct_labels = rq.findDistinctEntries(label_field);
+        assertEquals(2, distinct_labels.length);
+
+        String[] distinct_subjects = rq.findDistinctEntries(name_field);
+        assertEquals(1, distinct_subjects.length);
+    }
+
     private RequestHandler getRequestHandler() {
         String mongo_host = System.getenv(Config.ENV_MONGO_HOST);
         if (mongo_host == null) {
