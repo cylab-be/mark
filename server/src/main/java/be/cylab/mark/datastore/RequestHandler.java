@@ -476,8 +476,9 @@ public class RequestHandler implements ServerInterface {
      * @param doc   doc containing the aggregation value.
      * @return int, number of unique subjects
      */
-    public final int findUniqueSubjects(final Document doc) {
+    public final Subject[] findUniqueSubjects(final Document doc) {
         int unique_subjects = 0;
+        List<Subject> entries = new ArrayList<>();
         Document query = new Document("$group",
                             new Document("_id", doc));
         AggregateIterable<Document> db_output = mongodb
@@ -486,8 +487,10 @@ public class RequestHandler implements ServerInterface {
 
         for (Document db_document : db_output) {
                 unique_subjects += 1;
+                entries.add(adapter.readFromMongo(db_document
+                        .get("_id", Document.class)));
         }
-        return unique_subjects;
+        return entries.toArray(new Subject[entries.size()]);
     }
 
     public final String[] findDistinctEntries(final String field) {
