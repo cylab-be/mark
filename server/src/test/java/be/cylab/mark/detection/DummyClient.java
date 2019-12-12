@@ -140,6 +140,12 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     }
 
     @Override
+    public String[] findDistinctEntries(String field) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+    @Override
     public RawData[] findData(Document query) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
