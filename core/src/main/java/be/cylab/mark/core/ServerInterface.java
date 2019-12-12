@@ -144,6 +144,14 @@ public interface ServerInterface<T extends Subject> {
             throws Throwable;
 
     /**
+     * Find all distinct values for a given Field in the database.
+     * @param field
+     * @return
+     * @throws Throwable if an error occured
+     */
+    String[] findDistinctEntries(String field) throws Throwable;
+
+    /**
      * Search for data with a custom filter (don't forget to mention a label,
      * for example).
      *
