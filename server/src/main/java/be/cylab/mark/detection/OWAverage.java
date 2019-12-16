@@ -31,13 +31,12 @@ import be.cylab.mark.core.ServerInterface;
 import info.debatty.java.aggregation.OWA;
 import java.util.Arrays;
 import java.util.Collections;
-import org.eclipse.jetty.util.ArrayUtil;
 
 /**
  *
  * @author georgi
  */
-public class OrderedWeightedAverage implements DetectionAgentInterface {
+public class OWAverage implements DetectionAgentInterface {
     private static final double[] DEFAULT_OWA_WEIGHTS = {0.2, 0.4, 0.3, 0.1};
     private OWA owa_aggregator;
 
@@ -85,14 +84,14 @@ public class OrderedWeightedAverage implements DetectionAgentInterface {
         //check if there are more scores than weights and if so extend them
         if (ordered_scores.length > DEFAULT_OWA_WEIGHTS.length) {
             double[] new_weights = new double[scores.length];
-            System.arraycopy(DEFAULT_OWA_WEIGHTS,
+            System.arraycopy(owa_weights,
                     0,
                     new_weights,
                     0,
-                    DEFAULT_OWA_WEIGHTS.length);
+                    owa_weights.length);
             owa_aggregator = new OWA(new_weights);
         } else {
-            owa_aggregator = new OWA(DEFAULT_OWA_WEIGHTS);
+            owa_aggregator = new OWA(owa_weights);
         }
 
         //create the evidence

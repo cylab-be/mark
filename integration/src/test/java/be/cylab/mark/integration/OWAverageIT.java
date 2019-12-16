@@ -27,19 +27,20 @@ import be.cylab.mark.client.Client;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import java.net.URL;
+import java.util.Arrays;
 import static junit.framework.TestCase.assertEquals;
 
 /**
  *
  * @author georgi
  */
-public class OrderedWeightedAverageIT extends MarkCase {
+public class OWAverageIT extends MarkCase {
 
     public final void testOrderedWeightedAverage() throws Throwable {
         server = getServer();
 
         DetectionAgentProfile agent = new DetectionAgentProfile();
-        agent.setClassName("be.cylab.mark.detection.OrderedWeightedAverage");
+        agent.setClassName("be.cylab.mark.detection.OWAverage");
         agent.setLabel("detection.owa");
         agent.setTriggerLabel("data.");
         server.addDetectionAgent(agent);
@@ -55,43 +56,53 @@ public class OrderedWeightedAverageIT extends MarkCase {
         ev.setLabel("data.test1");
         ev.setScore(1);
         ev.setSubject(link);
+        ev.setTime(12341);
         datastore.addEvidence(ev);
 
         Evidence ev2 = new Evidence();
         ev2.setLabel("data.test2");
         ev2.setScore(0.8);
         ev2.setSubject(link);
+        ev2.setTime(12342);
         datastore.addEvidence(ev2);
 
         Thread.sleep(3000);
         Evidence[] owa_evidences =
-                datastore.findEvidence("detection.owa", link);
+                datastore.findLastEvidences("detection.owa", link);
 
-        assertEquals(2, owa_evidences.length);
-        assertEquals(0.52, owa_evidences[0].getScore(), 0.0);
+        assertEquals(1, owa_evidences.length);
+        assertEquals(0.52,
+                owa_evidences[0].getScore(),
+                0.0);
 
         Evidence ev3 = new Evidence();
         ev3.setLabel("data.test3");
         ev3.setScore(0.6);
         ev3.setSubject(link);
+        ev3.setTime(12343);
         datastore.addEvidence(ev3);
 
         Evidence ev4 = new Evidence();
         ev4.setLabel("data.test4");
         ev4.setScore(0.2);
         ev4.setSubject(link);
+        ev4.setTime(12344);
         datastore.addEvidence(ev4);
 
         Evidence ev5 = new Evidence();
         ev5.setLabel("data.test5");
         ev5.setScore(0.2);
         ev5.setSubject(link);
+        ev5.setTime(12345);
         datastore.addEvidence(ev5);
 
         Thread.sleep(3000);
         Evidence[] new_owa_evidences =
-                datastore.findEvidence("detection.owa", link);
+                datastore.findLastEvidences("detection.owa", link);
 
-        assertEquals(0.72, new_owa_evidences[0].getScore(), 0.0);
+        assertEquals(1, new_owa_evidences.length);
+        assertEquals(0.72,
+                new_owa_evidences[0].getScore(),
+                0.0);
     }
 }
