@@ -27,7 +27,6 @@ import be.cylab.mark.client.Client;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import java.net.URL;
-import java.util.Arrays;
 import static junit.framework.TestCase.assertEquals;
 
 /**

@@ -97,6 +97,7 @@ public class OWAverage implements DetectionAgentInterface {
         //create the evidence
         Evidence ev = new Evidence();
 
+        //the score for the evidence is the aggregated scores
         ev.setScore(owa_aggregator.aggregate(ordered_scores));
         ev.setSubject(event.getSubject());
         ev.setTime(event.getTimestamp());
