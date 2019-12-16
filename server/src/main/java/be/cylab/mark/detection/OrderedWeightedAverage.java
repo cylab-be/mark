@@ -29,6 +29,9 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
 import info.debatty.java.aggregation.OWA;
+import java.util.Arrays;
+import java.util.Collections;
+import org.eclipse.jetty.util.ArrayUtil;
 
 /**
  *
@@ -36,6 +39,7 @@ import info.debatty.java.aggregation.OWA;
  */
 public class OrderedWeightedAverage implements DetectionAgentInterface {
     private static final double[] DEFAULT_OWA_WEIGHTS = {0.2, 0.4, 0.3, 0.1};
+    private OWA owa_aggregator;
 
     @Override
     public void analyze(
@@ -61,14 +65,40 @@ public class OrderedWeightedAverage implements DetectionAgentInterface {
                     + " from configuration file. Error: " + ex.getMessage());
         }
 
+        //get the evidences from the datastore
         Evidence[] evidences = datastore.findLastEvidences(
                 profile.getTriggerLabel(), event.getSubject());
-        OWA owa_aggregator = new OWA(owa_weights);
+
+        //get the scores of the evidences
+        Double[] scores = new Double[evidences.length];
+        for (int i = 0; i < evidences.length; i++) {
+            Double score = evidences[i].getScore();
+            scores[i] = score;
+        }
+        //sort the array in descending order and copy them to a primitive array
+        Arrays.sort(scores, Collections.reverseOrder());
+        double[] ordered_scores = new double[scores.length];
+        for (int i = 0; i < scores.length; i++) {
+            ordered_scores[i] = scores[i];
+        }
+
+        //check if there are more scores than weights and if so extend them
+        if (ordered_scores.length > DEFAULT_OWA_WEIGHTS.length) {
+            double[] new_weights = new double[scores.length];
+            System.arraycopy(DEFAULT_OWA_WEIGHTS,
+                    0,
+                    new_weights,
+                    0,
+                    DEFAULT_OWA_WEIGHTS.length);
+            owa_aggregator = new OWA(new_weights);
+        } else {
+            owa_aggregator = new OWA(DEFAULT_OWA_WEIGHTS);
+        }
 
         //create the evidence
         Evidence ev = new Evidence();
 
-        //ev.setScore(owa.aggregate());
+        ev.setScore(owa_aggregator.aggregate(ordered_scores));
         ev.setSubject(event.getSubject());
         ev.setTime(event.getTimestamp());
         ev.setReport("OWA Aggregation generated for evidences with"
