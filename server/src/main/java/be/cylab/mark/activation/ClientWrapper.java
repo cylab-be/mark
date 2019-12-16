@@ -153,12 +153,6 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public String[] findDistinctEntries(String field) throws Throwable {
-        return client.findDistinctEntries(field);
-    }
-
-
-    @Override
     public Object getFromCache(String key) throws Throwable {
         return client.getFromCache(key);
     }

@@ -61,10 +61,20 @@ public class OrderedWeightedAverage implements DetectionAgentInterface {
                     + " from configuration file. Error: " + ex.getMessage());
         }
 
-        OWA owa = new OWA(owa_weights);
         Evidence[] evidences = datastore.findLastEvidences(
                 profile.getTriggerLabel(), event.getSubject());
-        //String[] evidence_labels = datastore.findDistinctEntries("LABEL");
+        OWA owa_aggregator = new OWA(owa_weights);
+
+        //create the evidence
+        Evidence ev = new Evidence();
+
+        //ev.setScore(owa.aggregate());
+        ev.setSubject(event.getSubject());
+        ev.setTime(event.getTimestamp());
+        ev.setReport("OWA Aggregation generated for evidences with"
+                + " label " + profile.getTriggerLabel());
+        datastore.addEvidence(ev);
+
     }
     
 }

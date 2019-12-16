@@ -482,7 +482,7 @@ public class RequestHandler implements ServerInterface {
         Document query = new Document("$group",
                             new Document("_id", doc));
         AggregateIterable<Document> db_output = mongodb
-                                .getCollection(COLLECTION_DATA)
+                                .getCollection(COLLECTION_EVIDENCE)
                                 .aggregate(Arrays.asList(query));
 
         for (Document db_document : db_output) {

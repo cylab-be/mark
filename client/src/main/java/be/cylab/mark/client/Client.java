@@ -261,15 +261,6 @@ public class Client<T extends Subject> implements ServerInterface {
     }
 
     @Override
-    public final String[] findDistinctEntries(final String field)
-            throws Throwable {
-        return json_rpc_client.invoke(
-                "findDisctinctEntries",
-                new Object[]{field},
-                String[].class);
-    }
-
-    @Override
     public final URL getURL() {
         return this.server_url;
     }
