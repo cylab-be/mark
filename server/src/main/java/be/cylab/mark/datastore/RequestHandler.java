@@ -650,20 +650,16 @@ public class RequestHandler implements ServerInterface {
         status.put("db.data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
         status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
-        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1}"));
+        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1024}"));
         try {
             status.put("db.data.size", stats.getInteger("size"));
         } catch (Exception ex) {
             status.put("db.data.size", stats.getDouble("size"));
         }
 
-        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1}"));
-        try {
-            status.put("db.evidence.size", stats.getInteger("size"));
-        } catch (Exception ex) {
-            LOGGER.error("Failed to fetch status from DB: " + ex.getMessage());
-            status.put("db.evidence.size", stats.getDouble("size"));
-        }
+        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1024}"));
+
+        status.put("db.evidence.size", stats.getInteger("size"));
 
         return status;
     }
