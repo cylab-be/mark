@@ -661,6 +661,7 @@ public class RequestHandler implements ServerInterface {
         try {
             status.put("db.evidence.size", stats.getInteger("size"));
         } catch (Exception ex) {
+            LOGGER.error("Failed to fetch status from DB: " + ex.getMessage());
             status.put("db.evidence.size", stats.getDouble("size"));
         }
 
