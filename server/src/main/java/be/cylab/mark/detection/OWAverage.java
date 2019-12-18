@@ -97,6 +97,11 @@ public class OWAverage implements DetectionAgentInterface {
         //create the evidence
         Evidence ev = new Evidence();
 
+        //get the IDs of the evidences used for aggregation
+        for (Evidence evidence: evidences) {
+            ev.references().add(evidence.getId());
+        }
+
         //the score for the evidence is the aggregated scores
         ev.setScore(owa_aggregator.aggregate(ordered_scores));
         ev.setSubject(event.getSubject());
