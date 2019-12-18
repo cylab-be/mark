@@ -465,7 +465,7 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        HashMap<String, Evidence> evidences = new HashMap<String, Evidence>();
+        HashMap<String, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {
             Evidence evidence = convertEvidence(doc);
 
@@ -651,10 +651,18 @@ public class RequestHandler implements ServerInterface {
         status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
         Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1}"));
-        status.put("db.data.size", stats.getInteger("size"));
+        try {
+            status.put("db.data.size", stats.getInteger("size"));
+        } catch (Exception ex) {
+            status.put("db.data.size", stats.getDouble("size"));
+        }
 
         stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1}"));
-        status.put("db.evidence.size", stats.getInteger("size"));
+        try {
+            status.put("db.evidence.size", stats.getInteger("size"));
+        } catch (Exception ex) {
+            status.put("db.evidence.size", stats.getDouble("size"));
+        }
 
         return status;
     }
