@@ -93,10 +93,17 @@ class StatusRoute implements TemplateViewRoute {
         List<Point> points = new ArrayList<>();
 
         for (Map<String, Object> status : history) {
-            points.add(
+            try {
+                points.add(
                     new Point(
                             (long) status.get("time"),
                             (int) status.get(field)));
+            } catch (Exception ex) {
+                points.add(
+                    new Point(
+                            (long) status.get("time"),
+                            (long) status.get(field)));
+            }
         }
 
         return points;
