@@ -46,6 +46,7 @@
         <jsonrpc4J.version>1.5.3.1</jsonrpc4J.version>
         <jetty.version>9.4.12.v20180830</jetty.version>
         <mongodb.version>3.11.0</mongodb.version>
+        <jackson.version>2.10.1</jackson.version>
         <!-- provide a default value for jvm.options, otherwize surefire will
         crash when combined with jacaco provided options. jvm.options will
         be overridden by command line value when running tests with jdk 9 and
