@@ -137,7 +137,6 @@ public class Client<T extends Subject> implements ServerInterface {
                     new Object[]{query, page},
                     RawData[].class);
             Collections.addAll(results, set);
-            System.out.println(set.length);
             page++;
         } while (set.length > 0);
 
