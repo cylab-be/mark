@@ -3,6 +3,10 @@
 ## Unreleased
   
 
+* **Fetch mongodb collection sizes in MB to avoid overflows**
+[7498fce52d21f21](https://github.com/cylab/mark/commit/7498fce52d21f21) Thibault Debatty *2020-01-08 08:58:13*
+* **Implement paging for findData(query) to reduce memory usage on the server. Fix issue #60**
+[0c85ada52c6ece3](https://github.com/cylab/mark/commit/0c85ada52c6ece3) Thibault Debatty *2020-01-08 08:53:16*
 * **Use git-changelog to generate CHANGELOG.md**
 [51c96506a4f982f](https://github.com/cylab/mark/commit/51c96506a4f982f) Thibault Debatty *2020-01-08 07:55:12*
 * **update jackson library. fix #58**
