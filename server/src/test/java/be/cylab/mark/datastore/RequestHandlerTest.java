@@ -58,7 +58,7 @@ public class RequestHandlerTest extends TestCase {
         rq.addRawData(data);
 
         Document query = new Document("DATA", "1234");
-        RawData[] result = rq.findData(query);
+        RawData[] result = rq.findData(query, 0);
         assertEquals(2, result.length);
     }
 

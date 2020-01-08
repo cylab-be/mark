@@ -53,10 +53,12 @@ public class RequestHandler implements ServerInterface {
     //Cache
     private final HashMap<String, Object> agents_cache;
 
+
     /**
-     *
+     * 
      * @param mongodb
-     * @param mqclient
+     * @param activation_controller
+     * @param adapter 
      */
     public RequestHandler(
             final MongoDatabase mongodb,
@@ -120,9 +122,17 @@ public class RequestHandler implements ServerInterface {
 
     @Override
     public final RawData[] findData(Document query) {
+        throw new UnsupportedOperationException(
+                "You should use findData(query, page) instead!");
+    }
+    
+    public static final int PAGE_SIZE = 1000;
+    
+    public final RawData[] findData(Document query, int page) {
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_DATA)
-                .find(query);
+                .find(query)
+                .skip(page * PAGE_SIZE).limit(PAGE_SIZE);
 
         ArrayList<RawData> results = new ArrayList<>();
         for (Document doc : documents) {

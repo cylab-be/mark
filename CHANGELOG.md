@@ -3,6 +3,8 @@
 ## Unreleased
   
 
+* **Use git-changelog to generate CHANGELOG.md**
+[51c96506a4f982f](https://github.com/cylab/mark/commit/51c96506a4f982f) Thibault Debatty *2020-01-08 07:55:12*
 * **update jackson library. fix #58**
 [615faff85353112](https://github.com/cylab/mark/commit/615faff85353112) Thibault Debatty *2020-01-07 16:43:06*
 * **Fix to allow compilation on JDK11**

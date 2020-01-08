@@ -227,7 +227,32 @@ public class ClientIT extends MarkCase {
         Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
         RawData[] result = datastore.findData(query);
         assertEquals(2, result.length);
+    }
 
+    public final void testFindALotOfDataWithBson() throws Throwable {
+        System.out.println("findData(Bson.Document) with many results");
+        System.out.println("=========================================");
+
+        server = getServer();
+        server.start();
+
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+
+        RawData<Link> data = new RawData();
+        data.setLabel("data.http");
+        data.setSubject(new Link("1.2.3.4", "some.server"));
+        data.setTime(123456);
+
+        int count = 1234;
+        for (int i = 0; i < count; i++) {
+            datastore.addRawData(data);
+        }
+
+
+        Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
+        RawData[] result = datastore.findData(query);
+        assertEquals(count, result.length);
     }
 
     public final void testFindEvidence() throws Throwable {

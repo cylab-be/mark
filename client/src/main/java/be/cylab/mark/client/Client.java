@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.bson.Document;
@@ -124,10 +125,23 @@ public class Client<T extends Subject> implements ServerInterface {
 
     @Override
     public final RawData[] findData(final Document query) throws Throwable {
-        return json_rpc_client.invoke(
-                "findData",
-                new Object[]{query},
-                RawData[].class);
+        // To avoid overloading the server with large queries, we have to use
+        // findData(query, page), and merge all results
+
+        int page = 0;
+        RawData[] set;
+        ArrayList<RawData> results = new ArrayList<>();
+        do {
+            set = json_rpc_client.invoke(
+                    "findData",
+                    new Object[]{query, page},
+                    RawData[].class);
+            Collections.addAll(results, set);
+            System.out.println(set.length);
+            page++;
+        } while (set.length > 0);
+
+        return results.toArray(new RawData[results.size()]);
     }
 
     /**
