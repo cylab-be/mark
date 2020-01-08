@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
+## 0.0.28
   
 
+* **Update changelog**
+[540d7f14cdc80e6](https://github.com/cylab/mark/commit/540d7f14cdc80e6) Thibault Debatty *2020-01-08 09:05:53*
+* **Bump Ignite to 2.7.6**
+[72af69e0dda8aa5](https://github.com/cylab/mark/commit/72af69e0dda8aa5) Thibault Debatty *2020-01-08 09:05:41*
 * **Fetch mongodb collection sizes in MB to avoid overflows**
 [7498fce52d21f21](https://github.com/cylab/mark/commit/7498fce52d21f21) Thibault Debatty *2020-01-08 08:58:13*
 * **Implement paging for findData(query) to reduce memory usage on the server. Fix issue #60**
