@@ -66,7 +66,7 @@ class StatusRoute implements TemplateViewRoute {
             List<Point> history_memory = extractInt(history, "memory_used");
 
             history_memory = history_memory.stream()
-                    .map((Point t) -> new Point(t.getT(), t.getY() / 1024 / 1024))
+                    .map((Point t) -> new Point(t.getT(), t.getY()))
                     .collect(Collectors.toList());
             attributes.put("history_memory", encode(history_memory));
 
@@ -93,17 +93,10 @@ class StatusRoute implements TemplateViewRoute {
         List<Point> points = new ArrayList<>();
 
         for (Map<String, Object> status : history) {
-            try {
-                points.add(
-                    new Point(
-                            (long) status.get("time"),
-                            (int) status.get(field)));
-            } catch (Exception ex) {
-                points.add(
-                    new Point(
-                            (long) status.get("time"),
-                            (long) status.get(field)));
-            }
+            points.add(
+                new Point(
+                        (long) status.get("time"),
+                        (int) status.get(field)));
         }
 
         return points;

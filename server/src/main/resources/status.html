@@ -13,8 +13,8 @@
         <p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
         <p>
             Memory:
-            {{ (status.get("memory.used") / 1024 / 1024) | numberformat("#") }}MB
-            ({{ (status.get("memory.total") / 1024 / 1024) | numberformat("#") }}MB available)
+            {{ status.get("memory.used") | numberformat("#") }}MB
+            ({{ status.get("memory.total") | numberformat("#") }}MB available)
         </p>
 
         <p>Running: {{ status.get("running") }}</p>
@@ -70,13 +70,13 @@
             <tr>
                 <th>Data</th>
                 <td>{{ status.get("db.data.count") }}</td>
-                <td>{{ (status.get("db.data.size") / 1024 / 1024) | numberformat("#") }}</td>
+                <td>{{ status.get("db.data.size") | numberformat("#") }}</td>
             </tr>
 
             <tr>
                 <th>Evidence</th>
                 <td>{{ status.get("db.evidence.count") }}</td>
-                <td>{{ (status.get("db.evidence.size") / 1024 / 1024) | numberformat("#") }}</td>
+                <td>{{ status.get("db.evidence.size") | numberformat("#") }}</td>
             </tr>
         </table>
     </div>
