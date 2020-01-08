@@ -55,10 +55,10 @@ public class RequestHandler implements ServerInterface {
 
 
     /**
-     * 
+     *
      * @param mongodb
      * @param activation_controller
-     * @param adapter 
+     * @param adapter
      */
     public RequestHandler(
             final MongoDatabase mongodb,
@@ -125,9 +125,9 @@ public class RequestHandler implements ServerInterface {
         throw new UnsupportedOperationException(
                 "You should use findData(query, page) instead!");
     }
-    
+
     public static final int PAGE_SIZE = 1000;
-    
+
     public final RawData[] findData(Document query, int page) {
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_DATA)
@@ -648,10 +648,12 @@ public class RequestHandler implements ServerInterface {
         status.put("db.data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
         status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
-        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1}"));
+        Document stats = mongodb.runCommand(
+                Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1048576}"));
         status.put("db.data.size", stats.getInteger("size"));
 
-        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1}"));
+        stats = mongodb.runCommand(
+                Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1048576}"));
         status.put("db.evidence.size", stats.getInteger("size"));
 
         return status;
