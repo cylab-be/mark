@@ -494,7 +494,7 @@ public class RequestHandler implements ServerInterface {
         Document query = new Document("$group",
                             new Document("_id", doc));
         AggregateIterable<Document> db_output = mongodb
-                                .getCollection(COLLECTION_EVIDENCE)
+                                .getCollection(COLLECTION_DATA)
                                 .aggregate(Arrays.asList(query));
 
         for (Document db_document : db_output) {
@@ -639,8 +639,8 @@ public class RequestHandler implements ServerInterface {
         status.put("os.version", os.getVersion());
 
         Runtime rt = Runtime.getRuntime();
-        status.put("memory.total", rt.maxMemory());
-        status.put("memory.used", rt.totalMemory() - rt.freeMemory());
+        status.put("memory.total", rt.maxMemory() / 1024 / 1024);
+        status.put("memory.used", (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024);
 
         return status;
     }
@@ -650,14 +650,14 @@ public class RequestHandler implements ServerInterface {
         status.put("db.data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
         status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
-        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1024}"));
+        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1048576}"));
         try {
             status.put("db.data.size", stats.getInteger("size"));
         } catch (Exception ex) {
             status.put("db.data.size", stats.getDouble("size"));
         }
 
-        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1024}"));
+        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1048576}"));
 
         status.put("db.evidence.size", stats.getInteger("size"));
 
