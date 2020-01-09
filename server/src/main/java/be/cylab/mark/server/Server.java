@@ -7,7 +7,6 @@ import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.webserver.WebServer;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
@@ -50,7 +49,7 @@ public class Server {
      * @param web_server
      * @param activation_controller
      * @param datastore
-     * @throws java.lang.Throwable
+     * @throws java.lang.Throwable on any error
      */
     @Inject
     public Server(final Config config, final WebServer web_server,
@@ -102,6 +101,7 @@ public class Server {
     /**
      * Stop the data agents, wait for all detection agents to complete and
      * eventually stop the datastore.
+     * @throws java.lang.Exception on any error
      */
     public final void stop() throws Exception {
         LOGGER.info("Stopping server...");
@@ -125,13 +125,18 @@ public class Server {
         LOGGER.info("Server stopped!");
     }
 
+    /**
+     *
+     * @throws InterruptedException if thread is interrupted while waiting
+     */
     public final void awaitTermination() throws InterruptedException {
         LOGGER.info("Wait for data agents to finish...");
         for (DataAgentContainer agent : data_agents) {
             agent.join();
         }
 
-        LOGGER.info("Wait for activation controller to finish running tasks...");
+        LOGGER.info(
+                "Wait for activation controller to finish running tasks...");
         activation_controller.awaitTermination();
     }
 
@@ -147,27 +152,29 @@ public class Server {
     /**
      *
      * @param profile
-     * @throws InvalidProfileException
-     * @throws MalformedURLException
+     * @throws InvalidProfileException if config is not correct
+     * @throws MalformedURLException if URL of server is incorrect
      */
     public final void addDataAgentProfile(final DataAgentProfile profile)
             throws InvalidProfileException, MalformedURLException {
         data_agents.add(new DataAgentContainer(profile, config));
     }
 
+
+    private static final String LOG_PATTERN = "%d [%p] [%t] %c %m%n";
+
     private void startLogging() {
 
         Logger.getRootLogger().getLoggerRepository().resetConfiguration();
 
         ConsoleAppender console = new ConsoleAppender();
-        String PATTERN = "%d [%p] [%t] %c %m%n";
-        console.setLayout(new PatternLayout(PATTERN));
+        console.setLayout(new PatternLayout(LOG_PATTERN));
         console.setThreshold(Level.FATAL);
         console.activateOptions();
         Logger.getRootLogger().addAppender(console);
 
         console = new ConsoleAppender();
-        console.setLayout(new PatternLayout(PATTERN));
+        console.setLayout(new PatternLayout(LOG_PATTERN));
         console.setThreshold(Level.INFO);
         console.activateOptions();
         Logger.getLogger("be.cylab.mark").addAppender(console);
@@ -181,8 +188,9 @@ public class Server {
                     getFileAppender("mark-ignite.log", Level.INFO));
             Logger.getLogger("org.eclipse.jetty").addAppender(
                     getFileAppender("mark-jetty.log", Level.INFO));
-            Logger.getLogger("be.cylab.mark.activation.ActivationController").addAppender(
-                    getFileAppender("mark-activationctonroller.log", Level.DEBUG));
+            Logger.getLogger("be.cylab.mark.activation.ActivationController")
+                    .addAppender(getFileAppender(
+                            "mark-activationctonroller.log", Level.DEBUG));
 
         } catch (FileNotFoundException ex) {
             System.err.println(
@@ -191,7 +199,8 @@ public class Server {
 
     }
 
-    private FileAppender getFileAppender(String filename, Level level)
+    private FileAppender getFileAppender(
+            final String filename, final Level level)
             throws FileNotFoundException {
         FileAppender fa = new FileAppender();
         fa.setName(filename);
@@ -227,7 +236,7 @@ public class Server {
      *
      * @param directory
      */
-    public void loadJars(final File directory) {
+    public final void loadJars(final File directory) {
 
         LOGGER.info("Load jars...");
 
@@ -242,12 +251,9 @@ public class Server {
             method.setAccessible(true);
 
             File[] jar_files = directory
-                    .listFiles(new FilenameFilter() {
-                        @Override
-                        public boolean accept(final File dir, final String name) {
-                            return name.endsWith(".jar");
-                        }
-                    });
+                    .listFiles(
+                            (final File dir, final String name) ->
+                            name.endsWith(".jar"));
 
             for (File jar_file : jar_files) {
                 LOGGER.info(jar_file.getAbsolutePath());
@@ -263,14 +269,14 @@ public class Server {
 
     }
 
-    private void loadDataAgents(File modules_dir) throws FileNotFoundException {
-                // Parse *.data.yml files
-        File[] data_agent_files = modules_dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith(".data.yml");
-            }
-        });
+    private void loadDataAgents(final File modules_dir)
+            throws FileNotFoundException {
+
+        // Parse *.data.yml files
+        File[] data_agent_files = modules_dir.listFiles(
+                (final File dir, final String name) ->
+                        name.endsWith(".data.yml"));
+
         //Instanciate DataAgentProfiles for each previously parsed files.
         for (File file : data_agent_files) {
             data_agents.add(
@@ -281,16 +287,14 @@ public class Server {
         LOGGER.info("Found " + data_agents.size() + " data agents ...");
     }
 
-    private void loadDetectionAgents(File modules_dir)
+    private void loadDetectionAgents(final File modules_dir)
             throws FileNotFoundException {
+
         // Parse *.detection.yml files
         File[] detection_agent_files
-                = modules_dir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(final File dir, final String name) {
-                        return name.endsWith(".detection.yml");
-                    }
-                });
+                = modules_dir.listFiles(
+                        (final File dir, final String name) ->
+                                name.endsWith(".detection.yml"));
 
         for (File file : detection_agent_files) {
             activation_controller.addAgent(

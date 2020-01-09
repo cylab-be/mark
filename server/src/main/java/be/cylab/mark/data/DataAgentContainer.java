@@ -25,11 +25,7 @@ package be.cylab.mark.data;
 
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DataAgentInterface;
-import java.net.MalformedURLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import be.cylab.mark.client.Client;
-import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.server.Config;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +38,11 @@ public class DataAgentContainer extends Thread {
     private final Config config;
     private final DataAgentProfile profile;
 
+    /**
+     *
+     * @param profile
+     * @param config
+     */
     public DataAgentContainer(
             final DataAgentProfile profile, final Config config) {
         this.profile = profile;
