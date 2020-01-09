@@ -143,7 +143,8 @@ public class RequestHandlerTest extends TestCase {
         RequestHandler handler = new RequestHandler(
                 mongodb,
                 new DummyActivationContoller(),
-                new DummySubjectAdapter());
+                new DummySubjectAdapter(),
+                new MongoParser(new DummySubjectAdapter()));
 
         return handler;
     }
