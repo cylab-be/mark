@@ -42,6 +42,10 @@ public class ActivationController<T extends Subject> extends SafeThread
     private final LinkedList<DetectionAgentProfile> profiles;
     private final ExecutorInterface executor;
 
+    //store the last time an agent has been triggered for a specific Subject,
+    //to be able to handle if it needs to be triggered at specific intervals
+    private final Map<String, Long> last_time_triggered;
+
     // events are stored in a table of label => subjects => Event
     // to allow fast lookup
     private volatile Map<String, Map<T, Event<T>>> events;
@@ -63,6 +67,7 @@ public class ActivationController<T extends Subject> extends SafeThread
         this.profiles = new LinkedList<>();
         this.executor = executor;
         this.events = new HashMap<>();
+        this.last_time_triggered = new HashMap<>();
     }
 
     /**
@@ -169,8 +174,11 @@ public class ActivationController<T extends Subject> extends SafeThread
                 }
 
                 for (Event<T> event : events.get(event_label).values()) {
-                    this.scheduleDetection(profile, event);
-                    scheduled++;
+                    if (checkCorrectTriggerTime(profile, event)) {
+                        updateLastTimeTriggered(profile, event);
+                        this.scheduleDetection(profile, event);
+                        scheduled++;
+                    }
                 }
             }
         }
@@ -192,6 +200,52 @@ public class ActivationController<T extends Subject> extends SafeThread
             final String trigger_label, final String event_label) {
 
         return Pattern.compile(trigger_label).matcher(event_label).find();
+    }
+
+    /**
+     * Check if the time between the current triggered event and the last
+     * triggered event for a given detection agent is long enough.
+     * @param profile
+     * @param event
+     * @return
+     */
+    boolean checkCorrectTriggerTime(
+            final DetectionAgentProfile profile, final Event<T> event) {
+        String key = profile.getClassName() + "-"
+                            + event.getSubject().toString();
+
+        if (last_time_triggered.containsKey(key)) {
+            if ((event.getTimestamp() - last_time_triggered.get(key)) <
+                    profile.getTriggerInterval()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Updates the LastTimeTriggered map with the new timestamp for the specific
+     * Detection Agent-Subject pair.
+     * @param profile
+     * @param event 
+     */
+    private void updateLastTimeTriggered(
+            final DetectionAgentProfile profile, final Event<T> event) {
+        String key = profile.getClassName() + "-"
+                            + event.getSubject().toString();
+
+        if (last_time_triggered.containsKey(key)) {
+            LOGGER.debug("Replacing for key {} old timestamp {} with new {}",
+                            key,
+                            last_time_triggered.get(key),
+                            event.getTimestamp());
+            last_time_triggered.replace(key, event.getTimestamp());
+        } else {
+            last_time_triggered.put(key, event.getTimestamp());
+            LOGGER.debug("Adding new key {} with timestamp {}",
+                            key,
+                            event.getTimestamp());
+        }
     }
 
     /**
@@ -282,6 +336,15 @@ public class ActivationController<T extends Subject> extends SafeThread
      */
     Map<String, Map<T, Event<T>>> getEvents() {
         return this.events;
+    }
+
+    /**
+     * Get the map of lastTriggeredAgents.
+     * Used for testing.
+     * @return 
+     */
+    Map<String, Long> getLastTimeTriggered() {
+        return this.last_time_triggered;
     }
 
     @Override
