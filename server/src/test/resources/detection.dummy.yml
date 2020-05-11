@@ -1,0 +1,9 @@
+# Launch a single Dummy agent for every
+# new http data
+---
+class_name:       mark.core.DummyDetector
+label:            detection.dummy
+trigger_label:    data.http
+trigger_interval: 1800
+parameters:
+    say:  echo
