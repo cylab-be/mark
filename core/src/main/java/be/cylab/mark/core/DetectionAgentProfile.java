@@ -28,6 +28,12 @@ public class DetectionAgentProfile {
     private String trigger_label = "";
 
     /**
+     * The label showing the triggering interval of this detection agent. Ex:
+     * an agent can be triggered constaly when = 0 or once a day = 86400.
+     */
+    private int trigger_interval = 0;
+
+    /**
      * The class of the detection agent to trigger.
      */
     private String class_name = "";
@@ -68,6 +74,22 @@ public class DetectionAgentProfile {
      */
     public final void setTriggerLabel(final String trigger_label) {
         this.trigger_label = trigger_label;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final int getTriggerInterval() {
+        return trigger_interval;
+    }
+
+    /**
+     *
+     * @param trigger_interval
+     */
+    public final void setTriggerInterval(final int trigger_interval) {
+        this.trigger_interval = trigger_interval;
     }
 
     /**

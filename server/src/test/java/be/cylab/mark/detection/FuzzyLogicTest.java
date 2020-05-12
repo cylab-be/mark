@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 
 /**
  *
- * @author georgi
+ * @author Georgi Nikolov
  */
 public class FuzzyLogicTest extends TestCase {
     double test_value1 = 0.6;

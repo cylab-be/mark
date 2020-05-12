@@ -13,8 +13,8 @@
         <p>Load: {{ status.get("load") }} ({{ status.get("processors") }} processors)</p>
         <p>
             Memory:
-            {{ (status.get("memory.used") / 1024 / 1024) | numberformat("#") }}MB
-            ({{ (status.get("memory.total") / 1024 / 1024) | numberformat("#") }}MB available)
+            {{ status.get("memory.used") | numberformat("#") }}MB
+            ({{ status.get("memory.total") | numberformat("#") }}MB available)
         </p>
 
         <p>Running: {{ status.get("running") }}</p>
