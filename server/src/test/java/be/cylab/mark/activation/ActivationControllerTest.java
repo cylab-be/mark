@@ -36,7 +36,7 @@ import java.io.InputStream;
 
 /**
  *
- * @author georgi
+ * @author Georgi Nikolov
  */
 public class ActivationControllerTest extends TestCase {
 

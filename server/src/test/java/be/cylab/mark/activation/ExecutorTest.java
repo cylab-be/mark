@@ -32,7 +32,7 @@ import be.cylab.mark.server.DummySubject;
 
 /**
  *
- * @author georgi
+ * @author Georgi Nikolov
  */
 public class ExecutorTest extends TestCase {
 

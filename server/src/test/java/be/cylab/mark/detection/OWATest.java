@@ -28,7 +28,7 @@ import info.debatty.java.aggregation.OWA;
 
 /**
  *
- * @author georgi
+ * @author Georgi Nikolov
  */
 public class OWATest extends TestCase {
     private static final double[] WEIGHTS = new double[]{0.2, 0.4, 0.3, 0.1};

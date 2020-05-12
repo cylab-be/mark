@@ -34,7 +34,7 @@ import java.util.Collections;
 
 /**
  *
- * @author georgi
+ * @author Georgi Nikolov
  */
 public class OWAverage implements DetectionAgentInterface {
     private static final double[] DEFAULT_OWA_WEIGHTS = {0.2, 0.4, 0.3, 0.1};

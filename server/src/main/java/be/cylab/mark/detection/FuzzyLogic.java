@@ -27,7 +27,7 @@ package be.cylab.mark.detection;
  * fuzzy logic function is f(x)=m*x + b
  * we need to calculate the mean and coefficient b to be able to calculate
  * the f(x) for given point x
- * @author georgi
+ * @author Georgi Nikolov
  */
 public class FuzzyLogic {
     private final double x1;
