@@ -112,7 +112,8 @@ public class Datastore {
         request_handler = new RequestHandler(
                 mongodb,
                 activation_controller,
-                config.getSubjectAdapter());
+                config.getSubjectAdapter(),
+                new MongoParser((config.getSubjectAdapter())));
 
         ObjectMapper object_mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();

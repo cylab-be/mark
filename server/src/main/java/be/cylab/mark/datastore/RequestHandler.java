@@ -49,33 +49,38 @@ public class RequestHandler implements ServerInterface {
     private final GridFSBucket gridfsbucket;
     private final ActivationControllerInterface activation_controller;
     private final SubjectAdapter adapter;
+    private final MongoParser parser;
 
     //Cache
     private final HashMap<String, Object> agents_cache;
+
 
     /**
      *
      * @param mongodb
      * @param activation_controller
      * @param adapter
+     * @param parser
      */
     public RequestHandler(
             final MongoDatabase mongodb,
             final ActivationControllerInterface activation_controller,
-            final SubjectAdapter adapter) {
+            final SubjectAdapter adapter,
+            final MongoParser parser) {
 
         this.agents_cache = new HashMap();
         this.mongodb = mongodb;
         this.activation_controller = activation_controller;
         this.adapter = adapter;
+        this.parser = parser;
         this.gridfsbucket = GridFSBuckets.create(mongodb, COLLECTION_FILES);
 
         // Create indexes for LABEL and TIME
-        Document index = new Document(LABEL, 1);
+        Document index = new Document(parser.LABEL, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
 
-        index = new Document(TIME, 1);
+        index = new Document(parser.TIME, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
     }
@@ -109,7 +114,7 @@ public class RequestHandler implements ServerInterface {
     @Override
     public final void addRawData(final RawData data) {
 
-        Document document = convert(data);
+        Document document = parser.convert(data);
         mongodb.getCollection(COLLECTION_DATA)
                 .insertOne(document);
 
@@ -121,13 +126,21 @@ public class RequestHandler implements ServerInterface {
 
     @Override
     public final RawData[] findData(Document query) {
+        throw new UnsupportedOperationException(
+                "You should use findData(query, page) instead!");
+    }
+
+    public static final int PAGE_SIZE = 1000;
+
+    public final RawData[] findData(Document query, int page) {
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_DATA)
-                .find(query);
+                .find(query)
+                .skip(page * PAGE_SIZE).limit(PAGE_SIZE);
 
         ArrayList<RawData> results = new ArrayList<>();
         for (Document doc : documents) {
-            results.add(convert(doc));
+            results.add(parser.convert(doc));
         }
         return results.toArray(new RawData[results.size()]);
     }
@@ -145,8 +158,8 @@ public class RequestHandler implements ServerInterface {
             final long till) {
 
         Document query = new Document();
-        query.append(LABEL, label);
-        query.append(TIME, new Document("$gte", from).append("$lte", till));
+        query.append(parser.LABEL, label);
+        query.append(parser.TIME, new Document("$gte", from).append("$lte", till));
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -155,7 +168,7 @@ public class RequestHandler implements ServerInterface {
 
         ArrayList<RawData> results = new ArrayList<>();
         for (Document doc : documents) {
-            results.add(convert(doc));
+            results.add(parser.convert(doc));
         }
         return results.toArray(new RawData[results.size()]);
     }
@@ -167,7 +180,7 @@ public class RequestHandler implements ServerInterface {
     @Override
     public final void addEvidence(final Evidence evidence) {
 
-        Document document = convert(evidence);
+        Document document = parser.convert(evidence);
         mongodb.getCollection(COLLECTION_EVIDENCE)
                 .insertOne(document);
         ObjectId id = (ObjectId)document.get( "_id" );
@@ -208,117 +221,6 @@ public class RequestHandler implements ServerInterface {
                 new DetectionAgentProfile[profiles.size()]);
     }
 
-    private static final String LABEL = "LABEL";
-    private static final String TIME = "TIME";
-    private static final String DATA = "DATA";
-    private static final String SCORE = "SCORE";
-    private static final String REPORT = "REPORT";
-    private static final String REFERENCES = "references";
-
-    /**
-     * Convert from MongoDB document to RawData.
-     *
-     * @param doc
-     * @return
-     */
-    private RawData convert(final Document doc) {
-
-        RawData data = new RawData();
-        data.setSubject(adapter.readFromMongo(doc));
-        data.setData(doc.getString(DATA));
-        data.setTime(doc.getLong(TIME));
-        data.setLabel(doc.getString(LABEL));
-
-        return data;
-
-    }
-
-    private Evidence convertEvidence(final Document doc) {
-
-        Evidence evidence = new Evidence();
-        evidence.setSubject(adapter.readFromMongo(doc));
-        evidence.setScore(doc.getDouble(SCORE));
-        evidence.setTime(doc.getLong(TIME));
-        evidence.setLabel(doc.getString(LABEL));
-        evidence.setReport(doc.getString(REPORT));
-        evidence.setId(doc.getObjectId("_id").toString());
-        evidence.setReferences(doc.getList(REFERENCES, String.class));
-        evidence.setRequests(doc.getList("requests", String.class));
-
-        Document profile_doc = doc.get("profile", Document.class);
-
-        if (profile_doc != null) {
-            DetectionAgentProfile profile = new DetectionAgentProfile();
-            profile.setClassName(profile_doc.getString("class_name"));
-            profile.setLabel(profile_doc.getString("label"));
-            profile.setTriggerLabel(profile_doc.getString("trigger_label"));
-            profile.setParameters(this.convertToMap(profile_doc.get("parameters", Document.class)));
-            evidence.setProfile(profile);
-        }
-
-        return evidence;
-    }
-
-    public Document convert(Map map) {
-        return new Document(map);
-    }
-
-    public HashMap convertToMap (Document doc) {
-        HashMap map = new HashMap();
-
-        for (Map.Entry<String, Object> entry : doc.entrySet()) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-
-        return map;
-    }
-
-    /**
-     * Convert from RawData to MongoDB document.
-     *
-     * @param data
-     * @return
-     */
-    private Document convert(final RawData data) {
-
-        Document doc = new Document()
-                .append(LABEL, data.getLabel())
-                .append(TIME, data.getTime())
-                .append(DATA, data.getData());
-        adapter.writeToMongo(data.getSubject(), doc);
-        return doc;
-    }
-
-    /**
-     * Convert from Evidence to MongoDB document.
-     *
-     * @param evidence
-     * @return
-     */
-    private Document convert(final Evidence evidence) {
-
-        Document doc = new Document()
-                .append(LABEL, evidence.getLabel())
-                .append(TIME, evidence.getTime())
-                .append(SCORE, evidence.getScore())
-                .append(TIME, evidence.getTime())
-                .append(REPORT, evidence.getReport())
-                .append(REFERENCES, evidence.getReferences())
-                .append("requests", evidence.getRequests());
-
-        if (evidence.getProfile() != null) {
-            Document profile_doc = new Document()
-                .append("class_name", evidence.getProfile().getClassName())
-                .append("label", evidence.getProfile().getLabel())
-                .append("trigger_label", evidence.getProfile().getTriggerLabel())
-                .append("parameters", convert(evidence.getProfile().getParameters()));
-            doc.append("profile", profile_doc);
-        }
-
-        adapter.writeToMongo(evidence.getSubject(), doc);
-        return doc;
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -333,7 +235,7 @@ public class RequestHandler implements ServerInterface {
             throws Throwable {
 
         Document query = new Document();
-        query.append(LABEL, label);
+        query.append(parser.LABEL, label);
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -356,7 +258,7 @@ public class RequestHandler implements ServerInterface {
         LOGGER.debug("findEvidence : " + label);
 
         Document query = new Document();
-        query.append(LABEL, label);
+        query.append(parser.LABEL, label);
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
@@ -364,7 +266,7 @@ public class RequestHandler implements ServerInterface {
 
         HashMap<Subject, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {
-            Evidence evidence = convertEvidence(doc);
+            Evidence evidence = parser.convertEvidence(doc);
 
             Evidence inmap = evidences.get(evidence.getSubject());
             if (inmap == null) {
@@ -436,7 +338,7 @@ public class RequestHandler implements ServerInterface {
             throw new IllegalArgumentException("Invalid id provided: " + id);
         }
 
-        return convertEvidence(document);
+        return parser.convertEvidence(document);
     }
 
     public URL getURL() {
@@ -456,7 +358,7 @@ public class RequestHandler implements ServerInterface {
         Document query = new Document();
         // Find everything that starts with "label"
         Pattern regex = Pattern.compile("^" + label);
-        query.append(LABEL, regex);
+        query.append(parser.LABEL, regex);
 
         // ... corresponding to subject
         adapter.writeToMongo(subject, query);
@@ -467,7 +369,7 @@ public class RequestHandler implements ServerInterface {
 
         HashMap<String, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {
-            Evidence evidence = convertEvidence(doc);
+            Evidence evidence = parser.convertEvidence(doc);
 
             Evidence inmap = evidences.get(evidence.getLabel());
             if (inmap == null) {
@@ -579,8 +481,8 @@ public class RequestHandler implements ServerInterface {
     public Evidence[] findEvidenceSince(
             String label, Subject subject, long time) throws Throwable {
         Document query = new Document();
-        query.append(LABEL, label);
-        query.append(TIME, new BasicDBObject("$gt", time));
+        query.append(parser.LABEL, label);
+        query.append(parser.TIME, new BasicDBObject("$gt", time));
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -594,7 +496,7 @@ public class RequestHandler implements ServerInterface {
         List<Evidence> evidences = new ArrayList<>();
 
         for (Document doc : documents) {
-            evidences.add(convertEvidence(doc));
+            evidences.add(parser.convertEvidence(doc));
         }
 
         return evidences.toArray(new Evidence[evidences.size()]);
@@ -650,15 +552,12 @@ public class RequestHandler implements ServerInterface {
         status.put("db.data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
         status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
-        Document stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1048576}"));
-        try {
-            status.put("db.data.size", stats.getInteger("size"));
-        } catch (Exception ex) {
-            status.put("db.data.size", stats.getDouble("size"));
-        }
+        Document stats = mongodb.runCommand(
+                Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1048576}"));
+        status.put("db.data.size", stats.getInteger("size"));
 
-        stats = mongodb.runCommand(Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1048576}"));
-
+        stats = mongodb.runCommand(
+                Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1048576}"));
         status.put("db.evidence.size", stats.getInteger("size"));
 
         return status;
@@ -680,7 +579,7 @@ public class RequestHandler implements ServerInterface {
         List<Map> history = new LinkedList<>();
 
         for (Document doc : documents) {
-            history.add(convertToMap(doc));
+            history.add(parser.convertToMap(doc));
         }
 
         return history;
