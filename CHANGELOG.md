@@ -1,15 +1,63 @@
 # Changelog
 
 ## Unreleased
-  
 
+
+* **update htmlunit version**
+[970c36b7b916fe2](https://github.com/cylab/mark/commit/970c36b7b916fe2) Thibault Debatty *2020-05-25 11:49:11*
+* **fix test**
+[e7ba65b663f8a70](https://github.com/cylab/mark/commit/e7ba65b663f8a70) Thibault Debatty *2020-05-25 10:31:21*
+* **updated CHANGELOG**
+[f1b404c84eeed06](https://github.com/cylab/mark/commit/f1b404c84eeed06) Thibault Debatty *2020-05-25 09:33:43*
+* **Updated the @author tag in the generated comments (instead of "georgi" -> "Georgi Nikolov")**
+[bc1d781fc1fdb17](https://github.com/cylab/mark/commit/bc1d781fc1fdb17) Georgi Nikolov *2020-05-12 10:01:16*
+* **Updated the ActivationController to hold information of when is the last time an agent was triggered and check if enough time has passed to trigger it again depending on the Detection Agents trigger_interval parameter. Added accordingly UnitTests to test these functionalities**
+[80379adabe6ecd8](https://github.com/cylab/mark/commit/80379adabe6ecd8) Georgi Nikolov *2020-05-11 20:03:35*
+* **Added a field "trigger_interval" to the DetectionAgentProfile which will be used to signal at what intervals the detection agent should be triggered**
+[ea515610341509a](https://github.com/cylab/mark/commit/ea515610341509a) Georgi Nikolov *2020-05-11 20:03:05*
+* **Added a new test resource to server package to test the Activation Controller with detection agents**
+[d21daa6bc94da12](https://github.com/cylab/mark/commit/d21daa6bc94da12) Georgi Nikolov *2020-05-11 20:02:32*
+* **Start to fix checkstyle errors**
+[3f85a2e2161a269](https://github.com/cylab/mark/commit/3f85a2e2161a269) Thibault Debatty *2020-01-09 10:24:33*
+* **Move mongo conversion to separate class. Fix issue #49**
+[98277888c7f58fd](https://github.com/cylab/mark/commit/98277888c7f58fd) Thibault Debatty *2020-01-09 10:12:02*
 * **Style**
 [46ce5ea6ac62f78](https://github.com/cylab/mark/commit/46ce5ea6ac62f78) Thibault Debatty *2020-01-09 09:53:24*
+* **Updated how the size of the DBs are shown on the Status page o the UI (now correctly shows the size in MB)**
+[25d36cafaa6ac5c](https://github.com/cylab/mark/commit/25d36cafaa6ac5c) Georgi Nikolov *2020-01-08 11:38:36*
+* **Changed that the uniqueSubject count is retrieved from the Collection_DATa instead of Collection_EVidence; This is already the case on the trunk, for some reason the change wasn't present on this branch**
+[26d19b7ccba1d96](https://github.com/cylab/mark/commit/26d19b7ccba1d96) Georgi Nikolov *2020-01-08 11:37:53*
 * **Update CHANGELOG**
 [071073e1fa90b24](https://github.com/cylab/mark/commit/071073e1fa90b24) Thibault Debatty *2020-01-08 09:18:09*
+* **Removed the try-catch and instead changed the scale of the db size field. From scale 1 to scale 1024 (retrieve the size data in KB instead of B)**
+[4ff4a25eed46506](https://github.com/cylab/mark/commit/4ff4a25eed46506) Georgi Nikolov *2019-12-18 12:22:54*
+* **Added a try-catch clause for extractInt when the field is of form Long instead of Int. If an error occurs it is logged to the LOGGER too**
+[4e53e2b810de598](https://github.com/cylab/mark/commit/4e53e2b810de598) Georgi Nikolov *2019-12-18 11:24:40*
+* **Added a logger output if an error occurs when the dbStatus method throws an error**
+[5dbbf1df4a71b85](https://github.com/cylab/mark/commit/5dbbf1df4a71b85) Georgi Nikolov *2019-12-18 11:24:17*
+* **Added a try-catch clause when trying to get the status of the database as when the size of a collection exceeds 2^31-1 (max integer value) it returns instead a double, which can cause an error**
+[344e92fbc687c18](https://github.com/cylab/mark/commit/344e92fbc687c18) Georgi Nikolov *2019-12-18 08:51:21*
+* **Added references to the evidences used for the aggregation**
+[0ca8f728aa209f6](https://github.com/cylab/mark/commit/0ca8f728aa209f6) Georgi Nikolov *2019-12-18 08:51:04*
+* **Added style changes where needed - added Override notation to couple of the methods and added method comments to others where missing**
+[79dc597102549e8](https://github.com/cylab/mark/commit/79dc597102549e8) Georgi Nikolov *2019-12-18 07:42:59*
+* **Added extra comments to the OWAverage detection aggregation agent. Extended the OWAverageIT test to check how the scores are aggregated for less scores than weights and more scores than weights**
+[e01144d3e372748](https://github.com/cylab/mark/commit/e01144d3e372748) Georgi Nikolov *2019-12-16 11:03:07*
+* **Renamed the OrderedWeightedAverage to OWAverage**
+[0095108c0aeda26](https://github.com/cylab/mark/commit/0095108c0aeda26) Georgi Nikolov *2019-12-16 11:01:19*
+* **Added an Integration test for the OrderedWeightedAverage detection agent (aggregation agent)**
+[2049d7ca8dc85b2](https://github.com/cylab/mark/commit/2049d7ca8dc85b2) Georgi Nikolov *2019-12-16 10:04:53*
+* **Extended the OrderedWeightedAverage detection agent to get the evidences, get the scores, sort them in descending order, aggregate them using the OWA aggregation and create an evidence. Created a test for the OWA aggregator to test how it aggregates and generates a score**
+[3b56cc208a96d15](https://github.com/cylab/mark/commit/3b56cc208a96d15) Georgi Nikolov *2019-12-16 10:03:55*
+* **Reverted the previous changes as the distinct label method is not needed for the OWA aggregator (only needed by the mark-python-client for the subject-score csv generation)**
+[b9e1f6170dcfd75](https://github.com/cylab/mark/commit/b9e1f6170dcfd75) Georgi Nikolov *2019-12-16 08:04:13*
+* **Extended the Client and ServerInterface to support the findDistinctValues()**
+[320541c8dd81f82](https://github.com/cylab/mark/commit/320541c8dd81f82) Georgi Nikolov *2019-12-12 13:16:20*
+* **Added the maven dependency for the aggregation.OWA and aggregation.WOWA. Added an aggregation detection agent OWA. Extended the Client to have a findDistinctValue method (same as Request Handler) to get the distinct Label names from the database**
+[46c22fd06f58bc0](https://github.com/cylab/mark/commit/46c22fd06f58bc0) Georgi Nikolov *2019-12-12 13:12:15*
 
 ## 0.0.28
-  
+
 
 * **Update changelog**
 [540d7f14cdc80e6](https://github.com/cylab/mark/commit/540d7f14cdc80e6) Thibault Debatty *2020-01-08 09:05:53*
@@ -33,7 +81,7 @@
 [45f5e66e78ed487](https://github.com/cylab/mark/commit/45f5e66e78ed487) Tibo *2019-09-27 06:53:07*
 
 ## 0.0.27
-  
+
 
 * **updated status page screenshot**
 [d429bbf3222c788](https://github.com/cylab/mark/commit/d429bbf3222c788) Thibault Debatty *2019-09-26 11:04:13*
@@ -51,7 +99,7 @@
 [f81c32c6c602646](https://github.com/cylab/mark/commit/f81c32c6c602646) Thibault Debatty *2019-09-24 06:03:47*
 
 ## 0.0.26
-  
+
 
 * **Show db status as table**
 [ccf9225de5da1d5](https://github.com/cylab/mark/commit/ccf9225de5da1d5) Thibault Debatty *2019-09-23 12:38:14*
@@ -101,7 +149,7 @@
 [3c0b6fe0d969ad2](https://github.com/cylab/mark/commit/3c0b6fe0d969ad2) Thibault Debatty *2019-09-20 12:56:59*
 
 ## 0.0.25
-  
+
 
 * **Allow to inspect data processed by a detector**
 [27e187bd49352da](https://github.com/cylab/mark/commit/27e187bd49352da) Thibault Debatty *2019-09-20 12:24:16*
@@ -117,7 +165,7 @@
 [148ad7e450c5047](https://github.com/cylab/mark/commit/148ad7e450c5047) Thibault Debatty *2019-09-19 10:12:04*
 
 ## 0.0.24
-  
+
 
 * **Use clientwrapper to save lavel in evidence report**
 [5a6618608b36be3](https://github.com/cylab/mark/commit/5a6618608b36be3) Thibault Debatty *2019-09-19 09:08:01*
@@ -137,7 +185,7 @@
 [1112dda1abce72b](https://github.com/cylab/mark/commit/1112dda1abce72b) Thibault Debatty *2019-09-18 08:00:24*
 
 ## 0.0.23
-  
+
 
 * **Fix default config file**
 [87a1695e865bad1](https://github.com/cylab/mark/commit/87a1695e865bad1) Thibault Debatty *2019-09-17 15:49:39*
@@ -145,7 +193,7 @@
 [99bcd6dfdf047ab](https://github.com/cylab/mark/commit/99bcd6dfdf047ab) Thibault Debatty *2019-09-16 11:59:02*
 
 ## 0.0.22
-  
+
 
 * **Add artifacts**
 [109f2cd7627b78e](https://github.com/cylab/mark/commit/109f2cd7627b78e) Thibault Debatty *2019-09-16 11:36:26*
@@ -167,7 +215,7 @@
 [17bf016ccc41355](https://github.com/cylab/mark/commit/17bf016ccc41355) Thibault Debatty *2019-09-14 08:32:17*
 
 ## 0.0.21
-  
+
 
 * **Revert "[maven-release-plugin] prepare release 0.0.21"**
 [6bbbd5eb3252866](https://github.com/cylab/mark/commit/6bbbd5eb3252866) Tibo *2019-09-13 09:33:19*
@@ -181,7 +229,7 @@
 [691997e090ce3be](https://github.com/cylab/mark/commit/691997e090ce3be) Thibault Debatty *2019-09-09 09:31:33*
 
 ## 0.0.20
-  
+
 
 * **Show correct label in selection box**
 [26b0a7833e509b8](https://github.com/cylab/mark/commit/26b0a7833e509b8) Thibault Debatty *2019-09-09 09:00:50*
@@ -333,7 +381,7 @@
 [9677822c6034990](https://github.com/cylab/mark/commit/9677822c6034990) Thibault Debatty *2019-08-26 12:20:13*
 
 ## 0.0.19
-  
+
 
 * **Removed System prints from ReadWrite agent**
 [02cad57c1a89cb7](https://github.com/cylab/mark/commit/02cad57c1a89cb7) Georgi Nikolov *2019-08-14 12:33:47*
@@ -357,7 +405,7 @@
 [fa3f0f4cb706148](https://github.com/cylab/mark/commit/fa3f0f4cb706148) Georgi Nikolov *2019-08-06 12:44:35*
 
 ## 0.0.18
-  
+
 
 * **Added a method "getUniqueSubjects()" which for now returns the number of unique Subjects (pairs CLIENT-SERVER in the case of Link and MASFAD) are in the evidences. To be used by the validate_output_eval python script to correctly calculate the true detection/false positive**
 [3987ff908f1bbfa](https://github.com/cylab/mark/commit/3987ff908f1bbfa) Georgi Nikolov *2019-07-14 18:53:17*
@@ -379,25 +427,25 @@
 [caccc66d3d9042b](https://github.com/cylab/mark/commit/caccc66d3d9042b) Tibo *2019-05-09 13:13:09*
 
 ## 0.0.17
-  
+
 
 * **remove 'v' from git tag format, to be consistent with artifacts name**
 [bc482a315837fe8](https://github.com/cylab/mark/commit/bc482a315837fe8) Thibault Debatty *2019-04-30 10:00:38*
 
 ## v0.0.16
-  
+
 
 * **Upload server-TAG-standalone.zip to download.cylab.be**
 [dde15ec2ca4e3cb](https://github.com/cylab/mark/commit/dde15ec2ca4e3cb) Tibo *2019-04-30 09:48:33*
 
 ## v0.0.15
-  
+
 
 * **Updated the FuzzyLogic class with its own personal parameters x1,x2,y1,y2 that have to be supplied to the constructor of the class the moment an object of the class is created. Adapted the unit test to use the new class parameters**
 [68c4659cc45668c](https://github.com/cylab/mark/commit/68c4659cc45668c) Georgi Nikolov *2019-04-25 12:15:34*
 
 ## v0.0.14
-  
+
 
 * **adding synchronized block for all cache methods**
 [81dbb6ecab4628b](https://github.com/cylab/mark/commit/81dbb6ecab4628b) bunyamin@live.be *2019-04-23 13:08:12*
@@ -839,13 +887,13 @@
 [733caa83a1886ca](https://github.com/cylab/mark/commit/733caa83a1886ca) Thibault Debatty *2017-02-13 16:20:07*
 
 ## v0.0.11
-  
+
 
 * **Added addFile method in ServerInterface and its implementation**
 [8ac80c73b495701](https://github.com/cylab/mark/commit/8ac80c73b495701) bunyamin@live.be *2019-03-26 14:05:16*
 
 ## v0.0.10
-  
+
 
 * **Renamed to be.cylab.mark**
 [28f497c7f9d7de4](https://github.com/cylab/mark/commit/28f497c7f9d7de4) Thibault Debatty *2019-03-26 10:06:35*
@@ -854,13 +902,13 @@
 
 ## v0.0.8
 ### Jira NEXUS-9138   
-  
+
 
 * **Have to mark integration as published, see bug https://issues.sonatype.org/browse/NEXUS-9138**
 [38da80364545c1f](https://github.com/cylab/mark/commit/38da80364545c1f) Thibault Debatty *2017-03-07 11:57:14*
 
 ## v0.0.7
-  
+
 
 * **Minor test change**
 [302bc8e56e40839](https://github.com/cylab/mark/commit/302bc8e56e40839) Thibault Debatty *2017-03-07 11:47:09*
@@ -878,7 +926,7 @@
 [95877c54c3b79a1](https://github.com/cylab/mark/commit/95877c54c3b79a1) Thibault Debatty *2017-03-07 10:57:40*
 
 ## v0.0.6
-  
+
 
 * **Minor style fix**
 [a7312f9cb618d9c](https://github.com/cylab/mark/commit/a7312f9cb618d9c) Thibault Debatty *2017-02-23 17:32:30*
@@ -900,7 +948,7 @@
 [ca1c1e23ab2eebc](https://github.com/cylab/mark/commit/ca1c1e23ab2eebc) Thibault Debatty *2017-02-22 14:47:04*
 
 ## v0.0.5
-  
+
 
 * **Cleaned server distribution zip**
 [9c5585bb1d0ec11](https://github.com/cylab/mark/commit/9c5585bb1d0ec11) Thibault Debatty *2017-02-21 23:47:26*
@@ -910,7 +958,7 @@
 [dde6736244ed93f](https://github.com/cylab/mark/commit/dde6736244ed93f) Thibault Debatty *2017-02-21 23:16:39*
 
 ## v0.0.4
-  
+
 
 * **Original javadoc config**
 [dbdaf554f7a9809](https://github.com/cylab/mark/commit/dbdaf554f7a9809) Thibault Debatty *2017-02-21 22:30:18*
@@ -918,7 +966,7 @@
 [4f2a1bd63219a83](https://github.com/cylab/mark/commit/4f2a1bd63219a83) Thibault Debatty *2017-02-21 22:23:08*
 
 ## v0.0.3
-  
+
 
 * **Revert to snapshot**
 [66851ec9b8c4022](https://github.com/cylab/mark/commit/66851ec9b8c4022) Thibault Debatty *2017-02-21 18:24:01*
@@ -942,13 +990,13 @@
 [f378588040fcee4](https://github.com/cylab/mark/commit/f378588040fcee4) Thibault Debatty *2017-02-18 10:55:22*
 
 ## v0.0.2
-  
+
 
 * **Prepare POM to create releases**
 [cc68e61cb702977](https://github.com/cylab/mark/commit/cc68e61cb702977) Thibault Debatty *2017-02-13 15:23:21*
 
 ## v0.0.1
-  
+
 
 * **Prepare POM to create releases**
 [9127f47110b1210](https://github.com/cylab/mark/commit/9127f47110b1210) Thibault Debatty *2017-02-13 15:02:09*
@@ -964,7 +1012,7 @@
 [fb141776319644d](https://github.com/cylab/mark/commit/fb141776319644d) Thibault Debatty *2017-02-13 14:56:10*
 
 ## v0.1
-  
+
 
 * **Prepare POM to create releases**
 [96353c13e35617b](https://github.com/cylab/mark/commit/96353c13e35617b) Thibault Debatty *2017-02-13 14:49:00*
