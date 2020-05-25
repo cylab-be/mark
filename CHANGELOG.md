@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+  
+
+* **Style**
+[46ce5ea6ac62f78](https://github.com/cylab/mark/commit/46ce5ea6ac62f78) Thibault Debatty *2020-01-09 09:53:24*
+* **Update CHANGELOG**
+[071073e1fa90b24](https://github.com/cylab/mark/commit/071073e1fa90b24) Thibault Debatty *2020-01-08 09:18:09*
+
 ## 0.0.28
   
 
