@@ -16,11 +16,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -165,40 +168,50 @@ public class Server {
 
     private void startLogging() {
 
-        Logger.getRootLogger().getLoggerRepository().resetConfiguration();
+        ConfigurationBuilder<BuiltConfiguration> builder =
+                ConfigurationBuilderFactory.newConfigurationBuilder();
+
+        // log internal errors from log4j
+        builder.setStatusLevel(Level.ERROR);
+
+
+
+        /*
+        LogManager.getRootLogger().getLoggerRepository().resetConfiguration();
 
         ConsoleAppender console = new ConsoleAppender();
         console.setLayout(new PatternLayout(LOG_PATTERN));
         console.setThreshold(Level.FATAL);
         console.activateOptions();
-        Logger.getRootLogger().addAppender(console);
+        LogManager.getRootLogger().addAppender(console);
 
         console = new ConsoleAppender();
         console.setLayout(new PatternLayout(LOG_PATTERN));
         console.setThreshold(Level.INFO);
         console.activateOptions();
-        Logger.getLogger("be.cylab.mark").addAppender(console);
+        LogManager.getLogger("be.cylab.mark").addAppender(console);
 
         try {
-            Logger.getRootLogger().addAppender(
+            LogManager.getRootLogger().addAppender(
                     getFileAppender("mark.log", Level.INFO));
-            Logger.getLogger("be.cylab.mark.server").addAppender(
+            LogManager.getLogger("be.cylab.mark.server").addAppender(
                     getFileAppender("mark-server.log", Level.INFO));
-            Logger.getLogger("org.apache.ignite").addAppender(
+            LogManager.getLogger("org.apache.ignite").addAppender(
                     getFileAppender("mark-ignite.log", Level.INFO));
-            Logger.getLogger("org.eclipse.jetty").addAppender(
+            LogManager.getLogger("org.eclipse.jetty").addAppender(
                     getFileAppender("mark-jetty.log", Level.INFO));
-            Logger.getLogger("be.cylab.mark.activation.ActivationController")
+            LogManager.getLogger("be.cylab.mark.activation.ActivationController")
                     .addAppender(getFileAppender(
                             "mark-activationctonroller.log", Level.DEBUG));
 
         } catch (FileNotFoundException ex) {
             System.err.println(
                     "Logs will not be written to files: " + ex.getMessage());
-        }
+        }*/
 
     }
 
+    /*
     private FileAppender getFileAppender(
             final String filename, final Level level)
             throws FileNotFoundException {
@@ -212,7 +225,7 @@ public class Server {
         fa.activateOptions();
 
         return fa;
-    }
+    }*/
 
     private void parseModules() throws FileNotFoundException {
         LOGGER.info("Parsing modules directory ");
