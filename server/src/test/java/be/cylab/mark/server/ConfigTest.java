@@ -47,29 +47,4 @@ public class ConfigTest extends TestCase {
         assertEquals("1.2.3.4", config.server_host);
 
     }
-
-    /**
-     * Test of getLogDiretory method, of class Config.
-     */
-    public void testGetLogDiretory() throws Exception {
-        System.out.println("getLogDiretory");
-        Config conf = Config.getTestConfig();
-
-        assertEquals("/tmp", conf.getLogDiretory().getAbsolutePath());
-
-        conf.log_directory = "./logs";
-        try {
-            System.out.println(conf.getLogDiretory().getPath());
-            fail("Should throw a file not found exception!");
-        } catch (FileNotFoundException ex) {
-            assertEquals(
-                    ex.getClass().getSimpleName(),
-                    "FileNotFoundException");
-        }
-
-        conf.setPath(new File("/tmp/conf.yml"));
-        conf.log_directory = "./";
-        assertEquals("/tmp", conf.getLogDiretory().getAbsolutePath());
-    }
-
 }

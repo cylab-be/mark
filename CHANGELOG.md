@@ -3,6 +3,16 @@
 ## Unreleased
 
 
+* **use Log4J configuration class with annotation**
+[ef592f71ca1f7f2](https://github.com/cylab/mark/commit/ef592f71ca1f7f2) Thibault Debatty *2020-05-25 12:52:12*
+* **load plugin jars using command line class path**
+[24d6cf4e09552ba](https://github.com/cylab/mark/commit/24d6cf4e09552ba) Thibault Debatty *2020-05-25 12:42:11*
+* **update guice**
+[9a125cd6ba38bc4](https://github.com/cylab/mark/commit/9a125cd6ba38bc4) Thibault Debatty *2020-05-25 12:40:14*
+* **updated CHANGELOG**
+[eaa9c009558f2de](https://github.com/cylab/mark/commit/eaa9c009558f2de) Thibault Debatty *2020-05-25 11:52:25*
+* **started upgrade to log4j-2**
+[8dd99cb999d0e0f](https://github.com/cylab/mark/commit/8dd99cb999d0e0f) Thibault Debatty *2020-05-25 11:52:12*
 * **update htmlunit version**
 [970c36b7b916fe2](https://github.com/cylab/mark/commit/970c36b7b916fe2) Thibault Debatty *2020-05-25 11:49:11*
 * **fix test**

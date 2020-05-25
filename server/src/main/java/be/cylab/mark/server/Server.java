@@ -12,8 +12,6 @@ import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.data.DataAgentContainer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.slf4j.LoggerFactory;
@@ -74,6 +72,7 @@ public class Server {
 
         LOGGER.info("Starting server...");
 
+        LOGGER.debug(System.getProperty("java.class.path"));
         this.parseModules();
 
         web_server.start();

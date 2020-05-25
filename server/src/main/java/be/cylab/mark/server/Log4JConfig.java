@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.server;
 
+import be.cylab.mark.activation.ActivationController;
 import java.net.URI;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -31,8 +32,8 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.ConfigurationSource;
 import org.apache.logging.log4j.core.config.Order;
-import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.LayoutComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 
@@ -46,7 +47,6 @@ public class Log4JConfig extends ConfigurationFactory {
 
     @Override
     protected String[] getSupportedTypes() {
-        System.out.println("getSupportedTypes");
         return new String[] {"*"};
     }
 
@@ -70,33 +70,54 @@ public class Log4JConfig extends ConfigurationFactory {
             final String name,
             final ConfigurationBuilder<BuiltConfiguration> builder) {
 
-        System.out.println("Configure log4j...");
         builder.setConfigurationName(name);
 
         // Log errors from LOG4J itself
         builder.setStatusLevel(Level.ERROR);
 
-        // Log to stdout
-        AppenderComponentBuilder appenderBuilder = builder
+        LayoutComponentBuilder layout = builder.newLayout("PatternLayout")
+                .addAttribute("pattern", LOG_PATTERN);
+
+        // STDOUT
+        builder.add(builder
                 .newAppender("STDOUT", "CONSOLE")
-                .addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT);
-
-        appenderBuilder
-                .add(builder.newLayout("PatternLayout")
-                .addAttribute("pattern", LOG_PATTERN));
-        builder.add(appenderBuilder);
+                .addAttribute("target", ConsoleAppender.Target.SYSTEM_OUT)
+                .add(layout));
 
 
-        // Log MARK server : INFO
-        builder.add(builder.newLogger(
-                Server.class.getCanonicalName(), Level.DEBUG)
+        // Log MARK server (INFO) to STDOUT
+        builder.add(builder
+                .newLogger(Server.class.getCanonicalName(), Level.INFO)
                 .add(builder.newAppenderRef("STDOUT"))
                 .addAttribute("additivity", false));
 
-        // Log everything else : WARN
+        // Log everything else (WARN) to STDOUT
         builder.add(builder
                 .newRootLogger(Level.WARN)
                 .add(builder.newAppenderRef("STDOUT")));
+
+        // Log MARK ActivationController (INFO) to file
+        builder.add(builder
+                .newAppender("FILE-ACTIVATION", "FILE")
+                .addAttribute(
+                        "fileName",
+                        "logs/mark-activationctonroller.log")
+                .add(layout));
+        builder.add(builder
+            .newLogger(ActivationController.class.getCanonicalName(), Level.DEBUG)
+            .add(builder.newAppenderRef("FILE-ACTIVATION")));
+
+        // Log MARK Server (DEBUG) to file
+        builder.add(builder
+                .newAppender("FILE-SERVER", "FILE")
+                .addAttribute(
+                        "fileName",
+                        "logs/mark-server.log")
+                .add(layout));
+        builder.add(builder
+            .newLogger(ActivationController.class.getCanonicalName(), Level.DEBUG)
+            .add(builder.newAppenderRef("FILE-SERVER")));
+
         return builder.build();
     }
 
