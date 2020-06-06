@@ -3,6 +3,8 @@
 ## Unreleased
 
 
+* **finish logging update**
+[5785e95ef92a24a](https://github.com/cylab/mark/commit/5785e95ef92a24a) Thibault Debatty *2020-05-25 13:35:47*
 * **use Log4J configuration class with annotation**
 [ef592f71ca1f7f2](https://github.com/cylab/mark/commit/ef592f71ca1f7f2) Thibault Debatty *2020-05-25 12:52:12*
 * **load plugin jars using command line class path**
