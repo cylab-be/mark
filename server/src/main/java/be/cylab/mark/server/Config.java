@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import be.cylab.mark.core.SubjectAdapter;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -143,11 +142,6 @@ public class Config {
      */
     public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
 
-    /**
-     * Logger.
-     */
-    private static final org.slf4j.Logger LOGGER
-            = LoggerFactory.getLogger(Config.class);
 
     /**
      * Max threads for tests.

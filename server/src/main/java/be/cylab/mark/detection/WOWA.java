@@ -29,7 +29,6 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 
 /**
  *

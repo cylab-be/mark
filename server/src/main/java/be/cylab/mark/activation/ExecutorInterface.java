@@ -31,9 +31,9 @@ import java.util.Map;
  * @author tibo
  */
 public interface ExecutorInterface {
-    public void submit(Runnable job);
+    void submit(Runnable job);
 
-    public boolean shutdown() throws InterruptedException;
+    boolean shutdown() throws InterruptedException;
 
-    public Map<String, Object> getStatus();
+    Map<String, Object> getStatus();
 }

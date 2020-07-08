@@ -2,7 +2,6 @@ package be.cylab.mark.activation;
 
 import java.io.Serializable;
 import java.net.URL;
-import be.cylab.mark.client.Client;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;

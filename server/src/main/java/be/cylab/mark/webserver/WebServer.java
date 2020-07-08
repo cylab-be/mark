@@ -24,7 +24,6 @@
 package be.cylab.mark.webserver;
 
 import be.cylab.mark.client.Client;
-import static spark.Spark.*;
 import com.google.inject.Inject;
 import be.cylab.mark.server.Config;
 import com.mitchellbosecke.pebble.loader.ClasspathLoader;
@@ -73,11 +72,11 @@ public class WebServer {
         PebbleTemplateEngine pebble = new PebbleTemplateEngine(
                 new ClasspathLoader());
 
-        staticFiles.location("/static");
-        port(8000);
+        spark.Spark.staticFiles.location("/static");
+        spark.Spark.port(8000);
 
-        get("/", new HomeRoute(client), pebble);
-        get("/status/pause", (rqst, rspns) -> {
+        spark.Spark.get("/", new HomeRoute(client), pebble);
+        spark.Spark.get("/status/pause", (rqst, rspns) -> {
             try {
                 client.pause();
             } catch (Throwable ex) {
@@ -87,7 +86,7 @@ public class WebServer {
             return null;
         });
 
-        get("/status/resume", (rqst, rspns) -> {
+        spark.Spark.get("/status/resume", (rqst, rspns) -> {
             try {
                 client.resume();
             } catch (Throwable ex) {
@@ -97,9 +96,9 @@ public class WebServer {
             return null;
         });
 
-        get("/status", new StatusRoute(client), pebble);
-        get("/report/:id/data/:rq", new ReportDataRoute(client), pebble);
-        get("/report/:id", new ReportRoute(client), pebble);
+        spark.Spark.get("/status", new StatusRoute(client), pebble);
+        spark.Spark.get("/report/:id/data/:rq", new ReportDataRoute(client), pebble);
+        spark.Spark.get("/report/:id", new ReportRoute(client), pebble);
     }
 
     /**

@@ -12,8 +12,6 @@ import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.data.DataAgentContainer;
-import java.net.URL;
-import java.net.URLClassLoader;
 import org.slf4j.LoggerFactory;
 
 /**

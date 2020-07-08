@@ -45,7 +45,6 @@ public class Threshold implements DetectionAgentInterface {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
-        String label = event.getLabel();
         Subject subject = event.getSubject();
 
         double value = Double.valueOf(

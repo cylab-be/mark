@@ -44,7 +44,7 @@ public class FuzzyLogic {
     /**
      * Method for calculating the membership functions given two points.
      * Lower bound (x1,y1) and upper bound (x2,y2) will be used to calculate the
-     * membership function and then calculate f(value) of this function. The 
+     * membership function and then calculate f(value) of this function. The
      * function returns a value between (0,1).
      * @param value
      * @return
@@ -67,14 +67,13 @@ public class FuzzyLogic {
         }
         //the function we need to determine if f(x)=m*x + b
         //first determine the slope m
-        double test = x2 - x1;
         double slope_m = (y2 - y1) / (x2 - x1);
         //once we have the slope m we can substitute m,x and y in the function
         //and determine the coef b
         double coeff_b = y1 - (x1 * slope_m);
         //we have the slope m and the coefficient b, now we can substitute them
         //in the function and determine f(value)
-        return ( slope_m * value ) + coeff_b;        
+        return slope_m * value + coeff_b;
     }
 
     /**

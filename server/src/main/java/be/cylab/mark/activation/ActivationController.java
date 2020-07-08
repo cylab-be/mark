@@ -211,23 +211,20 @@ public class ActivationController<T extends Subject> extends SafeThread
      */
     boolean checkCorrectTriggerTime(
             final DetectionAgentProfile profile, final Event<T> event) {
+
         String key = profile.getClassName() + "-"
                             + event.getSubject().toString();
 
-        if (last_time_triggered.containsKey(key)) {
-            if ((event.getTimestamp() - last_time_triggered.get(key)) <
-                    profile.getTriggerInterval()) {
-                return false;
-            }
-        }
-        return true;
+        return !(last_time_triggered.containsKey(key)
+                && (event.getTimestamp() - last_time_triggered.get(key)) <
+                profile.getTriggerInterval());
     }
 
     /**
      * Updates the LastTimeTriggered map with the new timestamp for the specific
      * Detection Agent-Subject pair.
      * @param profile
-     * @param event 
+     * @param event
      */
     private void updateLastTimeTriggered(
             final DetectionAgentProfile profile, final Event<T> event) {
@@ -302,6 +299,7 @@ public class ActivationController<T extends Subject> extends SafeThread
         for (DetectionAgentProfile profile : profiles) {
             try {
                 DetectionAgentInterface new_task = profile.createInstance();
+                LOGGER.debug(new_task.toString());
 
             } catch (IllegalArgumentException
                     | SecurityException ex) {
@@ -341,7 +339,7 @@ public class ActivationController<T extends Subject> extends SafeThread
     /**
      * Get the map of lastTriggeredAgents.
      * Used for testing.
-     * @return 
+     * @return
      */
     Map<String, Long> getLastTimeTriggered() {
         return this.last_time_triggered;

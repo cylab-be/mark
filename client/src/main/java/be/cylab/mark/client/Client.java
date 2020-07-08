@@ -423,9 +423,9 @@ public class Client<T extends Subject> implements ServerInterface {
             ev.setScore(((NumericNode) tree.get("score")).asDouble());
             ev.setTime(((NumericNode) tree.get("time")).asLong());
             ev.setReferences(
-                    deserializeList(((ArrayNode) tree.get("references"))));
+                    deserializeList((ArrayNode) tree.get("references")));
             ev.setRequests(
-                    deserializeList(((ArrayNode) tree.get("requests"))));
+                    deserializeList((ArrayNode) tree.get("requests")));
             ev.setProfile(deserializeProfile(tree.get("profile")));
 
             ev.setSubject(
