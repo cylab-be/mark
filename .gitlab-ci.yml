@@ -96,8 +96,8 @@ build:docker:
   script:
     # pull previous image version to enable caching inside dind
     - docker pull cylab/mark:latest || true
-    - docker build --tag cylab/mark:CI_COMMIT_TAG --tag cylab/mark:latest .
-    - docker push cylab/mark:CI_COMMIT_TAG
+    - docker build --tag cylab/mark:$CI_COMMIT_TAG --tag cylab/mark:latest .
+    - docker push cylab/mark:$CI_COMMIT_TAG
     - docker push cylab/mark:latest
  
 
