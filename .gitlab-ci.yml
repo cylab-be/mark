@@ -1,7 +1,6 @@
 stages:
   - test
-  - test-deploy
-  - build
+  - integration
   - release
 
 cache:
@@ -56,8 +55,8 @@ test:jdk-11:mongo-4.4:
   script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2 -Djvm.options="--illegal-access=permit"
 
 
-test:deploy:
-  stage: test-deploy
+integration:
+  stage: integration
   image: cylab/java8-mongo
   dependencies:
     # so we don't have to compile the code ourselfs..
@@ -75,7 +74,7 @@ test:deploy:
     - bash example/test.sh
 
 build:docker:
-  stage: build
+  stage: integration
   # only when we push a new tag
   only:
     - tags
@@ -93,7 +92,7 @@ build:docker:
   script:
     # pull previous image version to enable caching inside dind
     - docker pull cylab/mark:latest || true
-    - docker build --cache-from cylab/mark:latest --tag cylab/mark:CI_COMMIT_TAG --tag cylab/mark:latest .
+    - docker build --tag cylab/mark:CI_COMMIT_TAG --tag cylab/mark:latest .
     - docker push cylab/mark:CI_COMMIT_TAG
     - docker push cylab/mark:latest
  
