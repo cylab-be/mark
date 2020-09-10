@@ -53,6 +53,10 @@ test:jdk-11:mongo-4.4:
   services:
     - mongo:4.4
   script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2 -Djvm.options="--illegal-access=permit"
+  artifacts:
+    paths:
+    - "server/target"
+    - "example/target"
 
 
 integration:
