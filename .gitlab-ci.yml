@@ -48,6 +48,13 @@ test:jdk-11:mongo-3.6:
     - mongo:3.6
   script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2 -Djvm.options="--illegal-access=permit"
 
+test:jdk-11:mongo-4.4:
+  stage: test
+  image: maven:3.5.3-jdk-11
+  services:
+    - mongo:4.4
+  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2 -Djvm.options="--illegal-access=permit"
+
 
 test:deploy:
   stage: test-deploy
@@ -73,7 +80,7 @@ build:docker:
   only:
     - tags
   dependencies:
-    - test:jdk-11:mongo-3.6
+    - test:jdk-11:mongo-4.4
   # this job requires docker-in-docker
   tags:
     - dind
