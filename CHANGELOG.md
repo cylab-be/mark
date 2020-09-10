@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+* **updated CHANGELOG**
+[934bdab0c73aa6d](https://github.com/cylab/mark/commit/934bdab0c73aa6d) Thibault Debatty *2020-09-10 12:45:40*
+* **add docker build script**
+[eab46811cc8eb0a](https://github.com/cylab/mark/commit/eab46811cc8eb0a) Thibault Debatty *2020-09-10 12:42:46*
 * **add global PMD config**
 [9689e0520f44746](https://github.com/cylab/mark/commit/9689e0520f44746) Thibault Debatty *2020-07-08 13:24:23*
 * **updated apache ignite dependency. fix security issue**
