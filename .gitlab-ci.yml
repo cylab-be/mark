@@ -58,7 +58,7 @@ test:jdk-11:mongo-4.4:
 
 test:deploy:
   stage: test-deploy
-  image: ubuntu:18.04
+  image: cylab/java8-mongo
   dependencies:
     # so we don't have to compile the code ourselfs..
     - test:jdk-8:mongo-3.6
