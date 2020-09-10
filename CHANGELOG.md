@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+* **add global PMD config**
+[9689e0520f44746](https://github.com/cylab/mark/commit/9689e0520f44746) Thibault Debatty *2020-07-08 13:24:23*
+* **updated apache ignite dependency. fix security issue**
+[626fb0b68485af6](https://github.com/cylab/mark/commit/626fb0b68485af6) Thibault Debatty *2020-06-06 19:07:44*
 * **finish logging update**
 [5785e95ef92a24a](https://github.com/cylab/mark/commit/5785e95ef92a24a) Thibault Debatty *2020-05-25 13:35:47*
 * **use Log4J configuration class with annotation**
