@@ -24,8 +24,6 @@
 
 package be.cylab.mark.server;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import junit.framework.TestCase;
 

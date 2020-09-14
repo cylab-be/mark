@@ -37,6 +37,8 @@ public class Config {
     public int idle_timeout = DEFAULT_IDLE_TIMEOUT;
     private static final int DEFAULT_IDLE_TIMEOUT = 60;
 
+    private String server_bind = "0.0.0.0";
+
     /**
      * Server host IP.
      */
@@ -222,6 +224,10 @@ public class Config {
 
         if (System.getenv("MARK_MONGO_PORT") != null) {
             this.mongo_port = Integer.valueOf(System.getenv("MARK_MONGO_PORT"));
+        }
+
+        if (System.getenv("MARK_SERVER_BIND") != null) {
+            this.server_bind = System.getenv("MARK_SERVER_BIND");
         }
     }
 
@@ -425,6 +431,13 @@ public class Config {
 
     public void setLogDirectory(String log_directory) {
         this.log_directory = log_directory;
+    }
+
+    public String getServerBind() {
+        return this.server_bind;
+    }
+    public void setServerBind(final String server_bind) {
+        this.server_bind = server_bind;
     }
 
 

@@ -10,7 +10,6 @@ mongo_db:       MARK
 server_host:    1.2.3.4
 server_port:    8080
 
-webserver_root: ./ui
 log_directory:  ./logs
 modules:        ./modules
 
