@@ -221,7 +221,7 @@ public class Config {
     /**
      * Read environment variables.
      */
-    private final void readEnvironment() {
+    private void readEnvironment() {
         if (System.getenv("MARK_MONGO_HOST") != null) {
             this.mongo_host = System.getenv("MARK_MONGO_HOST");
         }
