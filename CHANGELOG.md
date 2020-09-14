@@ -3,6 +3,14 @@
 ## Unreleased
 
 
+* **removed unused webserverRoot calls**
+[8724a3b81081ace](https://github.com/cylab/mark/commit/8724a3b81081ace) Thibault Debatty *2020-09-14 10:06:54*
+
+## 1.1.0
+
+
+* **updated changelog**
+[4569e0924c311ac](https://github.com/cylab/mark/commit/4569e0924c311ac) Thibault Debatty *2020-09-14 07:56:27*
 * **fix style**
 [c06cb585ca5dfda](https://github.com/cylab/mark/commit/c06cb585ca5dfda) Thibault Debatty *2020-09-14 07:51:17*
 * **read mongo host and port from environment variables to support DOcker ...**
