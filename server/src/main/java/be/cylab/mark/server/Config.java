@@ -158,10 +158,7 @@ public class Config {
      * Instantiate a new default configuration.
      */
     public Config() {
-        this.mongo_host = System.getenv(ENV_MONGO_HOST);
-        if (this.mongo_host == null) {
-            this.mongo_host = DEFAULT_MONGO_HOST;
-        }
+        this.readEnvironment();
     }
 
     /**
@@ -175,6 +172,7 @@ public class Config {
             throws FileNotFoundException {
 
         Config config = fromInputStream(new FileInputStream(file));
+        config.readEnvironment();
         config.path = file;
         return config;
     }
@@ -189,6 +187,7 @@ public class Config {
     public static final Config fromInputStream(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
         Config config = yaml.loadAs(input, Config.class);
+        config.readEnvironment();
         return config;
     }
 
@@ -217,6 +216,19 @@ public class Config {
      */
     final void setPath(File path) {
         this.path = path;
+    }
+
+    /**
+     * Read environment variables.
+     */
+    private final void readEnvironment() {
+        if (System.getenv("MARK_MONGO_HOST") != null) {
+            this.mongo_host = System.getenv("MARK_MONGO_HOST");
+        }
+
+        if (System.getenv("MARK_MONGO_PORT") != null) {
+            this.mongo_port = Integer.valueOf(System.getenv("MARK_MONGO_PORT"));
+        }
     }
 
     /**
