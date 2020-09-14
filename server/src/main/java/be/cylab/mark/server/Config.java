@@ -88,12 +88,6 @@ public class Config {
     private static final boolean DEFAULT_START_WEBSERVER = true;
 
     /**
-     * Web root path.
-     */
-    public String webserver_root = DEFAULT_WEB_ROOT;
-    private static final String DEFAULT_WEB_ROOT = "../ui";
-
-    /**
      * Empty the MONGO database before starting (useful for testing).
      */
     public boolean mongo_clean = DEFAULT_MONGO_CLEAN;
@@ -287,47 +281,6 @@ public class Config {
         }
 
         return modules_file;
-    }
-
-    /**
-     *
-     * @param webserver_root
-     */
-    public final void setWebserverRoot(final String webserver_root) {
-        this.webserver_root = webserver_root;
-    }
-
-    public final String getWebserverRoot() {
-        return this.webserver_root;
-    }
-
-    /**
-     *
-     * @return @throws FileNotFoundException
-     */
-    public final File getRealWebserverRoot() throws FileNotFoundException {
-        File webroot_file = new File(webserver_root);
-
-        if (!webroot_file.isAbsolute()) {
-            // web root is a relative path...
-            if (path == null) {
-                throw new FileNotFoundException(
-                        "webserver root is not valid: "
-                        + webserver_root
-                        + " (not a directory or not a valid path)");
-            }
-
-            webroot_file = new File(path.toURI().resolve(webserver_root));
-        }
-
-        if (!webroot_file.isDirectory()) {
-            throw new FileNotFoundException(
-                    "webserver root is not valid: "
-                    + webserver_root
-                    + " (not a directory or not a valid path)");
-        }
-        return webroot_file;
-
     }
 
     public int getMaxThreads() {
