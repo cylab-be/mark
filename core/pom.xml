@@ -4,7 +4,7 @@
     <parent>
         <groupId>be.cylab.mark</groupId>
         <artifactId>root</artifactId>
-        <version>0.0.29-SNAPSHOT</version>
+        <version>1.2.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -30,24 +30,6 @@
                             <consoleOutput>true</consoleOutput>
                             <linkXRef>false</linkXRef>
                         </configuration>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.12.0</version>
-                <configuration>
-                    <!-- this is actually true by default, but can be disabled -->
-                    <failOnViolation>true</failOnViolation>
-                    <printFailingErrors>true</printFailingErrors>
-                </configuration>
-                <executions>
-                    <execution>
                         <goals>
                             <goal>check</goal>
                         </goals>

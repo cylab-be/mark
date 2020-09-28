@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import be.cylab.mark.core.SubjectAdapter;
-import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -37,6 +36,8 @@ public class Config {
      */
     public int idle_timeout = DEFAULT_IDLE_TIMEOUT;
     private static final int DEFAULT_IDLE_TIMEOUT = 60;
+
+    private String server_bind = "0.0.0.0";
 
     /**
      * Server host IP.
@@ -89,12 +90,6 @@ public class Config {
     private static final boolean DEFAULT_START_WEBSERVER = true;
 
     /**
-     * Web root path.
-     */
-    public String webserver_root = DEFAULT_WEB_ROOT;
-    private static final String DEFAULT_WEB_ROOT = "../ui";
-
-    /**
      * Empty the MONGO database before starting (useful for testing).
      */
     public boolean mongo_clean = DEFAULT_MONGO_CLEAN;
@@ -143,11 +138,6 @@ public class Config {
      */
     public static final String ENV_MONGO_HOST = "MARK_MONGO_HOST";
 
-    /**
-     * Logger.
-     */
-    private static final org.slf4j.Logger LOGGER
-            = LoggerFactory.getLogger(Config.class);
 
     /**
      * Max threads for tests.
@@ -164,10 +154,7 @@ public class Config {
      * Instantiate a new default configuration.
      */
     public Config() {
-        this.mongo_host = System.getenv(ENV_MONGO_HOST);
-        if (this.mongo_host == null) {
-            this.mongo_host = DEFAULT_MONGO_HOST;
-        }
+        this.readEnvironment();
     }
 
     /**
@@ -181,6 +168,7 @@ public class Config {
             throws FileNotFoundException {
 
         Config config = fromInputStream(new FileInputStream(file));
+        config.readEnvironment();
         config.path = file;
         return config;
     }
@@ -195,6 +183,7 @@ public class Config {
     public static final Config fromInputStream(final InputStream input) {
         Yaml yaml = new Yaml(new Constructor(Config.class));
         Config config = yaml.loadAs(input, Config.class);
+        config.readEnvironment();
         return config;
     }
 
@@ -223,6 +212,23 @@ public class Config {
      */
     final void setPath(File path) {
         this.path = path;
+    }
+
+    /**
+     * Read environment variables.
+     */
+    private void readEnvironment() {
+        if (System.getenv("MARK_MONGO_HOST") != null) {
+            this.mongo_host = System.getenv("MARK_MONGO_HOST");
+        }
+
+        if (System.getenv("MARK_MONGO_PORT") != null) {
+            this.mongo_port = Integer.valueOf(System.getenv("MARK_MONGO_PORT"));
+        }
+
+        if (System.getenv("MARK_SERVER_BIND") != null) {
+            this.server_bind = System.getenv("MARK_SERVER_BIND");
+        }
     }
 
     /**
@@ -281,75 +287,6 @@ public class Config {
         }
 
         return modules_file;
-    }
-
-    /**
-     *
-     * @param webserver_root
-     */
-    public final void setWebserverRoot(final String webserver_root) {
-        this.webserver_root = webserver_root;
-    }
-
-    public final String getWebserverRoot() {
-        return this.webserver_root;
-    }
-
-    /**
-     *
-     * @return @throws FileNotFoundException
-     */
-    public final File getRealWebserverRoot() throws FileNotFoundException {
-        File webroot_file = new File(webserver_root);
-
-        if (!webroot_file.isAbsolute()) {
-            // web root is a relative path...
-            if (path == null) {
-                throw new FileNotFoundException(
-                        "webserver root is not valid: "
-                        + webserver_root
-                        + " (not a directory or not a valid path)");
-            }
-
-            webroot_file = new File(path.toURI().resolve(webserver_root));
-        }
-
-        if (!webroot_file.isDirectory()) {
-            throw new FileNotFoundException(
-                    "webserver root is not valid: "
-                    + webserver_root
-                    + " (not a directory or not a valid path)");
-        }
-        return webroot_file;
-
-    }
-
-    public final File getLogDiretory() throws FileNotFoundException {
-        if (log_directory == null) {
-            throw new FileNotFoundException("Log dir is null (undefined)");
-        }
-
-        File logdir_file = new File(log_directory);
-
-        if (!logdir_file.isAbsolute()) {
-            // it's a relative file
-            if (path == null) {
-                throw new FileNotFoundException(
-                        "log directory is not valid: "
-                        + log_directory
-                        + " (not a directory or not a valid path)");
-            }
-            logdir_file = new File(path.toURI().resolve(log_directory));
-        }
-
-        if (!logdir_file.isDirectory()) {
-            throw new FileNotFoundException(
-                    "log directory is not valid: "
-                    + log_directory
-                    + " (not a directory or not a valid path)");
-        }
-
-        return logdir_file;
     }
 
     public int getMaxThreads() {
@@ -494,6 +431,13 @@ public class Config {
 
     public void setLogDirectory(String log_directory) {
         this.log_directory = log_directory;
+    }
+
+    public String getServerBind() {
+        return this.server_bind;
+    }
+    public void setServerBind(final String server_bind) {
+        this.server_bind = server_bind;
     }
 
 

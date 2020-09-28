@@ -50,6 +50,8 @@ public class IgniteExecutor implements ExecutorInterface {
     private final Ignite ignite;
     private final Config config;
 
+    private static final String LOCALHOST = "127.0.0.1";
+
 
     @Inject
     public IgniteExecutor(final Config config) {
@@ -80,7 +82,7 @@ public class IgniteExecutor implements ExecutorInterface {
             // Disable autodiscovery
             TcpDiscoverySpi spi = new TcpDiscoverySpi();
             TcpDiscoveryVmIpFinder ip_finder = new TcpDiscoveryVmIpFinder();
-            ip_finder.setAddresses(Arrays.asList("127.0.0.1"));
+            ip_finder.setAddresses(Arrays.asList(LOCALHOST));
             spi.setIpFinder(ip_finder);
             ignite_config.setDiscoverySpi(spi);
         }

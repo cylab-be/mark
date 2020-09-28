@@ -12,15 +12,6 @@ import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.data.DataAgentContainer;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -63,8 +54,6 @@ public class Server {
         this.data_agents = new LinkedList<>();
 
         this.monitor = new Thread(new Monitor(datastore));
-
-        this.startLogging();
     }
 
     /**
@@ -81,6 +70,7 @@ public class Server {
 
         LOGGER.info("Starting server...");
 
+        LOGGER.debug(System.getProperty("java.class.path"));
         this.parseModules();
 
         web_server.start();
@@ -160,60 +150,6 @@ public class Server {
         data_agents.add(new DataAgentContainer(profile, config));
     }
 
-
-    private static final String LOG_PATTERN = "%d [%p] [%t] %c %m%n";
-
-    private void startLogging() {
-
-        Logger.getRootLogger().getLoggerRepository().resetConfiguration();
-
-        ConsoleAppender console = new ConsoleAppender();
-        console.setLayout(new PatternLayout(LOG_PATTERN));
-        console.setThreshold(Level.FATAL);
-        console.activateOptions();
-        Logger.getRootLogger().addAppender(console);
-
-        console = new ConsoleAppender();
-        console.setLayout(new PatternLayout(LOG_PATTERN));
-        console.setThreshold(Level.INFO);
-        console.activateOptions();
-        Logger.getLogger("be.cylab.mark").addAppender(console);
-
-        try {
-            Logger.getRootLogger().addAppender(
-                    getFileAppender("mark.log", Level.INFO));
-            Logger.getLogger("be.cylab.mark.server").addAppender(
-                    getFileAppender("mark-server.log", Level.INFO));
-            Logger.getLogger("org.apache.ignite").addAppender(
-                    getFileAppender("mark-ignite.log", Level.INFO));
-            Logger.getLogger("org.eclipse.jetty").addAppender(
-                    getFileAppender("mark-jetty.log", Level.INFO));
-            Logger.getLogger("be.cylab.mark.activation.ActivationController")
-                    .addAppender(getFileAppender(
-                            "mark-activationctonroller.log", Level.DEBUG));
-
-        } catch (FileNotFoundException ex) {
-            System.err.println(
-                    "Logs will not be written to files: " + ex.getMessage());
-        }
-
-    }
-
-    private FileAppender getFileAppender(
-            final String filename, final Level level)
-            throws FileNotFoundException {
-        FileAppender fa = new FileAppender();
-        fa.setName(filename);
-        fa.setFile(
-                config.getLogDiretory().getPath() + File.separator + filename);
-        fa.setLayout(new PatternLayout("%d [%p] [%t] %c %m%n"));
-        fa.setThreshold(level);
-        fa.setAppend(true);
-        fa.activateOptions();
-
-        return fa;
-    }
-
     private void parseModules() throws FileNotFoundException {
         LOGGER.info("Parsing modules directory ");
         File modules_dir;
@@ -225,48 +161,8 @@ public class Server {
         }
 
         LOGGER.info(modules_dir.getAbsolutePath());
-        this.loadJars(modules_dir);
         this.loadDataAgents(modules_dir);
         this.loadDetectionAgents(modules_dir);
-    }
-
-
-    /**
-     * Load jars from specified directory.
-     *
-     * @param directory
-     */
-    public final void loadJars(final File directory) {
-
-        LOGGER.info("Load jars...");
-
-        try {
-            // List *.jar and update the class path
-            // this is a hack that allows to modify the global (system) class
-            // loader.
-            URLClassLoader class_loader
-                    = (URLClassLoader) ClassLoader.getSystemClassLoader();
-            Method method = URLClassLoader.class.getDeclaredMethod(
-                    "addURL", URL.class);
-            method.setAccessible(true);
-
-            File[] jar_files = directory
-                    .listFiles(
-                            (final File dir, final String name) ->
-                            name.endsWith(".jar"));
-
-            for (File jar_file : jar_files) {
-                LOGGER.info(jar_file.getAbsolutePath());
-                method.invoke(class_loader, jar_file.toURI().toURL());
-            }
-        } catch (IllegalAccessException | IllegalArgumentException
-                | NoSuchMethodException | SecurityException
-                | InvocationTargetException | MalformedURLException ex) {
-
-            LOGGER.warn("Unable to load jar: " + ex.getMessage());
-
-        }
-
     }
 
     private void loadDataAgents(final File modules_dir)

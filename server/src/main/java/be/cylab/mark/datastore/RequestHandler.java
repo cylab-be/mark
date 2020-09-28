@@ -152,6 +152,7 @@ public class RequestHandler implements ServerInterface {
      * @param subject
      * @return
      */
+    @Override
     public final RawData[] findRawData(
             final String label, final Subject subject, final long from,
             final long till) {
@@ -165,7 +166,7 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_DATA)
                 .find(query);
 
-        ArrayList<RawData> results = new ArrayList<RawData>();
+        ArrayList<RawData> results = new ArrayList<>();
         for (Document doc : documents) {
             results.add(parser.convert(doc));
         }
@@ -176,6 +177,7 @@ public class RequestHandler implements ServerInterface {
      *
      * @param evidence
      */
+    @Override
     public final void addEvidence(final Evidence evidence) {
 
         Document document = parser.convert(evidence);
@@ -227,6 +229,7 @@ public class RequestHandler implements ServerInterface {
      * @return
      * @throws Throwable if request fails
      */
+    @Override
     public final Evidence[] findEvidence(
             final String label, final Subject subject)
             throws Throwable {
@@ -242,6 +245,12 @@ public class RequestHandler implements ServerInterface {
         return this.parseEvidences(documents);
     }
 
+    /**
+     * 
+     * @param label
+     * @return
+     * @throws Throwable 
+     */
     @Override
     public final Evidence[] findEvidence(final String label)
             throws Throwable {
@@ -314,6 +323,7 @@ public class RequestHandler implements ServerInterface {
      * @param id
      * @return
      */
+    @Override
     public final Evidence findEvidenceById(final String id) {
         Document query = new Document();
         query.append("_id", new ObjectId(id));
@@ -342,6 +352,7 @@ public class RequestHandler implements ServerInterface {
      * @param subject
      * @return
      */
+    @Override
     public final Evidence[] findLastEvidences(
             final String label, final Subject subject) {
         Document query = new Document();
@@ -356,7 +367,7 @@ public class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        HashMap<String, Evidence> evidences = new HashMap<String, Evidence>();
+        HashMap<String, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {
             Evidence evidence = parser.convertEvidence(doc);
 
@@ -385,7 +396,7 @@ public class RequestHandler implements ServerInterface {
         Document query = new Document("$group",
                             new Document("_id", doc));
         AggregateIterable<Document> db_output = mongodb
-                                .getCollection(COLLECTION_EVIDENCE)
+                                .getCollection(COLLECTION_DATA)
                                 .aggregate(Arrays.asList(query));
 
         for (Document db_document : db_output) {
@@ -530,8 +541,8 @@ public class RequestHandler implements ServerInterface {
         status.put("os.version", os.getVersion());
 
         Runtime rt = Runtime.getRuntime();
-        status.put("memory.total", rt.maxMemory());
-        status.put("memory.used", rt.totalMemory() - rt.freeMemory());
+        status.put("memory.total", rt.maxMemory() / 1024 / 1024);
+        status.put("memory.used", (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024);
 
         return status;
     }

@@ -3,54 +3,6 @@
 ## Unreleased
 
 
-* **removed unused webserverRoot calls**
-[8724a3b81081ace](https://github.com/cylab/mark/commit/8724a3b81081ace) Thibault Debatty *2020-09-14 10:06:54*
-
-## 1.1.0
-
-
-* **updated changelog**
-[4569e0924c311ac](https://github.com/cylab/mark/commit/4569e0924c311ac) Thibault Debatty *2020-09-14 07:56:27*
-* **fix style**
-[c06cb585ca5dfda](https://github.com/cylab/mark/commit/c06cb585ca5dfda) Thibault Debatty *2020-09-14 07:51:17*
-* **read mongo host and port from environment variables to support DOcker ...**
-[c1c4386c8f619c8](https://github.com/cylab/mark/commit/c1c4386c8f619c8) Thibault Debatty *2020-09-14 07:47:46*
-* **removed /ui/ directory from zip file, as it does not exist anymore**
-[c31b4edea8f3c78](https://github.com/cylab/mark/commit/c31b4edea8f3c78) Thibault Debatty *2020-09-10 13:49:59*
-
-## 1.0.0
-
-
-* **update changelog**
-[48c1c01ffacbce0](https://github.com/cylab/mark/commit/48c1c01ffacbce0) Thibault Debatty *2020-09-10 13:41:47*
-* **fix docker tag name**
-[53c6a18ba6dadf8](https://github.com/cylab/mark/commit/53c6a18ba6dadf8) Thibault Debatty *2020-09-10 13:39:22*
-
-## 1.0.0-RC3
-
-
-* **fix docker build job ?**
-[0684eb6450c6f7f](https://github.com/cylab/mark/commit/0684eb6450c6f7f) Thibault Debatty *2020-09-10 13:28:40*
-
-## 1.0.0-RC2
-
-
-* **fix docker build?**
-[746643d07826244](https://github.com/cylab/mark/commit/746643d07826244) Thibault Debatty *2020-09-10 13:10:35*
-* **remove deprecated 'links'**
-[abb0f5cfe42f896](https://github.com/cylab/mark/commit/abb0f5cfe42f896) Thibault Debatty *2020-09-10 13:10:22*
-* **use docker image cylab/java8-mongo to speedup test:deploy**
-[d43a23f2a09b57c](https://github.com/cylab/mark/commit/d43a23f2a09b57c) Thibault Debatty *2020-09-10 12:58:24*
-* **add test with JDK11 + mongo 4**
-[ee4bd43b8a3ebdf](https://github.com/cylab/mark/commit/ee4bd43b8a3ebdf) Thibault Debatty *2020-09-10 12:49:06*
-
-## 1.0.0-RC1
-
-
-* **updated CHANGELOG**
-[934bdab0c73aa6d](https://github.com/cylab/mark/commit/934bdab0c73aa6d) Thibault Debatty *2020-09-10 12:45:40*
-* **add docker build script**
-[eab46811cc8eb0a](https://github.com/cylab/mark/commit/eab46811cc8eb0a) Thibault Debatty *2020-09-10 12:42:46*
 * **add global PMD config**
 [9689e0520f44746](https://github.com/cylab/mark/commit/9689e0520f44746) Thibault Debatty *2020-07-08 13:24:23*
 * **updated apache ignite dependency. fix security issue**

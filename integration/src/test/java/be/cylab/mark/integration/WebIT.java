@@ -64,9 +64,7 @@ public class WebIT extends TestCase {
         //Set up config and server
         Config config = Config.getTestConfig();
         config.start_webserver = true;
-        config.setWebserverRoot(
-                Paths.get("").toAbsolutePath().getParent().resolve("ui")
-                        .toString());
+
         config.adapter_class = LinkAdapter.class.getName();
 
         ExecutorInterface executor = new IgniteExecutor(config);

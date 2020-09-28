@@ -113,7 +113,7 @@ public class Datastore {
                 mongodb,
                 activation_controller,
                 config.getSubjectAdapter(),
-                new MongoParser((config.getSubjectAdapter())));
+                new MongoParser(config.getSubjectAdapter()));
 
         ObjectMapper object_mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
@@ -134,7 +134,7 @@ public class Datastore {
         Server jetty = new Server(thread_pool);
 
         ServerConnector http_connector = new ServerConnector(jetty);
-        http_connector.setHost(config.server_host);
+        http_connector.setHost(config.getServerBind());
         http_connector.setPort(config.server_port);
 
         jetty.setConnectors(new Connector[]{http_connector});

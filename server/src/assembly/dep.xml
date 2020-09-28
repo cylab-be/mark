@@ -15,7 +15,6 @@
     /bin/server.jar
     /libs/
     /modules
-    /ui/
     -->
 
     <fileSets>
@@ -53,11 +52,6 @@
             <includes>
                 <include>*.jar</include>
             </includes>
-        </fileSet>
-
-        <fileSet>
-            <directory>${project.basedir}/../ui</directory>
-            <outputDirectory>ui</outputDirectory>
         </fileSet>
 
         <fileSet>

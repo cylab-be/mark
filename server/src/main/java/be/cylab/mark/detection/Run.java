@@ -61,11 +61,13 @@ public class Run implements DetectionAgentInterface {
             }
 
         } catch (IOException e) {
+            System.err.println(e.getMessage());
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
+                    System.err.println(e.getMessage());
                 }
             }
         }
