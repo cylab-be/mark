@@ -49,12 +49,24 @@ class StatusRoute implements TemplateViewRoute {
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(StatusRoute.class);
 
+    /**
+     * Show the status of the server.
+     * @param client
+     */
     public StatusRoute(final Client client) {
         this.client = client;
     }
 
+    /**
+     * Show the status of the server.
+     *
+     * @param rqst
+     * @param rspns
+     * @return
+     * @throws Exception
+     */
     @Override
-    public ModelAndView handle(final Request rqst, final Response rspns)
+    public final ModelAndView handle(final Request rqst, final Response rspns)
             throws Exception {
 
         Map<String, Object> attributes = new HashMap<>();
@@ -89,7 +101,8 @@ class StatusRoute implements TemplateViewRoute {
         return new ModelAndView(attributes, "status.html");
     }
 
-    private List<Point> extractInt(List<Map> history, String field) {
+    private List<Point> extractInt(
+            final List<Map> history, final String field) {
         List<Point> points = new ArrayList<>();
 
         for (Map<String, Object> status : history) {
@@ -102,7 +115,8 @@ class StatusRoute implements TemplateViewRoute {
         return points;
     }
 
-    private List<Point> extractDouble(List<Map> history, String field) {
+    private List<Point> extractDouble(
+            final List<Map> history, final String field) {
         List<Point> points = new ArrayList<>();
 
         for (Map<String, Object> status : history) {
@@ -115,7 +129,8 @@ class StatusRoute implements TemplateViewRoute {
         return points;
     }
 
-    private String encode(List<Point> points) throws JsonProcessingException {
+    private String encode(final List<Point> points)
+            throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(points);
     }

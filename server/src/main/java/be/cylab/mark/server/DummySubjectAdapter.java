@@ -32,22 +32,38 @@ import org.bson.Document;
  *
  * @author Thibault Debatty
  */
-public class DummySubjectAdapter implements SubjectAdapter<DummySubject> {
+public final class DummySubjectAdapter implements SubjectAdapter<DummySubject> {
 
+    /**
+     *
+     * @param subject
+     * @param doc
+     */
     @Override
-    public void writeToMongo(DummySubject subject, Document doc) {
+    public void writeToMongo(
+            final DummySubject subject, final Document doc) {
         doc.append("name", subject.name);
     }
 
+    /**
+     *
+     * @param doc
+     * @return
+     */
     @Override
-    public DummySubject readFromMongo(Document doc) {
+    public DummySubject readFromMongo(final Document doc) {
         DummySubject ds = new DummySubject();
         ds.name = doc.getString("name");
         return ds;
     }
 
+    /**
+     *
+     * @param node
+     * @return
+     */
     @Override
-    public DummySubject deserialize(JsonNode node) {
+    public DummySubject deserialize(final JsonNode node) {
         DummySubject ds = new DummySubject();
         ds.name = node.get("name").textValue();
         return ds;

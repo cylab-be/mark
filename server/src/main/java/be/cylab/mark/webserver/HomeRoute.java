@@ -48,12 +48,25 @@ public class HomeRoute implements TemplateViewRoute {
 
     private final Client client;
 
-    public HomeRoute(Client client) {
+    /**
+     * Home : shows ranking.
+     * @param client
+     */
+    public HomeRoute(final Client client) {
         this.client = client;
     }
 
+    /**
+     * Home : shows ranking.
+     *
+     * @param rqst
+     * @param rspns
+     * @return
+     * @throws Exception
+     */
     @Override
-    public ModelAndView handle(Request rqst, Response rspns) throws Exception {
+    public ModelAndView handle(final Request rqst, final Response rspns)
+            throws Exception {
         Map<String, Object> attributes = new HashMap<>();
         String label = "";
         try {
@@ -76,7 +89,9 @@ public class HomeRoute implements TemplateViewRoute {
             Evidence[] evidences = this.client.findEvidence(label, page);
             attributes.put("evidences", evidences);
 
-            attributes.put("markversion", getClass().getPackage().getImplementationVersion());
+            attributes.put(
+                    "markversion",
+                    getClass().getPackage().getImplementationVersion());
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from datastore!", ex);
             halt(500);

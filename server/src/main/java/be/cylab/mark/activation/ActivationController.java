@@ -135,7 +135,7 @@ public class ActivationController<T extends Subject> extends SafeThread
         Map<String, Map<T, Event<T>>> copy_of_events;
 
         while (true) {
-            Thread.sleep(1000 * config.update_interval);
+            Thread.sleep(1000 * config.getUpdateInterval());
 
             if (! this.running) {
                 continue;

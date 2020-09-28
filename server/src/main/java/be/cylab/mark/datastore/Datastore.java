@@ -96,10 +96,10 @@ public class Datastore {
     private MongoDatabase connectToMongodb(Config config) {
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
-                config.mongo_host, config.mongo_port);
-        MongoDatabase db = mongo.getDatabase(config.mongo_db);
+                config.getMongoHost(), config.getMongoPort());
+        MongoDatabase db = mongo.getDatabase(config.getMongoDb());
 
-        if (config.mongo_clean) {
+        if (config.isMongoClean()) {
             db.drop();
         }
 
@@ -126,16 +126,16 @@ public class Datastore {
                 = new JsonRpcServer(object_mapper, request_handler);
 
         QueuedThreadPool thread_pool = new QueuedThreadPool(
-                config.max_threads,
-                config.min_threads,
-                config.idle_timeout,
-                new ArrayBlockingQueue<>(config.max_pending_requests));
+                config.getMaxThreads(),
+                config.getMinThreads(),
+                config.getIdleTimeout(),
+                new ArrayBlockingQueue<>(config.getMaxPendingRequests()));
 
         Server jetty = new Server(thread_pool);
 
         ServerConnector http_connector = new ServerConnector(jetty);
         http_connector.setHost(config.getServerBind());
-        http_connector.setPort(config.server_port);
+        http_connector.setPort(config.getServerPort());
 
         jetty.setConnectors(new Connector[]{http_connector});
         jetty.setHandler(new JettyHandler(jsonrpc_server));

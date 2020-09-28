@@ -65,7 +65,7 @@ public class IgniteExecutor implements ExecutorInterface {
 
         IgniteConfiguration ignite_config = new IgniteConfiguration();
         ignite_config.setPeerClassLoadingEnabled(true);
-        ignite_config.setClientMode(!config.ignite_start_server);
+        ignite_config.setClientMode(!config.isIgniteStartServer());
 
         ignite_config.setCollisionSpi(new FifoQueueCollisionSpi());
 
@@ -78,7 +78,7 @@ public class IgniteExecutor implements ExecutorInterface {
             12L * 1024 * 1024 * 1024);
         ignite_config.setDataStorageConfiguration(storage_config);
 
-        if (!config.ignite_autodiscovery) {
+        if (!config.isIgniteAutodiscovery()) {
             // Disable autodiscovery
             TcpDiscoverySpi spi = new TcpDiscoverySpi();
             TcpDiscoveryVmIpFinder ip_finder = new TcpDiscoveryVmIpFinder();
@@ -100,7 +100,7 @@ public class IgniteExecutor implements ExecutorInterface {
 
     @Override
     public boolean shutdown() throws InterruptedException {
-        Thread.sleep(2 * 1000 * config.update_interval);
+        Thread.sleep(2 * 1000 * config.getUpdateInterval());
         this.ignite.executorService().shutdown();
         return this.ignite.executorService().awaitTermination(1, TimeUnit.DAYS);
     }
