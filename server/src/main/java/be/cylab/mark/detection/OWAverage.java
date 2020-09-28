@@ -36,7 +36,7 @@ import java.util.Collections;
  *
  * @author Georgi Nikolov
  */
-public class OWAverage implements DetectionAgentInterface {
+public final class OWAverage implements DetectionAgentInterface {
     private static final double[] DEFAULT_OWA_WEIGHTS = {0.2, 0.4, 0.3, 0.1};
     private OWA owa_aggregator;
 
@@ -111,5 +111,5 @@ public class OWAverage implements DetectionAgentInterface {
         datastore.addEvidence(ev);
 
     }
-    
+
 }

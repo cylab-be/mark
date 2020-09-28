@@ -34,7 +34,7 @@ import be.cylab.mark.core.ServerInterface;
  *
  * @author Thibault Debatty
  */
-public class WOWA implements DetectionAgentInterface {
+public final class WOWA implements DetectionAgentInterface {
 
     @Override
     public void analyze(

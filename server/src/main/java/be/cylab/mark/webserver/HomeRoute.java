@@ -65,7 +65,7 @@ public class HomeRoute implements TemplateViewRoute {
      * @throws Exception
      */
     @Override
-    public ModelAndView handle(final Request rqst, final Response rspns)
+    public final ModelAndView handle(final Request rqst, final Response rspns)
             throws Exception {
         Map<String, Object> attributes = new HashMap<>();
         String label = "";

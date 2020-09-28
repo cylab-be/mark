@@ -45,14 +45,17 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
  * @author tibo
  */
 @Singleton
-public class IgniteExecutor implements ExecutorInterface {
+public final class IgniteExecutor implements ExecutorInterface {
 
     private final Ignite ignite;
     private final Config config;
 
     private static final String LOCALHOST = "127.0.0.1";
 
-
+    /**
+     *
+     * @param config
+     */
     @Inject
     public IgniteExecutor(final Config config) {
 
@@ -94,7 +97,7 @@ public class IgniteExecutor implements ExecutorInterface {
 
 
     @Override
-    public void submit(Runnable job) {
+    public void submit(final Runnable job) {
         this.ignite.executorService().submit(job);
     }
 

@@ -46,25 +46,27 @@ public class Datastore {
      *
      * @param config
      * @param activation_controller
-     * @throws be.cylab.mark.core.InvalidProfileException
      */
     @Inject
     public Datastore(
             final Config config,
-            final ActivationControllerInterface activation_controller)
-            throws InvalidProfileException {
+            final ActivationControllerInterface activation_controller) {
 
         this.config = config;
         this.activation_controller = activation_controller;
     }
 
     /**
-     * Start the datastore. This will start the json-rpc server in a separate
+     * Start the datastore.This will start the json-rpc server in a separate
      * thread and return when the server is ready.
      *
-     * @throws Exception
+     * @throws be.cylab.mark.core.InvalidProfileException if the adapter class
+     * mentioned in the configuration is invalid
+     * @throws java.lang.InterruptedException if we were stopped
+     * @throws Exception if the server failed to start
      */
-    public final void start() throws Exception {
+    public final void start()
+            throws InvalidProfileException, InterruptedException, Exception {
 
         LOGGER.info("Starting JSON-RPC datastore on " + config.getServerHost()
                 + " : " + config.getServerPort());
@@ -93,7 +95,7 @@ public class Datastore {
         server.stop();
     }
 
-    private MongoDatabase connectToMongodb(Config config) {
+    private MongoDatabase connectToMongodb(final Config config) {
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
                 config.getMongoHost(), config.getMongoPort());
@@ -106,7 +108,7 @@ public class Datastore {
         return db;
     }
 
-    private Server createJsonRPCServer(MongoDatabase mongodb)
+    private Server createJsonRPCServer(final MongoDatabase mongodb)
             throws InvalidProfileException {
 
         request_handler = new RequestHandler(
@@ -143,11 +145,19 @@ public class Datastore {
         return jetty;
     }
 
-    public ServerInterface getRequestHandler() {
+    /**
+     *
+     * @return
+     */
+    public final ServerInterface getRequestHandler() {
         return this.request_handler;
     }
 
-    public MongoDatabase getMongodb() {
+    /**
+     *
+     * @return
+     */
+    public final MongoDatabase getMongodb() {
         return this.mongodb;
     }
 }

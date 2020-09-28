@@ -32,5 +32,13 @@ import be.cylab.mark.core.ServerInterface;
  * @author Thibault Debatty
  */
 public interface DatastoreFactory {
-    ServerInterface getInstance(String datastore_url) throws MalformedURLException;
+
+    /**
+     *
+     * @param datastore_url
+     * @return
+     * @throws MalformedURLException if the URL was not correct
+     */
+    ServerInterface getInstance(String datastore_url)
+            throws MalformedURLException;
 }
