@@ -162,13 +162,15 @@ public final class Config {
      * @param file
      * @return
      * @throws java.io.FileNotFoundException if the config file does not exist
+     * @throws Exception if the config is not valid
      */
     public static Config fromFile(final File file)
-            throws FileNotFoundException {
+            throws FileNotFoundException, Exception {
 
         Config config = fromInputStream(new FileInputStream(file));
         config.readEnvironment();
         config.path = file;
+        config.validate();
         return config;
     }
 
@@ -255,6 +257,24 @@ public final class Config {
                     "Adapter class " + adapter_class + " is invalid",
                     ex);
         }
+    }
+
+    /**
+     * Check that this configuration is valid.
+     * @return
+     * @throws java.lang.Exception if the configuration is invalid
+     */
+    public boolean validate() throws Exception {
+
+        if (server_host.equals("127.0.0.1") && ignite_autodiscovery) {
+            throw new Exception(
+                    "Server host cannot be 127.0.0.1 with a distributed "
+                            + "executor!");
+        }
+        this.getSubjectAdapter();
+        this.getDatastoreUrl();
+
+        return true;
     }
 
     @Override

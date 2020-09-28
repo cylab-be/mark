@@ -65,6 +65,8 @@ public class BillingModule extends AbstractModule {
 
         } catch (FileNotFoundException ex) {
             LOGGER.error("File not found : " + config_file);
+        } catch (Exception ex) {
+            LOGGER.error("Invalid configuration: " + ex.getMessage());
         }
     }
 
