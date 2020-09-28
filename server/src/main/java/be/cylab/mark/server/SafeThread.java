@@ -43,7 +43,7 @@ public abstract class SafeThread extends Thread {
 
     /**
      *
-     * @throws Throwable
+     * @throws Throwable if the agent failes
      */
     public abstract void doRun() throws Throwable;
 

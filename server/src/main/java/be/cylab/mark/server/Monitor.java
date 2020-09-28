@@ -39,15 +39,23 @@ public class Monitor implements Runnable {
 
     private final Datastore datastore;
 
-    public Monitor(Datastore datastore) {
+    /**
+     *
+     * @param datastore
+     */
+    public Monitor(final Datastore datastore) {
         this.datastore = datastore;
     }
 
+    /**
+     *
+     */
     @Override
-    public void run() {
+    public final void run() {
 
         ServerInterface server = datastore.getRequestHandler();
-        MongoCollection collection = datastore.getMongodb().getCollection("statistics");
+        MongoCollection collection =
+                datastore.getMongodb().getCollection("statistics");
 
         while (true) {
             try {
@@ -68,7 +76,7 @@ public class Monitor implements Runnable {
         }
     }
 
-    private Map<String, Object> sanitize(Map<String, Object> orig) {
+    private Map<String, Object> sanitize(final Map<String, Object> orig) {
         Map<String, Object> result = new HashMap<>();
 
         for (Entry<String, Object> entry : orig.entrySet()) {
@@ -79,7 +87,7 @@ public class Monitor implements Runnable {
 
     }
 
-    private String sanitize(String s) {
+    private String sanitize(final String s) {
         return s.replace(".", "_");
     }
 

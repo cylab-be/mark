@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The activation controller uses the micro batching principle:
- * https://streaml.io/resources/tutorials/concepts/understanding-batch-microbatch-streaming
+ * https://streaml.io/resources/tutorials/concepts/understanding-batch-
+ * microbatch-streaming
  * Events are continuously collected (with notifyRawData and notifyEvidence).In
  a separate thread, every few secondes (defined by Config.update_interval),
  analysis jobs are triggered. These jobs are executed by an Apache Ignite
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 @Singleton
-public class ActivationController<T extends Subject> extends SafeThread
+public final class ActivationController<T extends Subject> extends SafeThread
                                 implements ActivationControllerInterface<T> {
 
     private static final Logger LOGGER
@@ -57,12 +58,10 @@ public class ActivationController<T extends Subject> extends SafeThread
      *
      * @param config
      * @param executor
-     * @throws InvalidProfileException
      */
     @Inject
     public ActivationController(
-            final Config config, final ExecutorInterface executor)
-            throws InvalidProfileException {
+            final Config config, final ExecutorInterface executor) {
         this.config = config;
         this.profiles = new LinkedList<>();
         this.executor = executor;
@@ -76,7 +75,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      * @param data
      */
     @Override
-    public final void notifyRawData(final RawData<T> data) {
+    public void notifyRawData(final RawData<T> data) {
 
         this.addEvent(
                 new Event(
@@ -91,7 +90,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      * @param evidence
      */
     @Override
-    public final void notifyEvidence(final Evidence<T> evidence) {
+    public void notifyEvidence(final Evidence<T> evidence) {
 
         this.addEvent(
                 new Event(
@@ -105,7 +104,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      * Add this event to the tree of events (if required).
      * @param new_event
      */
-    final synchronized void addEvent(Event<T> new_event) {
+    synchronized void addEvent(final Event<T> new_event) {
 
         // all subjects that have an event with this label
         Map<T, Event<T>> subjects = events.get(new_event.getLabel());
@@ -130,14 +129,14 @@ public class ActivationController<T extends Subject> extends SafeThread
     }
 
     @Override
-    public final void doRun() throws Throwable {
+    public void doRun() throws Throwable {
 
         Map<String, Map<T, Event<T>>> copy_of_events;
 
         while (true) {
-            Thread.sleep(1000 * config.update_interval);
+            Thread.sleep(1000 * config.getUpdateInterval());
 
-            if (! this.running) {
+            if (!this.running) {
                 continue;
             }
 
@@ -216,8 +215,8 @@ public class ActivationController<T extends Subject> extends SafeThread
                             + event.getSubject().toString();
 
         return !(last_time_triggered.containsKey(key)
-                && (event.getTimestamp() - last_time_triggered.get(key)) <
-                profile.getTriggerInterval());
+                && (event.getTimestamp() - last_time_triggered.get(key))
+                < profile.getTriggerInterval());
     }
 
     /**
@@ -280,9 +279,10 @@ public class ActivationController<T extends Subject> extends SafeThread
     /**
      * Ask executor to shutdown then wait for tasks to finish.
      *
-     * @throws InterruptedException
+     * @throws InterruptedException if our thread was killed while
+     * we were stopping...
      */
-    public final void awaitTermination() throws InterruptedException {
+    public void awaitTermination() throws InterruptedException {
         this.executor.shutdown();
     }
 
@@ -293,7 +293,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      *
      * @throws InvalidProfileException if one of the profiles is corrupted
      */
-    public final void testProfiles()
+    public void testProfiles()
             throws InvalidProfileException {
 
         for (DetectionAgentProfile profile : profiles) {
@@ -315,7 +315,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      * @return
      */
     @Override
-    public final List<DetectionAgentProfile> getProfiles() {
+    public List<DetectionAgentProfile> getProfiles() {
         return profiles;
     }
 
@@ -323,7 +323,7 @@ public class ActivationController<T extends Subject> extends SafeThread
      *
      * @param profile
      */
-    public final void addAgent(final DetectionAgentProfile profile) {
+    public void addAgent(final DetectionAgentProfile profile) {
         profiles.add(profile);
     }
 

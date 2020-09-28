@@ -46,12 +46,26 @@ public class ReportDataRoute implements TemplateViewRoute {
 
     private final Client client;
 
-    public ReportDataRoute(Client client) {
+    /**
+     * Shows data entries.
+     *
+     * @param client
+     */
+    public ReportDataRoute(final Client client) {
         this.client = client;
     }
 
+    /**
+     * Shows data entries.
+     *
+     * @param rqst
+     * @param rspns
+     * @return
+     * @throws Exception
+     */
     @Override
-    public ModelAndView handle(Request rqst, Response rspns) throws Exception {
+    public final ModelAndView handle(final Request rqst, final Response rspns)
+            throws Exception {
         String report_id = rqst.params(":id");
         int data_rqst_id = Integer.valueOf(rqst.params(":rq"));
 

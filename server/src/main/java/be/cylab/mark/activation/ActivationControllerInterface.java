@@ -50,14 +50,31 @@ public interface ActivationControllerInterface<T extends Subject> {
      */
     void notifyRawData(final RawData<T> data);
 
+    /**
+     *
+     * @return
+     */
     List<DetectionAgentProfile> getProfiles();
 
+    /**
+     *
+     * @return
+     */
     Map<String, Object> getExecutorStatus();
 
+    /**
+     * Pause execution.
+     */
     void pauseExecution();
 
+    /**
+     * Resume execution.
+     */
     void resumeExecution();
 
+    /**
+     * Check if running.
+     * @return
+     */
     boolean isRunning();
-
 }

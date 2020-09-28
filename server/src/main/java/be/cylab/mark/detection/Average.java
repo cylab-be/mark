@@ -36,7 +36,7 @@ import be.cylab.mark.core.ServerInterface;
  *
  * @author Thibault Debatty
  */
-public class Average implements DetectionAgentInterface {
+public final class Average implements DetectionAgentInterface {
 
     private static final int DEFAULT_MIN_DENOMINATOR = 3;
     private static final String DENOMINATOR_STRING = "mindenominator";

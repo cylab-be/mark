@@ -27,23 +27,41 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 
 /**
- *
+ * Used to track requests performed by the client, so we can keep track of
+ * data used by the different detection algorithms.
  * @author tibo
  */
-public class JsonRequestListener implements JsonRpcClient.RequestListener{
+public final class JsonRequestListener
+        implements JsonRpcClient.RequestListener {
 
     private String last_request = "";
 
+    /**
+     *
+     * @param client
+     * @param request
+     */
     @Override
-    public void onBeforeRequestSent(JsonRpcClient client, ObjectNode request) {
+    public void onBeforeRequestSent(
+            final JsonRpcClient client, final ObjectNode request) {
         last_request = request.toString();
     }
 
+    /**
+     *
+     * @param client
+     * @param response
+     */
     @Override
-    public void onBeforeResponseProcessed(JsonRpcClient client, ObjectNode response) {
+    public void onBeforeResponseProcessed(
+            final JsonRpcClient client, final ObjectNode response) {
         // nothing to do here...
     }
 
+    /**
+     *
+     * @return
+     */
     public String getLastRequest() {
         return last_request;
     }

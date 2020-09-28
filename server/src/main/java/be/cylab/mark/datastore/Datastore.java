@@ -46,25 +46,27 @@ public class Datastore {
      *
      * @param config
      * @param activation_controller
-     * @throws be.cylab.mark.core.InvalidProfileException
      */
     @Inject
     public Datastore(
             final Config config,
-            final ActivationControllerInterface activation_controller)
-            throws InvalidProfileException {
+            final ActivationControllerInterface activation_controller) {
 
         this.config = config;
         this.activation_controller = activation_controller;
     }
 
     /**
-     * Start the datastore. This will start the json-rpc server in a separate
+     * Start the datastore.This will start the json-rpc server in a separate
      * thread and return when the server is ready.
      *
-     * @throws Exception
+     * @throws be.cylab.mark.core.InvalidProfileException if the adapter class
+     * mentioned in the configuration is invalid
+     * @throws java.lang.InterruptedException if we were stopped
+     * @throws Exception if the server failed to start
      */
-    public final void start() throws Exception {
+    public final void start()
+            throws InvalidProfileException, InterruptedException, Exception {
 
         LOGGER.info("Starting JSON-RPC datastore on " + config.getServerHost()
                 + " : " + config.getServerPort());
@@ -93,20 +95,20 @@ public class Datastore {
         server.stop();
     }
 
-    private MongoDatabase connectToMongodb(Config config) {
+    private MongoDatabase connectToMongodb(final Config config) {
         // Connect to mongodb
         MongoClient mongo = new MongoClient(
-                config.mongo_host, config.mongo_port);
-        MongoDatabase db = mongo.getDatabase(config.mongo_db);
+                config.getMongoHost(), config.getMongoPort());
+        MongoDatabase db = mongo.getDatabase(config.getMongoDb());
 
-        if (config.mongo_clean) {
+        if (config.isMongoClean()) {
             db.drop();
         }
 
         return db;
     }
 
-    private Server createJsonRPCServer(MongoDatabase mongodb)
+    private Server createJsonRPCServer(final MongoDatabase mongodb)
             throws InvalidProfileException {
 
         request_handler = new RequestHandler(
@@ -126,16 +128,16 @@ public class Datastore {
                 = new JsonRpcServer(object_mapper, request_handler);
 
         QueuedThreadPool thread_pool = new QueuedThreadPool(
-                config.max_threads,
-                config.min_threads,
-                config.idle_timeout,
-                new ArrayBlockingQueue<>(config.max_pending_requests));
+                config.getMaxThreads(),
+                config.getMinThreads(),
+                config.getIdleTimeout(),
+                new ArrayBlockingQueue<>(config.getMaxPendingRequests()));
 
         Server jetty = new Server(thread_pool);
 
         ServerConnector http_connector = new ServerConnector(jetty);
         http_connector.setHost(config.getServerBind());
-        http_connector.setPort(config.server_port);
+        http_connector.setPort(config.getServerPort());
 
         jetty.setConnectors(new Connector[]{http_connector});
         jetty.setHandler(new JettyHandler(jsonrpc_server));
@@ -143,11 +145,19 @@ public class Datastore {
         return jetty;
     }
 
-    public ServerInterface getRequestHandler() {
+    /**
+     *
+     * @return
+     */
+    public final ServerInterface getRequestHandler() {
         return this.request_handler;
     }
 
-    public MongoDatabase getMongodb() {
+    /**
+     *
+     * @return
+     */
+    public final MongoDatabase getMongodb() {
         return this.mongodb;
     }
 }

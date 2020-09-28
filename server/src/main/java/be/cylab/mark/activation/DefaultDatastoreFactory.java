@@ -34,14 +34,20 @@ import be.cylab.mark.core.SubjectAdapter;
  *
  * @author Thibault Debatty
  */
-public class DefaultDatastoreFactory implements DatastoreFactory {
+public final class DefaultDatastoreFactory implements DatastoreFactory {
     private final SubjectAdapter adapter;
 
-    public DefaultDatastoreFactory(SubjectAdapter adapter) {
+    /**
+     *
+     * @param adapter
+     */
+    public DefaultDatastoreFactory(final SubjectAdapter adapter) {
         this.adapter = adapter;
     }
 
-    public ServerInterface getInstance(String datastore_url) throws MalformedURLException {
+    @Override
+    public ServerInterface getInstance(final String datastore_url)
+            throws MalformedURLException {
         return new Client(new URL(datastore_url), adapter);
     }
 }

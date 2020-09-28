@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thibault Debatty
  */
-public class RequestHandler implements ServerInterface {
+public final class RequestHandler implements ServerInterface {
 
     private static final String COLLECTION_DATA = "DATA";
     private static final String COLLECTION_EVIDENCE = "EVIDENCE";
@@ -76,11 +76,11 @@ public class RequestHandler implements ServerInterface {
         this.gridfsbucket = GridFSBuckets.create(mongodb, COLLECTION_FILES);
 
         // Create indexes for LABEL and TIME
-        Document index = new Document(parser.LABEL, 1);
+        Document index = new Document(MongoParser.LABEL, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
 
-        index = new Document(parser.TIME, 1);
+        index = new Document(MongoParser.TIME, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
         mongodb.getCollection(COLLECTION_EVIDENCE).createIndex(index);
     }
@@ -91,7 +91,7 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     @Override
-    public final String test() {
+    public String test() {
         return "1";
     }
 
@@ -102,7 +102,7 @@ public class RequestHandler implements ServerInterface {
      * @param data
      */
     @Override
-    public final void testString(final String data) {
+    public void testString(final String data) {
         System.out.println(data);
     }
 
@@ -112,27 +112,36 @@ public class RequestHandler implements ServerInterface {
      * @param data {@inheritDoc}
      */
     @Override
-    public final void addRawData(final RawData data) {
+    public void addRawData(final RawData data) {
 
         Document document = parser.convert(data);
         mongodb.getCollection(COLLECTION_DATA)
                 .insertOne(document);
 
-        ObjectId id = (ObjectId)document.get( "_id" );
+        ObjectId id = (ObjectId) document.get("_id");
         data.setId(id.toString());
 
         activation_controller.notifyRawData(data);
     }
 
     @Override
-    public final RawData[] findData(Document query) {
+    public RawData[] findData(final Document query) {
         throw new UnsupportedOperationException(
                 "You should use findData(query, page) instead!");
     }
 
-    public static final int PAGE_SIZE = 1000;
+    /**
+     * Number of results per query.
+     */
+    private static final int PAGE_SIZE = 1000;
 
-    public final RawData[] findData(Document query, int page) {
+    /**
+     *
+     * @param query
+     * @param page
+     * @return
+     */
+    public RawData[] findData(final Document query, final int page) {
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_DATA)
                 .find(query)
@@ -153,13 +162,14 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     @Override
-    public final RawData[] findRawData(
+    public RawData[] findRawData(
             final String label, final Subject subject, final long from,
             final long till) {
 
         Document query = new Document();
         query.append(parser.LABEL, label);
-        query.append(parser.TIME, new Document("$gte", from).append("$lte", till));
+        query.append(
+                parser.TIME, new Document("$gte", from).append("$lte", till));
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -178,12 +188,12 @@ public class RequestHandler implements ServerInterface {
      * @param evidence
      */
     @Override
-    public final void addEvidence(final Evidence evidence) {
+    public void addEvidence(final Evidence evidence) {
 
         Document document = parser.convert(evidence);
         mongodb.getCollection(COLLECTION_EVIDENCE)
                 .insertOne(document);
-        ObjectId id = (ObjectId)document.get( "_id" );
+        ObjectId id = (ObjectId) document.get("_id");
         evidence.setId(id.toString());
 
         activation_controller.notifyEvidence(evidence);
@@ -202,19 +212,19 @@ public class RequestHandler implements ServerInterface {
     }
 
     @Override
-    public byte[] findFile(ObjectId file_id) throws Throwable {
+    public byte[] findFile(final ObjectId file_id) throws Throwable {
         byte[] data;
         try (GridFSDownloadStream downloadStream
                 = this.gridfsbucket.openDownloadStream(file_id)) {
-            int fileLength = (int) downloadStream.getGridFSFile().getLength();
-            data = new byte[fileLength];
+            int file_length = (int) downloadStream.getGridFSFile().getLength();
+            data = new byte[file_length];
             downloadStream.read(data);
         }
         return data;
     }
 
     @Override
-    public final DetectionAgentProfile[] activation() {
+    public DetectionAgentProfile[] activation() {
         List<DetectionAgentProfile> profiles =
                 activation_controller.getProfiles();
         return profiles.toArray(
@@ -230,7 +240,7 @@ public class RequestHandler implements ServerInterface {
      * @throws Throwable if request fails
      */
     @Override
-    public final Evidence[] findEvidence(
+    public Evidence[] findEvidence(
             final String label, final Subject subject)
             throws Throwable {
 
@@ -246,13 +256,13 @@ public class RequestHandler implements ServerInterface {
     }
 
     /**
-     * 
+     *
      * @param label
      * @return
-     * @throws Throwable 
+     * @throws Throwable
      */
     @Override
-    public final Evidence[] findEvidence(final String label)
+    public Evidence[] findEvidence(final String label)
             throws Throwable {
 
         LOGGER.debug("findEvidence : " + label);
@@ -286,7 +296,7 @@ public class RequestHandler implements ServerInterface {
         return ev_array;
     }
 
-    private final static int RESULTS_PER_PAGE = 100;
+    private static final int RESULTS_PER_PAGE = 100;
 
     /**
      * Keep only one evidence per subject: the most recent one.
@@ -296,7 +306,7 @@ public class RequestHandler implements ServerInterface {
      * @throws Throwable if request fails
      */
     @Override
-    public final Evidence[] findEvidence(final String label, final int page)
+    public Evidence[] findEvidence(final String label, final int page)
             throws Throwable {
 
         if (page < 1) {
@@ -324,7 +334,7 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     @Override
-    public final Evidence findEvidenceById(final String id) {
+    public Evidence findEvidenceById(final String id) {
         Document query = new Document();
         query.append("_id", new ObjectId(id));
 
@@ -341,6 +351,11 @@ public class RequestHandler implements ServerInterface {
         return parser.convertEvidence(document);
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public URL getURL() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -353,7 +368,7 @@ public class RequestHandler implements ServerInterface {
      * @return
      */
     @Override
-    public final Evidence[] findLastEvidences(
+    public Evidence[] findLastEvidences(
             final String label, final Subject subject) {
         Document query = new Document();
         // Find everything that starts with "label"
@@ -390,8 +405,7 @@ public class RequestHandler implements ServerInterface {
      * @param doc   doc containing the aggregation value.
      * @return int, number of unique subjects
      */
-    public final Subject[] findUniqueSubjects(final Document doc) {
-        int unique_subjects = 0;
+    public Subject[] findUniqueSubjects(final Document doc) {
         List<Subject> entries = new ArrayList<>();
         Document query = new Document("$group",
                             new Document("_id", doc));
@@ -400,14 +414,18 @@ public class RequestHandler implements ServerInterface {
                                 .aggregate(Arrays.asList(query));
 
         for (Document db_document : db_output) {
-                unique_subjects += 1;
                 entries.add(adapter.readFromMongo(db_document
                         .get("_id", Document.class)));
         }
         return entries.toArray(new Subject[entries.size()]);
     }
 
-    public final String[] findDistinctEntries(final String field) {
+    /**
+     *
+     * @param field
+     * @return
+     */
+    public String[] findDistinctEntries(final String field) {
         List<String> entries = new ArrayList<>();
 
         try (MongoCursor<String> cursor = mongodb
@@ -446,7 +464,8 @@ public class RequestHandler implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public void storeInCache(final String key, final Object value) throws Throwable {
+    public void storeInCache(final String key, final Object value)
+            throws Throwable {
         synchronized (agents_cache) {
             this.agents_cache.put(key, value);
         }
@@ -479,10 +498,11 @@ public class RequestHandler implements ServerInterface {
 
     @Override
     public Evidence[] findEvidenceSince(
-            String label, Subject subject, long time) throws Throwable {
+            final String label, final Subject subject, final long time)
+            throws Throwable {
         Document query = new Document();
-        query.append(parser.LABEL, label);
-        query.append(parser.TIME, new BasicDBObject("$gt", time));
+        query.append(MongoParser.LABEL, label);
+        query.append(MongoParser.TIME, new BasicDBObject("$gt", time));
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -492,7 +512,7 @@ public class RequestHandler implements ServerInterface {
         return this.parseEvidences(documents);
     }
 
-    private Evidence[] parseEvidences(FindIterable<Document> documents) {
+    private Evidence[] parseEvidences(final FindIterable<Document> documents) {
         List<Evidence> evidences = new ArrayList<>();
 
         for (Document doc : documents) {
@@ -529,7 +549,8 @@ public class RequestHandler implements ServerInterface {
         Map<String, Object> status = new HashMap<>();
 
         status.put("running", activation_controller.isRunning());
-        status.put("version", getClass().getPackage().getImplementationVersion());
+        status.put(
+                "version", getClass().getPackage().getImplementationVersion());
 
         OperatingSystemMXBean os =
          (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
@@ -542,22 +563,32 @@ public class RequestHandler implements ServerInterface {
 
         Runtime rt = Runtime.getRuntime();
         status.put("memory.total", rt.maxMemory() / 1024 / 1024);
-        status.put("memory.used", (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024);
+        status.put(
+                "memory.used",
+                (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024);
 
         return status;
     }
 
     private Map<String, Object> dbStatus() throws Throwable {
         Map<String, Object> status = new HashMap<>();
-        status.put("db.data.count", mongodb.getCollection(COLLECTION_DATA).countDocuments());
-        status.put("db.evidence.count", mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
+        status.put(
+                "db.data.count",
+                mongodb.getCollection(COLLECTION_DATA).countDocuments());
+        status.put(
+                "db.evidence.count",
+                mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
         Document stats = mongodb.runCommand(
-                Document.parse("{ collStats: '" + COLLECTION_DATA + "', scale: 1048576}"));
+                Document.parse(
+                        "{ collStats: '" + COLLECTION_DATA
+                                + "', scale: 1048576}"));
         status.put("db.data.size", stats.getInteger("size"));
 
         stats = mongodb.runCommand(
-                Document.parse("{ collStats: '" + COLLECTION_EVIDENCE + "', scale: 1048576}"));
+                Document.parse(
+                        "{ collStats: '" + COLLECTION_EVIDENCE
+                                + "', scale: 1048576}"));
         status.put("db.evidence.size", stats.getInteger("size"));
 
         return status;
