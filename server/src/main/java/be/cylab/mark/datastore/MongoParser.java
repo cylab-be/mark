@@ -36,18 +36,45 @@ import org.bson.Document;
  *
  * @author tibo
  */
-public class MongoParser {
+public final class MongoParser {
 
-    public final String LABEL = "LABEL";
-    public final String TIME = "TIME";
-    public final String DATA = "DATA";
-    public final String SCORE = "SCORE";
-    public final String REPORT = "REPORT";
-    public final String REFERENCES = "references";
+    /**
+     * LABEL field.
+     */
+    public static final String LABEL = "LABEL";
+
+    /**
+     * TIME field.
+     */
+    public static final String TIME = "TIME";
+
+    /**
+     * DATA field.
+     */
+    public static final String DATA = "DATA";
+
+    /**
+     * SCORE field.
+     */
+    public static final String SCORE = "SCORE";
+
+    /**
+     * REPORT field.
+     */
+    public static final String REPORT = "REPORT";
+
+    /**
+     * REFERENCES field.
+     */
+    public static final String REFERENCES = "references";
 
     private final SubjectAdapter adapter;
 
 
+    /**
+     *
+     * @param adapter
+     */
     public MongoParser(final SubjectAdapter adapter) {
         this.adapter = adapter;
     }
@@ -69,6 +96,11 @@ public class MongoParser {
         return data;
     }
 
+    /**
+     *
+     * @param doc
+     * @return
+     */
     public Evidence convertEvidence(final Document doc) {
 
         Evidence evidence = new Evidence();
@@ -88,18 +120,30 @@ public class MongoParser {
             profile.setClassName(profile_doc.getString("class_name"));
             profile.setLabel(profile_doc.getString("label"));
             profile.setTriggerLabel(profile_doc.getString("trigger_label"));
-            profile.setParameters(this.convertToMap(profile_doc.get("parameters", Document.class)));
+            profile.setParameters(
+                    this.convertToMap(
+                            profile_doc.get("parameters", Document.class)));
             evidence.setProfile(profile);
         }
 
         return evidence;
     }
 
-    public Document convert(Map map) {
+    /**
+     *
+     * @param map
+     * @return
+     */
+    public Document convert(final Map map) {
         return new Document(map);
     }
 
-    public HashMap convertToMap (Document doc) {
+    /**
+     *
+     * @param doc
+     * @return
+     */
+    public HashMap convertToMap(final Document doc) {
         HashMap map = new HashMap();
 
         for (Map.Entry<String, Object> entry : doc.entrySet()) {
@@ -146,8 +190,12 @@ public class MongoParser {
             Document profile_doc = new Document()
                 .append("class_name", evidence.getProfile().getClassName())
                 .append("label", evidence.getProfile().getLabel())
-                .append("trigger_label", evidence.getProfile().getTriggerLabel())
-                .append("parameters", convert(evidence.getProfile().getParameters()));
+                .append(
+                        "trigger_label",
+                        evidence.getProfile().getTriggerLabel())
+                .append(
+                        "parameters",
+                        convert(evidence.getProfile().getParameters()));
             doc.append("profile", profile_doc);
         }
 

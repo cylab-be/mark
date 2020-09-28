@@ -42,7 +42,7 @@ public final class DummySubjectAdapter implements SubjectAdapter<DummySubject> {
     @Override
     public void writeToMongo(
             final DummySubject subject, final Document doc) {
-        doc.append("name", subject.name);
+        doc.append("name", subject.getName());
     }
 
     /**
@@ -52,9 +52,7 @@ public final class DummySubjectAdapter implements SubjectAdapter<DummySubject> {
      */
     @Override
     public DummySubject readFromMongo(final Document doc) {
-        DummySubject ds = new DummySubject();
-        ds.name = doc.getString("name");
-        return ds;
+        return new DummySubject(doc.getString("name"));
     }
 
     /**
@@ -64,8 +62,6 @@ public final class DummySubjectAdapter implements SubjectAdapter<DummySubject> {
      */
     @Override
     public DummySubject deserialize(final JsonNode node) {
-        DummySubject ds = new DummySubject();
-        ds.name = node.get("name").textValue();
-        return ds;
+        return new DummySubject(node.get("name").textValue());
     }
 }

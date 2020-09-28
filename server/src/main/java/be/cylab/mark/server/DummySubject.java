@@ -31,22 +31,39 @@ import java.util.Objects;
  *
  * @author Thibault Debatty
  */
-public class DummySubject implements Subject {
+public final class DummySubject implements Subject {
 
-    public String name = "";
+    private final String name;
 
-    public DummySubject() {
+    /**
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
     }
 
-    public DummySubject(String name) {
+    /**
+     *
+     * @param name
+     */
+    public DummySubject(final String name) {
         this.name = name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return name;
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public int hashCode() {
         int hash = 7;
@@ -54,6 +71,11 @@ public class DummySubject implements Subject {
         return hash;
     }
 
+    /**
+     *
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -66,9 +88,7 @@ public class DummySubject implements Subject {
             return false;
         }
         final DummySubject other = (DummySubject) obj;
-        if (!Objects.equals(this.name, other.name)) {
-            return false;
-        }
-        return true;
+
+        return Objects.equals(this.name, other.name);
     }
 }
