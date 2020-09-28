@@ -31,9 +31,24 @@ import java.util.Map;
  * @author tibo
  */
 public interface ExecutorInterface {
+
+    /**
+     * Run this job.
+     * @param job
+     */
     void submit(Runnable job);
 
+    /**
+     * Stop.
+     * @return
+     * @throws InterruptedException if the thread was killed while we were
+     * stopping.
+     */
     boolean shutdown() throws InterruptedException;
 
+    /**
+     * Get the status of the backend executor.
+     * @return
+     */
     Map<String, Object> getStatus();
 }

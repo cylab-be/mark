@@ -31,15 +31,28 @@ public final class Point {
     private final long t;
     private final double y;
 
+    /**
+     * Simple time, value point.
+     * @param t
+     * @param y
+     */
     public Point(final long t, final double y) {
         this.t = t;
         this.y = y;
     }
 
+    /**
+     * Get time.
+     * @return
+     */
     public long getT() {
         return t;
     }
 
+    /**
+     * Get value.
+     * @return
+     */
     public double getY() {
         return y;
     }

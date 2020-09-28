@@ -41,9 +41,11 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
  *
  * @author tibo
  */
-@Plugin(name = "CustomConfigurationFactory", category = ConfigurationFactory.CATEGORY)
+@Plugin(
+        name = "CustomConfigurationFactory",
+        category = ConfigurationFactory.CATEGORY)
 @Order(50)
-public class Log4JConfig extends ConfigurationFactory {
+public final class Log4JConfig extends ConfigurationFactory {
 
     @Override
     protected String[] getSupportedTypes() {
@@ -59,8 +61,11 @@ public class Log4JConfig extends ConfigurationFactory {
 
     @Override
     public Configuration getConfiguration(
-            final LoggerContext ctx, final String name, final URI config_location) {
-        ConfigurationBuilder<BuiltConfiguration> builder = newConfigurationBuilder();
+            final LoggerContext ctx,
+            final String name,
+            final URI config_location) {
+        ConfigurationBuilder<BuiltConfiguration> builder =
+                newConfigurationBuilder();
         return createConfiguration(name, builder);
     }
 
@@ -104,7 +109,8 @@ public class Log4JConfig extends ConfigurationFactory {
                         "logs/mark-activationctonroller.log")
                 .add(layout));
         builder.add(builder
-            .newLogger(ActivationController.class.getCanonicalName(), Level.DEBUG)
+            .newLogger(
+                    ActivationController.class.getCanonicalName(), Level.DEBUG)
             .add(builder.newAppenderRef("FILE-ACTIVATION")));
 
         // Log MARK Server (DEBUG) to file
@@ -115,7 +121,8 @@ public class Log4JConfig extends ConfigurationFactory {
                         "logs/mark-server.log")
                 .add(layout));
         builder.add(builder
-            .newLogger(ActivationController.class.getCanonicalName(), Level.DEBUG)
+            .newLogger(
+                    ActivationController.class.getCanonicalName(), Level.DEBUG)
             .add(builder.newAppenderRef("FILE-SERVER")));
 
         return builder.build();

@@ -49,13 +49,19 @@ import org.bson.types.ObjectId;
  * @author tibo
  * @param <T>
  */
-public class ClientWrapper<T extends Subject> implements ServerInterface {
+public final class ClientWrapper<T extends Subject> implements ServerInterface {
 
     private final DetectionAgentProfile profile;
     private final Client<Subject> client;
     private final JsonRequestListener request_listener;
     private final ArrayList<String> requests = new ArrayList<>();
 
+    /**
+     *
+     * @param server_url
+     * @param adapter
+     * @param profile
+     */
     public ClientWrapper(
             final URL server_url,
             final SubjectAdapter adapter,
@@ -68,6 +74,11 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
     }
 
 
+    /**
+     *
+     * @param evidence
+     * @throws Throwable
+     */
     @Override
     public void addEvidence(final Evidence evidence) throws Throwable {
         evidence.setProfile(profile);
@@ -76,38 +87,82 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
         client.addEvidence(evidence);
     }
 
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
     @Override
     public String test() throws Throwable {
         return client.test();
     }
 
+    /**
+     *
+     * @param data
+     * @throws Throwable
+     */
     @Override
-    public void testString(String data) throws Throwable {
+    public void testString(final String data) throws Throwable {
         client.testString(data);
     }
 
+    /**
+     *
+     * @param data
+     * @throws Throwable
+     */
     @Override
-    public void addRawData(RawData data) throws Throwable {
+    public void addRawData(final RawData data) throws Throwable {
         client.addRawData(data);
     }
 
+    /**
+     *
+     * @param bytes
+     * @param filename
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public ObjectId addFile(byte[] bytes, String filename) throws Throwable {
+    public ObjectId addFile(final byte[] bytes, final String filename)
+            throws Throwable {
         return client.addFile(bytes, filename);
     }
 
+    /**
+     *
+     * @param file_id
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public byte[] findFile(ObjectId file_id) throws Throwable {
+    public byte[] findFile(final ObjectId file_id) throws Throwable {
         return client.findFile(file_id);
     }
 
+    /**
+     *
+     * @param query
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public RawData[] findData(Document query) throws Throwable {
+    public RawData[] findData(final Document query) throws Throwable {
         RawData[] data = client.findData(query);
         requests.add(request_listener.getLastRequest());
         return data;
     }
 
+    /**
+     *
+     * @param type
+     * @param subject
+     * @param from
+     * @param till
+     * @return
+     * @throws Throwable
+     */
     @Override
     public RawData[] findRawData(
             final String type, final Subject subject, final long from,
@@ -117,76 +172,172 @@ public class ClientWrapper<T extends Subject> implements ServerInterface {
         return data;
     }
 
+    /**
+     *
+     * @param label
+     * @param subject
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Evidence[] findEvidence(String label, Subject subject) throws Throwable {
+    public Evidence[] findEvidence(final String label, final Subject subject)
+            throws Throwable {
         return client.findEvidence(label, subject);
     }
 
+    /**
+     *
+     * @param label
+     * @param subject
+     * @param time
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Evidence[] findEvidenceSince(String label, Subject subject, long time) throws Throwable {
+    public Evidence[] findEvidenceSince(
+            final String label, final Subject subject, final long time)
+            throws Throwable {
         return client.findEvidenceSince(label, subject, time);
     }
 
+    /**
+     *
+     * @param label
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Evidence[] findEvidence(String label) throws Throwable {
+    public Evidence[] findEvidence(final String label) throws Throwable {
         return client.findEvidence(label);
     }
 
+    /**
+     *
+     * @param label
+     * @param page
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Evidence[] findEvidence(String label, int page) throws Throwable {
+    public Evidence[] findEvidence(
+            final String label, final int page) throws Throwable {
         return client.findEvidence(label, page);
     }
 
+    /**
+     *
+     * @param id
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Evidence findEvidenceById(String id) throws Throwable {
+    public Evidence findEvidenceById(final String id) throws Throwable {
         return client.findEvidenceById(id);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public URL getURL() {
         return client.getURL();
     }
 
+    /**
+     *
+     * @param label
+     * @param subject
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Evidence[] findLastEvidences(String label, Subject subject) throws Throwable {
+    public Evidence[] findLastEvidences(
+            final String label, final Subject subject) throws Throwable {
         return client.findLastEvidences(label, subject);
     }
 
+    /**
+     *
+     * @param key
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public Object getFromCache(String key) throws Throwable {
+    public Object getFromCache(final String key) throws Throwable {
         return client.getFromCache(key);
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     * @throws Throwable
+     */
     @Override
-    public void storeInCache(String key, Object value) throws Throwable {
+    public void storeInCache(final String key, final Object value)
+            throws Throwable {
         client.storeInCache(key, value);
     }
 
+    /**
+     *
+     * @param key
+     * @param new_value
+     * @param old_value
+     * @return
+     * @throws Throwable
+     */
     @Override
-    public boolean compareAndSwapInCache(String key, Object new_value, Object old_value) throws Throwable {
+    public boolean compareAndSwapInCache(
+            final String key, final Object new_value, final Object old_value)
+            throws Throwable {
         return client.compareAndSwapInCache(key, new_value, old_value);
     }
 
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
     @Override
     public DetectionAgentProfile[] activation() throws Throwable {
         return client.activation();
     }
 
+    /**
+     *
+     * @throws Throwable
+     */
     @Override
     public void pause() throws Throwable {
         client.pause();
     }
 
+    /**
+     *
+     * @throws Throwable
+     */
     @Override
     public void resume() throws Throwable {
         client.resume();
     }
 
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Map status() throws Throwable {
         return client.status();
     }
 
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
     @Override
     public List history() throws Throwable {
         return client.history();

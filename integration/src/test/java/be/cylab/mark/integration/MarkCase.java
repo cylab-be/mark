@@ -57,7 +57,7 @@ public class MarkCase extends TestCase {
      */
     protected final Server getServer() throws Throwable {
         Config config = Config.getTestConfig();
-        config.adapter_class = LinkAdapter.class.getName();
+        config.setAdapterClass(LinkAdapter.class.getName());
 
 
         ExecutorInterface executor = new IgniteExecutor(config);

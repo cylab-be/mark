@@ -42,7 +42,7 @@ public class ConfigTest extends TestCase {
 
 
         Config config = Config.fromInputStream(stream);
-        assertEquals("1.2.3.4", config.server_host);
+        assertEquals("1.2.3.4", config.getServerHost());
 
     }
 }

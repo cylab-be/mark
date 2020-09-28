@@ -59,7 +59,7 @@ public class WebServer {
      * @throws java.lang.Exception if jetty fails to start
      */
     public final void start() throws Exception {
-        if (!config.start_webserver) {
+        if (!config.isStartWebserver()) {
             return;
         }
 
@@ -97,7 +97,9 @@ public class WebServer {
         });
 
         spark.Spark.get("/status", new StatusRoute(client), pebble);
-        spark.Spark.get("/report/:id/data/:rq", new ReportDataRoute(client), pebble);
+        spark.Spark.get(
+                "/report/:id/data/:rq",
+                new ReportDataRoute(client), pebble);
         spark.Spark.get("/report/:id", new ReportRoute(client), pebble);
     }
 

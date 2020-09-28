@@ -48,14 +48,15 @@ public class BillingModule extends AbstractModule {
      *
      * @param config_file used to instantiate Config.
      */
-    public BillingModule(File config_file) {
+    public BillingModule(final File config_file) {
         this.config_file = config_file;
     }
 
     @Override
-    protected void configure() {
+    protected final void configure() {
         //Associate Interface to class
-        bind(ActivationControllerInterface.class).to(ActivationController.class);
+        bind(ActivationControllerInterface.class).to(
+                ActivationController.class);
         bind(ExecutorInterface.class).to(IgniteExecutor.class);
 
         //Specific way to instantiate Config

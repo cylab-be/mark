@@ -33,7 +33,7 @@ import be.cylab.mark.core.ServerInterface;
  *
  * @author tibo
  */
-public class Counter implements DetectionAgentInterface {
+public final class Counter implements DetectionAgentInterface {
 
     @Override
     public void analyze(

@@ -49,12 +49,24 @@ public class ReportRoute implements TemplateViewRoute {
 
     private final Client client;
 
-    public ReportRoute(Client client) {
+    /**
+     * Shows a single report.
+     * @param client
+     */
+    public ReportRoute(final Client client) {
         this.client = client;
     }
 
+    /**
+     * Shows a single detection report.
+     * @param rqst
+     * @param rspns
+     * @return
+     * @throws Exception
+     */
     @Override
-    public ModelAndView handle(Request rqst, Response rspns) throws Exception {
+    public final ModelAndView handle(final Request rqst, final Response rspns)
+            throws Exception {
         String id = rqst.params(":id");
 
         Map<String, Object> model = new HashMap<>();
@@ -76,11 +88,11 @@ public class ReportRoute implements TemplateViewRoute {
         return new ModelAndView(model, "report.html");
     }
 
-    private Evidence[] getHistory(Evidence ev) throws Throwable {
+    private Evidence[] getHistory(final Evidence ev) throws Throwable {
         return client.findEvidence(ev.getLabel(), ev.getSubject());
     }
 
-    private Evidence[] getReferences(Evidence ev) throws Throwable {
+    private Evidence[] getReferences(final Evidence ev) throws Throwable {
         List<Evidence> evidences = new ArrayList<>();
         for (String ref_id : (List<String>) ev.getReferences()) {
             evidences.add(client.findEvidenceById(ref_id));
@@ -89,7 +101,8 @@ public class ReportRoute implements TemplateViewRoute {
         return evidences.toArray(new Evidence[evidences.size()]);
     }
 
-    private String jsonEncode(Evidence[] history) throws JsonProcessingException {
+    private String jsonEncode(final Evidence[] history)
+            throws JsonProcessingException {
         List<Point> points = new ArrayList<>();
         for (Evidence ev : history) {
             points.add(new Point(ev.getTime(), ev.getScore()));

@@ -29,13 +29,23 @@ package be.cylab.mark.detection;
  * the f(x) for given point x
  * @author Georgi Nikolov
  */
-public class FuzzyLogic {
+public final class FuzzyLogic {
+
     private final double x1;
     private final double x2;
     private final double y1;
     private final double y2;
 
-    public FuzzyLogic(double x1, double x2, double y1, double y2) {
+    /**
+     *
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     */
+    public FuzzyLogic(
+            final double x1, final double x2, final double y1,
+            final double y2) {
         this.x1 = x1;
         this.x2 = x2;
         this.y1 = y1;
@@ -49,7 +59,7 @@ public class FuzzyLogic {
      * @param value
      * @return
      */
-    public double determineMembership(double value) {
+    public double determineMembership(final double value) {
         //test if x1 is equal to x2 because it may cause division by 0
         if (x1 == x2) {
             throw new ArithmeticException("X1 == X2 -> can't divide by 0");
@@ -81,7 +91,7 @@ public class FuzzyLogic {
      * @param values
      * @return
      */
-    public double fuzzyAnd(double[] values) {
+    public double fuzzyAnd(final double[] values) {
         if (values.length == 0) {
             //if the values supplied are empty throw exception
             throw new IllegalArgumentException("Values array given is empty");
@@ -100,7 +110,12 @@ public class FuzzyLogic {
         return result;
     }
 
-    public double fuzzyOr(double[] values) {
+    /**
+     *
+     * @param values
+     * @return
+     */
+    public double fuzzyOr(final double[] values) {
          if (values.length == 0) {
             //if the values supplied are empty throw exception
             throw new IllegalArgumentException("Values array given is empty");
