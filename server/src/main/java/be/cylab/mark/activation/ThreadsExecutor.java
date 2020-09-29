@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2019 tibo.
+ * Copyright 2020 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,43 +23,43 @@
  */
 package be.cylab.mark.activation;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The actual detection jobs can be executed by any platform that implements
- * this interface. We currently use Apache Ignite.
+ *
  * @author tibo
  */
-public interface ExecutorInterface {
+public final class ThreadsExecutor implements ExecutorInterface {
 
-    /**
-     * Run this job.
-     * @param job
-     */
-    void submit(Runnable job);
+    private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            10, 10, 0L, TimeUnit.SECONDS, queue);
 
-    /**
-     * Stop.
-     * @return
-     * @throws InterruptedException if the thread was killed while we were
-     * stopping.
-     */
-    boolean shutdown() throws InterruptedException;
+    @Override
+    public void submit(final Runnable job) {
+        executor.submit(job);
+    }
 
-    /**
-     * Get the status of the backend executor.
-     *
-     * Typical fields of the Map include:
-     * - executor.job.executed
-     * - executor.job.running
-     * - executor.job.waiting
-     * - executor.job.waittime
-     * - executor.job.executetime
-     * - executor.nodes
-     * - executor.cpus
-     * - executor.parallelism
-     *
-     * @return
-     */
-    Map<String, Object> getStatus();
+    @Override
+    public boolean shutdown() throws InterruptedException {
+        executor.shutdown();
+        return true;
+    }
+
+    @Override
+    public Map<String, Object> getStatus() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("executor.nodes", 1);
+        map.put("executor.parallelism", executor.getMaximumPoolSize());
+        map.put("executor.jobs.running", executor.getActiveCount());
+        map.put("executor.jobs.executed", executor.getCompletedTaskCount());
+        map.put("executor.jobs.waiting", queue.size());
+        return map;
+    }
+
 }

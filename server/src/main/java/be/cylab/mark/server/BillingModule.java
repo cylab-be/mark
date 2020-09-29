@@ -30,6 +30,7 @@ import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.activation.ActivationControllerInterface;
 import be.cylab.mark.activation.ExecutorInterface;
 import be.cylab.mark.activation.IgniteExecutor;
+import be.cylab.mark.activation.ThreadsExecutor;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -54,20 +55,30 @@ public class BillingModule extends AbstractModule {
 
     @Override
     protected final void configure() {
+        // read config file
+        Config config = null;
+        try {
+            config = Config.fromFile(config_file);
+
+        } catch (FileNotFoundException ex) {
+            LOGGER.error("File not found: " + config_file);
+            return;
+        } catch (Exception ex) {
+            LOGGER.error("Invalid configuration: " + ex.getMessage());
+            return;
+        }
+        bind(Config.class).toInstance(config);
+
         //Associate Interface to class
         bind(ActivationControllerInterface.class).to(
                 ActivationController.class);
-        bind(ExecutorInterface.class).to(IgniteExecutor.class);
 
-        //Specific way to instantiate Config
-        try {
-            bind(Config.class).toInstance(Config.fromFile(config_file));
-
-        } catch (FileNotFoundException ex) {
-            LOGGER.error("File not found : " + config_file);
-        } catch (Exception ex) {
-            LOGGER.error("Invalid configuration: " + ex.getMessage());
+        if (config.getExecutorClass().equals(IgniteExecutor.class.getName())) {
+            bind(ExecutorInterface.class).to(IgniteExecutor.class);
+        } else {
+            bind(ExecutorInterface.class).to(ThreadsExecutor.class);
         }
+
     }
 
 }

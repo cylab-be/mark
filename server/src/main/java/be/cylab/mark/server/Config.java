@@ -1,5 +1,6 @@
 package be.cylab.mark.server;
 
+import be.cylab.mark.activation.IgniteExecutor;
 import com.google.inject.Singleton;
 import be.cylab.mark.core.InvalidProfileException;
 import java.io.File;
@@ -132,6 +133,8 @@ public final class Config {
      */
     private String log_directory = DEFAULT_LOG_DIRECTORY;
     private static final String DEFAULT_LOG_DIRECTORY = "./log";
+
+    private String executor_class = IgniteExecutor.class.getCanonicalName();
 
     /**
      * Env variable for setting mongodb host.
@@ -613,5 +616,21 @@ public final class Config {
      */
     public void setServerBind(final String server_bind) {
         this.server_bind = server_bind;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getExecutorClass() {
+        return executor_class;
+    }
+
+    /**
+     *
+     * @param executor_class
+     */
+    public void setExecutorClass(final String executor_class) {
+        this.executor_class = executor_class;
     }
 }

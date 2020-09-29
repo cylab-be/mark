@@ -3,6 +3,32 @@
 ## Unreleased
 
 
+* **validate config. Fix issue #59**
+[09f807a9c9d2a4f](https://github.com/cylab/mark/commit/09f807a9c9d2a4f) Thibault Debatty *2020-09-28 14:54:23*
+* **check config**
+[0c29707215e7ccc](https://github.com/cylab/mark/commit/0c29707215e7ccc) Thibault Debatty *2020-09-28 14:43:28*
+* **Checkstyle**
+[62cd7adf73e285a](https://github.com/cylab/mark/commit/62cd7adf73e285a) Tibo *2020-09-28 14:15:48*
+* **removed PMD plugin, as it is already part of the root module**
+[f9e5a96bfdcb6fc](https://github.com/cylab/mark/commit/f9e5a96bfdcb6fc) Thibault Debatty *2020-09-28 14:10:35*
+* **moved checkstyle config to root module**
+[ce0e86301bc0597](https://github.com/cylab/mark/commit/ce0e86301bc0597) Thibault Debatty *2020-09-28 14:09:13*
+* **fix remaining checkstyle errors**
+[25de4ba6c51e7c7](https://github.com/cylab/mark/commit/25de4ba6c51e7c7) Thibault Debatty *2020-09-28 14:05:25*
+* **fix approx 90 checkstyle errors**
+[1304460d9fe0fc4](https://github.com/cylab/mark/commit/1304460d9fe0fc4) Thibault Debatty *2020-09-28 13:21:07*
+* **fix approx. 100 checkstyle errors**
+[1e041bf4a96249c](https://github.com/cylab/mark/commit/1e041bf4a96249c) Thibault Debatty *2020-09-28 12:10:18*
+* **start fixing style in server module**
+[785f1eb16f2a183](https://github.com/cylab/mark/commit/785f1eb16f2a183) Thibault Debatty *2020-05-25 09:33:05*
+
+## 1.2.0
+
+
+* **updated changelog**
+[5db3e23ddc4d8e1](https://github.com/cylab/mark/commit/5db3e23ddc4d8e1) Thibault Debatty *2020-09-14 11:00:53*
+* **remove references to web_root + configurable bind address**
+[c87429f0aedbcd9](https://github.com/cylab/mark/commit/c87429f0aedbcd9) Thibault Debatty *2020-09-14 11:00:45*
 * **removed unused webserverRoot calls**
 [8724a3b81081ace](https://github.com/cylab/mark/commit/8724a3b81081ace) Thibault Debatty *2020-09-14 10:06:54*
 
