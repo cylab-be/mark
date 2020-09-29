@@ -1,6 +1,7 @@
 package be.cylab.mark.server;
 
 import be.cylab.mark.activation.IgniteExecutor;
+import be.cylab.mark.activation.ThreadsExecutor;
 import com.google.inject.Singleton;
 import be.cylab.mark.core.InvalidProfileException;
 import java.io.File;
@@ -134,7 +135,7 @@ public final class Config {
     private String log_directory = DEFAULT_LOG_DIRECTORY;
     private static final String DEFAULT_LOG_DIRECTORY = "./log";
 
-    private String executor_class = IgniteExecutor.class.getCanonicalName();
+    private String executor_class = ThreadsExecutor.class.getCanonicalName();
 
     /**
      * Env variable for setting mongodb host.
