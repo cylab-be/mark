@@ -269,10 +269,12 @@ public final class Config {
      */
     public boolean validate() throws Exception {
 
-        if (server_host.equals("127.0.0.1") && ignite_autodiscovery) {
+        if (server_host.equals("127.0.0.1")
+                && executor_class.equals(IgniteExecutor.class.getName())
+                && ignite_autodiscovery) {
             throw new Exception(
                     "Server host cannot be 127.0.0.1 with a distributed "
-                            + "executor!");
+                            + "executor (ignite_autodiscovery is true)!");
         }
         this.getSubjectAdapter();
         this.getDatastoreUrl();
