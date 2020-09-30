@@ -3,6 +3,16 @@
 ## Unreleased
 
 
+* **add call to reload detection agent profiles. fix issue #67**
+[f9fb34023f94cf4](https://github.com/cylab/mark/commit/f9fb34023f94cf4) Thibault Debatty *2020-09-30 14:47:06*
+* **cleanup activation controller code**
+[dee3bbf00855167](https://github.com/cylab/mark/commit/dee3bbf00855167) Thibault Debatty *2020-09-30 13:41:55*
+* **use threads executor by default**
+[be86ef6f528ad90](https://github.com/cylab/mark/commit/be86ef6f528ad90) Thibault Debatty *2020-09-29 13:24:47*
+* **fix integration test**
+[ceaf00987f50611](https://github.com/cylab/mark/commit/ceaf00987f50611) Thibault Debatty *2020-09-29 13:16:06*
+* **use a thread pool executor by default, modify config to use ignite. Fix issue #62**
+[18eb176d0cb92ed](https://github.com/cylab/mark/commit/18eb176d0cb92ed) Thibault Debatty *2020-09-29 12:46:07*
 * **validate config. Fix issue #59**
 [09f807a9c9d2a4f](https://github.com/cylab/mark/commit/09f807a9c9d2a4f) Thibault Debatty *2020-09-28 14:54:23*
 * **check config**
