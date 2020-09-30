@@ -96,6 +96,16 @@ public class WebServer {
             return null;
         });
 
+        spark.Spark.get("/status/reload", (rqst, rspns) -> {
+            try {
+                client.reload();
+            } catch (Throwable ex) {
+                LOGGER.error("Failed to reload server!: " + ex.getMessage());
+            }
+            rspns.redirect("/status");
+            return null;
+        });
+
         spark.Spark.get("/status", new StatusRoute(client), pebble);
         spark.Spark.get(
                 "/report/:id/data/:rq",

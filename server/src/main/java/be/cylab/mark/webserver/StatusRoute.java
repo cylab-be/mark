@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import static spark.Spark.halt;
+// import static spark.Spark.halt;
 import spark.TemplateViewRoute;
 
 /**
@@ -71,6 +71,7 @@ class StatusRoute implements TemplateViewRoute {
 
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("mark", this.client);
+
         try {
             attributes.put("status", this.client.status());
             List history = this.client.history();
@@ -96,7 +97,7 @@ class StatusRoute implements TemplateViewRoute {
                     encode(extractDouble(history, "executor_job_waittime")));
         } catch (Throwable ex) {
             LOGGER.error("Failed to read from client: " + ex.getMessage());
-            halt(500);
+            // halt(500);
         }
         return new ModelAndView(attributes, "status.html");
     }
