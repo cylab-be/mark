@@ -533,6 +533,11 @@ public final class RequestHandler implements ServerInterface {
     }
 
     @Override
+    public void reload() {
+        this.activation_controller.reload();
+    }
+
+    @Override
     public Map<String, Object> status() throws Throwable {
         Map<String, Object> status = new HashMap<>();
         status.putAll(this.markStatus());

@@ -177,11 +177,10 @@ public class ActivationControllerTest extends TestCase {
         RawData data = getTestData();
         //create a dummy agent and add it to the controller
         DetectionAgentProfile profile = getTestDetectionAgent();
-        LinkedList<DetectionAgentProfile> profiles = new LinkedList<>();
-        profiles.add(profile);
+
         //key that we will be looking for
         String key = profile.getClassName() + "-" + data.getSubject().toString();
-        controller.setProfiles(profiles);
+        controller.addProfile(profile);
         controller.start();
 
         Thread.sleep(1000);
@@ -217,9 +216,7 @@ public class ActivationControllerTest extends TestCase {
         DetectionAgentProfile profile = getTestDetectionAgent();
         //key that we will be looking for
         String key = profile.getClassName() + "-" + data.getSubject().toString();
-        LinkedList<DetectionAgentProfile> profiles = new LinkedList<>();
-        profiles.add(profile);
-        controller.setProfiles(profiles);
+        controller.addProfile(profile);
         controller.start();
 
         Thread.sleep(1000);

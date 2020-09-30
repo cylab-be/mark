@@ -359,6 +359,11 @@ public class Client<T extends Subject> implements ServerInterface {
         return json_rpc_client.invoke("history", null, List.class);
     }
 
+    @Override
+    public final void reload() throws Throwable {
+        json_rpc_client.invoke("reload", null);
+    }
+
 
 
     /**

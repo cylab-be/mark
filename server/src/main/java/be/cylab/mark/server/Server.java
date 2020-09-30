@@ -9,9 +9,7 @@ import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
-import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.data.DataAgentContainer;
-import java.util.List;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -74,7 +72,7 @@ public class Server {
         this.parseModules();
 
         web_server.start();
-        activation_controller.testProfiles();
+        activation_controller.reload();
         activation_controller.start();
         datastore.start();
         monitor.start();
@@ -143,7 +141,6 @@ public class Server {
 
         LOGGER.info(modules_dir.getAbsolutePath());
         this.loadDataAgents(modules_dir);
-        this.loadDetectionAgents(modules_dir);
     }
 
     private void loadDataAgents(final File modules_dir)
@@ -162,22 +159,5 @@ public class Server {
                             config));
         }
         LOGGER.info("Found " + data_agents.size() + " data agents ...");
-    }
-
-    private void loadDetectionAgents(final File modules_dir)
-            throws FileNotFoundException {
-
-        // Parse *.detection.yml files
-        File[] detection_agent_files
-                = modules_dir.listFiles(
-                        (final File dir, final String name) ->
-                                name.endsWith(".detection.yml"));
-
-        List<DetectionAgentProfile> profiles = new LinkedList<>();
-        for (File file : detection_agent_files) {
-            profiles.add(DetectionAgentProfile.fromFile(file));
-        }
-        LOGGER.info("Found " + profiles.size() + " detection agents ...");
-        activation_controller.setProfiles(profiles);
     }
 }

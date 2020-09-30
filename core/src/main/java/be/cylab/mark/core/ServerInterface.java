@@ -215,6 +215,13 @@ public interface ServerInterface<T extends Subject> {
     void resume() throws Throwable;
 
     /**
+     * Reload the directory containing detection agents profiles.
+     * @throws java.lang.Throwable if something went wrong
+     */
+    void reload() throws Throwable;
+
+
+    /**
      * Get the last previous status objects.
      * @return
      * @throws Throwable if something goes wrong

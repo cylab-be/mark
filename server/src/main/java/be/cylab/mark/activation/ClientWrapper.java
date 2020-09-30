@@ -343,4 +343,13 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
         return client.history();
     }
 
+    /**
+     *
+     * @throws Throwable
+     */
+    @Override
+    public void reload() throws Throwable {
+        client.reload();
+    }
+
 }

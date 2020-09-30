@@ -200,4 +200,9 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     public List<Map> history() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void reload() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

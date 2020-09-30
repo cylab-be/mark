@@ -15,6 +15,8 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.Subject;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.SafeThread;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -324,16 +326,6 @@ public final class ActivationController<T extends Subject> extends SafeThread
     }
 
     /**
-     * Set a new list of profiles.
-     *
-     * This method can be used during execution, to dynamically add detectors.
-     * @param profiles
-     */
-    public void setProfiles(final List<DetectionAgentProfile> profiles) {
-        this.profiles = profiles;
-    }
-
-    /**
      * Add the profile for a new detector.
      * This method can be used during execution, to dynamically add detectors.
      * @param profile
@@ -385,5 +377,35 @@ public final class ActivationController<T extends Subject> extends SafeThread
     @Override
     public boolean isRunning() {
         return this.running;
+    }
+
+    @Override
+    public void reload() {
+        File modules_dir;
+        try {
+            modules_dir = config.getModulesDirectory();
+        } catch (FileNotFoundException ex) {
+            LOGGER.warn(ex.getMessage());
+            LOGGER.warn("Skipping modules parsing ...");
+            return;
+        }
+
+
+        // Parse *.detection.yml files
+        File[] detection_agent_files
+                = modules_dir.listFiles(
+                        (final File dir, final String name) ->
+                                name.endsWith(".detection.yml"));
+
+        profiles = new LinkedList<>();
+        for (File file : detection_agent_files) {
+            try {
+                addProfile(DetectionAgentProfile.fromFile(file));
+            } catch (FileNotFoundException ex) {
+                LOGGER.warn("File does not exist anymore: "
+                        + file.getAbsolutePath());
+            }
+        }
+        LOGGER.info("Found " + profiles.size() + " detection agents ...");
     }
 }

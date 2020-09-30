@@ -77,5 +77,8 @@ public class DummyActivationContoller implements ActivationControllerInterface {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
+    @Override
+    public void reload() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

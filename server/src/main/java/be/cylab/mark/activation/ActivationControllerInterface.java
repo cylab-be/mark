@@ -77,4 +77,9 @@ public interface ActivationControllerInterface<T extends Subject> {
      * @return
      */
     boolean isRunning();
+
+    /**
+     * Reload configuration files for detection agent profiles.
+     */
+    void reload();
 }
