@@ -26,6 +26,7 @@ package be.cylab.mark.integration;
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
+import be.cylab.mark.detection.TimeAverage;
 import java.net.URL;
 
 /**
@@ -35,15 +36,13 @@ import java.net.URL;
 public class TimeAverageIT extends MarkCase {
 
     public final void testTimeAverage() throws Throwable {
-        server = getServer();
 
         DetectionAgentProfile agent = new DetectionAgentProfile();
-        agent.setClassName("be.cylab.mark.detection.TimeAverage");
+        agent.setClassName(TimeAverage.class.getName());
         agent.setLabel("detection.timeaverage");
         agent.setTriggerLabel("data");
-        server.addDetectionAgent(agent);
 
-        server.start();
+        getActivationController().addProfile(agent);
 
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());

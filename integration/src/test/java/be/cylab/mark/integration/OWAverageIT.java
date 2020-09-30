@@ -26,6 +26,7 @@ package be.cylab.mark.integration;
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
+import be.cylab.mark.detection.OWAverage;
 import java.net.URL;
 import static junit.framework.TestCase.assertEquals;
 
@@ -36,15 +37,12 @@ import static junit.framework.TestCase.assertEquals;
 public class OWAverageIT extends MarkCase {
 
     public final void testOrderedWeightedAverage() throws Throwable {
-        server = getServer();
 
         DetectionAgentProfile agent = new DetectionAgentProfile();
-        agent.setClassName("be.cylab.mark.detection.OWAverage");
+        agent.setClassName(OWAverage.class.getName());
         agent.setLabel("detection.owa");
         agent.setTriggerLabel("data.");
-        server.addDetectionAgent(agent);
-
-        server.start();
+        getActivationController().addProfile(agent);
 
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());

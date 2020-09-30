@@ -40,7 +40,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
     private static final Logger LOGGER
             = LoggerFactory.getLogger(ActivationController.class);
 
-    private final LinkedList<DetectionAgentProfile> profiles;
+    private List<DetectionAgentProfile> profiles;
     private final ExecutorInterface executor;
 
     //store the last time an agent has been triggered for a specific Subject,
@@ -62,6 +62,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
     @Inject
     public ActivationController(
             final Config config, final ExecutorInterface executor) {
+
         this.config = config;
         this.profiles = new LinkedList<>();
         this.executor = executor;
@@ -162,8 +163,9 @@ public final class ActivationController<T extends Subject> extends SafeThread
      */
     private void processEvents(final Map<String, Map<T, Event<T>>> events) {
 
-
         int scheduled = 0;
+        int events_count = 0;
+
         for (String event_label : events.keySet()) {
 
             for (DetectionAgentProfile profile : profiles) {
@@ -173,6 +175,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
                 }
 
                 for (Event<T> event : events.get(event_label).values()) {
+                    events_count++;
                     if (checkCorrectTriggerTime(profile, event)) {
                         updateLastTimeTriggered(profile, event);
                         this.scheduleDetection(profile, event);
@@ -181,8 +184,9 @@ public final class ActivationController<T extends Subject> extends SafeThread
                 }
             }
         }
-
-        LOGGER.info("Scheduled " + scheduled + " detectors...");
+        LOGGER.info("Processed " + events_count + " events against "
+                + profiles.size() + " profiles and scheduled " + scheduled
+                + " detectors ...");
     }
 
     /**
@@ -320,12 +324,24 @@ public final class ActivationController<T extends Subject> extends SafeThread
     }
 
     /**
+     * Set a new list of profiles.
      *
+     * This method can be used during execution, to dynamically add detectors.
+     * @param profiles
+     */
+    public void setProfiles(final List<DetectionAgentProfile> profiles) {
+        this.profiles = profiles;
+    }
+
+    /**
+     * Add the profile for a new detector.
+     * This method can be used during execution, to dynamically add detectors.
      * @param profile
      */
-    public void addAgent(final DetectionAgentProfile profile) {
-        profiles.add(profile);
+    public void addProfile(final DetectionAgentProfile profile) {
+        this.profiles.add(profile);
     }
+
 
     /**
      * Get the list of received events (new data or new evidence reports).
@@ -352,6 +368,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
 
     @Override
     public void pauseExecution() {
+        LOGGER.info("Pause ...");
         synchronized (this) {
             this.running = false;
         }
@@ -359,6 +376,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
 
     @Override
     public void resumeExecution() {
+        LOGGER.info("Resume ...");
         synchronized (this) {
             this.running = true;
         }

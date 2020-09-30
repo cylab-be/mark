@@ -33,6 +33,7 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.DummySubject;
 import java.io.InputStream;
+import java.util.LinkedList;
 
 /**
  *
@@ -176,11 +177,13 @@ public class ActivationControllerTest extends TestCase {
         RawData data = getTestData();
         //create a dummy agent and add it to the controller
         DetectionAgentProfile profile = getTestDetectionAgent();
+        LinkedList<DetectionAgentProfile> profiles = new LinkedList<>();
+        profiles.add(profile);
         //key that we will be looking for
         String key = profile.getClassName() + "-" + data.getSubject().toString();
-        controller.addAgent(profile);
+        controller.setProfiles(profiles);
         controller.start();
-        
+
         Thread.sleep(1000);
         //notify controller of new RawData
         controller.notifyRawData(data);
@@ -200,7 +203,7 @@ public class ActivationControllerTest extends TestCase {
         assertEquals(true, last_time_triggered.keySet().contains(key));
         assertEquals(true, last_time_triggered.keySet().contains(key2));
         assertEquals(Long.valueOf(123456), last_time_triggered.get(key));
-        assertEquals(Long.valueOf(123477), last_time_triggered.get(key2));    
+        assertEquals(Long.valueOf(123477), last_time_triggered.get(key2));
     }
 
     public void testUpdatingLastTimeTriggeredEntry() throws Throwable, InvalidProfileException {
@@ -214,9 +217,11 @@ public class ActivationControllerTest extends TestCase {
         DetectionAgentProfile profile = getTestDetectionAgent();
         //key that we will be looking for
         String key = profile.getClassName() + "-" + data.getSubject().toString();
-        controller.addAgent(profile);
+        LinkedList<DetectionAgentProfile> profiles = new LinkedList<>();
+        profiles.add(profile);
+        controller.setProfiles(profiles);
         controller.start();
-        
+
         Thread.sleep(1000);
         //notify controller of new RawData
         controller.notifyRawData(data);
@@ -237,7 +242,7 @@ public class ActivationControllerTest extends TestCase {
         assertEquals(1, last_time_triggered.size());
         assertEquals(true, last_time_triggered.keySet().contains(key));
         //check that the entry was updated with the second timestamp
-        assertEquals(Long.valueOf(234567), last_time_triggered.get(key));    
+        assertEquals(Long.valueOf(234567), last_time_triggered.get(key));
     }
 
     /**

@@ -25,7 +25,7 @@ package be.cylab.mark.integration;
 
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.activation.ExecutorInterface;
-import be.cylab.mark.activation.IgniteExecutor;
+import be.cylab.mark.activation.ThreadsExecutor;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.server.Config;
@@ -39,7 +39,34 @@ import junit.framework.TestCase;
  */
 public class MarkCase extends TestCase {
 
-    protected Server server;
+    private Server server;
+    private ActivationController activation_controller;
+
+    @Override
+    protected final void setUp() throws Exception {
+
+        Config config = Config.getTestConfig();
+        config.setAdapterClass(LinkAdapter.class.getName());
+
+        ExecutorInterface executor = new ThreadsExecutor();
+
+        activation_controller
+                = new ActivationController(config, executor);
+        activation_controller.addProfile(DetectionAgentProfile.fromInputStream(
+                getClass().getResourceAsStream("/detection.dummy.yml")));
+
+        try {
+            server = new Server(
+                    config,
+                    new WebServer(config),
+                    activation_controller,
+                    new Datastore(config, activation_controller));
+            server.start();
+        } catch (Throwable ex) {
+            throw new Exception("failed to start server", ex);
+        }
+
+    }
 
     @Override
     protected final void tearDown() throws Exception {
@@ -49,43 +76,18 @@ public class MarkCase extends TestCase {
         super.tearDown();
     }
 
+
+
     /**
      * Set up normal server.
      *
-     * @return server.
-     * @throws Throwable
+     * @return server
      */
-    protected final Server getServer() throws Throwable {
-        Config config = Config.getTestConfig();
-        config.setAdapterClass(LinkAdapter.class.getName());
-
-
-        ExecutorInterface executor = new IgniteExecutor(config);
-
-        ActivationController activation_controller
-                = new ActivationController(config, executor);
-        return new Server(
-                config,
-                new WebServer(config),
-                activation_controller,
-                new Datastore(config, activation_controller));
+    protected final Server getTestServer() {
+        return server;
     }
 
-    /**
-     * Set up and start dummy server.
-     *
-     * @throws Throwable
-     */
-    protected final void startDummyServer()
-            throws Throwable {
-
-        server = getServer();
-
-        // Activate the dummy activation profile
-        server.addDetectionAgent(DetectionAgentProfile.fromInputStream(
-                getClass()
-                        .getResourceAsStream("/detection.dummy.yml")));
-        server.start();
+    protected final ActivationController getActivationController() {
+        return activation_controller;
     }
-
 }

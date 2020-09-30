@@ -29,6 +29,7 @@ import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.DummySubject;
+import java.util.LinkedList;
 
 /**
  *
@@ -53,7 +54,7 @@ public class ExecutorTest extends TestCase {
         profile.setTriggerLabel("data.dummy");
         profile.setClassName(
                 be.cylab.mark.detection.DummyDetector.class.getCanonicalName());
-        controller.addAgent(profile);
+        controller.addProfile(profile);
         controller.start();
 
         Thread.sleep(1000);

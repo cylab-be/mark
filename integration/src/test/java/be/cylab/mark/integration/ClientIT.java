@@ -1,5 +1,6 @@
 package be.cylab.mark.integration;
 
+import be.cylab.mark.activation.ActivationController;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -27,7 +28,6 @@ public class ClientIT extends MarkCase {
         System.out.println("test");
         System.out.println("====");
 
-        startDummyServer();
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
         assertEquals("1", datastore.test());
@@ -37,7 +37,6 @@ public class ClientIT extends MarkCase {
         System.out.println("status");
         System.out.println("====");
 
-        startDummyServer();
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
         System.out.println(datastore.status());
@@ -51,7 +50,6 @@ public class ClientIT extends MarkCase {
         System.out.println("testString");
         System.out.println("==========");
 
-        startDummyServer();
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
         datastore.testString("My String");
@@ -64,8 +62,6 @@ public class ClientIT extends MarkCase {
     public final void testAddFindRawData() throws Throwable {
         System.out.println("addRawData and findRawData");
         System.out.println("==========================");
-
-        startDummyServer();
 
         String label = "http";
         Link link = new Link("1.2.3.4", "www.google.be");
@@ -106,12 +102,11 @@ public class ClientIT extends MarkCase {
         System.out.println("============================================");
 
         // Start server with read-write activation profile
-        server = getServer();
-        server.addDetectionAgent(
+        ActivationController activation_controller = getActivationController();
+        activation_controller.addProfile(
                 DetectionAgentProfile.fromInputStream(
                         getClass()
                                 .getResourceAsStream("/detection.readwrite.yml")));
-        server.start();
 
         // Count the original number of evidences
         Client datastore = new Client(
@@ -132,7 +127,8 @@ public class ClientIT extends MarkCase {
         data.setTime(1234567);
         datastore.addRawData(data);
 
-        server.awaitTermination();
+        Thread.sleep(1000);
+        getTestServer().awaitTermination();
 
         int final_count = datastore
                 .findEvidence(
@@ -150,9 +146,6 @@ public class ClientIT extends MarkCase {
     public final void testStoreInAndGetFromCache() throws Throwable {
         System.out.println("storeInCache, get from cache");
         System.out.println("============================");
-
-        server = getServer();
-        server.start();
 
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
@@ -182,9 +175,6 @@ public class ClientIT extends MarkCase {
         System.out.println("Compare and swap in cache");
         System.out.println("=========================");
 
-        server = getServer();
-        server.start();
-
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
 
@@ -208,9 +198,6 @@ public class ClientIT extends MarkCase {
         System.out.println("findRawData(Bson.Document)");
         System.out.println("==========================");
 
-        server = getServer();
-        server.start();
-
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
 
@@ -232,9 +219,6 @@ public class ClientIT extends MarkCase {
     public final void testFindALotOfDataWithBson() throws Throwable {
         System.out.println("findData(Bson.Document) with many results");
         System.out.println("=========================================");
-
-        server = getServer();
-        server.start();
 
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
@@ -258,9 +242,6 @@ public class ClientIT extends MarkCase {
     public final void testFindEvidence() throws Throwable {
         System.out.println("findEvidence, test we get the most recent");
         System.out.println("=========================================");
-
-        server = getServer();
-        server.start();
 
         // Count the original number of evidences
         Client datastore = new Client(
@@ -294,9 +275,6 @@ public class ClientIT extends MarkCase {
     public final void testFindEvidenceSince() throws Throwable {
         System.out.println("findEvidenceSince");
         System.out.println("=================");
-
-        server = getServer();
-        server.start();
 
         // Count the original number of evidences
         Client datastore = new Client(
@@ -332,7 +310,6 @@ public class ClientIT extends MarkCase {
     public final void testInvalidConnection() throws Throwable {
         System.out.println("Test invalid connection");
         System.out.println("=======================");
-        startDummyServer();
 
         try {
             Client datastore = new Client(

@@ -1,7 +1,6 @@
 package be.cylab.mark.server;
 
 import com.google.inject.Inject;
-import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.webserver.WebServer;
@@ -12,6 +11,7 @@ import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.data.DataAgentContainer;
+import java.util.List;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -130,26 +130,6 @@ public class Server {
         activation_controller.awaitTermination();
     }
 
-    /**
-     * Add the profile for a detection agent.
-     *
-     * @param profile
-     */
-    public final void addDetectionAgent(final DetectionAgentProfile profile) {
-        activation_controller.addAgent(profile);
-    }
-
-    /**
-     *
-     * @param profile
-     * @throws InvalidProfileException if config is not correct
-     * @throws MalformedURLException if URL of server is incorrect
-     */
-    public final void addDataAgentProfile(final DataAgentProfile profile)
-            throws InvalidProfileException, MalformedURLException {
-        data_agents.add(new DataAgentContainer(profile, config));
-    }
-
     private void parseModules() throws FileNotFoundException {
         LOGGER.info("Parsing modules directory ");
         File modules_dir;
@@ -157,6 +137,7 @@ public class Server {
             modules_dir = config.getModulesDirectory();
         } catch (FileNotFoundException ex) {
             LOGGER.warn(ex.getMessage());
+            LOGGER.warn("Skipping modules parsing ...");
             return;
         }
 
@@ -192,12 +173,11 @@ public class Server {
                         (final File dir, final String name) ->
                                 name.endsWith(".detection.yml"));
 
+        List<DetectionAgentProfile> profiles = new LinkedList<>();
         for (File file : detection_agent_files) {
-            activation_controller.addAgent(
-                    DetectionAgentProfile.fromFile(file));
+            profiles.add(DetectionAgentProfile.fromFile(file));
         }
-        LOGGER.info(
-                "Found " + activation_controller.getProfiles().size()
-                        + " detection agents ...");
+        LOGGER.info("Found " + profiles.size() + " detection agents ...");
+        activation_controller.setProfiles(profiles);
     }
 }
