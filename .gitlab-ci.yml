@@ -97,6 +97,7 @@ build:docker:
   services:
     - docker:19.03.1-dind
   before_script:
+    - cd server
     - docker info
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   script:
