@@ -1,0 +1,13 @@
+version: '2.0'
+services:
+  mark:
+    build: .
+    environment:
+    - MARK_MONGO_HOST=example_mongo_1
+    ports:
+    - "8000:8000"
+    - "8080:8080"
+    depends_on:
+    - mongo
+  mongo:
+    image: mongo:4.4
