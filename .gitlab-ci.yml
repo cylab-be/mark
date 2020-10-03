@@ -116,7 +116,7 @@ release:
   script:
     - "curl https://download.cylab.be/api/mark/server-$CI_COMMIT_TAG-standalone.zip  --request POST --header \"Authorization: Bearer $UPLOAD_TOKEN\" -F \"file=@./server/target/server-$CI_COMMIT_TAG-standalone.zip\""
 
-build:docker:
+build:docker-mark-example:
   stage: release
   # only when we push a new tag
   only:
