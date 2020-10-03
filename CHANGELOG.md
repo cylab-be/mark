@@ -3,6 +3,22 @@
 ## Unreleased
 
 
+* **add coverage badge**
+[a5d96694750d048](https://github.com/cylab/mark/commit/a5d96694750d048) Thibault Debatty *2020-10-01 08:24:29*
+* **use integration test to compute correct coverage**
+[700d40bb5574d49](https://github.com/cylab/mark/commit/700d40bb5574d49) Thibault Debatty *2020-10-01 08:22:47*
+* **correct title for coverage report**
+[1de6c26bdf4f47d](https://github.com/cylab/mark/commit/1de6c26bdf4f47d) Thibault Debatty *2020-10-01 08:10:41*
+* **compute code coverage for the complete project**
+[3f9a7c4ad8a2faf](https://github.com/cylab/mark/commit/3f9a7c4ad8a2faf) Thibault Debatty *2020-10-01 08:09:49*
+
+## 1.3.0
+
+
+* **updated changelog**
+[1efa745f4e651f5](https://github.com/cylab/mark/commit/1efa745f4e651f5) Thibault Debatty *2020-09-30 15:05:15*
+* **add reload button to status page**
+[92ad46ac0011c14](https://github.com/cylab/mark/commit/92ad46ac0011c14) Thibault Debatty *2020-09-30 15:04:51*
 * **add call to reload detection agent profiles. fix issue #67**
 [f9fb34023f94cf4](https://github.com/cylab/mark/commit/f9fb34023f94cf4) Thibault Debatty *2020-09-30 14:47:06*
 * **cleanup activation controller code**
@@ -31,6 +47,14 @@
 [1e041bf4a96249c](https://github.com/cylab/mark/commit/1e041bf4a96249c) Thibault Debatty *2020-09-28 12:10:18*
 * **start fixing style in server module**
 [785f1eb16f2a183](https://github.com/cylab/mark/commit/785f1eb16f2a183) Thibault Debatty *2020-05-25 09:33:05*
+* **Start to fix checkstyle errors**
+[3f85a2e2161a269](https://github.com/cylab/mark/commit/3f85a2e2161a269) Thibault Debatty *2020-01-09 10:24:33*
+* **Move mongo conversion to separate class. Fix issue #49**
+[98277888c7f58fd](https://github.com/cylab/mark/commit/98277888c7f58fd) Thibault Debatty *2020-01-09 10:12:02*
+* **Style**
+[46ce5ea6ac62f78](https://github.com/cylab/mark/commit/46ce5ea6ac62f78) Thibault Debatty *2020-01-09 09:53:24*
+* **Update CHANGELOG**
+[071073e1fa90b24](https://github.com/cylab/mark/commit/071073e1fa90b24) Thibault Debatty *2020-01-08 09:18:09*
 
 ## 1.2.0
 
@@ -117,18 +141,10 @@
 [ea515610341509a](https://github.com/cylab/mark/commit/ea515610341509a) Georgi Nikolov *2020-05-11 20:03:05*
 * **Added a new test resource to server package to test the Activation Controller with detection agents**
 [d21daa6bc94da12](https://github.com/cylab/mark/commit/d21daa6bc94da12) Georgi Nikolov *2020-05-11 20:02:32*
-* **Start to fix checkstyle errors**
-[3f85a2e2161a269](https://github.com/cylab/mark/commit/3f85a2e2161a269) Thibault Debatty *2020-01-09 10:24:33*
-* **Move mongo conversion to separate class. Fix issue #49**
-[98277888c7f58fd](https://github.com/cylab/mark/commit/98277888c7f58fd) Thibault Debatty *2020-01-09 10:12:02*
-* **Style**
-[46ce5ea6ac62f78](https://github.com/cylab/mark/commit/46ce5ea6ac62f78) Thibault Debatty *2020-01-09 09:53:24*
 * **Updated how the size of the DBs are shown on the Status page o the UI (now correctly shows the size in MB)**
 [25d36cafaa6ac5c](https://github.com/cylab/mark/commit/25d36cafaa6ac5c) Georgi Nikolov *2020-01-08 11:38:36*
 * **Changed that the uniqueSubject count is retrieved from the Collection_DATa instead of Collection_EVidence; This is already the case on the trunk, for some reason the change wasn't present on this branch**
 [26d19b7ccba1d96](https://github.com/cylab/mark/commit/26d19b7ccba1d96) Georgi Nikolov *2020-01-08 11:37:53*
-* **Update CHANGELOG**
-[071073e1fa90b24](https://github.com/cylab/mark/commit/071073e1fa90b24) Thibault Debatty *2020-01-08 09:18:09*
 * **Removed the try-catch and instead changed the scale of the db size field. From scale 1 to scale 1024 (retrieve the size data in KB instead of B)**
 [4ff4a25eed46506](https://github.com/cylab/mark/commit/4ff4a25eed46506) Georgi Nikolov *2019-12-18 12:22:54*
 * **Added a try-catch clause for extractInt when the field is of form Long instead of Int. If an error occurs it is logged to the LOGGER too**
