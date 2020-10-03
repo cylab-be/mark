@@ -96,7 +96,10 @@ public class Datastore {
     }
 
     private MongoDatabase connectToMongodb(final Config config) {
-        // Connect to mongodb
+
+        LOGGER.info("Connecting to mongo at " + config.getMongoHost() + ":"
+                + config.getMongoPort());
+
         MongoClient mongo = new MongoClient(
                 config.getMongoHost(), config.getMongoPort());
         MongoDatabase db = mongo.getDatabase(config.getMongoDb());

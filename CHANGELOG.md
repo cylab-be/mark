@@ -3,6 +3,12 @@
 ## Unreleased
 
 
+* **updated changelog**
+[21180aceed35955](https://github.com/cylab/mark/commit/21180aceed35955) Thibault Debatty *2020-10-03 07:23:27*
+* **remove unused instruction webserver_root from default config**
+[4a319f6d7822ff2](https://github.com/cylab/mark/commit/4a319f6d7822ff2) Thibault Debatty *2020-10-03 07:23:19*
+* **weird: code coverage is not correct with jvm option illegal_access=permit => removed**
+[003c86ed4d069f9](https://github.com/cylab/mark/commit/003c86ed4d069f9) Thibault Debatty *2020-10-01 14:41:13*
 * **add coverage badge**
 [a5d96694750d048](https://github.com/cylab/mark/commit/a5d96694750d048) Thibault Debatty *2020-10-01 08:24:29*
 * **use integration test to compute correct coverage**
