@@ -3,6 +3,12 @@
 ## Unreleased
 
 
+* **add some debug info**
+[37257d34929b028](https://github.com/cylab/mark/commit/37257d34929b028) Thibault Debatty *2020-10-03 14:58:24*
+
+## 1.3.1
+
+
 * **updated changelog**
 [21180aceed35955](https://github.com/cylab/mark/commit/21180aceed35955) Thibault Debatty *2020-10-03 07:23:27*
 * **remove unused instruction webserver_root from default config**
