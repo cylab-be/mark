@@ -3,6 +3,30 @@
 ## Unreleased
 
 
+* **add subjects to the example data source**
+[fe0b667ca0669c8](https://github.com/cylab/mark/commit/fe0b667ca0669c8) Thibault Debatty *2020-10-19 11:52:27*
+* **add a start time for the data query in ExampleDetector**
+[9c7bc5dc37484b1](https://github.com/cylab/mark/commit/9c7bc5dc37484b1) Thibault Debatty *2020-10-19 11:47:37*
+* **use the new docker image mark-web for the web interface**
+[8588896f6c43623](https://github.com/cylab/mark/commit/8588896f6c43623) Thibault Debatty *2020-10-19 11:18:33*
+
+## 1.3.3-RC1
+
+
+* **update changelog**
+[6769482802c5764](https://github.com/cylab/mark/commit/6769482802c5764) Thibault Debatty *2020-10-03 19:33:29*
+* **fix job name**
+[5e562c909ae2742](https://github.com/cylab/mark/commit/5e562c909ae2742) Thibault Debatty *2020-10-03 19:33:16*
+* **build mark-example docker image**
+[16f45499901e0dc](https://github.com/cylab/mark/commit/16f45499901e0dc) Thibault Debatty *2020-10-03 19:21:16*
+* **create mark-example docker image**
+[b2b9428d217ad6c](https://github.com/cylab/mark/commit/b2b9428d217ad6c) Thibault Debatty *2020-10-03 19:16:55*
+* **move docker files to server dir**
+[8f953f9276b1de5](https://github.com/cylab/mark/commit/8f953f9276b1de5) Thibault Debatty *2020-10-03 19:00:53*
+
+## 1.3.2
+
+
 * **add some debug info**
 [37257d34929b028](https://github.com/cylab/mark/commit/37257d34929b028) Thibault Debatty *2020-10-03 14:58:24*
 
