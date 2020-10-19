@@ -25,10 +25,13 @@ public class ExampleDetector<T extends Subject>
             final DetectionAgentProfile profile,
             final ServerInterface<T> datastore) throws Throwable {
 
+        long now = System.currentTimeMillis();
+        long since = now - 1000 * 300;
+
         RawData[] data = datastore.findRawData(
                 ev.getLabel(),
                 ev.getSubject(),
-                0, System.currentTimeMillis());
+                since, now);
 
         if (data.length < 1) {
             return;
