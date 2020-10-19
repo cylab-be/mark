@@ -1,8 +1,26 @@
 # Changelog
 
 ## Unreleased
+### Jira jdk-11   
 
 
+* **try to fix test:jdk-11:mongo-4.4**
+[aa6b257fbed3724](https://github.com/cylab/mark/commit/aa6b257fbed3724) Thibault Debatty *2020-10-19 14:30:15*
+
+### Jira mongo-4   
+
+
+* **try to fix test:jdk-11:mongo-4.4**
+[aa6b257fbed3724](https://github.com/cylab/mark/commit/aa6b257fbed3724) Thibault Debatty *2020-10-19 14:30:15*
+
+
+
+* **Squashed commit of the following:**
+[a7eef69cb635439](https://github.com/cylab/mark/commit/a7eef69cb635439) Thibault Debatty *2020-10-19 14:27:08*
+* **updated changelog**
+[0ccc9826a563db8](https://github.com/cylab/mark/commit/0ccc9826a563db8) Thibault Debatty *2020-10-19 14:23:26*
+* **remove webserver as it is now a separate project**
+[0fcad7397257c41](https://github.com/cylab/mark/commit/0fcad7397257c41) Thibault Debatty *2020-10-19 12:06:18*
 * **add subjects to the example data source**
 [fe0b667ca0669c8](https://github.com/cylab/mark/commit/fe0b667ca0669c8) Thibault Debatty *2020-10-19 11:52:27*
 * **add a start time for the data query in ExampleDetector**

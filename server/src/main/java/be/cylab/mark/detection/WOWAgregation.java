@@ -79,7 +79,7 @@ public class WOWAgregation implements DetectionAgentInterface {
         }
     }
     @Override
-    public void analyze(
+    public final void analyze(
             final Event event,
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
@@ -89,7 +89,8 @@ public class WOWAgregation implements DetectionAgentInterface {
                 profile.getTriggerLabel(),
                 event.getSubject());
         evidences_number = evidences.length;
-        //Store elements un a TreeMap to have an order (based on label alphabetic order
+        //Store elements un a TreeMap to have an order
+        //(based on label alphabetic order)
         Map<String, String[]> agent_labels = new TreeMap<>();
 
         long last_time = 0;
@@ -112,7 +113,8 @@ public class WOWAgregation implements DetectionAgentInterface {
                     + key + ") : Score(" + agent_labels.get(key)[0]
                     + ") : Id(" + agent_labels.get(key)[1] + ")";
             ev.references().add(agent_labels.get(key)[1]);
-            //Set score elements in the double[] following the alphabetic order (TreeMap)
+            //Set score elements in the double[]
+            // following the alphabetic order (TreeMap)
             scores[i] = Double.parseDouble(agent_labels.get(key)[0]);
             i++;
         }
@@ -156,8 +158,10 @@ public class WOWAgregation implements DetectionAgentInterface {
     }
 
     /**
-     * Method to check if the String parameter from yml file provides correct parameters.
-     * If parameters are correct ( String != null) and number of element == number of evidences
+     * Method to check if the String parameter from yml
+     * file provides correct parameters.
+     * If parameters are correct ( String != null) and
+     * number of element == number of evidences
      * Return False
      * If incorrect parameters, return true
      * @param parameters_string
@@ -166,16 +170,14 @@ public class WOWAgregation implements DetectionAgentInterface {
     static boolean checkDefaultParameters(final String parameters_string) {
         if (parameters_string == null) {
             return true;
-        } else if (parameters_string.split(",").length != evidences_number) {
-            return true;
         } else {
-            return false;
+            return parameters_string.split(",").length != evidences_number;
         }
 
     }
 
     /**
-     * Method to parse a String[] to a double[]
+     * Method to parse a String[] to a double[].
      * @param parameters
      * @return
      */
