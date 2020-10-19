@@ -30,7 +30,6 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.Server;
-import be.cylab.mark.webserver.WebServer;
 import junit.framework.TestCase;
 
 /**
@@ -58,7 +57,6 @@ public class MarkCase extends TestCase {
         try {
             server = new Server(
                     config,
-                    new WebServer(config),
                     activation_controller,
                     new Datastore(config, activation_controller));
             server.start();

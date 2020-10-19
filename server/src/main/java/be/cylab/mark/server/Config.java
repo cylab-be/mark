@@ -73,23 +73,10 @@ public final class Config {
             = "be.cylab.mark.server.DummySubjectAdapter";
 
     /**
-     * Webserver port.
-     */
-    private int webserver_port = DEFAULT_WEBSERVER_PORT;
-    private static final int DEFAULT_WEBSERVER_PORT = 8000;
-
-    /**
      * update interval.
      */
     private int update_interval = DEFAULT_UPDATE_INTERVAL;
     private static final int DEFAULT_UPDATE_INTERVAL = 10;
-
-    /**
-     * Start (or not) the integrated webserver. Can be disabled for testing, for
-     * example...
-     */
-    private boolean start_webserver = DEFAULT_START_WEBSERVER;
-    private static final boolean DEFAULT_START_WEBSERVER = true;
 
     /**
      * Empty the MONGO database before starting (useful for testing).
@@ -193,14 +180,13 @@ public final class Config {
     }
 
     /**
-     * Instantiate a config for tests: no webserver, updated interval = 1s,
+     * Instantiate a config for tests: updated interval = 1s,
      * clean db at startup.
      *
      * @return
      */
     public static Config getTestConfig() {
         Config conf = new Config();
-        conf.start_webserver = false;
         conf.update_interval = 1;
         conf.mongo_clean = true;
         conf.ignite_autodiscovery = false;
@@ -449,22 +435,6 @@ public final class Config {
      *
      * @return
      */
-    public int getWebserverPort() {
-        return webserver_port;
-    }
-
-    /**
-     *
-     * @param webserver_port
-     */
-    public void setWebserverPort(final int webserver_port) {
-        this.webserver_port = webserver_port;
-    }
-
-    /**
-     *
-     * @return
-     */
     public int getUpdateInterval() {
         return update_interval;
     }
@@ -475,22 +445,6 @@ public final class Config {
      */
     public void setUpdateInterval(final int update_interval) {
         this.update_interval = update_interval;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public boolean isStartWebserver() {
-        return start_webserver;
-    }
-
-    /**
-     *
-     * @param start_webserver
-     */
-    public void setStartWebserver(final boolean start_webserver) {
-        this.start_webserver = start_webserver;
     }
 
     /**

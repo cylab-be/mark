@@ -3,7 +3,6 @@ package be.cylab.mark.server;
 import com.google.inject.Inject;
 import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.core.DataAgentProfile;
-import be.cylab.mark.webserver.WebServer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -25,7 +24,6 @@ public class Server {
 
     private final Config config;
     private final Datastore datastore;
-    private final WebServer web_server;
     private final LinkedList<DataAgentContainer> data_agents;
     private final ActivationController activation_controller;
     private final Thread monitor;
@@ -41,12 +39,11 @@ public class Server {
      * @throws java.lang.Throwable on any error
      */
     @Inject
-    public Server(final Config config, final WebServer web_server,
+    public Server(final Config config,
             final ActivationController activation_controller,
             final Datastore datastore) throws Throwable {
 
         this.config = config;
-        this.web_server = web_server;
         this.activation_controller = activation_controller;
         this.datastore = datastore;
         this.data_agents = new LinkedList<>();
@@ -71,7 +68,6 @@ public class Server {
         LOGGER.debug(System.getProperty("java.class.path"));
         this.parseModules();
 
-        web_server.start();
         activation_controller.reload();
         activation_controller.start();
         datastore.start();
@@ -106,9 +102,6 @@ public class Server {
 
         LOGGER.info("Ask datastore to stop...");
         datastore.stop();
-
-        LOGGER.info("Ask webserver to stop...");
-        web_server.stop();
 
         LOGGER.info("Server stopped!");
     }
