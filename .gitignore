@@ -29,3 +29,7 @@ target/
 
 ## Ignite
 **/ignite/
+
+## IntelliJ
+.idea
+*.iml
