@@ -37,7 +37,7 @@ import java.util.Random;
 public class ExampleDataSource implements DataAgentInterface {
 
     private final String[] names =
-            {"Thibault", "Wim", "Georgi", "Alex", "Fred"};
+            {"Tibo", "Wim", "Georgi", "Alex", "Fred", "Paloma", "Zac"};
     private final Random rand = new Random();
 
     @Override
