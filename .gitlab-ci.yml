@@ -55,7 +55,7 @@ test:jdk-11:mongo-4.4:
   script:
     - export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
     # extract code coverage from jacoco.csv
-    - apt update && apt install -y gawk
+    - apt update && apt upgrade -y && apt install -y gawk
     - ./jacoco-summary.sh coverage/target/site/jacoco-aggregate/jacoco.csv
   # Use this regular expression to create the coverage badge.
   coverage: '/^\s*Instructions:\s*\d+.\d+\%/'
