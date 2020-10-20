@@ -25,21 +25,6 @@ test:jdk-8:mongo-3.6:
     - "server/target"
     - "example/target"
 
-test:jdk-9:mongo-3.6:
-  stage: test
-  image: maven:3.6-jdk-9
-  services:
-    - mongo:3.6
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
-
-
-test:jdk-10:mongo-3.6:
-  stage: test
-  image: maven:3.6-jdk-10
-  services:
-    - mongo:3.6
-  script: export MARK_MONGO_HOST="mongo" && mvn clean install -Dgpg.skip=true -Dmaven.repo.local=.m2
-
 test:jdk-11:mongo-3.6:
   stage: test
   image: maven:3.6-jdk-11
