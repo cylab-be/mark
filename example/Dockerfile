@@ -1,4 +1,4 @@
-FROM cylab/mark:1.3.2
+FROM cylab/mark:1.4.0
 
 WORKDIR /mark
 
