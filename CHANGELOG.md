@@ -15,6 +15,12 @@
 
 
 
+* **removed tetss with jdk 9 and 10**
+[f0014cb10fbfeb3](https://github.com/cylab/mark/commit/f0014cb10fbfeb3) Thibault Debatty *2020-10-20 07:14:36*
+* **run gitlab tests with maven 3.6 (3.5.3 is quite old)**
+[3ce1fa9a0cf740b](https://github.com/cylab/mark/commit/3ce1fa9a0cf740b) Thibault Debatty *2020-10-20 07:12:24*
+* **Fix checkstyle issues**
+[10e72dc1fc53bca](https://github.com/cylab/mark/commit/10e72dc1fc53bca) Alex *2020-10-19 15:15:19*
 * **Squashed commit of the following:**
 [a7eef69cb635439](https://github.com/cylab/mark/commit/a7eef69cb635439) Thibault Debatty *2020-10-19 14:27:08*
 * **updated changelog**
