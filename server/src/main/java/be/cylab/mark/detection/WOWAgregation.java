@@ -202,6 +202,9 @@ public class WOWAgregation implements DetectionAgentInterface {
                     "Sum of weights in vector must be different of 0"
             );
         }
+        if (sum == 1.0) {
+            return vector;
+        }
         double[] normalized_vector = new double[vector.length];
         for (int i = 0; i < vector.length; i++) {
             normalized_vector[i] = vector[i] / sum;

@@ -3,6 +3,16 @@
 ## Unreleased
 
 
+* **Add normalization vector in OWA to avoid error if weights sum != 1**
+[b971d97d281dab6](https://github.com/cylab/mark/commit/b971d97d281dab6) Alex *2020-10-23 09:25:41*
+* **Add normlization vector to avoid error if weights sum is different to 1**
+[8ef632cecd6f3b0](https://github.com/cylab/mark/commit/8ef632cecd6f3b0) Alex *2020-10-23 09:23:08*
+* **updated changelog**
+[7880b878995785b](https://github.com/cylab/mark/commit/7880b878995785b) Thibault Debatty *2020-10-23 09:13:24*
+* **add link to online javadoc**
+[b3e16aaac904942](https://github.com/cylab/mark/commit/b3e16aaac904942) Thibault Debatty *2020-10-23 09:13:17*
+* **add frequency detector (moved from netrank). Fix issue #56**
+[795efc5c82ff8b4](https://github.com/cylab/mark/commit/795efc5c82ff8b4) Thibault Debatty *2020-10-23 09:12:35*
 * **in example project : use mark:1.4.0 and mark-web:1.0.0**
 [1528936f8efd007](https://github.com/cylab/mark/commit/1528936f8efd007) Thibault Debatty *2020-10-21 09:43:07*
 * **updated changelog**
