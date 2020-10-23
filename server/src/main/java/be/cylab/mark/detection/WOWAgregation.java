@@ -64,18 +64,20 @@ public class WOWAgregation implements DetectionAgentInterface {
             p_weights_string = profile.getParameter("p_weights");
 
         } catch (Exception ex) {
-            System.out.println("Could not get the OWA weight parameters"
+            System.out.println("Could not get the WOWA weight parameters"
                     + " from configuration file. Error: " + ex.getMessage());
         }
         if (checkDefaultParameters(w_weights_string)) {
             w_weights = generateDefaultWVector();
         } else {
             w_weights = parseDoubleArray(w_weights_string);
+            w_weights = normalizeVector(w_weights);
         }
         if (checkDefaultParameters(p_weights_string)) {
             p_weights = generateDefaultPVector();
         } else {
             p_weights = parseDoubleArray(p_weights_string);
+            p_weights = normalizeVector(p_weights);
         }
     }
     @Override
@@ -188,6 +190,23 @@ public class WOWAgregation implements DetectionAgentInterface {
             weights[i] = Double.parseDouble(split_weights[i]);
         }
         return weights;
+    }
+
+    static double[] normalizeVector(final double[] vector) {
+        double sum = 0.0;
+        for (double el : vector) {
+            sum = sum + el;
+        }
+        if (sum == 0.0) {
+            throw new IllegalArgumentException(
+                    "Sum of weights in vector must be different of 0"
+            );
+        }
+        double[] normalized_vector = new double[vector.length];
+        for (int i = 0; i < vector.length; i++) {
+            normalized_vector[i] = vector[i] / sum;
+        }
+        return normalized_vector;
     }
 
 
