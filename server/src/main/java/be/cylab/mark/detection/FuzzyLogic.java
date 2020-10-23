@@ -23,7 +23,8 @@
  */
 package be.cylab.mark.detection;
 
-/** Class responsible for implementing fuzzy logic membership function.
+/**
+ * Class responsible for implementing fuzzy logic membership function.
  * fuzzy logic function is f(x)=m*x + b
  * we need to calculate the mean and coefficient b to be able to calculate
  * the f(x) for given point x

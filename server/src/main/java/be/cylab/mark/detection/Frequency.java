@@ -26,7 +26,6 @@ package be.cylab.mark.detection;
 import be.cylab.mark.core.DetectionAgentInterface;
 import java.io.File;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,12 +79,6 @@ public class Frequency implements DetectionAgentInterface {
     private static int min_raw_data_needed;
 
     /**
-     * Minimum coverage by the peaks detected to generate an evidence.
-     */
-    private static final double[] DEFAULT_COVERAGE = {0.1, 0.5, 0, 1};
-    private static FuzzyLogic fuzzy_logic_coverage;
-
-    /**
      * Minimum peak to generate an evidence.
      */
     private static final double THRESHOLD_PARAMETER = 1.3;
@@ -93,9 +86,6 @@ public class Frequency implements DetectionAgentInterface {
     private static double frequency_threshold_parameter;
     private static final double[] DEFAULT_FUZZY_LOGIC_DET = {1.3, 2, 0, 1};
     private static FuzzyLogic fuzzy_logic_threshold;
-    //format used for the time started/ended of the agent
-    private static final DateFormat DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     /**
      * Analyze function inherited from the DetectionAgentInterface.
@@ -114,8 +104,6 @@ public class Frequency implements DetectionAgentInterface {
         //fetch any needed parameters from the configuration file
         initParams(dap);
 
-        //get the starting time of the analysis
-        Date start_time = new Date();
 
         RawData[] raw_data = si.findRawData(
                 event.getLabel(),
@@ -127,25 +115,26 @@ public class Frequency implements DetectionAgentInterface {
             return;
         }
 
-        FastFourierTransformer fft_transformer = new FastFourierTransformer(
-                DftNormalization.STANDARD);
 
         long[] times = new long[raw_data.length];
         for (int i = 0; i < raw_data.length; i++) {
             times[i] = raw_data[i].getTime();
         }
+        long min_time = min(times);
+        long max_time = max(times);
+        long size = pow2gt((max_time - min_time) / sampling_detection_interval);
 
-        long min = min(times);
-        long max = max(times);
-        long size = pow2gt((max - min) / sampling_detection_interval);
-
+        // count the number of elements in each time bin
         double[] counts = new double[(int) size];
         for (long time : times) {
-            long position = (time - min) / sampling_detection_interval;
+            long position = (time - min_time) / sampling_detection_interval;
             position = Math.min(position, counts.length - 1);
             counts[(int) position]++;
         }
 
+        // Perform FFT
+        FastFourierTransformer fft_transformer = new FastFourierTransformer(
+                DftNormalization.STANDARD);
         Complex[] transform
                 = fft_transformer.transform(counts, TransformType.FORWARD);
 
@@ -153,24 +142,14 @@ public class Frequency implements DetectionAgentInterface {
         double[] values = new double[transform.length / 2];
         double[] freqs = new double[transform.length / 2];
 
+        // Extract frequencies and corresponding power values
         for (int i = 0; i < transform.length / 2; i++) {
             freqs[i] = 1.0 / sampling_detection_interval * i / transform.length;
-            //values[i] = transform[i].abs();
-            // power spectrum
             values[i] = transform[i].multiply(transform[i].conjugate()).abs();
-            //        / (raw_data.length * transform.length);
-            //System.out.println(values[i]);
         }
 
-        if (values.length < 10) {
-            return;
-        }
-
-        // Smooth the function
+        // smooth values
         double[] smoothed_values = smooth(values);
-        // get the averages
-        double average_values = average(values);
-        double average_smoothed_values = average(smoothed_values);
 
         // Remove DC component
         for (int i = 0; i < 10; i++) {
@@ -179,80 +158,66 @@ public class Frequency implements DetectionAgentInterface {
         }
 
         //compute the threshold
-        double threshold = computeThreshold(smoothed_values,
-                                            average_smoothed_values);
-        int min_peak_index = analyzeSpectrumPeaks(smoothed_values, threshold);
+        double smoothed_threshold = computeThreshold(smoothed_values);
 
-        if (min_peak_index == 0) {
+        //
+        double base_peak_value = findBaseFrequencyValue(smoothed_values, smoothed_threshold);
+
+        if (base_peak_value == 0) {
             return;
         }
 
-        double min_peak_value = smoothed_values[min_peak_index];
+        double base_peak_freq = freqs[indexOf(smoothed_values, base_peak_value)];
+        double relative_peak_value = base_peak_value / smoothed_threshold;
+        double score = fuzzy_logic_threshold.determineMembership(relative_peak_value);
 
-        double min_freq_value = freqs[indexOf(smoothed_values, min_peak_value)];
-        double computed_coverage = computeCoverage(times, min_freq_value);
-        double msf_result = computeFuzzyLogic(
-                min_peak_value / threshold, computed_coverage);
-
-        if (msf_result != 0) {
-            //get the end time of the analysis and evidence generation
-            Date end_time = new Date();
-            //get the parameters used for the detection agent
-            HashMap<String, String> parameters = new HashMap<>();
-            //add the start and end time to the parameters
-            parameters.put("Start Time", DATE_FORMAT.format(
-                    start_time));
-            parameters.put("End Time", DATE_FORMAT.format(
-                    end_time));
-            parameters.put("Threshold", Double.toString(threshold));
-            parameters.put("Fuzzy Logic Parameters", "Min peak detected: "
-                    + min_peak_value + " , "
-                    + "Computed Coverage: " + computed_coverage);
-
-            String figure_spectrum_path = createSpectrumFigure(freqs, values,
-                    min_freq_value,
-                    computeThreshold(values, average_values),
-                    event.getSubject().toString(), raw_data[0].getTime());
-
-            String figure_smooth_spectrum_path = createSpectrumFigure(freqs,
-                    smoothed_values, min_freq_value,
-                    threshold,
-                    "smoothing for " + event.getSubject().toString(),
-                    raw_data[0].getTime());
-
-            String figure_timeseries_path = createTimeseriesFigure(times,
-                    event.getSubject().toString(), raw_data[0].getTime());
-
-            String figures = "<a href=\"file:///" + figure_spectrum_path
-                            + "\">" + "Frequency Spectrum Figure</a> | "
-                            + "<a href=\"file:///" + figure_smooth_spectrum_path
-                            + "\">" + "Smoothed Frequency Spectrum Figure</a>"
-                            + " | <a href=\"file:///" + figure_timeseries_path
-                            + "\">" + "Frequency Time Series Figure</a>";
-            //generate report
-            /*String freq_report = generateReport(
-                "Found frequency peak for " + event.getSubject().toString()
-                    + "<br />with frequency " + min_freq_value + "\n"
-                    + "= " + (1 / min_freq_value) + " seconds\n"
-                    + "with score of: " + msf_result,
-                raw_data.length, figures, parameters);*/
-
-            String freq_report =
-                "Found frequency peak for " + event.getSubject().toString()
-                    + "with frequency: " + min_freq_value + "Hz "
-                    + "| interval: " + Math.round(1 / min_freq_value)
-                    + " seconds"
-                    + "| score: " + msf_result
-                    + figures;
-
-            Evidence evidence = new Evidence();
-            evidence.setScore(msf_result);
-            evidence.setSubject(event.getSubject());
-            evidence.setLabel(dap.getLabel());
-            evidence.setTime(raw_data[raw_data.length - 1].getTime());
-            evidence.setReport(freq_report);
-            si.addEvidence(evidence);
+        if (score == 0) {
+            return;
         }
+
+        String figure_spectrum_path = createSpectrumFigure(freqs, values,
+                base_peak_freq,
+                computeThreshold(values),
+                event.getSubject().toString(), raw_data[0].getTime());
+
+        String figure_smooth_spectrum_path = createSpectrumFigure(freqs,
+                smoothed_values, base_peak_freq,
+                smoothed_threshold,
+                "smoothing for " + event.getSubject().toString(),
+                raw_data[0].getTime());
+
+        String figure_timeseries_path = createTimeseriesFigure(times,
+                event.getSubject().toString(), raw_data[0].getTime());
+
+        String figures = "<a href=\"file:///" + figure_spectrum_path
+                        + "\">" + "Frequency Spectrum Figure</a> | "
+                        + "<a href=\"file:///" + figure_smooth_spectrum_path
+                        + "\">" + "Smoothed Frequency Spectrum Figure</a>"
+                        + " | <a href=\"file:///" + figure_timeseries_path
+                        + "\">" + "Frequency Time Series Figure</a>";
+        //generate report
+        /*String freq_report = generateReport(
+            "Found frequency peak for " + event.getSubject().toString()
+                + "<br />with frequency " + min_freq_value + "\n"
+                + "= " + (1 / min_freq_value) + " seconds\n"
+                + "with score of: " + msf_result,
+            raw_data.length, figures, parameters);*/
+
+        String freq_report =
+            "Found frequency peak for " + event.getSubject().toString()
+                + "with frequency: " + base_peak_freq + "Hz "
+                + "| interval: " + Math.round(1 / base_peak_freq)
+                + " seconds"
+                + "| score: " + score
+                + figures;
+
+        Evidence evidence = new Evidence();
+        evidence.setScore(score);
+        evidence.setSubject(event.getSubject());
+        evidence.setLabel(dap.getLabel());
+        evidence.setTime(raw_data[raw_data.length - 1].getTime());
+        evidence.setReport(freq_report);
+        si.addEvidence(evidence);
     }
 
     /**
@@ -299,28 +264,6 @@ public class Frequency implements DetectionAgentInterface {
                     + " from configuration file. Error: " + ex.getMessage());
         }
 
-        fuzzy_logic_coverage = new FuzzyLogic(DEFAULT_COVERAGE[0],
-                                    DEFAULT_COVERAGE[1],
-                                    DEFAULT_COVERAGE[2],
-                                    DEFAULT_COVERAGE[3]);
-        try {
-            String fl_x1 = profile.getParameter("fuzzy_logic_coverage_x1");
-            String fl_x2 = profile.getParameter("fuzzy_logic_coverage_x2");
-            String fl_y1 = profile.getParameter("fuzzy_logic_coverage_y1");
-            String fl_y2 = profile.getParameter("fuzzy_logic_coverage_y2");
-            if (fl_x1 != null && fl_y1 != null
-                    && fl_x2 != null && fl_y2 != null) {
-                fuzzy_logic_coverage = new FuzzyLogic(Double.valueOf(fl_x1),
-                                            Double.valueOf(fl_x2),
-                                            Double.valueOf(fl_y1),
-                                            Double.valueOf(fl_y2));
-            }
-        } catch (NumberFormatException ex) {
-            System.out.println("Could not get frequency fuzzy logic parameters"
-                    + " for the frequency coverage "
-                    + " from configuration file. Error: " + ex.getMessage());
-        }
-
         //check for parameters set through the config file
         min_raw_data_needed = DEFAULT_MIN_RAW_DATA;
         try {
@@ -357,18 +300,6 @@ public class Frequency implements DetectionAgentInterface {
             System.out.println("Could not get frequency time window parameters"
                     + " from configuration file. Error: " + ex.getMessage());
         }
-    }
-
-    private double computeFuzzyLogic(final double min_peak,
-                                    final double coverage) {
-        double mf_result_det =
-                fuzzy_logic_threshold.determineMembership(min_peak);
-        double mf_result_coverage =
-                fuzzy_logic_coverage.determineMembership(coverage);
-        //use the FuzzyAnd to see the final result. Any FuzzyAnd method can be
-        //used as it is agnostic towards the fuzzy logic object parameters
-        return fuzzy_logic_threshold.fuzzyAnd(
-            new double[]{mf_result_det, mf_result_coverage});
     }
 
     /**
@@ -435,30 +366,46 @@ public class Frequency implements DetectionAgentInterface {
         return index_of_value;
     }
 
-    private double computeThreshold(final double[] values,
-                                    final double average) {
+    /**
+     * Compute a threshold value using 3-sigma rule.
+     *
+     * https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
+     * threshold = average + frequency_threshold * std deviation
+     *
+     * @param values
+     * @return
+     */
+    private double computeThreshold(final double[] values) {
+
+        double average = average(values);
+
+        // compute standard deviation sigma
+        //sum of (value - average)^2
         double sigma = 0;
-        //compute the sigma
-        //sum of the square of the dubstraction of the mean from each value
         for (double value: values) {
             sigma += Math.pow(value - average, 2);
         }
-        //divide the sum by the number of values - 1
         sigma = sigma / (double) (values.length - 1);
-        //take the square root of the result
         sigma = Math.sqrt(sigma);
-        //threshold is equal to the mean + detection_parameter * the sigma
+
+        //threshold is equal to the average + detection_parameter * the sigma
         return average + frequency_threshold_parameter * sigma;
     }
 
     /**
      * Method for computing the sample coverage for a given period.
+     *
+     * This method will:
+     * - bin the values
+     * - count how many bins are actually occupied
+     * - return nr_occupied_bins / nr_of_bins
      * @param timestamps
      * @param period
      * @return occupied_bins/nr_of_bins
      */
     private double computeCoverage(final long[] timestamps,
                                     final double period) {
+
         //create the bins for the histogram
         double period_in_seconds = 1 / period;
         int nr_of_bins = (int) ((timestamps[timestamps.length - 1]
@@ -635,9 +582,18 @@ public class Frequency implements DetectionAgentInterface {
         return new_values;
     }
 
-    private void removePeak(final double[] values, final double peak_value) {
+    /**
+     * Remove a frequency peak by overwritting 5 points.
+     * - the point with value peak_value
+     * - the 2 points situated before the acutal peak
+     * - the 2 points situated right after the peak
+     *
+     * @param values
+     * @param peak_value
+     */
+    private void removePeak(final double[] values, final int index_of_peak) {
         double[] erasure_values = new double[]{0.2, 0.1, 0, 0.1, 0.2};
-        int index_of_peak = indexOf(values, peak_value);
+
         values[index_of_peak - 2] = values[index_of_peak - 2]
                                     * erasure_values[0];
         values[index_of_peak - 1] = values[index_of_peak - 1]
@@ -653,26 +609,42 @@ public class Frequency implements DetectionAgentInterface {
         }
     }
 
-    private int analyzeSpectrumPeaks(final double[] values,
+    /**
+     * We will probably have multiple peaks above the threshold, so we search
+     * and return the peak with the lowest frequency.
+     *
+     * @param values
+     * @param threshold
+     * @return the value of the peak
+     */
+    private double findBaseFrequencyValue(final double[] values,
                                     final double threshold) {
 
         double[] values_to_analyze = values.clone();
-        Map<Double, Integer> max_values = new HashMap<>();
+        Map<Integer, Double> peaks = new HashMap<>();
         while (true) {
-            double max_peak = max(values_to_analyze);
-            if (max_peak > threshold) {
-                max_values.put(max_peak, indexOf(values, max_peak));
-                removePeak(values_to_analyze, max_peak);
+            double peak_value = max(values_to_analyze);
+            if (peak_value > threshold) {
+                int peak_index = indexOf(values, peak_value);
+                peaks.put(peak_index, peak_value);
+                removePeak(values_to_analyze, peak_index);
             }
-            if (max_peak < threshold) {
+
+            if (peak_value < threshold) {
                 break;
             }
         }
-        if (max_values.values().isEmpty()) {
+
+        if (peaks.values().isEmpty()) {
             return 0;
-        } else {
-            return Collections.min(max_values.values());
         }
+
+
+        int base_peak_index = Collections.min(peaks.keySet());
+        double base_peak_value = peaks.get(base_peak_index);
+
+        return base_peak_value;
+
     }
 
 
