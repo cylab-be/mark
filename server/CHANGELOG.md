@@ -3,6 +3,182 @@
 ## Unreleased
 
 
+* **in example project : use mark:1.4.0 and mark-web:1.0.0**
+[1528936f8efd007](https://github.com/cylab/mark/commit/1528936f8efd007) Thibault Debatty *2020-10-21 09:43:07*
+* **updated changelog**
+[5c2b61d65b1ecbc](https://github.com/cylab/mark/commit/5c2b61d65b1ecbc) Thibault Debatty *2020-10-21 09:42:20*
+
+## 1.4.0
+### Jira jdk-11   
+
+
+* **try to fix test:jdk-11:mongo-4.4**
+[aa6b257fbed3724](https://github.com/cylab/mark/commit/aa6b257fbed3724) Thibault Debatty *2020-10-19 14:30:15*
+
+### Jira mongo-4   
+
+
+* **try to fix test:jdk-11:mongo-4.4**
+[aa6b257fbed3724](https://github.com/cylab/mark/commit/aa6b257fbed3724) Thibault Debatty *2020-10-19 14:30:15*
+
+
+
+* **removed tetss with jdk 9 and 10**
+[f0014cb10fbfeb3](https://github.com/cylab/mark/commit/f0014cb10fbfeb3) Thibault Debatty *2020-10-20 07:14:36*
+* **run gitlab tests with maven 3.6 (3.5.3 is quite old)**
+[3ce1fa9a0cf740b](https://github.com/cylab/mark/commit/3ce1fa9a0cf740b) Thibault Debatty *2020-10-20 07:12:24*
+* **Fix checkstyle issues**
+[10e72dc1fc53bca](https://github.com/cylab/mark/commit/10e72dc1fc53bca) Alex *2020-10-19 15:15:19*
+* **Squashed commit of the following:**
+[a7eef69cb635439](https://github.com/cylab/mark/commit/a7eef69cb635439) Thibault Debatty *2020-10-19 14:27:08*
+* **updated changelog**
+[0ccc9826a563db8](https://github.com/cylab/mark/commit/0ccc9826a563db8) Thibault Debatty *2020-10-19 14:23:26*
+* **remove webserver as it is now a separate project**
+[0fcad7397257c41](https://github.com/cylab/mark/commit/0fcad7397257c41) Thibault Debatty *2020-10-19 12:06:18*
+* **add subjects to the example data source**
+[fe0b667ca0669c8](https://github.com/cylab/mark/commit/fe0b667ca0669c8) Thibault Debatty *2020-10-19 11:52:27*
+* **add a start time for the data query in ExampleDetector**
+[9c7bc5dc37484b1](https://github.com/cylab/mark/commit/9c7bc5dc37484b1) Thibault Debatty *2020-10-19 11:47:37*
+* **use the new docker image mark-web for the web interface**
+[8588896f6c43623](https://github.com/cylab/mark/commit/8588896f6c43623) Thibault Debatty *2020-10-19 11:18:33*
+
+## 1.3.3-RC1
+
+
+* **update changelog**
+[6769482802c5764](https://github.com/cylab/mark/commit/6769482802c5764) Thibault Debatty *2020-10-03 19:33:29*
+* **fix job name**
+[5e562c909ae2742](https://github.com/cylab/mark/commit/5e562c909ae2742) Thibault Debatty *2020-10-03 19:33:16*
+* **build mark-example docker image**
+[16f45499901e0dc](https://github.com/cylab/mark/commit/16f45499901e0dc) Thibault Debatty *2020-10-03 19:21:16*
+* **create mark-example docker image**
+[b2b9428d217ad6c](https://github.com/cylab/mark/commit/b2b9428d217ad6c) Thibault Debatty *2020-10-03 19:16:55*
+* **move docker files to server dir**
+[8f953f9276b1de5](https://github.com/cylab/mark/commit/8f953f9276b1de5) Thibault Debatty *2020-10-03 19:00:53*
+
+## 1.3.2
+
+
+* **add some debug info**
+[37257d34929b028](https://github.com/cylab/mark/commit/37257d34929b028) Thibault Debatty *2020-10-03 14:58:24*
+
+## 1.3.1
+
+
+* **updated changelog**
+[21180aceed35955](https://github.com/cylab/mark/commit/21180aceed35955) Thibault Debatty *2020-10-03 07:23:27*
+* **remove unused instruction webserver_root from default config**
+[4a319f6d7822ff2](https://github.com/cylab/mark/commit/4a319f6d7822ff2) Thibault Debatty *2020-10-03 07:23:19*
+* **weird: code coverage is not correct with jvm option illegal_access=permit => removed**
+[003c86ed4d069f9](https://github.com/cylab/mark/commit/003c86ed4d069f9) Thibault Debatty *2020-10-01 14:41:13*
+* **add coverage badge**
+[a5d96694750d048](https://github.com/cylab/mark/commit/a5d96694750d048) Thibault Debatty *2020-10-01 08:24:29*
+* **use integration test to compute correct coverage**
+[700d40bb5574d49](https://github.com/cylab/mark/commit/700d40bb5574d49) Thibault Debatty *2020-10-01 08:22:47*
+* **correct title for coverage report**
+[1de6c26bdf4f47d](https://github.com/cylab/mark/commit/1de6c26bdf4f47d) Thibault Debatty *2020-10-01 08:10:41*
+* **compute code coverage for the complete project**
+[3f9a7c4ad8a2faf](https://github.com/cylab/mark/commit/3f9a7c4ad8a2faf) Thibault Debatty *2020-10-01 08:09:49*
+
+## 1.3.0
+
+
+* **updated changelog**
+[1efa745f4e651f5](https://github.com/cylab/mark/commit/1efa745f4e651f5) Thibault Debatty *2020-09-30 15:05:15*
+* **add reload button to status page**
+[92ad46ac0011c14](https://github.com/cylab/mark/commit/92ad46ac0011c14) Thibault Debatty *2020-09-30 15:04:51*
+* **add call to reload detection agent profiles. fix issue #67**
+[f9fb34023f94cf4](https://github.com/cylab/mark/commit/f9fb34023f94cf4) Thibault Debatty *2020-09-30 14:47:06*
+* **cleanup activation controller code**
+[dee3bbf00855167](https://github.com/cylab/mark/commit/dee3bbf00855167) Thibault Debatty *2020-09-30 13:41:55*
+* **use threads executor by default**
+[be86ef6f528ad90](https://github.com/cylab/mark/commit/be86ef6f528ad90) Thibault Debatty *2020-09-29 13:24:47*
+* **fix integration test**
+[ceaf00987f50611](https://github.com/cylab/mark/commit/ceaf00987f50611) Thibault Debatty *2020-09-29 13:16:06*
+* **use a thread pool executor by default, modify config to use ignite. Fix issue #62**
+[18eb176d0cb92ed](https://github.com/cylab/mark/commit/18eb176d0cb92ed) Thibault Debatty *2020-09-29 12:46:07*
+* **validate config. Fix issue #59**
+[09f807a9c9d2a4f](https://github.com/cylab/mark/commit/09f807a9c9d2a4f) Thibault Debatty *2020-09-28 14:54:23*
+* **check config**
+[0c29707215e7ccc](https://github.com/cylab/mark/commit/0c29707215e7ccc) Thibault Debatty *2020-09-28 14:43:28*
+* **Checkstyle**
+[62cd7adf73e285a](https://github.com/cylab/mark/commit/62cd7adf73e285a) Tibo *2020-09-28 14:15:48*
+* **removed PMD plugin, as it is already part of the root module**
+[f9e5a96bfdcb6fc](https://github.com/cylab/mark/commit/f9e5a96bfdcb6fc) Thibault Debatty *2020-09-28 14:10:35*
+* **moved checkstyle config to root module**
+[ce0e86301bc0597](https://github.com/cylab/mark/commit/ce0e86301bc0597) Thibault Debatty *2020-09-28 14:09:13*
+* **fix remaining checkstyle errors**
+[25de4ba6c51e7c7](https://github.com/cylab/mark/commit/25de4ba6c51e7c7) Thibault Debatty *2020-09-28 14:05:25*
+* **fix approx 90 checkstyle errors**
+[1304460d9fe0fc4](https://github.com/cylab/mark/commit/1304460d9fe0fc4) Thibault Debatty *2020-09-28 13:21:07*
+* **fix approx. 100 checkstyle errors**
+[1e041bf4a96249c](https://github.com/cylab/mark/commit/1e041bf4a96249c) Thibault Debatty *2020-09-28 12:10:18*
+* **start fixing style in server module**
+[785f1eb16f2a183](https://github.com/cylab/mark/commit/785f1eb16f2a183) Thibault Debatty *2020-05-25 09:33:05*
+* **Start to fix checkstyle errors**
+[3f85a2e2161a269](https://github.com/cylab/mark/commit/3f85a2e2161a269) Thibault Debatty *2020-01-09 10:24:33*
+* **Move mongo conversion to separate class. Fix issue #49**
+[98277888c7f58fd](https://github.com/cylab/mark/commit/98277888c7f58fd) Thibault Debatty *2020-01-09 10:12:02*
+* **Style**
+[46ce5ea6ac62f78](https://github.com/cylab/mark/commit/46ce5ea6ac62f78) Thibault Debatty *2020-01-09 09:53:24*
+* **Update CHANGELOG**
+[071073e1fa90b24](https://github.com/cylab/mark/commit/071073e1fa90b24) Thibault Debatty *2020-01-08 09:18:09*
+
+## 1.2.0
+
+
+* **updated changelog**
+[5db3e23ddc4d8e1](https://github.com/cylab/mark/commit/5db3e23ddc4d8e1) Thibault Debatty *2020-09-14 11:00:53*
+* **remove references to web_root + configurable bind address**
+[c87429f0aedbcd9](https://github.com/cylab/mark/commit/c87429f0aedbcd9) Thibault Debatty *2020-09-14 11:00:45*
+* **removed unused webserverRoot calls**
+[8724a3b81081ace](https://github.com/cylab/mark/commit/8724a3b81081ace) Thibault Debatty *2020-09-14 10:06:54*
+
+## 1.1.0
+
+
+* **updated changelog**
+[4569e0924c311ac](https://github.com/cylab/mark/commit/4569e0924c311ac) Thibault Debatty *2020-09-14 07:56:27*
+* **fix style**
+[c06cb585ca5dfda](https://github.com/cylab/mark/commit/c06cb585ca5dfda) Thibault Debatty *2020-09-14 07:51:17*
+* **read mongo host and port from environment variables to support DOcker ...**
+[c1c4386c8f619c8](https://github.com/cylab/mark/commit/c1c4386c8f619c8) Thibault Debatty *2020-09-14 07:47:46*
+* **removed /ui/ directory from zip file, as it does not exist anymore**
+[c31b4edea8f3c78](https://github.com/cylab/mark/commit/c31b4edea8f3c78) Thibault Debatty *2020-09-10 13:49:59*
+
+## 1.0.0
+
+
+* **update changelog**
+[48c1c01ffacbce0](https://github.com/cylab/mark/commit/48c1c01ffacbce0) Thibault Debatty *2020-09-10 13:41:47*
+* **fix docker tag name**
+[53c6a18ba6dadf8](https://github.com/cylab/mark/commit/53c6a18ba6dadf8) Thibault Debatty *2020-09-10 13:39:22*
+
+## 1.0.0-RC3
+
+
+* **fix docker build job ?**
+[0684eb6450c6f7f](https://github.com/cylab/mark/commit/0684eb6450c6f7f) Thibault Debatty *2020-09-10 13:28:40*
+
+## 1.0.0-RC2
+
+
+* **fix docker build?**
+[746643d07826244](https://github.com/cylab/mark/commit/746643d07826244) Thibault Debatty *2020-09-10 13:10:35*
+* **remove deprecated 'links'**
+[abb0f5cfe42f896](https://github.com/cylab/mark/commit/abb0f5cfe42f896) Thibault Debatty *2020-09-10 13:10:22*
+* **use docker image cylab/java8-mongo to speedup test:deploy**
+[d43a23f2a09b57c](https://github.com/cylab/mark/commit/d43a23f2a09b57c) Thibault Debatty *2020-09-10 12:58:24*
+* **add test with JDK11 + mongo 4**
+[ee4bd43b8a3ebdf](https://github.com/cylab/mark/commit/ee4bd43b8a3ebdf) Thibault Debatty *2020-09-10 12:49:06*
+
+## 1.0.0-RC1
+
+
+* **updated CHANGELOG**
+[934bdab0c73aa6d](https://github.com/cylab/mark/commit/934bdab0c73aa6d) Thibault Debatty *2020-09-10 12:45:40*
+* **add docker build script**
+[eab46811cc8eb0a](https://github.com/cylab/mark/commit/eab46811cc8eb0a) Thibault Debatty *2020-09-10 12:42:46*
 * **add global PMD config**
 [9689e0520f44746](https://github.com/cylab/mark/commit/9689e0520f44746) Thibault Debatty *2020-07-08 13:24:23*
 * **updated apache ignite dependency. fix security issue**
@@ -33,18 +209,10 @@
 [ea515610341509a](https://github.com/cylab/mark/commit/ea515610341509a) Georgi Nikolov *2020-05-11 20:03:05*
 * **Added a new test resource to server package to test the Activation Controller with detection agents**
 [d21daa6bc94da12](https://github.com/cylab/mark/commit/d21daa6bc94da12) Georgi Nikolov *2020-05-11 20:02:32*
-* **Start to fix checkstyle errors**
-[3f85a2e2161a269](https://github.com/cylab/mark/commit/3f85a2e2161a269) Thibault Debatty *2020-01-09 10:24:33*
-* **Move mongo conversion to separate class. Fix issue #49**
-[98277888c7f58fd](https://github.com/cylab/mark/commit/98277888c7f58fd) Thibault Debatty *2020-01-09 10:12:02*
-* **Style**
-[46ce5ea6ac62f78](https://github.com/cylab/mark/commit/46ce5ea6ac62f78) Thibault Debatty *2020-01-09 09:53:24*
 * **Updated how the size of the DBs are shown on the Status page o the UI (now correctly shows the size in MB)**
 [25d36cafaa6ac5c](https://github.com/cylab/mark/commit/25d36cafaa6ac5c) Georgi Nikolov *2020-01-08 11:38:36*
 * **Changed that the uniqueSubject count is retrieved from the Collection_DATa instead of Collection_EVidence; This is already the case on the trunk, for some reason the change wasn't present on this branch**
 [26d19b7ccba1d96](https://github.com/cylab/mark/commit/26d19b7ccba1d96) Georgi Nikolov *2020-01-08 11:37:53*
-* **Update CHANGELOG**
-[071073e1fa90b24](https://github.com/cylab/mark/commit/071073e1fa90b24) Thibault Debatty *2020-01-08 09:18:09*
 * **Removed the try-catch and instead changed the scale of the db size field. From scale 1 to scale 1024 (retrieve the size data in KB instead of B)**
 [4ff4a25eed46506](https://github.com/cylab/mark/commit/4ff4a25eed46506) Georgi Nikolov *2019-12-18 12:22:54*
 * **Added a try-catch clause for extractInt when the field is of form Long instead of Int. If an error occurs it is logged to the LOGGER too**

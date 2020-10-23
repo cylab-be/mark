@@ -1,6 +1,14 @@
 # Changelog
 
 ## Unreleased
+
+
+* **in example project : use mark:1.4.0 and mark-web:1.0.0**
+[1528936f8efd007](https://github.com/cylab/mark/commit/1528936f8efd007) Thibault Debatty *2020-10-21 09:43:07*
+* **updated changelog**
+[5c2b61d65b1ecbc](https://github.com/cylab/mark/commit/5c2b61d65b1ecbc) Thibault Debatty *2020-10-21 09:42:20*
+
+## 1.4.0
 ### Jira jdk-11   
 
 
