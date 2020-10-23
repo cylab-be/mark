@@ -3,8 +3,9 @@
 [![pipeline status](https://gitlab.cylab.be/cylab/mark/badges/master/pipeline.svg)](https://gitlab.cylab.be/cylab/mark/commits/master)
 [![coverage report](https://gitlab.cylab.be/cylab/mark/badges/master/coverage.svg)](https://gitlab.cylab.be/cylab/mark/-/commits/master)
 [![Maven Central](https://img.shields.io/maven-central/v/be.cylab.mark/server)](https://mvnrepository.com/artifact/be.cylab.mark/server)
+[![javadoc](https://javadoc.io/badge2/be.cylab.mark/server/javadoc.svg)](https://javadoc.io/doc/be.cylab.mark/server)
 
-Developement now takes place at https://gitlab.cylab.be/cylab/mark
+Development now takes place at https://gitlab.cylab.be/cylab/mark
 
 The **multi-agent ranking framework (MARK)** aims to provide all the building blocks that are required to build large scale **detection and ranking systems**. Namely, the framework provides the following key components: 
 
