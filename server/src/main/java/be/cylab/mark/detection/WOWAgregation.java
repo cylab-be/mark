@@ -192,6 +192,12 @@ public class WOWAgregation implements DetectionAgentInterface {
         return weights;
     }
 
+    /**
+     * Method to normalize vector.
+     * Avoid error if the sum of weights are != 1.0 (mandotory for WOWA).
+     * @param vector
+     * @return
+     */
     static double[] normalizeVector(final double[] vector) {
         double sum = 0.0;
         for (double el : vector) {

@@ -115,15 +115,16 @@ public final class OWAverage implements DetectionAgentInterface {
 
     static double[] normalizeVector(final double[] vector) {
         double sum = 0.0;
+        double threshold = 0.000000000001;
         for (double el : vector) {
-            sum = sum + el;
+            sum += el;
         }
-        if (sum == 0.0) {
+        if (sum <= threshold) {
             throw new IllegalArgumentException(
                     "Sum of weights in vector must be different of 0"
             );
         }
-        if (sum == 1.0) {
+        if ((sum - 1.0) <= threshold) {
             return vector;
         }
         double[] normalized_vector = new double[vector.length];

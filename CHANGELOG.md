@@ -3,6 +3,8 @@
 ## Unreleased
 
 
+* **Normalization only if weights sum is != to 1.0. Avoid a rounded result that fails the tests**
+[37ddf79ab493033](https://github.com/cylab/mark/commit/37ddf79ab493033) Alex *2020-10-23 09:35:45*
 * **Add normalization vector in OWA to avoid error if weights sum != 1**
 [b971d97d281dab6](https://github.com/cylab/mark/commit/b971d97d281dab6) Alex *2020-10-23 09:25:41*
 * **Add normlization vector to avoid error if weights sum is different to 1**
