@@ -89,6 +89,7 @@ public final class OWAverage implements DetectionAgentInterface {
                     new_weights,
                     0,
                     owa_weights.length);
+            new_weights = normalizeVector(new_weights);
             owa_aggregator = new OWA(new_weights);
         } else {
             owa_aggregator = new OWA(owa_weights);
@@ -110,6 +111,23 @@ public final class OWAverage implements DetectionAgentInterface {
                 + " label " + profile.getTriggerLabel());
         datastore.addEvidence(ev);
 
+    }
+
+    static double[] normalizeVector(final double[] vector) {
+        double sum = 0.0;
+        for (double el : vector) {
+            sum = sum + el;
+        }
+        if (sum == 0.0) {
+            throw new IllegalArgumentException(
+                    "Sum of weights in vector must be different of 0"
+            );
+        }
+        double[] normalized_vector = new double[vector.length];
+        for (int i = 0; i < vector.length; i++) {
+            normalized_vector[i] = vector[i] / sum;
+        }
+        return normalized_vector;
     }
 
 }
