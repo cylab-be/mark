@@ -31,33 +31,42 @@ import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
- * A fake connection to MARK server, can be used for testing and debugging. It
- * will simply return fake data, and write out what it receives...
+ * A fake connection to MARK server, can be used for testing and debugging.It
+ will simply return fake data, and write out what it receives...
  *
  * @author Thibault Debatty
+ * @param <T>
  */
 public class DummyClient<T extends Subject> implements ServerInterface<T> {
 
+    private final List<Evidence<T>> evidences = new LinkedList<>();
+
+    @Override
     public String test() throws Throwable {
         return "test";
     }
 
+    @Override
     public void testString(String data) throws Throwable {
 
     }
 
+    @Override
     public void addRawData(RawData data) throws Throwable {
         System.out.println(data);
     }
 
+    @Override
     public void addEvidence(Evidence evidence) throws Throwable {
         System.out.println(evidence);
+        this.evidences.add(evidence);
     }
 
     @Override
@@ -71,6 +80,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     // Simulate an APT that connects every 60 seconds => f = 0.0166 Hz
     private static final int APT_INTERVAL = 60;
 
+    @Override
     public RawData[] findRawData(String type, T subject, long from, long till)
             throws Throwable {
 
@@ -125,6 +135,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public URL getURL() {
         try {
             return new URL("http://dummy.to.u:155");
@@ -135,6 +146,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
         return null;
     }
 
+    @Override
     public Evidence<T>[] findLastEvidences(String label, T subject) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -204,5 +216,9 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     @Override
     public void reload() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    List<Evidence<T>> getEvidences() {
+        return this.evidences;
     }
 }
