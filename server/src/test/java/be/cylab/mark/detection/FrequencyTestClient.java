@@ -20,22 +20,16 @@ import be.cylab.mark.core.Subject;
 public class FrequencyTestClient<T extends Subject> extends DummyClient<T>{
 
     private final LinkedList<Evidence<T>> evidences = new LinkedList<>();
-    private static int n_apt;
-    private static int n_noise;
-    private static int apt_interval;
+    private final int n_apt;
+    private final int n_noise;
+    private final int apt_interval;
 
     public FrequencyTestClient(final int number_apts,
                             final int number_noise,
-                            final int apt_inter) {
-        n_apt = number_apts;
-        n_noise = number_noise;
-        apt_interval = apt_inter;
-    }
-
-    public FrequencyTestClient() {
-        n_apt = 1000;
-        n_noise = 10000;
-        apt_interval = 60;
+                            final int apt_interval) {
+        this.n_apt = number_apts;
+        this.n_noise = number_noise;
+        this.apt_interval = apt_interval;
     }
 
     /**

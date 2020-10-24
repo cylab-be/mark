@@ -1,17 +1,11 @@
 ---
 class_name:     be.cylab.mark.detection.Frequency
-label:          detection.frequency.1w
+label:          detection.frequency
 trigger_label:  data
 parameters: {
-    sampling_interval : "2",
-    threshold_parameter : "1.7",
-    min_raw_data : "50",
-    fuzzy_logic_det_x1 : "0",
-    fuzzy_logic_det_x2 : "100",
-    fuzzy_logic_det_y1 : "0",
-    fuzzy_logic_det_y2 : "1",
-    fuzzy_logic_coverege_x1 : "0.1",
-    fuzzy_logic_coverege_x2 : "0.5",
-    fuzzy_logic_coverege_y1 : "0",
-    fuzzy_logic_coverege_y2 : "1"
+    sampling_interval: 2,
+    threshold_coeficient: 1.7,
+    min_raw_data: 50,
+    relative_value_0: 1.0,
+    relative_value_1: 3.0
 }

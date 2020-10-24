@@ -144,6 +144,26 @@ public class DetectionAgentProfile {
         return parameters.getOrDefault(name, default_value);
     }
 
+    /**
+     *
+     * @param name
+     * @param default_value
+     * @return
+     */
+    public final double getParameterDouble(
+            final String name, final double default_value) {
+
+        if (this.getParameter(name) == null) {
+            return default_value;
+        }
+
+        try {
+            return Double.valueOf(this.getParameter(name));
+        } catch (NumberFormatException ex) {
+            return default_value;
+        }
+    }
+
     private static final Yaml PARSER
             = new Yaml(new Constructor(DetectionAgentProfile.class));
 

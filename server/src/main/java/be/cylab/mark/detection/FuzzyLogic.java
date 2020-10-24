@@ -24,10 +24,10 @@
 package be.cylab.mark.detection;
 
 /**
- * Class responsible for implementing fuzzy logic membership function.
- * fuzzy logic function is f(x)=m*x + b
- * we need to calculate the mean and coefficient b to be able to calculate
- * the f(x) for given point x
+ * Implements fuzzy logic membership function.
+ *
+ * Compute f(x) = a * x + b from two points (x1, y1) and (x2, y2).
+ *
  * @author Georgi Nikolov
  */
 public final class FuzzyLogic {
@@ -47,24 +47,30 @@ public final class FuzzyLogic {
     public FuzzyLogic(
             final double x1, final double x2, final double y1,
             final double y2) {
+
+        //test if x1 is equal to x2 because it may cause division by 0
+        if (x1 == x2) {
+            throw new IllegalArgumentException("X1 == X2 -> can't divide by 0");
+        }
+
+        if (x1 > x2) {
+            throw new IllegalArgumentException("x2 must be > x1");
+        }
+
         this.x1 = x1;
         this.x2 = x2;
         this.y1 = y1;
         this.y2 = y2;
     }
+
     /**
-     * Method for calculating the membership functions given two points.
-     * Lower bound (x1,y1) and upper bound (x2,y2) will be used to calculate the
-     * membership function and then calculate f(value) of this function. The
-     * function returns a value between (0,1).
+     * Compute the membership functions given two points.
+     *
      * @param value
      * @return
      */
     public double determineMembership(final double value) {
-        //test if x1 is equal to x2 because it may cause division by 0
-        if (x1 == x2) {
-            throw new ArithmeticException("X1 == X2 -> can't divide by 0");
-        }
+
         //receives ex. (x1,y1) = [90,0] and (x2,y2) = [100,1]
         //determine if value is < x1 or > x2
         //because f(x) = m*x + b is a membership function it has soft limits
