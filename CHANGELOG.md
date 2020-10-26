@@ -3,6 +3,14 @@
 ## Unreleased
 
 
+* **updated changelog**
+[e90aa542d3d1643](https://github.com/cylab/mark/commit/e90aa542d3d1643) Thibault Debatty *2020-10-24 19:56:26*
+* **updated CHANGELOG**
+[92b4080fabfe1d6](https://github.com/cylab/mark/commit/92b4080fabfe1d6) Thibault Debatty *2020-10-24 19:56:11*
+* **cleanup Frequency agent**
+[5a75d20e9f866db](https://github.com/cylab/mark/commit/5a75d20e9f866db) Thibault Debatty *2020-10-24 19:55:30*
+* **Correct error in test. It was because there was a rounded value in a the normalizationVector method**
+[53f36785e8134c8](https://github.com/cylab/mark/commit/53f36785e8134c8) Alex *2020-10-23 15:39:46*
 * **cleanup frequency detector : remove all coverage related stuff**
 [1239aca520116b0](https://github.com/cylab/mark/commit/1239aca520116b0) Thibault Debatty *2020-10-23 12:03:00*
 * **Normalization only if weights sum is != to 1.0. Avoid a rounded result that fails the tests**
