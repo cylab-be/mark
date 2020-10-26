@@ -258,7 +258,7 @@ public class Frequency implements DetectionAgentInterface {
      * to be used when generating the report.
      * @param profile
      */
-    void initParams(final DetectionAgentProfile profile) {
+    final void initParams(final DetectionAgentProfile profile) {
 
         //check for parameters set through the config file
         threshold_coeficient = DEFAULT_THRESHOLD_COEFICIENT;
