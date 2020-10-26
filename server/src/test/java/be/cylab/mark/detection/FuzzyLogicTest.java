@@ -68,7 +68,7 @@ public class FuzzyLogicTest extends TestCase {
             FuzzyLogic fuzzylogic = new FuzzyLogic(x1, x1, y1, y2);
             double result = fuzzylogic.determineMembership(test_value1);
             fail();
-        } catch (ArithmeticException ex) {
+        } catch (ArithmeticException | IllegalArgumentException ex) {
             assertEquals("X1 == X2 -> can't divide by 0", ex.getMessage());
         }
     }
