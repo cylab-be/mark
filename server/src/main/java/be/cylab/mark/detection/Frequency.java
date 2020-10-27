@@ -140,28 +140,8 @@ public class Frequency implements DetectionAgentInterface {
             return;
         }
 
-        long[] times = new long[data.length];
-        for (int i = 0; i < data.length; i++) {
-            times[i] = data[i].getTime();
-        }
-
-        long size = pow2gt(time_window / sampling_interval);
-
-        // count the number of elements in each time bin
-        int[] time_bins = new int[(int) size];
-        for (long time : times) {
-            if (time < start_time) {
-                throw new Exception("time < requested start time!: " + time
-                        + " : " + start_time);
-            }
-
-            if (time > end_time) {
-                throw new Exception("time > requested end time!");
-            }
-
-            long position = (time - start_time) / sampling_interval;
-            time_bins[(int) position]++;
-        }
+        // count the number of data records in each time bin
+        int[] time_bins = bin(data, start_time, end_time);
 
         // Perform FFT
         FastFourierTransformer fft_transformer = new FastFourierTransformer(
@@ -210,10 +190,6 @@ public class Frequency implements DetectionAgentInterface {
                 0.0,
                 1.0);
         double score = fuzzy.determineMembership(relative_peak_value);
-
-        if (score == 0) {
-            return;
-        }
 
         String figure_spectrum_path = createSpectrumFigure(freqs, values,
                 base_peak_freq,
@@ -557,11 +533,39 @@ public class Frequency implements DetectionAgentInterface {
 
     }
 
-    private double[] intToDoubleArray(int[] ints) {
+    private double[] intToDoubleArray(final int[] ints) {
         double[] doubles = new double[ints.length];
-        for(int i=0; i<ints.length; i++) {
+        for(int i = 0; i < ints.length; i++) {
             doubles[i] = ints[i];
         }
         return doubles;
+    }
+
+    private int[] bin(
+            final RawData[] data,
+            final long start_time,
+            final long end_time) {
+        // count the number of elements in each time bin
+        long size = pow2gt(time_window / sampling_interval);
+        int[] time_bins = new int[(int) size];
+        for (RawData record : data) {
+            long time = record.getTime();
+            if (time < start_time) {
+                throw new IllegalArgumentException(
+                        "time < start_time : " + time
+                        + " : " + start_time);
+            }
+
+            if (time > end_time) {
+                throw new IllegalArgumentException(
+                        "time > end_time : " + time
+                        + " : " + end_time);
+            }
+
+            long position = (time - start_time) / sampling_interval;
+            time_bins[(int) position]++;
+        }
+
+        return time_bins;
     }
 }
