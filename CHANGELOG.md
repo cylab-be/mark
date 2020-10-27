@@ -3,6 +3,18 @@
 ## Unreleased
 
 
+* **cleanup**
+[abf833ccb18eb9a](https://github.com/cylab/mark/commit/abf833ccb18eb9a) Thibault Debatty *2020-10-27 14:12:11*
+* **updated default coef**
+[1c22599577894c9](https://github.com/cylab/mark/commit/1c22599577894c9) Thibault Debatty *2020-10-27 13:56:04*
+* **cleanup frequency agent**
+[d243da6bcb1ba1a](https://github.com/cylab/mark/commit/d243da6bcb1ba1a) Thibault Debatty *2020-10-27 13:53:14*
+* **update to CHANGELOG.md**
+[a11bfde2684ba14](https://github.com/cylab/mark/commit/a11bfde2684ba14) Georgi Nikolov *2020-10-26 08:11:47*
+* **Corrected a line in the FuzzyLogicTest to catch IllegalArgument exception too**
+[5369735789f0618](https://github.com/cylab/mark/commit/5369735789f0618) Georgi Nikolov *2020-10-26 08:11:08*
+* **Changed the initParam() method to final**
+[14bfcf097a314dd](https://github.com/cylab/mark/commit/14bfcf097a314dd) Georgi Nikolov *2020-10-26 08:10:57*
 * **updated changelog**
 [e90aa542d3d1643](https://github.com/cylab/mark/commit/e90aa542d3d1643) Thibault Debatty *2020-10-24 19:56:26*
 * **updated CHANGELOG**
