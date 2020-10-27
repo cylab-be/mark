@@ -26,8 +26,11 @@ package be.cylab.mark.detection;
 import junit.framework.TestCase;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
+import be.cylab.mark.core.Evidence;
 import be.cylab.mark.server.DummySubject;
 import java.util.Date;
+import java.util.LinkedList;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Test the Frequency detector.
@@ -92,7 +95,13 @@ public class FrequencyTest extends TestCase {
                 new FrequencyTestClient<>(1000, 86400);
 
         testWithClient(client);
-        assertEquals(0, client.getEvidences().size());
+
+        LinkedList<Evidence<DummySubject>> evidences = client.getEvidences();
+        if (evidences.isEmpty()) {
+            return;
+        }
+
+        assertTrue(evidences.get(0).getScore() < 0.1);
     }
 
     private void testWithClient(FrequencyTestClient<DummySubject> client)

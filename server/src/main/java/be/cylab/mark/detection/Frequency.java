@@ -151,10 +151,9 @@ public class Frequency implements DetectionAgentInterface {
                         intToDoubleArray(time_bins), TransformType.FORWARD);
 
         // Take lower half
+        // Extract frequencies and corresponding power values
         double[] values = new double[transform.length / 2];
         double[] freqs = new double[transform.length / 2];
-
-        // Extract frequencies and corresponding power values
         for (int i = 0; i < transform.length / 2; i++) {
             freqs[i] = 1.0 / sampling_interval * i / transform.length;
             values[i] = transform[i].multiply(transform[i].conjugate()).abs();
@@ -535,7 +534,7 @@ public class Frequency implements DetectionAgentInterface {
 
     private double[] intToDoubleArray(final int[] ints) {
         double[] doubles = new double[ints.length];
-        for(int i = 0; i < ints.length; i++) {
+        for (int i = 0; i < ints.length; i++) {
             doubles[i] = ints[i];
         }
         return doubles;

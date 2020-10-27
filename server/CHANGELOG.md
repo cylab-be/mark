@@ -3,8 +3,34 @@
 ## Unreleased
 
 
+* **cleanup**
+[abf833ccb18eb9a](https://github.com/cylab/mark/commit/abf833ccb18eb9a) Thibault Debatty *2020-10-27 14:12:11*
+* **updated default coef**
+[1c22599577894c9](https://github.com/cylab/mark/commit/1c22599577894c9) Thibault Debatty *2020-10-27 13:56:04*
+* **cleanup frequency agent**
+[d243da6bcb1ba1a](https://github.com/cylab/mark/commit/d243da6bcb1ba1a) Thibault Debatty *2020-10-27 13:53:14*
+* **update to CHANGELOG.md**
+[a11bfde2684ba14](https://github.com/cylab/mark/commit/a11bfde2684ba14) Georgi Nikolov *2020-10-26 08:11:47*
+* **Corrected a line in the FuzzyLogicTest to catch IllegalArgument exception too**
+[5369735789f0618](https://github.com/cylab/mark/commit/5369735789f0618) Georgi Nikolov *2020-10-26 08:11:08*
+* **Changed the initParam() method to final**
+[14bfcf097a314dd](https://github.com/cylab/mark/commit/14bfcf097a314dd) Georgi Nikolov *2020-10-26 08:10:57*
+* **updated changelog**
+[e90aa542d3d1643](https://github.com/cylab/mark/commit/e90aa542d3d1643) Thibault Debatty *2020-10-24 19:56:26*
+* **updated CHANGELOG**
+[92b4080fabfe1d6](https://github.com/cylab/mark/commit/92b4080fabfe1d6) Thibault Debatty *2020-10-24 19:56:11*
+* **cleanup Frequency agent**
+[5a75d20e9f866db](https://github.com/cylab/mark/commit/5a75d20e9f866db) Thibault Debatty *2020-10-24 19:55:30*
+* **Correct error in test. It was because there was a rounded value in a the normalizationVector method**
+[53f36785e8134c8](https://github.com/cylab/mark/commit/53f36785e8134c8) Alex *2020-10-23 15:39:46*
 * **cleanup frequency detector : remove all coverage related stuff**
 [1239aca520116b0](https://github.com/cylab/mark/commit/1239aca520116b0) Thibault Debatty *2020-10-23 12:03:00*
+* **Normalization only if weights sum is != to 1.0. Avoid a rounded result that fails the tests**
+[37ddf79ab493033](https://github.com/cylab/mark/commit/37ddf79ab493033) Alex *2020-10-23 09:35:45*
+* **Add normalization vector in OWA to avoid error if weights sum != 1**
+[b971d97d281dab6](https://github.com/cylab/mark/commit/b971d97d281dab6) Alex *2020-10-23 09:25:41*
+* **Add normlization vector to avoid error if weights sum is different to 1**
+[8ef632cecd6f3b0](https://github.com/cylab/mark/commit/8ef632cecd6f3b0) Alex *2020-10-23 09:23:08*
 * **updated changelog**
 [7880b878995785b](https://github.com/cylab/mark/commit/7880b878995785b) Thibault Debatty *2020-10-23 09:13:24*
 * **add link to online javadoc**
