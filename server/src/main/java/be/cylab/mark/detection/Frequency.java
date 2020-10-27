@@ -264,7 +264,7 @@ public class Frequency implements DetectionAgentInterface {
      * to be used when generating the report.
      * @param profile
      */
-    void initParams(final DetectionAgentProfile profile) {
+    final void initParams(final DetectionAgentProfile profile) {
 
         this.threshold_coeficient = profile.getParameterDouble(
                 THRESHOLD_STRING, DEFAULT_THRESHOLD_COEFICIENT);
