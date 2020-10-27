@@ -3,8 +3,9 @@ class_name:     be.cylab.mark.detection.Frequency
 label:          detection.frequency
 trigger_label:  data
 parameters: {
-    sampling_interval: 2,
-    threshold_coeficient: 1.7,
+    time_window: 86400,
+    sampling_interval: 30,
+    threshold_coeficient: 6.0,
     min_raw_data: 50,
     relative_value_0: 1.0,
     relative_value_1: 3.0

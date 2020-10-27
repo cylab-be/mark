@@ -150,6 +150,26 @@ public class DetectionAgentProfile {
      * @param default_value
      * @return
      */
+    public final int getParameterInt(
+            final String name, final int default_value) {
+
+        if (this.getParameter(name) == null) {
+            return default_value;
+        }
+
+        try {
+            return Integer.valueOf(this.getParameter(name));
+        } catch (NumberFormatException ex) {
+            return default_value;
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @param default_value
+     * @return
+     */
     public final double getParameterDouble(
             final String name, final double default_value) {
 

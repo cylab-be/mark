@@ -27,7 +27,6 @@ import be.cylab.mark.core.DetectionAgentInterface;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,22 +78,22 @@ public class Frequency implements DetectionAgentInterface {
     /**
      * Set default time window parameter.
      */
-    private static final long DEFAULT_TIME_WINDOW = 604800;
+    private static final int DEFAULT_TIME_WINDOW = 604800;
     private static final String TIME_WINDOW_STRING = "time_window";
-    private long time_window;
+    private int time_window;
 
     /**
      * Sampling interval (in second).
      */
-    private static final long SAMPLING_INTERVAL = 60; // in seconds
+    private static final int DEFAULT_SAMPLING_INTERVAL = 60; // in seconds
     private static final String SAMPLING_STRING = "sampling_interval";
-    private long sampling_interval;
+    private int sampling_interval;
 
     /**
      * Min number of raw data needed.
      */
     private static final int DEFAULT_MIN_RAW_DATA = 50;
-    private static final String MIN_RAW_DATA = "min_raw_data";
+    private static final String MIN_RAW_DATA_STRING = "min_raw_data";
     private int min_raw_data;
 
     /**
@@ -128,39 +127,48 @@ public class Frequency implements DetectionAgentInterface {
         //fetch any needed parameters from the configuration file
         initParams(dap);
 
+        long start_time = event.getTimestamp() - time_window;
+        long end_time = event.getTimestamp();
 
         RawData[] data = si.findRawData(
                 event.getLabel(),
                 event.getSubject(),
-                event.getTimestamp() - time_window,
-                event.getTimestamp());
+                start_time,
+                end_time);
 
         if (data.length < min_raw_data) {
             return;
         }
 
-
         long[] times = new long[data.length];
         for (int i = 0; i < data.length; i++) {
             times[i] = data[i].getTime();
         }
-        long min_time = min(times);
-        long max_time = max(times);
-        long size = pow2gt((max_time - min_time) / sampling_interval);
+
+        long size = pow2gt(time_window / sampling_interval);
 
         // count the number of elements in each time bin
-        double[] counts = new double[(int) size];
+        int[] time_bins = new int[(int) size];
         for (long time : times) {
-            long position = (time - min_time) / sampling_interval;
-            position = Math.min(position, counts.length - 1);
-            counts[(int) position]++;
+            if (time < start_time) {
+                throw new Exception("time < requested start time!: " + time
+                        + " : " + start_time);
+            }
+
+            if (time > end_time) {
+                throw new Exception("time > requested end time!");
+            }
+
+            long position = (time - start_time) / sampling_interval;
+            time_bins[(int) position]++;
         }
 
         // Perform FFT
         FastFourierTransformer fft_transformer = new FastFourierTransformer(
                 DftNormalization.STANDARD);
         Complex[] transform
-                = fft_transformer.transform(counts, TransformType.FORWARD);
+                = fft_transformer.transform(
+                        intToDoubleArray(time_bins), TransformType.FORWARD);
 
         // Take lower half
         double[] values = new double[transform.length / 2];
@@ -218,15 +226,13 @@ public class Frequency implements DetectionAgentInterface {
                 "smoothing for " + event.getSubject().toString(),
                 data[0].getTime());
 
-        String figure_timeseries_path = createTimeseriesFigure(times,
-                event.getSubject().toString(), data[0].getTime());
+        String figure_timeseries_path = createTimeseriesFigure(time_bins,
+                start_time,
+                event.getSubject().toString());
 
-        String figures = "<a href=\"file:///" + figure_spectrum_path
-                        + "\">" + "Frequency Spectrum Figure</a> | "
-                        + "<a href=\"file:///" + figure_smooth_spectrum_path
-                        + "\">" + "Smoothed Frequency Spectrum Figure</a>"
-                        + " | <a href=\"file:///" + figure_timeseries_path
-                        + "\">" + "Frequency Time Series Figure</a>";
+        String figures = "Spectrum: " + figure_spectrum_path + "\n"
+                        + "Smoothed: " + figure_smooth_spectrum_path + "\n"
+                        + "Histogram: " + figure_timeseries_path + "\n";
         //generate report
         /*String freq_report = generateReport(
             "Found frequency peak for " + event.getSubject().toString()
@@ -240,7 +246,7 @@ public class Frequency implements DetectionAgentInterface {
                 + " with frequency: " + base_peak_freq + "Hz "
                 + "| interval: " + Math.round(1 / base_peak_freq)
                 + " seconds"
-                + "| score: " + score
+                + "| score: " + score + "\n"
                 + figures;
 
         Evidence evidence = new Evidence();
@@ -260,57 +266,18 @@ public class Frequency implements DetectionAgentInterface {
      */
     void initParams(final DetectionAgentProfile profile) {
 
-        //check for parameters set through the config file
-        threshold_coeficient = DEFAULT_THRESHOLD_COEFICIENT;
-        try {
-            String threshold_string =
-                    profile.getParameter(THRESHOLD_STRING);
-            if (threshold_string != null) {
-                threshold_coeficient =
-                        Double.valueOf(threshold_string);
-            }
-        } catch (NumberFormatException ex) {
-            System.out.println("Could not get frequency detection threshold"
-                    + " from configuration file. Error: " + ex.getMessage());
-        }
+        this.threshold_coeficient = profile.getParameterDouble(
+                THRESHOLD_STRING, DEFAULT_THRESHOLD_COEFICIENT);
 
-        //check for parameters set through the config file
-        min_raw_data = DEFAULT_MIN_RAW_DATA;
-        try {
-            String threshold_string = profile.getParameter(MIN_RAW_DATA);
-            if (threshold_string != null) {
-                min_raw_data =
-                        Integer.valueOf(threshold_string);
-            }
-        } catch (NumberFormatException ex) {
-            System.out.println("Could not get fminimum raw data threshold"
-                    + " from configuration file. Error: " + ex.getMessage());
-        }
+        this.min_raw_data = profile.getParameterInt(
+                MIN_RAW_DATA_STRING, DEFAULT_MIN_RAW_DATA);
 
-        //check for parameters set through the config file
-        sampling_interval = SAMPLING_INTERVAL;
-        try {
-            String sampling_string = profile.getParameter(SAMPLING_STRING);
-            if (sampling_string != null) {
-                sampling_interval = Integer.valueOf(sampling_string);
-            }
-        } catch (NumberFormatException ex) {
-            System.out.println("Could not get frequency sampling interval from"
-                    + " configuration file. Error: " + ex.getMessage());
-        }
+        this.sampling_interval = profile.getParameterInt(
+                SAMPLING_STRING, DEFAULT_SAMPLING_INTERVAL);
 
-        //check for parameters set through the config file
-        time_window = DEFAULT_TIME_WINDOW;
-        try {
-            String time_window_string = profile.getParameter(
-                    TIME_WINDOW_STRING);
-            if (time_window_string != null) {
-                time_window = Long.valueOf(time_window_string);
-            }
-        } catch (NumberFormatException ex) {
-            System.out.println("Could not get frequency time window parameters"
-                    + " from configuration file. Error: " + ex.getMessage());
-        }
+        this.time_window = profile.getParameterInt(
+                TIME_WINDOW_STRING, DEFAULT_TIME_WINDOW);
+
     }
 
     /**
@@ -411,35 +378,15 @@ public class Frequency implements DetectionAgentInterface {
      * @return
      * @throws IOException
      */
-    private String createTimeseriesFigure(final long[] times,
-                            final String title,
-                            final long time) throws IOException {
+    private String createTimeseriesFigure(
+            final int[] time_bins,
+            final long start_time,
+            final String title) throws IOException {
+
         XYSeries series = new XYSeries("Time Series");
-        //sort the time array so the timestamps are in order
-        Arrays.sort(times);
-        //create the arrays with bins
-        int nr_of_bins = 512;
-        double period_in_seconds = (double) (times[times.length - 1]
-                                - times[0]) / nr_of_bins;
-        int[] timeseries_bins = new int[nr_of_bins];
-
-        //fill the bins
-        for (long timestamp : times) {
-            long req_time = timestamp - times[0];
-            long global_time = times[times.length - 1] - times[0];
-            int i_bin = Math.round((req_time / (float) global_time) * 512);
-            if (i_bin == 512) {
-                continue;
-            }
-            if (timeseries_bins[i_bin] == 0) {
-                timeseries_bins[i_bin] = 1;
-            }
-        }
-
-        //fill the time series with the data from the bins
-        for (int i = 0; i < timeseries_bins.length; i++) {
-            long bin_timestamp = (long) (times[0] + i * period_in_seconds);
-            series.add(bin_timestamp, timeseries_bins[i]);
+        for (int i = 0; i < time_bins.length; i++) {
+            long bin_timestamp = (long) (start_time + i * sampling_interval);
+            series.add(bin_timestamp, time_bins[i]);
         }
 
         XYSeriesCollection series_collection =
@@ -462,14 +409,8 @@ public class Frequency implements DetectionAgentInterface {
         renderer.setSeriesLinesVisible(
                 series_collection.getSeriesCount(), false);
 
-        //transform timestamp to create day folder for the figures
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date(time);
-        String formated_date = sf.format(date);
         //create the folders to store the figure
-        File figure_path = new File("/tmp/mark_figures/"
-                                    + formated_date
-                                    + "/");
+        File figure_path = new File("/tmp/mark_figures/");
         figure_path.mkdirs();
         //create the temporary figure file
         File figure = File.createTempFile("frequency_time_chart", ".png",
@@ -595,21 +536,19 @@ public class Frequency implements DetectionAgentInterface {
         Map<Integer, Double> peaks = new HashMap<>();
         while (true) {
             double peak_value = max(values_to_analyze);
-            if (peak_value > threshold) {
-                int peak_index = indexOf(values, peak_value);
-                peaks.put(peak_index, peak_value);
-                removePeak(values_to_analyze, peak_index);
-            }
 
             if (peak_value < threshold) {
                 break;
             }
+
+            int peak_index = indexOf(values, peak_value);
+            peaks.put(peak_index, peak_value);
+            removePeak(values_to_analyze, peak_index);
         }
 
         if (peaks.values().isEmpty()) {
             return 0;
         }
-
 
         int base_peak_index = Collections.min(peaks.keySet());
         double base_peak_value = peaks.get(base_peak_index);
@@ -618,5 +557,11 @@ public class Frequency implements DetectionAgentInterface {
 
     }
 
-
+    private double[] intToDoubleArray(int[] ints) {
+        double[] doubles = new double[ints.length];
+        for(int i=0; i<ints.length; i++) {
+            doubles[i] = ints[i];
+        }
+        return doubles;
+    }
 }

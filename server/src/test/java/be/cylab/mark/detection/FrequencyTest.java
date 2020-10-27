@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.server.DummySubject;
+import java.util.Date;
 
 /**
  * Test the Frequency detector.
@@ -44,53 +45,51 @@ public class FrequencyTest extends TestCase {
      * @throws java.lang.Throwable
      */
     public void testFrequency1() throws Throwable {
-        System.out.println("test Frequency agent with 60 sec interval,"
-                + "1000 apt connections and 10000 noise connections");
+        System.out.println("Frequency agent with 300 sec interval, "
+                + "0 noise connections");
         FrequencyTestClient<DummySubject> client =
-                new FrequencyTestClient<>(1000, 10000, 60);
+                new FrequencyTestClient<>(0, 300);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
     }
 
     public void testFrequency2() throws Throwable {
-        System.out.println("test Frequency agent with 60 sec interval,"
-                + "30 APT connections and 100 noise connections");
-
-        FrequencyTestClient client =
-                new FrequencyTestClient(30, 100, 60);
+        System.out.println("Frequency agent with 300 sec interval, "
+                + "1000 noise connections");
+        FrequencyTestClient<DummySubject> client =
+                new FrequencyTestClient<>(1000, 300);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
     }
 
     public void testFrequency3() throws Throwable {
-        System.out.println("test Frequency agent with 60 sec interval,"
-                + "30 APT connections and 1000 noise connections");
+        System.out.println("Frequency agent with 300 sec interval, "
+                + "2000 noise connections");
+        FrequencyTestClient<DummySubject> client =
+                new FrequencyTestClient<>(2000, 300);
 
-        FrequencyTestClient client =
-                new FrequencyTestClient(30, 1000, 60);
+        testWithClient(client);
+        assertEquals(1, client.getEvidences().size());
+    }
+
+    public void testFrequency4() throws Throwable {
+        System.out.println("Frequency agent with 1800 sec interval, "
+                + "48 noise connections");
+        FrequencyTestClient<DummySubject> client =
+                new FrequencyTestClient<>(100, 1800);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
     }
 
-    public void testFrequencyWithVeryHighInterval() throws Throwable {
-        System.out.println("test Frequency agent with 1800 sec interval,"
-                + "40 APT connections and 100 noise connections");
-
-        FrequencyTestClient client =
-                new FrequencyTestClient(40, 100, 1800);
-
-        testWithClient(client);
-        assertEquals(1, client.getEvidences().size());
-    }
 
     public void testFrequencyWithNoApt() throws Throwable {
-        System.out.println("test Frequency agent with no APT connections");
-
-        FrequencyTestClient client =
-                new FrequencyTestClient(0, 1000, 0);
+        System.out.println("Frequency agent with no APT, "
+                + "1000 noise connections");
+        FrequencyTestClient<DummySubject> client =
+                new FrequencyTestClient<>(1000, 86400);
 
         testWithClient(client);
         assertEquals(0, client.getEvidences().size());
@@ -103,15 +102,15 @@ public class FrequencyTest extends TestCase {
         DetectionAgentProfile profile = DetectionAgentProfile.fromInputStream(
                 getClass().getResourceAsStream("/detection.frequency.yaml"));
 
+        Date date = new Date();
+        long now = date.getTime() / 1000; // in seconds
+
         Event event = new Event("actual.trigger",
                 new DummySubject("foo"),
-                123456,
-                "1");
+                now,
+                "");
 
-        agent.analyze(
-                event,
-                profile,
-                client);
+        agent.analyze(event, profile, client);
     }
 
 }
