@@ -46,6 +46,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -367,9 +369,10 @@ public class Frequency implements DetectionAgentInterface {
         XYSeriesCollection series_collection =
                 new XYSeriesCollection(series);
 
-        final JFreeChart chart = ChartFactory.createXYLineChart(
+        final JFreeChart chart = ChartFactory.createXYBarChart(
                 "Frequency Time Sequence between (Client:Server) " + title,
                 "Time",
+                true,
                 "Number of Requests",
                 series_collection,
                 PlotOrientation.VERTICAL,
@@ -378,11 +381,9 @@ public class Frequency implements DetectionAgentInterface {
                 false
         );
 
-        XYPlot plot = (XYPlot) chart.getXYPlot();
-        XYLineAndShapeRenderer renderer =
-                (XYLineAndShapeRenderer) plot.getRenderer();
-        renderer.setSeriesLinesVisible(
-                series_collection.getSeriesCount(), false);
+        XYPlot plot = (XYPlot) chart.getPlot();
+        XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();
+        renderer.setShadowVisible(false);
 
         //create the folders to store the figure
         File figure_path = new File("/tmp/mark_figures/");
