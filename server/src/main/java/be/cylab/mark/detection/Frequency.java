@@ -67,7 +67,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  * - time_window in seconds (default 604800 - 1 week)
  * - sampling_interval in seconds (default 60 seconds)
  * - min_raw_data (default 50)
- * - threshold_coeficient (default 1.3)
+ * - threshold_coeficient (default 6.0)
  * - relative_value_0 (default 1)
  * - relative_value_1 (default 3)
  *
@@ -99,7 +99,7 @@ public class Frequency implements DetectionAgentInterface {
     /**
      * Minimum peak value above average to generate an evidence.
      */
-    private static final double DEFAULT_THRESHOLD_COEFICIENT = 1.3;
+    private static final double DEFAULT_THRESHOLD_COEFICIENT = 6.0;
     private static final String THRESHOLD_STRING = "threshold_coeficient";
     private double threshold_coeficient;
 
