@@ -3,6 +3,18 @@
 ## Unreleased
 
 
+* **updated changelog**
+[2d7aac13c0515ac](https://github.com/cylab/mark/commit/2d7aac13c0515ac) Thibault Debatty *2020-10-28 10:24:10*
+* **add detector with pattern trigger_label. Fix issue 77**
+[ea70f366148a569](https://github.com/cylab/mark/commit/ea70f366148a569) Thibault Debatty *2020-10-28 10:19:39*
+* **fix style**
+[54fab051228758e](https://github.com/cylab/mark/commit/54fab051228758e) Thibault Debatty *2020-10-28 08:54:51*
+* **remove shadow in bar graph**
+[3521506737d06b0](https://github.com/cylab/mark/commit/3521506737d06b0) Thibault Debatty *2020-10-27 14:59:57*
+* **updated changelog**
+[1e459c6854f1f09](https://github.com/cylab/mark/commit/1e459c6854f1f09) Thibault Debatty *2020-10-27 14:30:29*
+* **fix style**
+[0ceddc8982ad280](https://github.com/cylab/mark/commit/0ceddc8982ad280) Thibault Debatty *2020-10-27 14:30:22*
 * **cleanup**
 [abf833ccb18eb9a](https://github.com/cylab/mark/commit/abf833ccb18eb9a) Thibault Debatty *2020-10-27 14:12:11*
 * **updated default coef**
