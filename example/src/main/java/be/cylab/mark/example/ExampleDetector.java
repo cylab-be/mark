@@ -33,10 +33,6 @@ public class ExampleDetector<T extends Subject>
                 ev.getSubject(),
                 since, now);
 
-        if (data.length < 1) {
-            return;
-        }
-
         // Process data
         Random rand = new Random();
 
@@ -44,7 +40,8 @@ public class ExampleDetector<T extends Subject>
         Evidence<T> evidence = new Evidence<>();
         evidence.setLabel(profile.getLabel());
         evidence.setSubject(ev.getSubject());
-        evidence.setReport("Some report...");
+        evidence.setReport("Found " + data.length + " data records with label "
+            + ev.getLabel());
         evidence.setScore(rand.nextDouble());
         evidence.setTime(data[data.length - 1].getTime());
         datastore.addEvidence(evidence);
