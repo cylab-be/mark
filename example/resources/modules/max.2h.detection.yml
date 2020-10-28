@@ -1,0 +1,8 @@
+# Launch a single Dummy agent for every
+# new http data
+---
+class_name:     be.cylab.mark.detection.Max
+label:          detection.max.2h
+trigger_label:  detection.example
+parameters:
+  window: 7200
