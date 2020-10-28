@@ -53,23 +53,30 @@ import org.jfree.data.xy.XYSeriesCollection;
 /**
  * Perform a frequency analysis over the data regarding this subject.
  *
- * Will trigger an alert when a frequency peak is largely above the average.
+ * It will trigger an alert if a frequency peak is largely above the average.
  *
- * The threshold for producing an alert is computed as
- * average + threshold_coeficient * standard deviation.
+ * <p>The threshold for producing an alert is computed as
+ * <code>average + threshold_coeficient * standard deviation</code>.</p>
  *
- * The score is computed using the relative_peak_value = peak_value / threshold
- * score = 0 if relative_peak_value is less than relative_value_0
- * score = 1 if relative_peak_value is more than relative_value_1
- * perform linear regression between these values
+ * <p>The score is computed using the
+ * <code>relative_peak_value = peak_value / threshold</code>:</p>
  *
- * Parameters:
- * - time_window in seconds (default 604800 - 1 week)
- * - sampling_interval in seconds (default 60 seconds)
- * - min_raw_data (default 50)
- * - threshold_coeficient (default 6.0)
- * - relative_value_0 (default 1)
- * - relative_value_1 (default 3)
+ * <ul>
+ * <li>score = 0 if relative_peak_value is less than relative_value_0</li>
+ * <li>score = 1 if relative_peak_value is more than relative_value_1</li>
+ * <li>perform linear regression between these values</li>
+ * </ul>
+ *
+ * <p>Parameters:</p>
+ *
+ * <ul>
+ * <li>time_window in seconds (default 604800 - 1 week)</li>
+ * <li>sampling_interval in seconds (default 60 seconds)</li>
+ * <li>min_raw_data (default 50)</li>
+ * <li>threshold_coeficient (default 6.0)</li>
+ * <li>relative_value_0 (default 1)</li>
+ * <li>relative_value_1 (default 3)</li>
+ * </ul>
  *
  * @author Thibault Debatty
  */
