@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+* **updated changelog**
+[1e459c6854f1f09](https://github.com/cylab/mark/commit/1e459c6854f1f09) Thibault Debatty *2020-10-27 14:30:29*
+* **fix style**
+[0ceddc8982ad280](https://github.com/cylab/mark/commit/0ceddc8982ad280) Thibault Debatty *2020-10-27 14:30:22*
 * **cleanup**
 [abf833ccb18eb9a](https://github.com/cylab/mark/commit/abf833ccb18eb9a) Thibault Debatty *2020-10-27 14:12:11*
 * **updated default coef**
