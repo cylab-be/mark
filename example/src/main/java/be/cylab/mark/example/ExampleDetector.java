@@ -43,7 +43,7 @@ public class ExampleDetector<T extends Subject>
         evidence.setReport("Found " + data.length + " data records with label "
             + ev.getLabel());
         evidence.setScore(rand.nextDouble());
-        evidence.setTime(data[data.length - 1].getTime());
+        evidence.setTime(ev.getTimestamp());
         datastore.addEvidence(evidence);
     }
 }
