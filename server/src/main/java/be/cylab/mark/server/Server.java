@@ -33,7 +33,6 @@ public class Server {
      * data agents and no detection agents.
      *
      * @param config
-     * @param web_server
      * @param activation_controller
      * @param datastore
      * @throws java.lang.Throwable on any error
@@ -120,6 +119,18 @@ public class Server {
                 "Wait for activation controller to finish running tasks...");
         activation_controller.awaitTermination();
     }
+
+    /**
+     * Allows to programmatically add a data agent to the server.
+     *
+     * Used for integration tests for example.
+     *
+     * @param profile
+     */
+    public final void addDataAgentProfile(final DataAgentProfile profile) {
+        data_agents.add(new DataAgentContainer(profile, config));
+    }
+
 
     private void parseModules() throws FileNotFoundException {
         LOGGER.info("Parsing modules directory ");
