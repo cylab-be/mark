@@ -82,4 +82,12 @@ public interface ActivationControllerInterface<T extends Subject> {
      * Reload configuration files for detection agent profiles.
      */
     void reload();
+
+    /**
+     * Add or update the configuration a detector. If profile.label is already
+     * defined, the configuration is updated, otherwise a new detector is added.
+     *
+     * @param profile
+     */
+    void setAgentProfile(DetectionAgentProfile profile);
 }

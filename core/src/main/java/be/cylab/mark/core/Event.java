@@ -42,7 +42,7 @@ public class Event<T extends Subject> {
      * @param label
      * @param subject
      * @param timestamp
-     * @param id
+     * @param id of the data or evidence that caused this event
      */
     public Event(
             final String label, final T subject, final long timestamp,

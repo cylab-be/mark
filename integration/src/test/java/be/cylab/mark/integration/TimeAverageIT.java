@@ -42,7 +42,7 @@ public class TimeAverageIT extends MarkCase {
         agent.setLabel("detection.timeaverage");
         agent.setTriggerLabel("data");
 
-        getActivationController().addProfile(agent);
+        getActivationController().setAgentProfile(agent);
 
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());

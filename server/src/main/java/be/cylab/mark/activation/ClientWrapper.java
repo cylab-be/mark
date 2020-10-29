@@ -352,4 +352,16 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
         client.reload();
     }
 
+    /**
+     *
+     * @param profile
+     * @throws Throwable
+     */
+    @Override
+    public void setAgentProfile(final DetectionAgentProfile profile)
+            throws Throwable {
+
+        client.setAgentProfile(profile);
+    }
+
 }

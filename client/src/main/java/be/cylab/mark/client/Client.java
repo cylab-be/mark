@@ -313,6 +313,15 @@ public class Client<T extends Subject> implements ServerInterface {
     }
 
     @Override
+    public final void setAgentProfile(final DetectionAgentProfile profile)
+            throws Throwable {
+
+        json_rpc_client.invoke(
+                "setAgentProfile",
+                new Object[]{profile});
+    }
+
+    @Override
     public final Evidence[] findEvidenceSince(
             final String label, final Subject subject, final long time)
             throws Throwable {
@@ -363,7 +372,6 @@ public class Client<T extends Subject> implements ServerInterface {
     public final void reload() throws Throwable {
         json_rpc_client.invoke("reload", null);
     }
-
 
 
     /**

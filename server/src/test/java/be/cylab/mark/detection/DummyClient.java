@@ -221,4 +221,9 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     List<Evidence<T>> getEvidences() {
         return this.evidences;
     }
+
+    @Override
+    public void setAgentProfile(DetectionAgentProfile profile) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -33,7 +33,6 @@ import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.DummySubject;
 import java.io.InputStream;
-import java.util.LinkedList;
 
 /**
  *
@@ -180,7 +179,7 @@ public class ActivationControllerTest extends TestCase {
 
         //key that we will be looking for
         String key = profile.getClassName() + "-" + data.getSubject().toString();
-        controller.addProfile(profile);
+        controller.setAgentProfile(profile);
         controller.start();
 
         Thread.sleep(1000);
@@ -216,7 +215,7 @@ public class ActivationControllerTest extends TestCase {
         DetectionAgentProfile profile = getTestDetectionAgent();
         //key that we will be looking for
         String key = profile.getClassName() + "-" + data.getSubject().toString();
-        controller.addProfile(profile);
+        controller.setAgentProfile(profile);
         controller.start();
 
         Thread.sleep(1000);

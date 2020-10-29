@@ -202,6 +202,14 @@ public interface ServerInterface<T extends Subject> {
     DetectionAgentProfile[] activation() throws Throwable;
 
     /**
+     * Add or update the configuration a detector. If profile.label is already
+     * defined, the configuration is updated, otherwise a new detector is added.
+     * @param profile
+     * @throws java.lang.Throwable if something went wrong
+     */
+    void setAgentProfile(DetectionAgentProfile profile) throws Throwable;
+
+    /**
      * Pause execution (no algorithm will be scheduled).
      *
      * @throws Throwable if something went wrong

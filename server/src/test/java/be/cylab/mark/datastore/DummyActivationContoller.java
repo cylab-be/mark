@@ -81,4 +81,9 @@ public class DummyActivationContoller implements ActivationControllerInterface {
     public void reload() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void setAgentProfile(DetectionAgentProfile profile) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

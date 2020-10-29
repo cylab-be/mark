@@ -51,7 +51,8 @@ public class MarkCase extends TestCase {
 
         activation_controller
                 = new ActivationController(config, executor);
-        activation_controller.addProfile(DetectionAgentProfile.fromInputStream(
+        activation_controller.setAgentProfile(
+                DetectionAgentProfile.fromInputStream(
                 getClass().getResourceAsStream("/detection.dummy.yml")));
 
         try {

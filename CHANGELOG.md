@@ -1,6 +1,24 @@
 # Changelog
 
-## Unreleased
+## 1.5.2
+
+
+* **reimplemented the addDataAgentProfile, as it is required to run integration tests**
+[28aa832396e3a62](https://github.com/cylab/mark/commit/28aa832396e3a62) Thibault Debatty *2020-10-29 08:51:10*
+* **improved javadoc**
+[baf17064fb1660d](https://github.com/cylab/mark/commit/baf17064fb1660d) Thibault Debatty *2020-10-28 14:45:52*
+* **fix ExampleDetector when there is no data**
+[0b2ee492f8739a6](https://github.com/cylab/mark/commit/0b2ee492f8739a6) Thibault Debatty *2020-10-28 13:44:01*
+
+## 1.5.1
+
+
+* **updated changelog**
+[322ac6799bb1975](https://github.com/cylab/mark/commit/322ac6799bb1975) Thibault Debatty *2020-10-28 13:03:14*
+* **ExampleDetector creates an evidence even if there is no matching data...**
+[ff5fffe182a3033](https://github.com/cylab/mark/commit/ff5fffe182a3033) Thibault Debatty *2020-10-28 13:02:56*
+
+## 1.5.0
 
 
 * **updated changelog**

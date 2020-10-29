@@ -42,7 +42,8 @@ public final class ActivationController<T extends Subject> extends SafeThread
     private static final Logger LOGGER
             = LoggerFactory.getLogger(ActivationController.class);
 
-    private List<DetectionAgentProfile> profiles;
+    private final HashMap<String, DetectionAgentProfile> profiles =
+            new HashMap<>();
     private final ExecutorInterface executor;
 
     //store the last time an agent has been triggered for a specific Subject,
@@ -66,7 +67,6 @@ public final class ActivationController<T extends Subject> extends SafeThread
             final Config config, final ExecutorInterface executor) {
 
         this.config = config;
-        this.profiles = new LinkedList<>();
         this.executor = executor;
         this.events = new HashMap<>();
         this.last_time_triggered = new HashMap<>();
@@ -170,7 +170,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
 
         for (String event_label : events.keySet()) {
 
-            for (DetectionAgentProfile profile : profiles) {
+            for (DetectionAgentProfile profile : profiles.values()) {
                 if (!this.checkLabelsMatch(
                         profile.getTriggerLabel(), event_label)) {
                     continue;
@@ -302,7 +302,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
     public void testProfiles()
             throws InvalidProfileException {
 
-        for (DetectionAgentProfile profile : profiles) {
+        for (DetectionAgentProfile profile : profiles.values()) {
             try {
                 DetectionAgentInterface new_task = profile.createInstance();
                 LOGGER.debug(new_task.toString());
@@ -322,7 +322,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      */
     @Override
     public List<DetectionAgentProfile> getProfiles() {
-        return profiles;
+        return new LinkedList<>(profiles.values());
     }
 
     /**
@@ -330,8 +330,8 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * This method can be used during execution, to dynamically add detectors.
      * @param profile
      */
-    public void addProfile(final DetectionAgentProfile profile) {
-        this.profiles.add(profile);
+    public void setAgentProfile(final DetectionAgentProfile profile) {
+        this.profiles.put(profile.getLabel(), profile);
     }
 
 
@@ -397,10 +397,10 @@ public final class ActivationController<T extends Subject> extends SafeThread
                         (final File dir, final String name) ->
                                 name.endsWith(".detection.yml"));
 
-        profiles = new LinkedList<>();
+        profiles.clear();
         for (File file : detection_agent_files) {
             try {
-                addProfile(DetectionAgentProfile.fromFile(file));
+                setAgentProfile(DetectionAgentProfile.fromFile(file));
             } catch (FileNotFoundException ex) {
                 LOGGER.warn("File does not exist anymore: "
                         + file.getAbsolutePath());

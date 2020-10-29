@@ -167,9 +167,10 @@ public final class RequestHandler implements ServerInterface {
             final long till) {
 
         Document query = new Document();
-        query.append(parser.LABEL, label);
+        query.append(MongoParser.LABEL, label);
         query.append(
-                parser.TIME, new Document("$gte", from).append("$lte", till));
+                MongoParser.TIME,
+                new Document("$gte", from).append("$lte", till));
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -231,6 +232,14 @@ public final class RequestHandler implements ServerInterface {
                 new DetectionAgentProfile[profiles.size()]);
     }
 
+    @Override
+    public void setAgentProfile(final DetectionAgentProfile profile)
+            throws Throwable {
+
+        activation_controller.setAgentProfile(profile);
+
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -245,7 +254,7 @@ public final class RequestHandler implements ServerInterface {
             throws Throwable {
 
         Document query = new Document();
-        query.append(parser.LABEL, label);
+        query.append(MongoParser.LABEL, label);
         adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
@@ -268,7 +277,7 @@ public final class RequestHandler implements ServerInterface {
         LOGGER.debug("findEvidence : " + label);
 
         Document query = new Document();
-        query.append(parser.LABEL, label);
+        query.append(MongoParser.LABEL, label);
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
@@ -373,7 +382,7 @@ public final class RequestHandler implements ServerInterface {
         Document query = new Document();
         // Find everything that starts with "label"
         Pattern regex = Pattern.compile("^" + label);
-        query.append(parser.LABEL, regex);
+        query.append(MongoParser.LABEL, regex);
 
         // ... corresponding to subject
         adapter.writeToMongo(subject, query);

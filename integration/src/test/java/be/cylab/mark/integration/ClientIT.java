@@ -103,7 +103,7 @@ public class ClientIT extends MarkCase {
 
         // Start server with read-write activation profile
         ActivationController activation_controller = getActivationController();
-        activation_controller.addProfile(
+        activation_controller.setAgentProfile(
                 DetectionAgentProfile.fromInputStream(
                         getClass()
                                 .getResourceAsStream("/detection.readwrite.yml")));

@@ -42,7 +42,7 @@ public class OWAverageIT extends MarkCase {
         agent.setClassName(OWAverage.class.getName());
         agent.setLabel("detection.owa");
         agent.setTriggerLabel("data.");
-        getActivationController().addProfile(agent);
+        getActivationController().setAgentProfile(agent);
 
         Client datastore = new Client(
                 new URL("http://127.0.0.1:8080"), new LinkAdapter());
