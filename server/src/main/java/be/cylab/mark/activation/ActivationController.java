@@ -180,6 +180,10 @@ public final class ActivationController<T extends Subject> extends SafeThread
 
                     events_count++;
                     if (! checkTriggerInterval(profile, event)) {
+                        LOGGER.debug(
+                                "Skip {} for {} because of trigger interval",
+                                profile.getLabel(),
+                                event.getSubject().toString());
                         continue;
                     }
 
