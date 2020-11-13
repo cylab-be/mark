@@ -234,7 +234,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
 
         long delay = System.currentTimeMillis() - last_time_triggered.get(key);
         // getTriggerInterval is expressed in seconds
-        return (delay > 1000 * profile.getTriggerInterval());
+        return delay > 1000 * profile.getTriggerInterval();
     }
 
     /**
