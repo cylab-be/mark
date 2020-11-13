@@ -179,7 +179,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
                 for (Event<T> event : events.get(event_label).values()) {
 
                     events_count++;
-                    if (! checkTriggerInterval(profile, event)) {
+                    if (!checkTriggerInterval(profile, event)) {
                         LOGGER.debug(
                                 "Skip {} for {} because of trigger interval",
                                 profile.getLabel(),
@@ -228,7 +228,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
         String key = profile.getClassName() + "-"
                             + event.getSubject().toString();
 
-        if (! last_time_triggered.containsKey(key)) {
+        if (!last_time_triggered.containsKey(key)) {
             return true;
         }
 
