@@ -77,7 +77,8 @@ public class DetectionAgentProfile {
     }
 
     /**
-     *
+     * Minimum duration between triggering this detector for the same subject,
+     * expressed in seconds.
      * @return
      */
     public final int getTriggerInterval() {
@@ -85,7 +86,8 @@ public class DetectionAgentProfile {
     }
 
     /**
-     *
+     * Set the minimum duration between triggering this detector for the same
+     * subject, expressed in seconds.
      * @param trigger_interval
      */
     public final void setTriggerInterval(final int trigger_interval) {
