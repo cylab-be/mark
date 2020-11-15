@@ -31,7 +31,7 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
-import be.cylab.mark.server.DummySubject;
+import be.cylab.mark.DummySubject;
 import java.io.InputStream;
 
 /**
@@ -58,13 +58,13 @@ public class ActivationControllerTest extends TestCase {
         activation_controller.notifyRawData(data);
 
         //get the events map from the Activation Controller
-        Map<String, Map<DummySubject, Long>> event_map
+        Map<String, Map<Map, Event>> event_map
                 = activation_controller.getEvents();
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(data.getLabel()));
 
         //check for two instances of different subjects under the label
-        Map<DummySubject, Long> subject_map = event_map.get(data.getLabel());
+        Map<Map, Event> subject_map = event_map.get(data.getLabel());
         assertEquals(2, subject_map.keySet().size());
     }
 
@@ -75,7 +75,7 @@ public class ActivationControllerTest extends TestCase {
         ActivationController activation_controller = getTestController();
 
         // create a RawData entry to be pushed to the Activation Controller
-        RawData<DummySubject> data = this.getTestData();
+        RawData data = this.getTestData();
         activation_controller.notifyRawData(data);
 
         //add a second RawData entry with the same subject but later timestamp
@@ -83,13 +83,13 @@ public class ActivationControllerTest extends TestCase {
         activation_controller.notifyRawData(data);
 
         //get the events map from the Activation Controller
-        Map<String, Map<DummySubject, Event<DummySubject>>> event_map =
+        Map<String, Map<Map, Event>> event_map =
                 activation_controller.getEvents();
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(data.getLabel()));
 
         //check for one instance for the subject under the label
-        Map<DummySubject, Event<DummySubject>> subject_map =
+        Map<Map, Event> subject_map =
                 event_map.get(data.getLabel());
         assertEquals(1, subject_map.keySet().size());
 
@@ -114,13 +114,13 @@ public class ActivationControllerTest extends TestCase {
         activation_controller.notifyEvidence(evidence);
 
         //get the events map from the Activation Controller
-        Map<String, Map<DummySubject, Long>> event_map = activation_controller.getEvents();
+        Map<String, Map<Map, Event>> event_map = activation_controller.getEvents();
 
         //check that the data was saved under the correct label
         assertEquals(true, event_map.keySet().contains(evidence.getLabel()));
 
         //check for two instances of different subjects under the label
-        Map<DummySubject, Long> subject_map = event_map.get(evidence.getLabel());
+        Map<Map, Event> subject_map = event_map.get(evidence.getLabel());
         assertEquals(2, subject_map.keySet().size());
     }
 
@@ -128,10 +128,10 @@ public class ActivationControllerTest extends TestCase {
             throws InvalidProfileException, Throwable {
         System.out.println("Test NotifyEvidence With Same Subjects");
 
-        ActivationController<DummySubject> controller = getTestController();
+        ActivationController controller = getTestController();
 
         //create a Evidence entry to be pushed to the Activation Controller
-        Evidence<DummySubject> evidence = getTestEvidence();
+        Evidence evidence = getTestEvidence();
         controller.notifyEvidence(evidence);
 
         //add a second Evidence entry with the same subject but later timestamp
@@ -139,24 +139,24 @@ public class ActivationControllerTest extends TestCase {
         controller.notifyEvidence(evidence);
 
         //get the events map from the Activation Controller
-        Map<String, Map<DummySubject, Event<DummySubject>>> events =
+        Map<String, Map<Map, Event>> events =
                 controller.getEvents();
 
         //check that the data was saved under the correct label
         assertEquals(true, events.keySet().contains(evidence.getLabel()));
 
         //check for one instance for the subject under the label
-        Map<DummySubject, Event<DummySubject>> subjects =
+        Map<Map, Event> subjects =
                 events.get(evidence.getLabel());
         assertEquals(1, subjects.keySet().size());
 
         //check that it uses only the latest timestamp
-        Event<DummySubject> event = subjects.get(evidence.getSubject());
+        Event event = subjects.get(evidence.getSubject());
         assertEquals(456789, event.getTimestamp());
     }
 
     public void testLabelsMatching() throws InvalidProfileException {
-        ActivationController<DummySubject> controller
+        ActivationController controller
                 = this.getTestController();
 
         assertTrue(controller.checkLabelsMatch("data.http", "data.http"));
@@ -173,8 +173,8 @@ public class ActivationControllerTest extends TestCase {
      *
      * @return
      */
-    private RawData<DummySubject> getTestData() {
-        RawData<DummySubject> data = new RawData();
+    private RawData getTestData() {
+        RawData data = new RawData();
         data.setLabel("data.http");
         data.setSubject(new DummySubject("dummy subject"));
         data.setTime(123456);
@@ -182,7 +182,7 @@ public class ActivationControllerTest extends TestCase {
         return data;
     }
 
-    private Evidence<DummySubject> getTestEvidence() {
+    private Evidence getTestEvidence() {
         Evidence evidence = new Evidence();
         evidence.setLabel("evidence.http");
         evidence.setSubject(new DummySubject("dummi subject"));
@@ -191,7 +191,7 @@ public class ActivationControllerTest extends TestCase {
         return evidence;
     }
 
-    private ActivationController<DummySubject> getTestController()
+    private ActivationController getTestController()
             throws InvalidProfileException {
         Config config = Config.getTestConfig();
         ExecutorInterface executor = new DummyExecutor();

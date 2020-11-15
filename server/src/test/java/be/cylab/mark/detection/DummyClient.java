@@ -27,7 +27,6 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
-import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
@@ -44,9 +43,9 @@ import org.bson.types.ObjectId;
  * @author Thibault Debatty
  * @param <T>
  */
-public class DummyClient<T extends Subject> implements ServerInterface<T> {
+public class DummyClient implements ServerInterface {
 
-    private final List<Evidence<T>> evidences = new LinkedList<>();
+    private final List<Evidence> evidences = new LinkedList<>();
 
     @Override
     public String test() throws Throwable {
@@ -81,7 +80,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     private static final int APT_INTERVAL = 60;
 
     @Override
-    public RawData[] findRawData(String type, T subject, long from, long till)
+    public RawData[] findRawData(String type, Map subject, long from, long till)
             throws Throwable {
 
         int start = 123456;
@@ -123,15 +122,18 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
         return data;
     }
 
-    public Evidence<T>[] findEvidence(String label, T subject) throws Throwable {
+    @Override
+    public Evidence[] findEvidence(String label, Map subject) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Evidence<T>[] findEvidence(String label) throws Throwable {
+    @Override
+    public Evidence[] findEvidence(String label) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Evidence<T> findEvidenceById(String id) throws Throwable {
+    @Override
+    public Evidence findEvidenceById(String id) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -147,7 +149,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     }
 
     @Override
-    public Evidence<T>[] findLastEvidences(String label, T subject) {
+    public Evidence[] findLastEvidences(String label, Map subject) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -183,12 +185,12 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
     }
 
     @Override
-    public Evidence<T>[] findEvidence(String label, int page) throws Throwable {
+    public Evidence[] findEvidence(String label, int page) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Evidence<T>[] findEvidenceSince(String label, T subject, long time)
+    public Evidence[] findEvidenceSince(String label, Map subject, long time)
             throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -218,7 +220,7 @@ public class DummyClient<T extends Subject> implements ServerInterface<T> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    List<Evidence<T>> getEvidences() {
+    List<Evidence> getEvidences() {
         return this.evidences;
     }
 

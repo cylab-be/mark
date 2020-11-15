@@ -23,11 +23,11 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.DummySubject;
 import junit.framework.TestCase;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
-import be.cylab.mark.server.DummySubject;
 import java.util.Date;
 import java.util.LinkedList;
 import static junit.framework.TestCase.assertTrue;
@@ -50,8 +50,7 @@ public class FrequencyTest extends TestCase {
     public void testFrequency1() throws Throwable {
         System.out.println("Frequency agent with 300 sec interval, "
                 + "0 noise connections");
-        FrequencyTestClient<DummySubject> client =
-                new FrequencyTestClient<>(0, 300);
+        FrequencyTestClient client = new FrequencyTestClient(0, 300);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
@@ -60,8 +59,8 @@ public class FrequencyTest extends TestCase {
     public void testFrequency2() throws Throwable {
         System.out.println("Frequency agent with 300 sec interval, "
                 + "1000 noise connections");
-        FrequencyTestClient<DummySubject> client =
-                new FrequencyTestClient<>(1000, 300);
+        FrequencyTestClient client =
+                new FrequencyTestClient(1000, 300);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
@@ -70,8 +69,8 @@ public class FrequencyTest extends TestCase {
     public void testFrequency3() throws Throwable {
         System.out.println("Frequency agent with 300 sec interval, "
                 + "2000 noise connections");
-        FrequencyTestClient<DummySubject> client =
-                new FrequencyTestClient<>(2000, 300);
+        FrequencyTestClient client =
+                new FrequencyTestClient(2000, 300);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
@@ -80,8 +79,8 @@ public class FrequencyTest extends TestCase {
     public void testFrequency4() throws Throwable {
         System.out.println("Frequency agent with 1800 sec interval, "
                 + "48 noise connections");
-        FrequencyTestClient<DummySubject> client =
-                new FrequencyTestClient<>(100, 1800);
+        FrequencyTestClient client =
+                new FrequencyTestClient(100, 1800);
 
         testWithClient(client);
         assertEquals(1, client.getEvidences().size());
@@ -91,12 +90,12 @@ public class FrequencyTest extends TestCase {
     public void testFrequencyWithNoApt() throws Throwable {
         System.out.println("Frequency agent with no APT, "
                 + "1000 noise connections");
-        FrequencyTestClient<DummySubject> client =
-                new FrequencyTestClient<>(1000, 86400);
+        FrequencyTestClient client =
+                new FrequencyTestClient(1000, 86400);
 
         testWithClient(client);
 
-        LinkedList<Evidence<DummySubject>> evidences = client.getEvidences();
+        LinkedList<Evidence> evidences = client.getEvidences();
         if (evidences.isEmpty()) {
             return;
         }
@@ -104,7 +103,7 @@ public class FrequencyTest extends TestCase {
         assertTrue(evidences.get(0).getScore() < 0.1);
     }
 
-    private void testWithClient(FrequencyTestClient<DummySubject> client)
+    private void testWithClient(FrequencyTestClient client)
             throws Throwable {
                 Frequency agent = new Frequency();
 

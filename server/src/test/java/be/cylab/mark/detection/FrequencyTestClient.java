@@ -10,18 +10,17 @@ import java.util.LinkedList;
 import java.util.Random;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.Subject;
+import java.util.Map;
 
 /**
  * Generates 1 day (86400 seconds) of fake data, containing an fixed frequency
  * with provided interval + a number of noise data.
  *
  * @author georgi
- * @param <T>
  */
-public class FrequencyTestClient<T extends Subject> extends DummyClient<T>{
+public class FrequencyTestClient extends DummyClient {
 
-    private final LinkedList<Evidence<T>> evidences = new LinkedList<>();
+    private final LinkedList<Evidence> evidences = new LinkedList<>();
     private final int n_noise;
     private final int apt_interval;
 
@@ -44,7 +43,7 @@ public class FrequencyTestClient<T extends Subject> extends DummyClient<T>{
      * @throws Throwable
      */
     @Override
-    public RawData[] findRawData(String type, T subject,
+    public RawData[] findRawData(String type, Map subject,
             long l, long l1) throws Throwable {
 
         Date date = new Date();
@@ -99,7 +98,7 @@ public class FrequencyTestClient<T extends Subject> extends DummyClient<T>{
     }
 
     @Override
-    public LinkedList<Evidence<T>> getEvidences() {
+    public LinkedList<Evidence> getEvidences() {
         return this.evidences;
     }
 }

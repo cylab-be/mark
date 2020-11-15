@@ -28,26 +28,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.SubjectAdapter;
 
 /**
  *
  * @author Thibault Debatty
  */
 public final class DefaultDatastoreFactory implements DatastoreFactory {
-    private final SubjectAdapter adapter;
 
     /**
      *
-     * @param adapter
      */
-    public DefaultDatastoreFactory(final SubjectAdapter adapter) {
-        this.adapter = adapter;
+    public DefaultDatastoreFactory() {
     }
 
     @Override
     public ServerInterface getInstance(final String datastore_url)
             throws MalformedURLException {
-        return new Client(new URL(datastore_url), adapter);
+        return new Client(new URL(datastore_url));
     }
 }

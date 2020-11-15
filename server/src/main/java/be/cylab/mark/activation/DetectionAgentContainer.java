@@ -5,47 +5,39 @@ import java.net.URL;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
-import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.SubjectAdapter;
 import org.slf4j.LoggerFactory;
 
 /**
  * Container for running a detection agent.
  *
  * @author Thibault Debatty
- * @param <T> The type of Subject that this detection agent can deal with
  */
-public class DetectionAgentContainer <T extends Subject>
-                        implements Serializable, Runnable {
+public class DetectionAgentContainer implements Serializable, Runnable {
 
     // Things that are provided by the activation logic engine:
     private final URL datastore_url;
-    private final SubjectAdapter<T> subject_adapter;
     private final DetectionAgentProfile profile;
-    private final DetectionAgentInterface<T> agent;
-    private final Event<T> event;
+    private final DetectionAgentInterface agent;
+    private final Event event;
 
 
     /**
      *
      * @param ev
      * @param datastore_url
-     * @param subject_adapter
      * @param profile
      * @param agent
      */
     public DetectionAgentContainer(
-            final Event<T> ev,
+            final Event ev,
             final URL datastore_url,
-            final SubjectAdapter<T> subject_adapter,
             final DetectionAgentProfile profile,
-            final DetectionAgentInterface<T> agent) {
+            final DetectionAgentInterface agent) {
 
         this.event = ev;
         this.profile = profile;
         this.agent = agent;
-        this.subject_adapter = subject_adapter;
         this.datastore_url = datastore_url;
     }
 
@@ -54,8 +46,8 @@ public class DetectionAgentContainer <T extends Subject>
      */
     @Override
     public final void run() {
-        ServerInterface<T> datastore = new ClientWrapper<T>(
-                datastore_url, subject_adapter, profile);
+        ServerInterface datastore = new ClientWrapper(
+                datastore_url, profile);
 
         try {
             agent.analyze(event, profile, datastore);

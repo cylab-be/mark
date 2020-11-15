@@ -24,6 +24,7 @@
 
 package be.cylab.mark.datastore;
 
+import be.cylab.mark.DummySubject;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import com.mongodb.MongoClient;
@@ -31,8 +32,6 @@ import com.mongodb.client.MongoDatabase;
 import junit.framework.TestCase;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
-import be.cylab.mark.server.DummySubjectAdapter;
-import be.cylab.mark.server.DummySubject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class RequestHandlerTest extends TestCase {
 
         RequestHandler rq = this.getRequestHandler();
 
-        RawData<DummySubject> data = new RawData<>();
+        RawData data = new RawData();
         data.setData("1234");
         data.setSubject(new DummySubject("test"));
         rq.addRawData(data);
@@ -109,7 +108,6 @@ public class RequestHandlerTest extends TestCase {
     public void testfindDistinctEntries() throws Throwable {
         RequestHandler rq = this.getRequestHandler();
         String label_field = "LABEL";
-        String name_field = "name";
 
         Evidence ev = new Evidence();
         ev.setLabel("test");
@@ -125,9 +123,6 @@ public class RequestHandlerTest extends TestCase {
 
         String[] distinct_labels = rq.findDistinctEntries(label_field);
         assertEquals(2, distinct_labels.length);
-
-        String[] distinct_subjects = rq.findDistinctEntries(name_field);
-        assertEquals(1, distinct_subjects.length);
     }
 
     private RequestHandler getRequestHandler() {
@@ -143,8 +138,7 @@ public class RequestHandlerTest extends TestCase {
         RequestHandler handler = new RequestHandler(
                 mongodb,
                 new DummyActivationContoller(),
-                new DummySubjectAdapter(),
-                new MongoParser(new DummySubjectAdapter()));
+                new MongoParser());
 
         return handler;
     }
@@ -164,7 +158,7 @@ public class RequestHandlerTest extends TestCase {
         profile.setTriggerLabel("trigger.label");
         profile.getParameters().put("key", "value");
 
-        Evidence<DummySubject> ev = new Evidence<>();
+        Evidence ev = new Evidence();
         ev.setLabel("test");
         ev.setSubject(new DummySubject("me"));
         ev.setProfile(profile);

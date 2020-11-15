@@ -56,8 +56,7 @@ public class DataAgentContainer extends Thread {
             source.run(
                     profile,
                     new Client(
-                            config.getDatastoreUrl(),
-                            config.getSubjectAdapter()));
+                            config.getDatastoreUrl()));
 
         } catch (Throwable ex) {
             LoggerFactory.getLogger(

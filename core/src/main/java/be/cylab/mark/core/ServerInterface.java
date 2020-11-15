@@ -11,11 +11,8 @@ import org.bson.types.ObjectId;
  * by the client and server packages.
  *
  * @author Thibault Debatty
- * @param <T> The type of data that this server is dealing with (can be a link
- * between between a local computer and a server on the internet, or a person,
- * etc.).
  */
-public interface ServerInterface<T extends Subject> {
+public interface ServerInterface {
 
     /**
      *
@@ -36,7 +33,7 @@ public interface ServerInterface<T extends Subject> {
      * @param data
      * @throws java.lang.Throwable if request fails
      */
-    void addRawData(RawData<T> data) throws Throwable;
+    void addRawData(RawData data) throws Throwable;
 
     /**
      *
@@ -71,8 +68,8 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws java.lang.Throwable if request fails
      */
-    RawData<T>[] findRawData(String label, T subject, long from, long till)
-            throws Throwable;
+    RawData[] findRawData(String label, Map<String, String> subject,
+            long from, long till) throws Throwable;
 
     /**
      *
@@ -81,7 +78,8 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws java.lang.Throwable if request fails
      */
-    Evidence<T>[] findEvidence(String label, T subject) throws Throwable;
+    Evidence[] findEvidence(String label, Map<String, String> subject)
+            throws Throwable;
 
     /**
      *
@@ -91,8 +89,8 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws Throwable if something goes wrong
      */
-    Evidence<T>[] findEvidenceSince(String label, T subject, long time)
-            throws Throwable;
+    Evidence[] findEvidenceSince(String label, Map<String, String> subject,
+            long time) throws Throwable;
 
 
     /**
@@ -103,7 +101,7 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws java.lang.Throwable if request fails
      */
-    Evidence<T>[] findEvidence(String label) throws Throwable;
+    Evidence[] findEvidence(String label) throws Throwable;
 
     /**
      * Find evidence of given label, for all subjects.
@@ -113,7 +111,7 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws java.lang.Throwable if request fails
      */
-    Evidence<T>[] findEvidence(String label, int page) throws Throwable;
+    Evidence[] findEvidence(String label, int page) throws Throwable;
 
     /**
      * Get a single evidence by id.
@@ -122,7 +120,7 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws Throwable if request fails
      */
-    Evidence<T> findEvidenceById(String id) throws Throwable;
+    Evidence findEvidenceById(String id) throws Throwable;
 
     /**
      *
@@ -140,7 +138,7 @@ public interface ServerInterface<T extends Subject> {
      * @return
      * @throws Throwable if an error occured
      */
-    Evidence<T>[] findLastEvidences(String label, T subject)
+    Evidence[] findLastEvidences(String label, Map<String, String> subject)
             throws Throwable;
 
     /**

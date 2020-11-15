@@ -26,7 +26,6 @@ package be.cylab.mark.datastore;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.SubjectAdapter;
 import java.util.HashMap;
 import java.util.Map;
 import org.bson.Document;
@@ -68,15 +67,17 @@ public final class MongoParser {
      */
     public static final String REFERENCES = "references";
 
-    private final SubjectAdapter adapter;
+    /**
+     * SUBJECT field.
+     */
+    public static final String SUBJECT = "subject";
+
 
 
     /**
      *
-     * @param adapter
      */
-    public MongoParser(final SubjectAdapter adapter) {
-        this.adapter = adapter;
+    public MongoParser() {
     }
 
     /**
@@ -88,10 +89,15 @@ public final class MongoParser {
     public RawData convert(final Document doc) {
 
         RawData data = new RawData();
-        data.setSubject(adapter.readFromMongo(doc));
         data.setData(doc.getString(DATA));
         data.setTime(doc.getLong(TIME));
         data.setLabel(doc.getString(LABEL));
+
+        HashMap<String, String> map = new HashMap<>();
+        for (Map.Entry entry : doc.get(SUBJECT, Document.class).entrySet()) {
+            map.put((String) entry.getKey(), (String) entry.getValue());
+        }
+        data.setSubject(map);
 
         return data;
     }
@@ -104,7 +110,13 @@ public final class MongoParser {
     public Evidence convertEvidence(final Document doc) {
 
         Evidence evidence = new Evidence();
-        evidence.setSubject(adapter.readFromMongo(doc));
+
+        HashMap<String, String> map = new HashMap<>();
+        for (Map.Entry entry : doc.get(SUBJECT, Document.class).entrySet()) {
+            map.put((String) entry.getKey(), (String) entry.getValue());
+        }
+        evidence.setSubject(map);
+
         evidence.setScore(doc.getDouble(SCORE));
         evidence.setTime(doc.getLong(TIME));
         evidence.setLabel(doc.getString(LABEL));
@@ -164,8 +176,8 @@ public final class MongoParser {
         Document doc = new Document()
                 .append(LABEL, data.getLabel())
                 .append(TIME, data.getTime())
-                .append(DATA, data.getData());
-        adapter.writeToMongo(data.getSubject(), doc);
+                .append(DATA, data.getData())
+                .append(SUBJECT, data.getSubject());
         return doc;
     }
 
@@ -184,6 +196,7 @@ public final class MongoParser {
                 .append(TIME, evidence.getTime())
                 .append(REPORT, evidence.getReport())
                 .append(REFERENCES, evidence.getReferences())
+                .append(SUBJECT, evidence.getSubject())
                 .append("requests", evidence.getRequests());
 
         if (evidence.getProfile() != null) {
@@ -199,7 +212,6 @@ public final class MongoParser {
             doc.append("profile", profile_doc);
         }
 
-        adapter.writeToMongo(evidence.getSubject(), doc);
         return doc;
     }
 

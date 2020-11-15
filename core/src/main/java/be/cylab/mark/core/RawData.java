@@ -1,13 +1,14 @@
 package be.cylab.mark.core;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Thibault Debatty
- * @param <T>
  */
-public class RawData<T extends Subject> {
+public class RawData {
 
     private String label = "";
     /**
@@ -15,7 +16,7 @@ public class RawData<T extends Subject> {
      * format: number of milliseconds since January 1, 1970, 00:00:00 GMT.
      */
     private long time;
-    private T subject;
+    private Map<String, String> subject = new HashMap<>();
     private String data = "";
     private String id = "";
 
@@ -72,7 +73,7 @@ public class RawData<T extends Subject> {
      *
      * @return
      */
-    public final T getSubject() {
+    public final Map<String, String> getSubject() {
         return subject;
     }
 
@@ -80,7 +81,7 @@ public class RawData<T extends Subject> {
      *
      * @param subject
      */
-    public final void setSubject(final T subject) {
+    public final void setSubject(final Map<String, String> subject) {
         this.subject = subject;
     }
 

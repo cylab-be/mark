@@ -26,29 +26,27 @@ package be.cylab.mark.activation;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.Subject;
 import java.util.List;
 import java.util.Map;
 
 /**
  *
  * @author Thibault Debatty
- * @param <T> the actual type of ranking subject
  */
-public interface ActivationControllerInterface<T extends Subject> {
+public interface ActivationControllerInterface {
 
     /**
      *
      * @param evidence
      */
-    void notifyEvidence(final Evidence<T> evidence);
+    void notifyEvidence(final Evidence evidence);
 
     /**
      * Trigger required tasks for this new RawData.
      *
      * @param data
      */
-    void notifyRawData(final RawData<T> data);
+    void notifyRawData(final RawData data);
 
     /**
      *

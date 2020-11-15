@@ -1,26 +1,13 @@
 package be.cylab.mark.client;
 
 import be.cylab.mark.core.DetectionAgentProfile;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
-import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.SubjectAdapter;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
 import java.util.ArrayList;
@@ -34,9 +21,8 @@ import org.bson.types.ObjectId;
 /**
  *
  * @author Thibault Debatty
- * @param <T>
  */
-public class Client<T extends Subject> implements ServerInterface {
+public class Client implements ServerInterface {
 
     private static final int CONNECTION_TIMEOUT = 5000;
 
@@ -50,21 +36,10 @@ public class Client<T extends Subject> implements ServerInterface {
      * @param server_url
      * @param adapter
      */
-    public Client(final URL server_url, final SubjectAdapter adapter) {
+    public Client(final URL server_url) {
 
         this.server_url = server_url;
-
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(
-                RawData.class, new RawDataDezerializer(adapter));
-        module.addDeserializer(
-                Evidence.class, new EvidenceDeserializer(adapter));
-        mapper.registerModule(module);
-
-        json_rpc_client
-                = new JsonRpcHttpClient(
-                        mapper, server_url, new HashMap<>());
+        json_rpc_client = new JsonRpcHttpClient(server_url);
         json_rpc_client.setConnectionTimeoutMillis(CONNECTION_TIMEOUT);
     }
 
@@ -167,9 +142,8 @@ public class Client<T extends Subject> implements ServerInterface {
      */
     @Override
     public final RawData[] findRawData(
-            final String label, final Subject subject, final long from,
-            final long till)
-            throws Throwable {
+            final String label, final Map<String, String> subject,
+            final long from, final long till) throws Throwable {
 
         return json_rpc_client.invoke(
                 "findRawData",
@@ -187,7 +161,7 @@ public class Client<T extends Subject> implements ServerInterface {
      */
     @Override
     public final Evidence[] findEvidence(
-            final String label, final Subject subject)
+            final String label, final Map<String, String> subject)
             throws Throwable {
 
         Evidence[] evidences = json_rpc_client.invoke(
@@ -265,7 +239,7 @@ public class Client<T extends Subject> implements ServerInterface {
 
     @Override
     public final Evidence[] findLastEvidences(
-            final String label, final Subject subject)
+            final String label, final Map<String, String> subject)
             throws Throwable {
         return json_rpc_client.invoke(
                 "findLastEvidences",
@@ -323,7 +297,8 @@ public class Client<T extends Subject> implements ServerInterface {
 
     @Override
     public final Evidence[] findEvidenceSince(
-            final String label, final Subject subject, final long time)
+            final String label, final Map<String, String> subject,
+            final long time)
             throws Throwable {
 
         Evidence[] evidences = json_rpc_client.invoke(
@@ -371,104 +346,5 @@ public class Client<T extends Subject> implements ServerInterface {
     @Override
     public final void reload() throws Throwable {
         json_rpc_client.invoke("reload", null);
-    }
-
-
-    /**
-     * Helper class to deserialize raw data, using the subject adapter.
-     *
-     * @param <T>
-     */
-    private static class RawDataDezerializer<T extends Subject>
-            extends JsonDeserializer<RawData> {
-
-        private final SubjectAdapter<T> adapter;
-
-        RawDataDezerializer(final SubjectAdapter<T> adapter) {
-            this.adapter = adapter;
-        }
-
-        @Override
-        public RawData deserialize(
-                final JsonParser jparser,
-                final DeserializationContext context)
-                throws IOException, JsonProcessingException {
-
-            TreeNode tree = jparser.getCodec().readTree(jparser);
-            RawData<T> data = new RawData<>();
-            data.setId(((TextNode) tree.get("id")).asText());
-            data.setData(((TextNode) tree.get("data")).asText());
-            data.setLabel(((TextNode) tree.get("label")).asText());
-            data.setTime(((NumericNode) tree.get("time")).asLong());
-            data.setSubject(
-                    adapter.deserialize((JsonNode) tree.get("subject")));
-
-            return data;
-        }
-    }
-
-    /**
-     * Helper class to deserialize evidence, using subject adapter.
-     *
-     * @param <T>
-     */
-    private static class EvidenceDeserializer
-            extends JsonDeserializer<Evidence> {
-
-        private final SubjectAdapter adapter;
-
-        EvidenceDeserializer(final SubjectAdapter adapter) {
-            this.adapter = adapter;
-        }
-
-        @Override
-        public Evidence deserialize(
-                final JsonParser jparser,
-                final DeserializationContext ctx)
-                throws IOException, JsonProcessingException {
-
-            TreeNode tree = jparser.getCodec().readTree(jparser);
-
-            Evidence ev = new Evidence();
-            ev.setId(((TextNode) tree.get("id")).asText());
-            ev.setReport(((TextNode) tree.get("report")).asText());
-            ev.setLabel(((TextNode) tree.get("label")).asText());
-            ev.setScore(((NumericNode) tree.get("score")).asDouble());
-            ev.setTime(((NumericNode) tree.get("time")).asLong());
-            ev.setReferences(
-                    deserializeList((ArrayNode) tree.get("references")));
-            ev.setRequests(
-                    deserializeList((ArrayNode) tree.get("requests")));
-            ev.setProfile(deserializeProfile(tree.get("profile")));
-
-            ev.setSubject(
-                    adapter.deserialize((JsonNode) tree.get("subject")));
-
-            return ev;
-        }
-
-        private List<String> deserializeList(final ArrayNode node) {
-            List<String> values = new ArrayList<>();
-            for (JsonNode element : node) {
-                values.add(element.asText());
-            }
-            return values;
-        }
-
-        private DetectionAgentProfile deserializeProfile(final TreeNode node)
-                throws JsonProcessingException {
-            DetectionAgentProfile profile = new DetectionAgentProfile();
-            profile.setClassName(((TextNode) node.get("className")).asText());
-            profile.setLabel(((TextNode) node.get("label")).asText());
-            profile.setTriggerLabel(
-                    ((TextNode) node.get("triggerLabel")).asText());
-
-            ObjectMapper mapper = new ObjectMapper();
-            HashMap parameters = mapper.treeToValue(
-                    node.get("parameters"), HashMap.class);
-            profile.setParameters(parameters);
-
-            return profile;
-        }
     }
 }

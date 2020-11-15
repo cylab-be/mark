@@ -12,7 +12,6 @@ import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.Subject;
 import be.cylab.mark.server.Config;
 import be.cylab.mark.server.SafeThread;
 import java.io.File;
@@ -33,11 +32,10 @@ import org.slf4j.LoggerFactory;
  https://apacheignite.readme.io/docs/compute-grid#section-ignitecompute
  *
  * @author Thibault Debatty
- * @param <T>
  */
 @Singleton
-public final class ActivationController<T extends Subject> extends SafeThread
-                                implements ActivationControllerInterface<T> {
+public final class ActivationController extends SafeThread
+                                implements ActivationControllerInterface {
 
     private static final Logger LOGGER
             = LoggerFactory.getLogger(ActivationController.class);
@@ -52,7 +50,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
 
     // events are stored in a table of label => subjects => Event
     // to allow fast lookup
-    private volatile Map<String, Map<T, Event<T>>> events;
+    private volatile Map<String, Map<Map, Event>> events;
     private final Config config;
 
     private volatile boolean running = true;
@@ -78,7 +76,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * @param data
      */
     @Override
-    public void notifyRawData(final RawData<T> data) {
+    public void notifyRawData(final RawData data) {
 
         this.addEvent(
                 new Event(
@@ -93,7 +91,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * @param evidence
      */
     @Override
-    public void notifyEvidence(final Evidence<T> evidence) {
+    public void notifyEvidence(final Evidence evidence) {
 
         this.addEvent(
                 new Event(
@@ -107,10 +105,10 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * Add this event to the tree of events (if required).
      * @param new_event
      */
-    synchronized void addEvent(final Event<T> new_event) {
+    synchronized void addEvent(final Event new_event) {
 
         // all subjects that have an event with this label
-        Map<T, Event<T>> subjects = events.get(new_event.getLabel());
+        Map<Map, Event> subjects = events.get(new_event.getLabel());
 
         if (subjects == null) {
             subjects = new HashMap<>();
@@ -134,7 +132,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
     @Override
     public void doRun() throws Throwable {
 
-        Map<String, Map<T, Event<T>>> copy_of_events;
+        Map<String, Map<Map, Event>> copy_of_events;
 
         while (true) {
             Thread.sleep(1000 * config.getUpdateInterval());
@@ -163,7 +161,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      *
      * @param events
      */
-    private void processEvents(final Map<String, Map<T, Event<T>>> events) {
+    private void processEvents(final Map<String, Map<Map, Event>> events) {
 
         int scheduled = 0;
         int events_count = 0;
@@ -176,7 +174,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
                     continue;
                 }
 
-                for (Event<T> event : events.get(event_label).values()) {
+                for (Event event : events.get(event_label).values()) {
 
                     events_count++;
                     if (!checkTriggerInterval(profile, event)) {
@@ -223,7 +221,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * @return true if the profile should be triggered (delay was long enough)
      */
     boolean checkTriggerInterval(
-            final DetectionAgentProfile profile, final Event<T> event) {
+            final DetectionAgentProfile profile, final Event event) {
 
         String key = profile.getClassName() + "-"
                             + event.getSubject().toString();
@@ -244,7 +242,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * @param event
      */
     private void updateLastTimeTriggered(
-            final DetectionAgentProfile profile, final Event<T> event) {
+            final DetectionAgentProfile profile, final Event event) {
 
         String key = profile.getClassName() + "-"
                             + event.getSubject().toString();
@@ -259,7 +257,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      */
     private void scheduleDetection(
             final DetectionAgentProfile profile,
-            final Event<T> event) {
+            final Event event) {
 
         try {
             LOGGER.debug(
@@ -267,10 +265,9 @@ public final class ActivationController<T extends Subject> extends SafeThread
                     profile.getClassName(),
                     event.getSubject().toString());
             executor.submit(
-                    new DetectionAgentContainer<>(
+                    new DetectionAgentContainer(
                             event,
                             config.getDatastoreUrl(),
-                            config.getSubjectAdapter(),
                             profile,
                             profile.createInstance()));
 
@@ -331,6 +328,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * This method can be used during execution, to dynamically add detectors.
      * @param profile
      */
+    @Override
     public void setAgentProfile(final DetectionAgentProfile profile) {
         this.profiles.put(profile.getLabel(), profile);
     }
@@ -341,7 +339,7 @@ public final class ActivationController<T extends Subject> extends SafeThread
      * Used mainly for testing.
      * @return
      */
-    Map<String, Map<T, Event<T>>> getEvents() {
+    Map<String, Map<Map, Event>> getEvents() {
         return this.events;
     }
 
