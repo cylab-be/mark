@@ -114,6 +114,7 @@ public class RequestHandlerTest extends TestCase {
             e.setReport(String.valueOf(i));
             e.setLabel("ev");
             e.setTime(System.currentTimeMillis());
+            e.setScore(1.0);
             rq.addEvidence(e);
         }
 

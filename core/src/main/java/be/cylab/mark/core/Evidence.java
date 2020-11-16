@@ -3,6 +3,7 @@ package be.cylab.mark.core;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class Evidence
     private String id = "";
     private String label = "";
     private long time;
-    private Map<String, String> subject;
+    private Map<String, String> subject = new HashMap<>();
     private double score;
     private String report = "";
     private List<String> references = new ArrayList<>();

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+
+* **add new methods findLastEvidences and findLastRawData to allow inspection of new data from the web interface**
+[45af5f4c0bb484c](https://github.com/cylab/mark/commit/45af5f4c0bb484c) Thibault Debatty *2020-11-16 13:54:11*
+
 ## 2.0.1
 
 
