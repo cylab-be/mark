@@ -24,22 +24,15 @@
 
 package be.cylab.mark.integration;
 
-import be.cylab.mark.core.Subject;
+import java.util.HashMap;
+
 
 /**
  *
  * @author Thibault Debatty
  */
-public class Link implements Subject {
+public class Link extends HashMap<String, String> {
 
-    private String client;
-    private String server;
-
-    /**
-     * Undefined link.
-     */
-    public Link() {
-    }
 
     /**
      *
@@ -47,59 +40,7 @@ public class Link implements Subject {
      * @param server
      */
     public Link(final String client, final String server) {
-        this.client = client;
-        this.server = server;
-    }
-
-    @Override
-    public final String toString() {
-        return client + " : " + server;
-    }
-
-    @Override
-    public final int hashCode() {
-        int hash = 3;
-        hash = 59 * hash;
-        if (this.client != null) {
-            hash += this.client.hashCode();
-        }
-        hash = 59 * hash;
-
-        if (this.server != null) {
-            hash += this.server.hashCode();
-        }
-        return hash;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        Link other = (Link) obj;
-
-        return this.client.equals(other.client)
-                && this.server.equals(other.server);
-
-    }
-
-    /**
-     * Get client IP.
-     * @return
-     */
-    public final String getClient() {
-        return client;
-    }
-
-    /**
-     * Get server name.
-     * @return
-     */
-    public final String getServer() {
-        return server;
+        this.put("client", client);
+        this.put("server", server);
     }
 }

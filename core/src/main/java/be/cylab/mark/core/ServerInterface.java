@@ -3,7 +3,6 @@ package be.cylab.mark.core;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -141,15 +140,6 @@ public interface ServerInterface {
     Evidence[] findLastEvidences(String label, Map<String, String> subject)
             throws Throwable;
 
-    /**
-     * Search for data with a custom filter (don't forget to mention a label,
-     * for example).
-     *
-     * @param query
-     * @return
-     * @throws Throwable if an error occured
-     */
-    RawData[] findData(Document query) throws Throwable;
 
     /**
      * get value from cache represented by a map.

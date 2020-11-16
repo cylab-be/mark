@@ -33,7 +33,6 @@ import be.cylab.mark.core.ServerInterface;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -41,7 +40,6 @@ import org.bson.types.ObjectId;
  will simply return fake data, and write out what it receives...
  *
  * @author Thibault Debatty
- * @param <T>
  */
 public class DummyClient implements ServerInterface {
 
@@ -150,11 +148,6 @@ public class DummyClient implements ServerInterface {
 
     @Override
     public Evidence[] findLastEvidences(String label, Map subject) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public RawData[] findData(Document query) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

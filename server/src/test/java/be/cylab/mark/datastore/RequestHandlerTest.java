@@ -43,24 +43,6 @@ import org.bson.Document;
  */
 public class RequestHandlerTest extends TestCase {
 
-    public void testFindData() {
-
-        RequestHandler rq = this.getRequestHandler();
-
-        RawData data = new RawData();
-        data.setData("1234");
-        data.setSubject(new DummySubject("test"));
-        rq.addRawData(data);
-
-        assertNotSame("", data.getId());
-
-        rq.addRawData(data);
-
-        Document query = new Document("DATA", "1234");
-        RawData[] result = rq.findData(query, 0);
-        assertEquals(2, result.length);
-    }
-
     public void testFindEvidence() throws Throwable {
 
         RequestHandler rq = this.getRequestHandler();
@@ -103,26 +85,6 @@ public class RequestHandlerTest extends TestCase {
 
         evidences = rq.findEvidenceSince(label, subject, 123500);
         assertEquals(0, evidences.length);
-    }
-
-    public void testfindDistinctEntries() throws Throwable {
-        RequestHandler rq = this.getRequestHandler();
-        String label_field = "LABEL";
-
-        Evidence ev = new Evidence();
-        ev.setLabel("test");
-        ev.setReport("Some report...");
-        ev.setScore(0.99);
-        ev.setSubject(new DummySubject("test"));
-        ev.setTime(123456);
-        rq.addEvidence(ev);
-
-        ev.setLabel("test2");
-        ev.setSubject(new DummySubject("test"));
-        rq.addEvidence(ev);
-
-        String[] distinct_labels = rq.findDistinctEntries(label_field);
-        assertEquals(2, distinct_labels.length);
     }
 
     private RequestHandler getRequestHandler() {

@@ -1,6 +1,5 @@
 package be.cylab.mark.datastore;
 
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import be.cylab.mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
@@ -19,12 +18,12 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCursor;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -118,36 +117,6 @@ public final class RequestHandler implements ServerInterface {
         activation_controller.notifyRawData(data);
     }
 
-    @Override
-    public RawData[] findData(final Document query) {
-        throw new UnsupportedOperationException(
-                "You should use findData(query, page) instead!");
-    }
-
-    /**
-     * Number of results per query.
-     */
-    private static final int PAGE_SIZE = 1000;
-
-    /**
-     *
-     * @param query
-     * @param page
-     * @return
-     */
-    public RawData[] findData(final Document query, final int page) {
-        FindIterable<Document> documents = mongodb
-                .getCollection(COLLECTION_DATA)
-                .find(query)
-                .skip(page * PAGE_SIZE).limit(PAGE_SIZE);
-
-        ArrayList<RawData> results = new ArrayList<>();
-        for (Document doc : documents) {
-            results.add(parser.convert(doc));
-        }
-        return results.toArray(new RawData[results.size()]);
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -163,7 +132,11 @@ public final class RequestHandler implements ServerInterface {
 
         Document query = new Document();
         query.append(MongoParser.LABEL, label);
-        query.append(MongoParser.SUBJECT, subject);
+        for (Entry entry : subject.entrySet()) {
+            query.append(
+                    MongoParser.SUBJECT + "." + entry.getKey(),
+                    entry.getValue());
+        }
         query.append(
                 MongoParser.TIME,
                 new Document("$gte", from).append("$lte", till));
@@ -399,50 +372,6 @@ public final class RequestHandler implements ServerInterface {
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
-    }
-
-    /**
-     * Get unique subjects in the database.
-     *
-     * @return
-     */
-    public Map<String, String>[] findUniqueSubjects() {
-
-        Document query = new Document("$group",
-                            new Document("_id", MongoParser.SUBJECT));
-        AggregateIterable<Document> db_output = mongodb
-                                .getCollection(COLLECTION_DATA)
-                                .aggregate(Arrays.asList(query));
-
-        List<Map> subjects = new ArrayList<>();
-        for (Document db_document : db_output) {
-                subjects.add(db_document.get("_id", Document.class));
-        }
-        return subjects.toArray(new Map[subjects.size()]);
-    }
-
-    /**
-     * Find distinct values for provided field. Attention: currently does NOT
-     * work for nested fields (e.g SUBJECT.name).
-     * @param field
-     * @return
-     */
-    public String[] findDistinctEntries(final String field) {
-        List<String> entries = new ArrayList<>();
-
-        try (MongoCursor<String> cursor = mongodb
-                .getCollection(COLLECTION_EVIDENCE)
-                .distinct(field, String.class)
-                .iterator()) {
-
-            while (cursor.hasNext()) {
-                String temp_entry = cursor.next();
-                entries.add(temp_entry);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return entries.toArray(new String[entries.size()]);
     }
 
     /**

@@ -32,7 +32,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -134,19 +133,6 @@ public final class ClientWrapper implements ServerInterface {
     @Override
     public byte[] findFile(final ObjectId file_id) throws Throwable {
         return client.findFile(file_id);
-    }
-
-    /**
-     *
-     * @param query
-     * @return
-     * @throws Throwable
-     */
-    @Override
-    public RawData[] findData(final Document query) throws Throwable {
-        RawData[] data = client.findData(query);
-        requests.add(request_listener.getLastRequest());
-        return data;
     }
 
     /**

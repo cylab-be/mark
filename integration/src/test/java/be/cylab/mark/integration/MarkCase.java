@@ -45,7 +45,6 @@ public class MarkCase extends TestCase {
     protected final void setUp() throws Exception {
 
         Config config = Config.getTestConfig();
-        config.setAdapterClass(LinkAdapter.class.getName());
 
         ExecutorInterface executor = new ThreadsExecutor();
 

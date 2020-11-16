@@ -100,7 +100,7 @@ public class FrequencyTest extends TestCase {
             return;
         }
 
-        assertTrue(evidences.get(0).getScore() < 0.1);
+        assertTrue(evidences.get(0).getScore() < 0.2);
     }
 
     private void testWithClient(FrequencyTestClient client)

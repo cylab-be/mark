@@ -10,12 +10,9 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.googlecode.jsonrpc4j.JsonRpcClient;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -96,26 +93,6 @@ public class Client implements ServerInterface {
     public final void testString(final String data) throws Throwable {
 
         json_rpc_client.invoke("testString", new Object[]{data});
-    }
-
-    @Override
-    public final RawData[] findData(final Document query) throws Throwable {
-        // To avoid overloading the server with large queries, we have to use
-        // findData(query, page), and merge all results
-
-        int page = 0;
-        RawData[] set;
-        ArrayList<RawData> results = new ArrayList<>();
-        do {
-            set = json_rpc_client.invoke(
-                    "findData",
-                    new Object[]{query, page},
-                    RawData[].class);
-            Collections.addAll(results, set);
-            page++;
-        } while (set.length > 0);
-
-        return results.toArray(new RawData[results.size()]);
     }
 
     /**
