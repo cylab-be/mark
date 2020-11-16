@@ -47,7 +47,7 @@ public class ExampleDataSource implements DataAgentInterface {
 
         while (true) {
 
-            ExampleSubject subject = new ExampleSubject(
+            Subject subject = new Subject(
                     names[rand.nextInt(names.length)]);
 
             RawData data = new RawData();
