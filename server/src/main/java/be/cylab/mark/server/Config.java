@@ -64,13 +64,6 @@ public final class Config {
     private static final String DEFAULT_MODULES = "./modules";
 
     /**
-     * Adapter class to use.
-     */
-    private String adapter_class = DEFAULT_ADAPTER_CLASS;
-    private static final String DEFAULT_ADAPTER_CLASS
-            = "be.cylab.mark.server.DummySubjectAdapter";
-
-    /**
      * update interval.
      */
     private int update_interval = DEFAULT_UPDATE_INTERVAL;
@@ -392,22 +385,6 @@ public final class Config {
      */
     public void setModules(final String modules) {
         this.modules = modules;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getAdapterClass() {
-        return adapter_class;
-    }
-
-    /**
-     *
-     * @param adapter_class
-     */
-    public void setAdapterClass(final String adapter_class) {
-        this.adapter_class = adapter_class;
     }
 
     /**

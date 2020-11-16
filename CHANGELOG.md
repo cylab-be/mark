@@ -1,8 +1,10 @@
 # Changelog
 
-## Unreleased
+## 2.0.0
 
 
+* **updated changelog**
+[aa7879c72c9eab6](https://github.com/cylab/mark/commit/aa7879c72c9eab6) Thibault Debatty *2020-11-16 09:24:28*
 * **issue #64 : modify example module to use subject that is a map<String, String>**
 [36d2dec85315286](https://github.com/cylab/mark/commit/36d2dec85315286) Thibault Debatty *2020-11-16 09:09:54*
 * **issue #64 modify integration module to use subject that is actually a Map<String, String>. Removed findUniueSubjects() and findDistinctEntries() cause unused. Removed findData(bson.Document) because it can now be replaced by findRawData(Map subject)**

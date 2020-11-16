@@ -12,5 +12,3 @@ server_port:    8080
 
 log_directory:  ./logs
 modules:        ./modules
-
-adapter_class:  be.cylab.mark.server.DummySubjectAdapter
