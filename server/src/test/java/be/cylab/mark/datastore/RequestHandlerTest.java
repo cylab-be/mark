@@ -27,10 +27,10 @@ package be.cylab.mark.datastore;
 import be.cylab.mark.DummySubject;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
+import be.cylab.mark.core.RawData;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import junit.framework.TestCase;
-import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,6 +85,42 @@ public class RequestHandlerTest extends TestCase {
 
         evidences = rq.findEvidenceSince(label, subject, 123500);
         assertEquals(0, evidences.length);
+    }
+
+    public void testFindLastRawData() throws Throwable
+    {
+        RequestHandler rq = getRequestHandler();
+
+        for (int i = 0; i < 200; i++) {
+            RawData d = new RawData();
+            d.setData(String.valueOf(i));
+            d.setLabel("data");
+            d.setTime(System.currentTimeMillis());
+            rq.addRawData(d);
+        }
+
+        RawData[] last = rq.findLastRawData();
+        assertEquals(100, last.length);
+        assertEquals("199", last[0].getData());
+
+    }
+
+    public void testFindLastEvidences() throws Throwable
+    {
+        RequestHandler rq = getRequestHandler();
+
+        for (int i = 0; i < 200; i++) {
+            Evidence e = new Evidence();
+            e.setReport(String.valueOf(i));
+            e.setLabel("ev");
+            e.setTime(System.currentTimeMillis());
+            rq.addEvidence(e);
+        }
+
+        Evidence[] last = rq.findLastEvidences();
+        assertEquals(100, last.length);
+        assertEquals("199", last[0].getReport());
+
     }
 
     private RequestHandler getRequestHandler() {

@@ -349,4 +349,26 @@ public final class ClientWrapper implements ServerInterface {
         client.setAgentProfile(profile);
     }
 
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public RawData[] findLastRawData() throws Throwable {
+
+        return client.findLastRawData();
+    }
+
+
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Evidence[] findLastEvidences() throws Throwable {
+
+        return client.findLastEvidences();
+    }
 }

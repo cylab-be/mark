@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.1
+
+
+* **in mark-example docker image, use mark server 2.0.0**
+[8d70d88c3150935](https://github.com/cylab/mark/commit/8d70d88c3150935) Thibault Debatty *2020-11-16 10:58:35*
+* **remove config.SubjectAdapter Fix issue #81**
+[93b608ffbc1d005](https://github.com/cylab/mark/commit/93b608ffbc1d005) Thibault Debatty *2020-11-16 10:04:35*
+
 ## 2.0.0
 
 

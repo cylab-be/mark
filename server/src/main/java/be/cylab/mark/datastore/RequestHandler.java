@@ -145,6 +145,11 @@ public final class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_DATA)
                 .find(query);
 
+        return this.parseData(documents);
+
+    }
+
+    private RawData[] parseData(final FindIterable<Document> documents) {
         ArrayList<RawData> results = new ArrayList<>();
         for (Document doc : documents) {
             results.add(parser.convert(doc));
@@ -552,5 +557,29 @@ public final class RequestHandler implements ServerInterface {
         }
 
         return history;
+    }
+
+    @Override
+    public RawData[] findLastRawData() throws Throwable {
+        Document query = new Document()
+                .append("_id", -1);
+
+        return this.parseData(
+            mongodb.getCollection(COLLECTION_DATA)
+                    .find()
+                    .sort(query)
+                    .limit(100));
+    }
+
+    @Override
+    public Evidence[] findLastEvidences() throws Throwable {
+        Document query = new Document()
+                .append("_id", -1);
+
+        return this.parseEvidences(
+            mongodb.getCollection(COLLECTION_EVIDENCE)
+                    .find()
+                    .sort(query)
+                    .limit(100));
     }
 }

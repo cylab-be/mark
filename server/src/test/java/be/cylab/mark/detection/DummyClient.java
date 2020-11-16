@@ -221,4 +221,14 @@ public class DummyClient implements ServerInterface {
     public void setAgentProfile(DetectionAgentProfile profile) throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public RawData[] findLastRawData() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public Evidence[] findLastEvidences() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

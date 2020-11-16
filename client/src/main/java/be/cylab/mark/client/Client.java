@@ -324,4 +324,15 @@ public class Client implements ServerInterface {
     public final void reload() throws Throwable {
         json_rpc_client.invoke("reload", null);
     }
+
+    @Override
+    public final RawData[] findLastRawData() throws Throwable {
+        return json_rpc_client.invoke("findLastRawData", null, RawData[].class);
+    }
+
+    @Override
+    public final Evidence[] findLastEvidences() throws Throwable {
+        return json_rpc_client.invoke(
+                "findLastEvidences", null, Evidence[].class);
+    }
 }

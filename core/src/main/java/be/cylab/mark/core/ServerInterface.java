@@ -59,6 +59,13 @@ public interface ServerInterface {
     byte[] findFile(ObjectId file_id) throws Throwable;
 
     /**
+     * Find the last data records that were inserted in DB.
+     * @return
+     * @throws java.lang.Throwable if request fails
+     */
+    RawData[] findLastRawData() throws Throwable;
+
+    /**
      *
      * @param label
      * @param subject
@@ -126,6 +133,13 @@ public interface ServerInterface {
      * @return
      */
     URL getURL();
+
+    /**
+     * Find the last evidences that were inserted in the DB.
+     * @return
+     * @throws java.lang.Throwable if request fails
+     */
+    Evidence[] findLastEvidences() throws Throwable;
 
     /**
      * Find the evidences according to a pattern (that start with provided
