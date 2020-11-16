@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Thibault Debatty.
+ * Copyright 2020 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,74 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package be.cylab.mark;
 
-package be.cylab.mark.server;
-
-import be.cylab.mark.core.Subject;
-import java.util.Objects;
+import java.util.HashMap;
 
 /**
  *
- * @author Thibault Debatty
+ * @author tibo
  */
-public final class DummySubject implements Subject {
-
-    private final String name;
-
-    /**
-     *
-     * @return
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     *
-     * @param name
-     */
+public class DummySubject extends HashMap<String, String> {
     public DummySubject(final String name) {
-        this.name = name;
+        this.put("name", name);
     }
 
-    /**
-     *
-     * @return
-     */
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.name);
-        return hash;
-    }
-
-    /**
-     *
-     * @param obj
-     * @return
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final DummySubject other = (DummySubject) obj;
-
-        return Objects.equals(this.name, other.name);
-    }
 }

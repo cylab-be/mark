@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Thibault Debatty
- * @param <T>
  */
-public class Evidence<T extends Subject>
+public class Evidence
         implements Comparable<Evidence>, Serializable {
 
     private String id = "";
     private String label = "";
     private long time;
-    private T subject;
+    private Map<String, String> subject;
     private double score;
     private String report = "";
     private List<String> references = new ArrayList<>();
@@ -82,7 +82,7 @@ public class Evidence<T extends Subject>
      *
      * @return
      */
-    public final T getSubject() {
+    public final Map<String, String> getSubject() {
         return subject;
     }
 
@@ -90,7 +90,7 @@ public class Evidence<T extends Subject>
      *
      * @param subject
      */
-    public final void setSubject(final T subject) {
+    public final void setSubject(final Map<String, String> subject) {
         this.subject = subject;
     }
 

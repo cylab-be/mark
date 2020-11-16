@@ -45,7 +45,7 @@ public class OWAverageIT extends MarkCase {
         getActivationController().setAgentProfile(agent);
 
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
 
         Link link = new Link("1.2.3.4", "my.server.com");
 

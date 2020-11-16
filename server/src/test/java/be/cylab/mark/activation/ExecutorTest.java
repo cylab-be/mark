@@ -28,7 +28,7 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.server.Config;
-import be.cylab.mark.server.DummySubject;
+import be.cylab.mark.DummySubject;
 
 /**
  *
@@ -43,7 +43,7 @@ public class ExecutorTest extends TestCase {
         ActivationController controller =
                 new ActivationController(config, executor);
 
-        RawData<DummySubject> data = new RawData();
+        RawData data = new RawData();
         data.setLabel("data.dummy");
         data.setSubject(new DummySubject("dummy subject"));
         data.setTime(123456);

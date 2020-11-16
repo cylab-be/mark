@@ -44,8 +44,7 @@ public class TimeAverageIT extends MarkCase {
 
         getActivationController().setAgentProfile(agent);
 
-        Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client datastore = new Client(new URL("http://127.0.0.1:8080"));
 
         Link link = new Link("1.2.3.4", "my.server.com");
 
@@ -64,8 +63,8 @@ public class TimeAverageIT extends MarkCase {
         Evidence[] ta_evidences =
                 datastore.findEvidence("detection.timeaverage", link);
 
-        assertEquals(1, ta_evidences.length);
-        assertEquals(2.0, ta_evidences[0].getScore());
+        assertTrue(ta_evidences.length > 0);
+        assertEquals(2.0, ta_evidences[ta_evidences.length - 1].getScore());
 
 
     }

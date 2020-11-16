@@ -27,9 +27,8 @@ package be.cylab.mark.core;
 /**
  *
  * @author Thibault Debatty
- * @param <T>
  */
-public interface DetectionAgentInterface<T extends Subject> {
+public interface DetectionAgentInterface {
 
     /**
      * Perform the analysis.
@@ -41,8 +40,8 @@ public interface DetectionAgentInterface<T extends Subject> {
      * @throws Throwable if an error occured during analysis
      */
     void analyze(
-            Event<T> event,
+            Event event,
             DetectionAgentProfile profile,
-            ServerInterface<T> datastore) throws Throwable;
+            ServerInterface datastore) throws Throwable;
 
 }

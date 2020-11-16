@@ -28,13 +28,10 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
-import be.cylab.mark.core.SubjectAdapter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.bson.Document;
 import org.bson.types.ObjectId;
 
 /**
@@ -47,27 +44,24 @@ import org.bson.types.ObjectId;
  * DetectionAgentContainer.
  *
  * @author tibo
- * @param <T>
  */
-public final class ClientWrapper<T extends Subject> implements ServerInterface {
+public final class ClientWrapper implements ServerInterface {
 
     private final DetectionAgentProfile profile;
-    private final Client<Subject> client;
+    private final Client client;
     private final JsonRequestListener request_listener;
     private final ArrayList<String> requests = new ArrayList<>();
 
     /**
      *
      * @param server_url
-     * @param adapter
      * @param profile
      */
     public ClientWrapper(
             final URL server_url,
-            final SubjectAdapter adapter,
             final DetectionAgentProfile profile) {
 
-        this.client = new Client<>(server_url, adapter);
+        this.client = new Client(server_url);
         this.profile = profile;
         this.request_listener = new JsonRequestListener();
         this.client.getJsonRpcClient().setRequestListener(request_listener);
@@ -143,19 +137,6 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
 
     /**
      *
-     * @param query
-     * @return
-     * @throws Throwable
-     */
-    @Override
-    public RawData[] findData(final Document query) throws Throwable {
-        RawData[] data = client.findData(query);
-        requests.add(request_listener.getLastRequest());
-        return data;
-    }
-
-    /**
-     *
      * @param type
      * @param subject
      * @param from
@@ -165,7 +146,8 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
      */
     @Override
     public RawData[] findRawData(
-            final String type, final Subject subject, final long from,
+            final String type, final Map<String, String> subject,
+            final long from,
             final long till) throws Throwable {
         RawData[] data = client.findRawData(type, subject, from, till);
         requests.add(request_listener.getLastRequest());
@@ -180,7 +162,8 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public Evidence[] findEvidence(final String label, final Subject subject)
+    public Evidence[] findEvidence(final String label,
+            final Map<String, String> subject)
             throws Throwable {
         return client.findEvidence(label, subject);
     }
@@ -195,7 +178,8 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
      */
     @Override
     public Evidence[] findEvidenceSince(
-            final String label, final Subject subject, final long time)
+            final String label, final Map<String, String> subject,
+            final long time)
             throws Throwable {
         return client.findEvidenceSince(label, subject, time);
     }
@@ -253,7 +237,8 @@ public final class ClientWrapper<T extends Subject> implements ServerInterface {
      */
     @Override
     public Evidence[] findLastEvidences(
-            final String label, final Subject subject) throws Throwable {
+            final String label, final Map<String, String> subject)
+            throws Throwable {
         return client.findLastEvidences(label, subject);
     }
 

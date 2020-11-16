@@ -7,23 +7,20 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 
 /**
  * Dummy detection agent that reads some data from datastore and writes
  * one evidence.
  * @author Thibault Debatty
- * @param <T> The type of subject we deal with
  */
-public class ExampleDetector<T extends Subject>
-        implements DetectionAgentInterface<T> {
+public class ExampleDetector implements DetectionAgentInterface {
 
 
     @Override
     public final void analyze(
-            final Event<T> ev,
+            final Event ev,
             final DetectionAgentProfile profile,
-            final ServerInterface<T> datastore) throws Throwable {
+            final ServerInterface datastore) throws Throwable {
 
         long now = System.currentTimeMillis();
         long since = now - 1000 * 300;
@@ -37,7 +34,7 @@ public class ExampleDetector<T extends Subject>
         Random rand = new Random();
 
         // Add evidences to datastore
-        Evidence<T> evidence = new Evidence<>();
+        Evidence evidence = new Evidence();
         evidence.setLabel(profile.getLabel());
         evidence.setSubject(ev.getSubject());
         evidence.setReport("Found " + data.length + " data records with label "

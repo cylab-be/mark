@@ -24,10 +24,10 @@
 
 package be.cylab.mark.detection;
 
+import be.cylab.mark.DummySubject;
 import junit.framework.TestCase;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
-import be.cylab.mark.server.DummySubject;
 
 /**
  *
@@ -49,7 +49,7 @@ public class RunTest extends TestCase {
                 .getResourceAsStream("/detection.run.yml"));
 
         run_detector.analyze(
-                new Event<>(
+                new Event(
                         "actual.trigger",
                         new DummySubject("Tibo"),
                         123456,

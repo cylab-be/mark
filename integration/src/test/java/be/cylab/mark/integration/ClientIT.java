@@ -9,6 +9,7 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
+import java.util.HashMap;
 import org.bson.Document;
 
 /**
@@ -29,7 +30,7 @@ public class ClientIT extends MarkCase {
         System.out.println("====");
 
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
         assertEquals("1", datastore.test());
     }
 
@@ -38,7 +39,7 @@ public class ClientIT extends MarkCase {
         System.out.println("====");
 
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
         System.out.println(datastore.status());
     }
 
@@ -51,7 +52,7 @@ public class ClientIT extends MarkCase {
         System.out.println("==========");
 
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
         datastore.testString("My String");
     }
 
@@ -66,8 +67,8 @@ public class ClientIT extends MarkCase {
         String label = "http";
         Link link = new Link("1.2.3.4", "www.google.be");
 
-        Client<Link> datastore = new Client<>(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"));
         RawData[] original_data = datastore.findRawData(
                 label, link, 0, System.currentTimeMillis());
 
@@ -90,7 +91,40 @@ public class ClientIT extends MarkCase {
         assertEquals(
                 "A proxy log line...",
                 final_data[0].getData());
+    }
 
+    /**
+     * Test findRawData(Document).
+     */
+    public final void testFindDataWithBson() throws Throwable {
+        System.out.println("findRawData(Bson.Document)");
+        System.out.println("==========================");
+
+        String label = "data.http";
+        String client = "1.2.3.4";
+
+        Client datastore = new Client(
+                new URL("http://127.0.0.1:8080"));
+
+        RawData data = new RawData();
+        data.setLabel(label);
+        data.setSubject(new Link(client, "some.server"));
+        data.setTime(123456);
+        datastore.addRawData(data);
+
+        data.setSubject(new Link(client, "some.other.server"));
+        data.setTime(456789);
+        datastore.addRawData(data);
+
+        HashMap<String, String> query = new HashMap<>();
+        query.put("client", client);
+
+        RawData[] result = datastore.findRawData(
+                label,
+                query,
+                0,
+                999999);
+        assertEquals(2, result.length);
     }
 
     /**
@@ -110,7 +144,7 @@ public class ClientIT extends MarkCase {
 
         // Count the original number of evidences
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
         int original_count = datastore
                 .findEvidence(
                         "detection.rw", new Link("1.2.3.4", "www.google.be")).length;
@@ -148,7 +182,7 @@ public class ClientIT extends MarkCase {
         System.out.println("============================");
 
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
 
         String key1 = "key1";
         String key2 = "key2";
@@ -176,7 +210,7 @@ public class ClientIT extends MarkCase {
         System.out.println("=========================");
 
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
 
         String key1 = "key1";
         String value1 = "value";
@@ -191,66 +225,18 @@ public class ClientIT extends MarkCase {
 
     }
 
-    /**
-     * Test findRawData(Document).
-     */
-    public final void testFindDataWithBson() throws Throwable {
-        System.out.println("findRawData(Bson.Document)");
-        System.out.println("==========================");
-
-        Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
-
-        RawData<Link> data = new RawData();
-        data.setLabel("data.http");
-        data.setSubject(new Link("1.2.3.4", "some.server"));
-        data.setTime(123456);
-        datastore.addRawData(data);
-
-        data.setSubject(new Link("1.2.3.4", "some.other.server"));
-        data.setTime(456789);
-        datastore.addRawData(data);
-
-        Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
-        RawData[] result = datastore.findData(query);
-        assertEquals(2, result.length);
-    }
-
-    public final void testFindALotOfDataWithBson() throws Throwable {
-        System.out.println("findData(Bson.Document) with many results");
-        System.out.println("=========================================");
-
-        Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
-
-        RawData<Link> data = new RawData();
-        data.setLabel("data.http");
-        data.setSubject(new Link("1.2.3.4", "some.server"));
-        data.setTime(123456);
-
-        int count = 1234;
-        for (int i = 0; i < count; i++) {
-            datastore.addRawData(data);
-        }
-
-
-        Document query = new Document(LinkAdapter.CLIENT, "1.2.3.4");
-        RawData[] result = datastore.findData(query);
-        assertEquals(count, result.length);
-    }
-
     public final void testFindEvidence() throws Throwable {
         System.out.println("findEvidence, test we get the most recent");
         System.out.println("=========================================");
 
         // Count the original number of evidences
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
 
         String label = "my.test";
         assertEquals(0, datastore.findEvidence(label).length);
 
-        Evidence<Link> evidence = new Evidence<>();
+        Evidence evidence = new Evidence();
         Link subject = new Link("1.2.3.4", "test.me");
         evidence.setLabel(label);
         evidence.setScore(0.9);
@@ -278,11 +264,11 @@ public class ClientIT extends MarkCase {
 
         // Count the original number of evidences
         Client datastore = new Client(
-                new URL("http://127.0.0.1:8080"), new LinkAdapter());
+                new URL("http://127.0.0.1:8080"));
 
         String label = "my.test";
 
-        Evidence<Link> evidence = new Evidence<>();
+        Evidence evidence = new Evidence();
         Link subject = new Link("1.2.3.4", "test.me");
         evidence.setLabel(label);
         evidence.setScore(0.9);
@@ -313,7 +299,7 @@ public class ClientIT extends MarkCase {
 
         try {
             Client datastore = new Client(
-                    new URL("http://127.0.0.1:1555"), new LinkAdapter());
+                    new URL("http://127.0.0.1:1555"));
             datastore.test();
             fail("Should throw a SocketTimeoutException !");
             datastore.test();

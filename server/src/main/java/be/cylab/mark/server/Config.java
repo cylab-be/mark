@@ -3,14 +3,12 @@ package be.cylab.mark.server;
 import be.cylab.mark.activation.IgniteExecutor;
 import be.cylab.mark.activation.ThreadsExecutor;
 import com.google.inject.Singleton;
-import be.cylab.mark.core.InvalidProfileException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import be.cylab.mark.core.SubjectAdapter;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -232,24 +230,6 @@ public final class Config {
     }
 
     /**
-     *
-     * @return @throws InvalidProfileException if the adapter class is invalid
-     */
-    public SubjectAdapter getSubjectAdapter()
-            throws InvalidProfileException {
-        try {
-            return (SubjectAdapter) Class.forName(adapter_class).
-                    newInstance();
-        } catch (ClassNotFoundException
-                | InstantiationException
-                | IllegalAccessException ex) {
-            throw new InvalidProfileException(
-                    "Adapter class " + adapter_class + " is invalid",
-                    ex);
-        }
-    }
-
-    /**
      * Check that this configuration is valid.
      * @return
      * @throws java.lang.Exception if the configuration is invalid
@@ -263,7 +243,6 @@ public final class Config {
                     "Server host cannot be 127.0.0.1 with a distributed "
                             + "executor (ignite_autodiscovery is true)!");
         }
-        this.getSubjectAdapter();
         this.getDatastoreUrl();
 
         return true;

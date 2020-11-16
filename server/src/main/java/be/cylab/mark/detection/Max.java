@@ -28,8 +28,8 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
-import be.cylab.mark.core.Subject;
 import java.time.Instant;
+import java.util.Map;
 
 /**
  * This operator keeps the highest score produced by a detector during specified
@@ -47,7 +47,7 @@ public class Max implements DetectionAgentInterface {
             final ServerInterface datastore) throws Throwable {
 
         String label = event.getLabel();
-        Subject subject = event.getSubject();
+        Map<String, String> subject = event.getSubject();
 
         long window = Long.valueOf(
                 profile.getParameterOrDefault("window", DEFAULT_WINDOW));

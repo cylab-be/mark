@@ -23,17 +23,18 @@
  */
 package be.cylab.mark.core;
 
+import java.util.Map;
+
 /**
  * Represents an event of data (or evidence) inserted in the database. Contains
  * the label of inserted data, subject and timestamp. Used to trigger detectors
  * that have to be scheduled.
  *
  * @author tibo
- * @param <T> the actual subject class
  */
-public class Event<T extends Subject> {
+public class Event {
     private final String label;
-    private final T subject;
+    private final Map<String, String> subject;
     private final long timestamp;
     private final String id;
 
@@ -45,7 +46,8 @@ public class Event<T extends Subject> {
      * @param id of the data or evidence that caused this event
      */
     public Event(
-            final String label, final T subject, final long timestamp,
+            final String label, final Map<String, String> subject,
+            final long timestamp,
             final String id) {
         this.label = label;
         this.subject = subject;
@@ -65,7 +67,7 @@ public class Event<T extends Subject> {
      *
      * @return
      */
-    public final T getSubject() {
+    public final Map<String, String> getSubject() {
         return subject;
     }
 

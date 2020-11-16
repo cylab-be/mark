@@ -1,6 +1,5 @@
 package be.cylab.mark.datastore;
 
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import be.cylab.mark.core.ServerInterface;
 import com.mongodb.client.MongoDatabase;
@@ -16,17 +15,15 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import be.cylab.mark.activation.ActivationControllerInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
-import be.cylab.mark.core.Subject;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.SubjectAdapter;
 import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCursor;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
@@ -48,7 +45,6 @@ public final class RequestHandler implements ServerInterface {
     private final MongoDatabase mongodb;
     private final GridFSBucket gridfsbucket;
     private final ActivationControllerInterface activation_controller;
-    private final SubjectAdapter adapter;
     private final MongoParser parser;
 
     //Cache
@@ -59,19 +55,16 @@ public final class RequestHandler implements ServerInterface {
      *
      * @param mongodb
      * @param activation_controller
-     * @param adapter
      * @param parser
      */
     public RequestHandler(
             final MongoDatabase mongodb,
             final ActivationControllerInterface activation_controller,
-            final SubjectAdapter adapter,
             final MongoParser parser) {
 
         this.agents_cache = new HashMap();
         this.mongodb = mongodb;
         this.activation_controller = activation_controller;
-        this.adapter = adapter;
         this.parser = parser;
         this.gridfsbucket = GridFSBuckets.create(mongodb, COLLECTION_FILES);
 
@@ -124,36 +117,6 @@ public final class RequestHandler implements ServerInterface {
         activation_controller.notifyRawData(data);
     }
 
-    @Override
-    public RawData[] findData(final Document query) {
-        throw new UnsupportedOperationException(
-                "You should use findData(query, page) instead!");
-    }
-
-    /**
-     * Number of results per query.
-     */
-    private static final int PAGE_SIZE = 1000;
-
-    /**
-     *
-     * @param query
-     * @param page
-     * @return
-     */
-    public RawData[] findData(final Document query, final int page) {
-        FindIterable<Document> documents = mongodb
-                .getCollection(COLLECTION_DATA)
-                .find(query)
-                .skip(page * PAGE_SIZE).limit(PAGE_SIZE);
-
-        ArrayList<RawData> results = new ArrayList<>();
-        for (Document doc : documents) {
-            results.add(parser.convert(doc));
-        }
-        return results.toArray(new RawData[results.size()]);
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -163,15 +126,20 @@ public final class RequestHandler implements ServerInterface {
      */
     @Override
     public RawData[] findRawData(
-            final String label, final Subject subject, final long from,
+            final String label, final Map<String, String> subject,
+            final long from,
             final long till) {
 
         Document query = new Document();
         query.append(MongoParser.LABEL, label);
+        for (Entry entry : subject.entrySet()) {
+            query.append(
+                    MongoParser.SUBJECT + "." + entry.getKey(),
+                    entry.getValue());
+        }
         query.append(
                 MongoParser.TIME,
                 new Document("$gte", from).append("$lte", till));
-        adapter.writeToMongo(subject, query);
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_DATA)
@@ -250,12 +218,12 @@ public final class RequestHandler implements ServerInterface {
      */
     @Override
     public Evidence[] findEvidence(
-            final String label, final Subject subject)
+            final String label, final Map<String, String> subject)
             throws Throwable {
 
         Document query = new Document();
         query.append(MongoParser.LABEL, label);
-        adapter.writeToMongo(subject, query);
+        query.append(MongoParser.SUBJECT, subject);
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
@@ -283,7 +251,7 @@ public final class RequestHandler implements ServerInterface {
                 .getCollection(COLLECTION_EVIDENCE)
                 .find(query);
 
-        HashMap<Subject, Evidence> evidences = new HashMap<>();
+        HashMap<Map, Evidence> evidences = new HashMap<>();
         for (Document doc : documents) {
             Evidence evidence = parser.convertEvidence(doc);
 
@@ -378,14 +346,12 @@ public final class RequestHandler implements ServerInterface {
      */
     @Override
     public Evidence[] findLastEvidences(
-            final String label, final Subject subject) {
+            final String label, final Map<String, String> subject) {
         Document query = new Document();
         // Find everything that starts with "label"
         Pattern regex = Pattern.compile("^" + label);
         query.append(MongoParser.LABEL, regex);
-
-        // ... corresponding to subject
-        adapter.writeToMongo(subject, query);
+        query.append(MongoParser.SUBJECT, subject);
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)
@@ -406,49 +372,6 @@ public final class RequestHandler implements ServerInterface {
             }
         }
         return evidences.values().toArray(new Evidence[evidences.size()]);
-    }
-
-    /**
-     * Get the number of unique subjects(Client Server couples) in the database.
-     *
-     * @param doc   doc containing the aggregation value.
-     * @return int, number of unique subjects
-     */
-    public Subject[] findUniqueSubjects(final Document doc) {
-        List<Subject> entries = new ArrayList<>();
-        Document query = new Document("$group",
-                            new Document("_id", doc));
-        AggregateIterable<Document> db_output = mongodb
-                                .getCollection(COLLECTION_DATA)
-                                .aggregate(Arrays.asList(query));
-
-        for (Document db_document : db_output) {
-                entries.add(adapter.readFromMongo(db_document
-                        .get("_id", Document.class)));
-        }
-        return entries.toArray(new Subject[entries.size()]);
-    }
-
-    /**
-     *
-     * @param field
-     * @return
-     */
-    public String[] findDistinctEntries(final String field) {
-        List<String> entries = new ArrayList<>();
-
-        try (MongoCursor<String> cursor = mongodb
-                .getCollection(COLLECTION_EVIDENCE)
-                .distinct(field, String.class).iterator()) {
-
-            while (cursor.hasNext()) {
-                String temp_entry = cursor.next();
-                entries.add(temp_entry);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return entries.toArray(new String[entries.size()]);
     }
 
     /**
@@ -507,12 +430,13 @@ public final class RequestHandler implements ServerInterface {
 
     @Override
     public Evidence[] findEvidenceSince(
-            final String label, final Subject subject, final long time)
+            final String label, final Map<String, String> subject,
+            final long time)
             throws Throwable {
         Document query = new Document();
         query.append(MongoParser.LABEL, label);
         query.append(MongoParser.TIME, new BasicDBObject("$gt", time));
-        adapter.writeToMongo(subject, query);
+        query.append(MongoParser.SUBJECT, subject);
 
         FindIterable<Document> documents = mongodb
                 .getCollection(COLLECTION_EVIDENCE)

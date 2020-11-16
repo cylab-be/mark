@@ -22,60 +22,23 @@
  * THE SOFTWARE.
  */
 
-package be.cylab.mark.integration;
+package be.cylab.mark.example;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import be.cylab.mark.core.SubjectAdapter;
-import org.bson.Document;
+import java.util.HashMap;
+
 
 /**
- *
+ * An example subject for MARk example project. A subject class is actually
+ * not required. It only makes code a little more readable.
  * @author Thibault Debatty
  */
-public class LinkAdapter implements SubjectAdapter<Link> {
+public class Subject extends HashMap<String, String> {
 
     /**
-     * Field used to store the client in Mongo.
+     * Undefined link.
+     * @param name
      */
-    public static final String CLIENT = "CLIENT";
-
-    /**
-     * Field use to store the server in Mongo.
-     */
-    public static final String SERVER = "SERVER";
-
-    /**
-     * {@inheritDoc}
-     * @param link
-     * @param doc
-     */
-    @Override
-    public final void writeToMongo(final Link link, final Document doc) {
-        doc.append(CLIENT, link.getClient());
-        doc.append(SERVER, link.getServer());
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param doc
-     * @return
-     */
-    @Override
-    public final Link readFromMongo(final Document doc) {
-        return new Link(
-                doc.getString(CLIENT),
-                doc.getString(SERVER));
-    }
-
-    /**
-     * {@inheritDoc}
-     * @param node
-     * @return
-     */
-    @Override
-    public final Link deserialize(final JsonNode node) {
-        return new Link(
-                node.get("client").textValue(),
-                node.get("server").textValue());
+    public Subject(final String name) {
+        this.put("name", name);
     }
 }
