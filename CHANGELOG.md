@@ -1,5 +1,31 @@
 # Changelog
 
+## Unreleased
+
+
+* **issue #64 : modify example module to use subject that is a map<String, String>**
+[36d2dec85315286](https://github.com/cylab/mark/commit/36d2dec85315286) Thibault Debatty *2020-11-16 09:09:54*
+* **issue #64 modify integration module to use subject that is actually a Map<String, String>. Removed findUniueSubjects() and findDistinctEntries() cause unused. Removed findData(bson.Document) because it can now be replaced by findRawData(Map subject)**
+[171e07ed6972eef](https://github.com/cylab/mark/commit/171e07ed6972eef) Thibault Debatty *2020-11-16 09:04:00*
+* **#64 : Subject is now a Map<String, String> in modules core, client and server**
+[7d400cf46fdb6a6](https://github.com/cylab/mark/commit/7d400cf46fdb6a6) Thibault Debatty *2020-11-15 13:12:26*
+
+## 1.5.3
+
+
+* **fix style**
+[d880c3ea1790f9a](https://github.com/cylab/mark/commit/d880c3ea1790f9a) Thibault Debatty *2020-11-13 13:52:58*
+* **fix style**
+[a5cc70b76679110](https://github.com/cylab/mark/commit/a5cc70b76679110) Thibault Debatty *2020-11-13 13:41:40*
+* **fix test**
+[e8b4553d04f0baa](https://github.com/cylab/mark/commit/e8b4553d04f0baa) Thibault Debatty *2020-11-13 13:14:40*
+* **add some debug info**
+[a8a17b28f086b4b](https://github.com/cylab/mark/commit/a8a17b28f086b4b) Thibault Debatty *2020-11-13 11:36:26*
+* **fix activationController.checkTriggerInterval**
+[5e5b5139c2b3b70](https://github.com/cylab/mark/commit/5e5b5139c2b3b70) Thibault Debatty *2020-11-13 11:34:56*
+* **add server call setAgentProfile to change the configuration parameters of a detector. Fix issue #80**
+[43ceb6aba56dbcd](https://github.com/cylab/mark/commit/43ceb6aba56dbcd) Thibault Debatty *2020-10-29 14:39:46*
+
 ## 1.5.2
 
 
