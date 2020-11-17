@@ -55,7 +55,7 @@ integration:
   image: cylab/java8-mongo
   dependencies:
     # so we don't have to compile the code ourselfs..
-    - test:jdk-8:mongo-4.4
+    - test:jdk-8:mongo-3.6
   script:
     # install what we need
     - apt-get update
