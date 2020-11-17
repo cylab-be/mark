@@ -80,20 +80,6 @@ public class IgniteTest extends TestCase {
         }
 
         this.watchMetrics();
-    }
-
-    public void testIgniteCallAsync()
-            throws ExecutionException, InterruptedException {
-
-        System.out.println("Test Ignite CallAsync");
-
-        IgniteCompute compute = getIgnite().compute();
-
-        for (int i = 0; i < 22; i++) {
-            compute.callAsync(new StupidTask());
-        }
-
-        this.watchMetrics();
 
         /*
         * ClusterMetricsSnapshot [lastUpdateTime=1567105469591, maxActiveJobs=0,
@@ -114,7 +100,6 @@ public class IgniteTest extends TestCase {
         * sentMsgsCnt=0, sentBytesCnt=0, rcvdMsgsCnt=0, rcvdBytesCnt=0,
         * outMesQueueSize=0, totalNodes=1, totalJobsExecTime=0]
         */
-
     }
 
     private void watchMetrics() throws InterruptedException {
