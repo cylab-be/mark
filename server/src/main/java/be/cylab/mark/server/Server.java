@@ -63,7 +63,6 @@ public class Server {
             throws MalformedURLException, Exception {
 
         LOGGER.info("Starting server...");
-
         LOGGER.debug(System.getProperty("java.class.path"));
         this.parseModules();
 
@@ -78,7 +77,10 @@ public class Server {
             agent.start();
         }
 
-        LOGGER.info("Server started!");
+        LOGGER.info("=======================================");
+        LOGGER.info("MARk");
+        LOGGER.info(getClass().getPackage().getImplementationVersion());
+        LOGGER.info("=======================================");
     }
 
     /**

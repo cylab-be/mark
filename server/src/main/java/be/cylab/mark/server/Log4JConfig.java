@@ -110,7 +110,7 @@ public final class Log4JConfig extends ConfigurationFactory {
                 .add(layout));
         builder.add(builder
             .newLogger(
-                    ActivationController.class.getCanonicalName(), Level.DEBUG)
+                    ActivationController.class.getCanonicalName(), Level.INFO)
             .add(builder.newAppenderRef("FILE-ACTIVATION")));
 
         // Log MARK Server (DEBUG) to file
