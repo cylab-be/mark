@@ -85,9 +85,9 @@ docker:
     # pull previous image version to enable caching inside dind
     - docker pull cylab/mark:latest || true
     # standalone server
-    - docker build --tag cylab/mark:$CI_COMMIT_TAG --tag cylab/mark:latest .
+    - docker build --tag cylab/mark:$CI_COMMIT_SHORT_SHA --tag cylab/mark:latest .
     # mark-example
-    - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_TAG --tag cylab/mark-example:latest .
+    - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag cylab/mark-example:latest .
 
 release:docker:
   stage: release
