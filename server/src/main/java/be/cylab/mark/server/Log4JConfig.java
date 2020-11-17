@@ -122,7 +122,7 @@ public final class Log4JConfig extends ConfigurationFactory {
                 .add(layout));
         builder.add(builder
             .newLogger(
-                    ActivationController.class.getCanonicalName(), Level.DEBUG)
+                    Server.class.getCanonicalName(), Level.DEBUG)
             .add(builder.newAppenderRef("FILE-SERVER")));
 
         return builder.build();

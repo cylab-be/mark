@@ -3,9 +3,8 @@ services:
   mark:
     build: .
     environment:
-    - MARK_MONGO_HOST=server_mongo_1
+    - MARK_MONGO_HOST=mark_mongo_1
     ports:
-    - "8000:8000"
     - "8080:8080"
     depends_on:
     - mongo
