@@ -1,6 +1,6 @@
 #!/bin/bash
 
-data_lines=$(mongo --eval "db = db.getSiblingDB('mark-example'); printjson(db.DATA.count())" | tail -n1);
+data_lines=$(mongo --eval "db = db.getSiblingDB('mark'); printjson(db.DATA.count())" | tail -n1);
 echo "Found $data_lines data records";
 
 if [ $data_lines = 0 ] 
@@ -9,7 +9,7 @@ then
 fi
 
 
-evidences=$(mongo --eval "db = db.getSiblingDB('mark-example'); printjson(db.EVIDENCE.count())" | tail -n1);
+evidences=$(mongo --eval "db = db.getSiblingDB('mark'); printjson(db.EVIDENCE.count())" | tail -n1);
 echo "Found $evidences evidences";
 
 if [ $evidences = 0 ] 
