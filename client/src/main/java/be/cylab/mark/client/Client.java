@@ -31,7 +31,6 @@ public class Client implements ServerInterface {
      * So we can directly throw an exception if connection failed...
      *
      * @param server_url
-     * @param adapter
      */
     public Client(final URL server_url) {
 
