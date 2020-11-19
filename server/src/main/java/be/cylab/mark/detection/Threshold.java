@@ -31,13 +31,28 @@ import be.cylab.mark.core.ServerInterface;
 import java.util.Map;
 
 /**
- * This operator keeps the highest score produced by a detector during specified
- * time window.
+ * This operator produces a score only if the score of the triggering algorithm
+ * is above a threshold value. Takes only one parameter:
+ * <ul>
+ * <li><code>value</code> (default 0.5)</li>
+ * </ul>
+ *
+ * Example configuration (threshold10.detection.yml):
+ *
+ * <pre>
+ * ---
+ * class_name:     be.cylab.mark.detection.Threshold
+ * label:          detection.threshold.10
+ * trigger_label:  detection.2h.count
+ * parameters: {
+ *   value : 10
+ * }
+ * </pre>
  * @author tibo
  */
 public class Threshold implements DetectionAgentInterface {
 
-    private static final String DEFAULT_VALUE = "0.5";
+    private static final double DEFAULT_VALUE = 0.5;
 
     @Override
     public final void analyze(
@@ -47,8 +62,7 @@ public class Threshold implements DetectionAgentInterface {
 
         Map<String, String> subject = event.getSubject();
 
-        double value = Double.valueOf(
-                profile.getParameterOrDefault("value", DEFAULT_VALUE));
+        double value = profile.getParameterDouble("value", DEFAULT_VALUE);
 
         Evidence old_evidence =
                 datastore.findEvidenceById(event.getId());

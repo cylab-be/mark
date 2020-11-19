@@ -42,7 +42,7 @@ import java.util.Map;
  *
  * <pre>
  * ---
- * class_name:     be.cylab.mark.detection.Counter
+ * class_name:     be.cylab.mark.detection.Max
  * label:          detection.2h.max
  * trigger_label:  detection.2h.count
  * parameters: {

@@ -42,7 +42,7 @@ import java.util.Map;
  *
  * <pre>
  * ---
- * class_name:     be.cylab.mark.detection.Counter
+ * class_name:     be.cylab.mark.detection.TimeAverage
  * label:          detection.2h.timeaverage
  * trigger_label:  detection.2h.count
  * parameters: {
