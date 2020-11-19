@@ -32,12 +32,28 @@ import java.time.Instant;
 import java.util.Map;
 
 /**
+ * Compute the average value of all evidences produced for this label and
+ * subject during this time window. Takes only one parameter:
+ * <ul>
+ * <li><code>time_window</code> in seconds (default 3600 - 1h)</li>
+ * </ul>
  *
- * @author tibo
+ * Example configuration (2h.timeaverage.detection.yml):
+ *
+ * <pre>
+ * ---
+ * class_name:     be.cylab.mark.detection.Counter
+ * label:          detection.2h.timeaverage
+ * trigger_label:  detection.2h.count
+ * parameters: {
+ *   time_window : 7200
+ * }
+ * </pre>
+ * @author Thibault Debatty
  */
 public class TimeAverage implements DetectionAgentInterface {
 
-    private static final String DEFAULT_WINDOW = String.valueOf(7 * 24 * 3600);
+    private static final int DEFAULT_TIME_WINDOW = 3600;
 
     @Override
     public final void analyze(
@@ -48,13 +64,14 @@ public class TimeAverage implements DetectionAgentInterface {
         String label = event.getLabel();
         Map<String, String> subject = event.getSubject();
 
-        long window = Long.valueOf(
-                profile.getParameterOrDefault("window", DEFAULT_WINDOW));
+        long time_window = profile.getParameterInt(
+                "time_window", DEFAULT_TIME_WINDOW);
 
-        long start_time = event.getTimestamp() - window * 1000;
+        long till = event.getTimestamp();
+        long from = till - (time_window * 1000);
 
         Evidence[] evidences =
-                datastore.findEvidenceSince(label, subject, start_time);
+                datastore.findEvidenceSince(label, subject, from);
 
         Evidence new_ev = new Evidence();
         double sum = 0;
@@ -67,7 +84,7 @@ public class TimeAverage implements DetectionAgentInterface {
         String report =
                 "Found <b>" + evidences.length + "</b> evidences with label "
                 + "<b>" + event.getLabel() + "</b> since "
-                + Instant.ofEpochMilli(start_time).toString() + "<br>"
+                + Instant.ofEpochMilli(from).toString() + "<br>"
                 + "Average = " + sum + " / " + evidences.length + " = "
                 + score;
 
