@@ -30,10 +30,30 @@ import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
 
 /**
+ * A simple data counter. This detector counts the number of data records
+ * corresponding to this label, subject and time window.
  *
- * @author tibo
+ * Takes only one parameter:
+ * <ul>
+ * <li><code>time_window</code> in seconds (default 3600 - 1h)</li>
+ * </ul>
+ *
+ * Example configuration (2h.count.detection.yml):
+ *
+ * <pre>
+ * ---
+ * class_name:     be.cylab.mark.detection.Counter
+ * label:          detection.2h.count
+ * trigger_label:  data
+ * parameters: {
+ *   time_window : 7200
+ * }
+ * </pre>
+ * @author Thibault Debatty
  */
 public final class Counter implements DetectionAgentInterface {
+
+    private static final int DEFAULT_TIME_WINDOW = 3600; // 1h
 
     @Override
     public void analyze(
@@ -41,8 +61,11 @@ public final class Counter implements DetectionAgentInterface {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
+        int time_window = profile.getParameterInt(
+                "time_window", DEFAULT_TIME_WINDOW);
+
         long till = event.getTimestamp();
-        long from = till - 24 * 3600;
+        long from = till - (time_window * 1000);
 
         int count = datastore.findRawData(
                 event.getLabel(), event.getSubject(), from, till).length;
@@ -50,6 +73,7 @@ public final class Counter implements DetectionAgentInterface {
         Evidence ev = new Evidence();
         ev.setReport(
                 "Found " + count + " data entries for "
+                + "label " + event.getLabel() + " and "
                 + event.getSubject().toString());
 
         ev.setScore(count);
