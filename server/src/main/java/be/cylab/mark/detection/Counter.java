@@ -53,7 +53,7 @@ import be.cylab.mark.core.ServerInterface;
  */
 public final class Counter implements DetectionAgentInterface {
 
-    private static final int DEFAULT_TIME_WINDOW = 3600; // 1h
+    private static final int DEFAULT_TIME_WINDOW = 3600;
 
     @Override
     public void analyze(
@@ -61,7 +61,7 @@ public final class Counter implements DetectionAgentInterface {
             final DetectionAgentProfile profile,
             final ServerInterface datastore) throws Throwable {
 
-        int time_window = profile.getParameterInt(
+        long time_window = profile.getParameterInt(
                 "time_window", DEFAULT_TIME_WINDOW);
 
         long till = event.getTimestamp();
@@ -72,7 +72,7 @@ public final class Counter implements DetectionAgentInterface {
 
         Evidence ev = new Evidence();
         ev.setReport(
-                "Found " + count + " data entries for "
+                "Found " + count + " data records for "
                 + "label " + event.getLabel() + " and "
                 + event.getSubject().toString());
 

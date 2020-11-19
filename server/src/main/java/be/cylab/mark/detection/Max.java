@@ -32,13 +32,29 @@ import java.time.Instant;
 import java.util.Map;
 
 /**
- * This operator keeps the highest score produced by a detector during specified
- * time window.
- * @author tibo
+ * This operator keeps the highest score of evidences reports produced during
+ * a time window. It takes only one parameter:
+ * <ul>
+ * <li><code>time_window</code> in seconds (default 3600 - 1h)</li>
+ * </ul>
+ *
+ * Example configuration (2h.max.detection.yml):
+ *
+ * <pre>
+ * ---
+ * class_name:     be.cylab.mark.detection.Counter
+ * label:          detection.2h.max
+ * trigger_label:  detection.2h.count
+ * parameters: {
+ *   time_window : 7200
+ * }
+ * </pre>
+ *
+ * @author Thibault Debatty
  */
 public class Max implements DetectionAgentInterface {
 
-    private static final String DEFAULT_WINDOW = String.valueOf(7 * 24 * 3600);
+    private static final int DEFAULT_TIME_WINDOW = 3600;
 
     @Override
     public final void analyze(
@@ -49,13 +65,14 @@ public class Max implements DetectionAgentInterface {
         String label = event.getLabel();
         Map<String, String> subject = event.getSubject();
 
-        long window = Long.valueOf(
-                profile.getParameterOrDefault("window", DEFAULT_WINDOW));
+        long time_window = profile.getParameterInt(
+                "time_window", DEFAULT_TIME_WINDOW);
 
-        long start_time = event.getTimestamp() - window * 1000;
+        long till = event.getTimestamp();
+        long from = till - (time_window * 1000);
 
         Evidence[] evidences =
-                datastore.findEvidenceSince(label, subject, start_time);
+                datastore.findEvidenceSince(label, subject, from);
 
         Evidence new_ev = new Evidence();
         double max = 0;
@@ -65,17 +82,16 @@ public class Max implements DetectionAgentInterface {
             }
             new_ev.references().add(ev.getId());
         }
-        double score = max;
 
         String report =
                 "Found <b>" + evidences.length + "</b> evidences with label "
                 + "<b>" + event.getLabel() + "</b> since "
-                + Instant.ofEpochMilli(start_time).toString() + "<br>"
-                + "Highest score was " + score;
+                + Instant.ofEpochMilli(from).toString() + "<br>"
+                + "Highest score was " + max;
 
         new_ev.setSubject(subject);
         new_ev.setTime(event.getTimestamp());
-        new_ev.setScore(score);
+        new_ev.setScore(max);
         new_ev.setReport(report);
         datastore.addEvidence(new_ev);
     }
