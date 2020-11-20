@@ -18,18 +18,20 @@ All these components are implemented in a generic way. They are independent of t
 
 ![](./documentation/architecture.png)
 
-![](./documentation/home.png)
-
-![](./documentation/report.png)
-
-![](./documentation/status.png)
 
 
-## Requirements
+![](documentation/cascade.png)
 
-* Oracle Java 8 or up
-* MongoDB
+
+
+![](documentation/ranking.png)
+
+
+
+![](documentation/status.png)
+
+
 
 ## Getting started
 
-To get started with installation and to implement your own detection algorithms, check our [tutorial](./TUTORIAL.md)
+To get started with installation and to implement your own detection algorithms, check our [tutorials](https://cylab.be/research/mark)
