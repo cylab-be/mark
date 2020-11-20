@@ -35,3 +35,4 @@ All these components are implemented in a generic way. They are independent of t
 ## Getting started
 
 To get started with installation and to implement your own detection algorithms, check our [tutorials](https://cylab.be/research/mark)
+
