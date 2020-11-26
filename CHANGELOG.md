@@ -1,5 +1,45 @@
 # Changelog
 
+## Unreleased
+
+
+* **updated README and documentation**
+[97b6ce64591d992](https://github.com/cylab/mark/commit/97b6ce64591d992) Thibault Debatty *2020-11-20 13:09:01*
+* **updated README and documentation**
+[f2ec266afdd152f](https://github.com/cylab/mark/commit/f2ec266afdd152f) Thibault Debatty *2020-11-20 13:08:47*
+
+## 2.2.1
+
+
+* **issue #75 : clean and document Threshold detector**
+[7e87ebeeedaae38](https://github.com/cylab/mark/commit/7e87ebeeedaae38) Thibault Debatty *2020-11-19 14:22:48*
+* **issue #75 : clean and document TimeAverage detector**
+[f049524f92d6041](https://github.com/cylab/mark/commit/f049524f92d6041) Thibault Debatty *2020-11-19 14:16:33*
+* **issue #75 : clean and document Max detector**
+[d6bba6f2f5e6fb0](https://github.com/cylab/mark/commit/d6bba6f2f5e6fb0) Thibault Debatty *2020-11-19 14:05:55*
+* **issue #75 : Fix and add documentation for the Counter detector.**
+[40699074625dc50](https://github.com/cylab/mark/commit/40699074625dc50) Thibault Debatty *2020-11-19 13:59:03*
+* **updated javadoc**
+[9667097d054b50e](https://github.com/cylab/mark/commit/9667097d054b50e) Thibault Debatty *2020-11-19 13:42:59*
+
+## 2.2.0
+
+
+* **fix gitlab-ci**
+[81fa587a123e9d7](https://github.com/cylab/mark/commit/81fa587a123e9d7) Thibault Debatty *2020-11-17 13:27:33*
+* **fix integration test**
+[ead624db96ea0fa](https://github.com/cylab/mark/commit/ead624db96ea0fa) Thibault Debatty *2020-11-17 13:15:44*
+* **fix gitlab-ci**
+[e5ed0106f7eb2c5](https://github.com/cylab/mark/commit/e5ed0106f7eb2c5) Thibault Debatty *2020-11-17 13:04:23*
+* **remove unused (and slow) test ignite compute.callAsync()**
+[2fd9dfc52065940](https://github.com/cylab/mark/commit/2fd9dfc52065940) Thibault Debatty *2020-11-17 12:58:21*
+* **fix gitlab-ci**
+[9ebb2294d6e013b](https://github.com/cylab/mark/commit/9ebb2294d6e013b) Thibault Debatty *2020-11-17 12:56:40*
+* **mark and mark-example are built in parallel. Fix issue #82**
+[9ee3f411afdee4e](https://github.com/cylab/mark/commit/9ee3f411afdee4e) Thibault Debatty *2020-11-17 12:54:14*
+* **show startup banner including version. Fix issue #83**
+[a9436925a48e839](https://github.com/cylab/mark/commit/a9436925a48e839) Thibault Debatty *2020-11-17 11:51:35*
+
 ## 2.1.1
 
 
