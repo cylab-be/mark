@@ -37,6 +37,7 @@ import java.util.TreeMap;
 
 /**
  *
+ * @author Alexandre Croix
  * @author Thibault Debatty
  */
 public class WOWAgregation implements DetectionAgentInterface {
