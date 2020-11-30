@@ -40,7 +40,7 @@ public class OWATest extends TestCase {
         double result = OWA_AGGREGATOR.aggregate(scores);
         assertEquals(expected_value, result, 0.0);
     }
-
+/*
     public final void testOWAwithMoreScoresThanWeights() {
         double[] scores = new double[]{1, 0.7, 0.2, 0.2, 0.1, 0.1};
         double expected_value = 0.56;
@@ -72,4 +72,5 @@ public class OWATest extends TestCase {
         double result = OWA_AGGREGATOR.aggregate(scores);
         assertEquals(expected_value, result, 0.0);
     }
+ */
 }
