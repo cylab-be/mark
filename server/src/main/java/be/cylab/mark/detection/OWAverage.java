@@ -82,16 +82,24 @@ public final class OWAverage implements DetectionAgentInterface {
         }
 
         //check if there are more scores than weights and if so extend them
+        double[] new_weights = new double[scores.length];
         if (ordered_scores.length > DEFAULT_OWA_WEIGHTS.length) {
-            double[] new_weights = new double[scores.length];
             System.arraycopy(owa_weights,
                     0,
                     new_weights,
                     0,
                     owa_weights.length);
-            new_weights = normalizeVector(new_weights);
             owa_aggregator = new OWA(new_weights);
+        } else if (ordered_scores.length < DEFAULT_OWA_WEIGHTS.length) {
+                System.arraycopy(owa_weights,
+                        0,
+                        new_weights,
+                        0,
+                        new_weights.length);
+                new_weights = normalizeVector(new_weights);
+                owa_aggregator = new OWA(new_weights);
         } else {
+            owa_weights = normalizeVector(owa_weights);
             owa_aggregator = new OWA(owa_weights);
         }
 
@@ -124,7 +132,7 @@ public final class OWAverage implements DetectionAgentInterface {
                     "Sum of weights in vector must be different of 0"
             );
         }
-        if ((sum - 1.0) <= threshold) {
+        if (Math.abs(sum - 1.0) <= threshold) {
             return vector;
         }
         double[] normalized_vector = new double[vector.length];

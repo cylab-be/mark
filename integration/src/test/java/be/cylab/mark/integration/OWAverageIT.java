@@ -68,7 +68,7 @@ public class OWAverageIT extends MarkCase {
                 datastore.findLastEvidences("detection.owa", link);
 
         assertEquals(1, owa_evidences.length);
-        assertEquals(0.52,
+        assertEquals(0.8666666666666667,
                 owa_evidences[0].getScore(),
                 0.0);
 
