@@ -43,9 +43,9 @@ import java.util.TreeMap;
 public class WOWAgregation implements DetectionAgentInterface {
 
     private static final double[] DEFAULT_P_WEIGHTS = {0.2, 0.4, 0.3, 0.1};
-    private static double[] w_weights;
-    private static double[] p_weights;
-    private static int evidences_number;
+    private double[] w_weights;
+    private double[] p_weights;
+    private int evidences_number;
 
     /**
      * Initialize parameters.
@@ -57,7 +57,7 @@ public class WOWAgregation implements DetectionAgentInterface {
      * Default P weights are {0.2, 0.4, 0.3, 0.1, 0.0,.....}
      * @param profile
      */
-    static void initParams(final DetectionAgentProfile profile) {
+    final void initParams(final DetectionAgentProfile profile) {
         String w_weights_string = null;
         String p_weights_string = null;
         try {
@@ -70,12 +70,14 @@ public class WOWAgregation implements DetectionAgentInterface {
         }
         if (checkDefaultParameters(w_weights_string)) {
             w_weights = generateDefaultWVector();
+            //w_weights = normalizeVector(w_weights);
         } else {
             w_weights = parseDoubleArray(w_weights_string);
             w_weights = normalizeVector(w_weights);
         }
         if (checkDefaultParameters(p_weights_string)) {
             p_weights = generateDefaultPVector();
+            p_weights = normalizeVector(p_weights);
         } else {
             p_weights = parseDoubleArray(p_weights_string);
             p_weights = normalizeVector(p_weights);
@@ -106,7 +108,7 @@ public class WOWAgregation implements DetectionAgentInterface {
                 last_time = evidences[i].getTime();
             }
         }
-        initParams(profile);
+        this.initParams(profile);
         WOWA aggregator = new WOWA(w_weights, p_weights);
         Evidence ev = new Evidence();
         String agents_output = "";
@@ -136,7 +138,7 @@ public class WOWAgregation implements DetectionAgentInterface {
      * Values are 1 / evidences number.
      * @return
      */
-    private static double[] generateDefaultWVector() {
+    private double[] generateDefaultWVector() {
         double[] vector = new double[evidences_number];
         for (int i = 0; i < evidences_number; i++) {
             vector[i] = 1.0 / evidences_number;
@@ -150,14 +152,23 @@ public class WOWAgregation implements DetectionAgentInterface {
      * NEED TO ADD BEHAVIOR IF NUMBER OF EVIDENCE IS SMALLER THAN 4 !!!
      * @return
      */
-    private static double[] generateDefaultPVector() {
-        double[] vector = new double[evidences_number];
-        System.arraycopy(DEFAULT_P_WEIGHTS,
-                0,
-                vector,
-                0,
-                evidences_number - 1);
-        return vector;
+    private double[] generateDefaultPVector() {
+        double[] new_weights = new double[evidences_number];
+        if (evidences_number > DEFAULT_P_WEIGHTS.length) {
+            System.arraycopy(DEFAULT_P_WEIGHTS,
+                    0,
+                    new_weights,
+                    0,
+                    evidences_number - 1);
+        } else if (evidences_number < DEFAULT_P_WEIGHTS.length) {
+            System.arraycopy(DEFAULT_P_WEIGHTS,
+                    0,
+                    new_weights,
+                    0,
+                    new_weights.length);
+        }
+
+        return new_weights;
     }
 
     /**
@@ -170,7 +181,7 @@ public class WOWAgregation implements DetectionAgentInterface {
      * @param parameters_string
      * @return
      */
-    static boolean checkDefaultParameters(final String parameters_string) {
+    final boolean checkDefaultParameters(final String parameters_string) {
         if (parameters_string == null) {
             return true;
         } else {
@@ -184,7 +195,7 @@ public class WOWAgregation implements DetectionAgentInterface {
      * @param parameters
      * @return
      */
-    static double[] parseDoubleArray(final String parameters) {
+    final double[] parseDoubleArray(final String parameters) {
         String[] split_weights = parameters.split(",");
         double[] weights = new double[split_weights.length];
         for (int i = 0; i < evidences_number; i++) {
@@ -201,15 +212,16 @@ public class WOWAgregation implements DetectionAgentInterface {
      */
     static double[] normalizeVector(final double[] vector) {
         double sum = 0.0;
+        double threshold = 0.0000000001;
         for (double el : vector) {
-            sum = sum + el;
+            sum += el;
         }
-        if (sum == 0.0) {
+        if (sum <= threshold) {
             throw new IllegalArgumentException(
                     "Sum of weights in vector must be different of 0"
             );
         }
-        if (sum == 1.0) {
+        if (Math.abs(sum - 1.0) <= threshold) {
             return vector;
         }
         double[] normalized_vector = new double[vector.length];
