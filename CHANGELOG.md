@@ -3,6 +3,8 @@
 ## Unreleased
 
 
+* **Update docker-compose-example with the last version of mark-web image**
+[0f71892ff8f1470](https://github.com/cylab/mark/commit/0f71892ff8f1470) Alex *2020-11-26 08:55:10*
 * **updated README and documentation**
 [97b6ce64591d992](https://github.com/cylab/mark/commit/97b6ce64591d992) Thibault Debatty *2020-11-20 13:09:01*
 * **updated README and documentation**

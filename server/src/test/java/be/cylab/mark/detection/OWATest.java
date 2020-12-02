@@ -40,36 +40,4 @@ public class OWATest extends TestCase {
         double result = OWA_AGGREGATOR.aggregate(scores);
         assertEquals(expected_value, result, 0.0);
     }
-
-    public final void testOWAwithMoreScoresThanWeights() {
-        double[] scores = new double[]{1, 0.7, 0.2, 0.2, 0.1, 0.1};
-        double expected_value = 0.56;
-        try {
-            double result = OWA_AGGREGATOR.aggregate(scores);
-            assertEquals(expected_value, result, 0.0);
-        } catch (Exception ex) {
-            System.err.println("Exception caught when trying to aggregate with"
-                    + " more scores than weights: "
-                    + ex);
-            double[] new_weights = new double[scores.length];
-            System.arraycopy(WEIGHTS, 0, new_weights, 0, WEIGHTS.length);
-            OWA new_owa = new OWA(new_weights);
-            double result = new_owa.aggregate(scores);
-            assertEquals(expected_value, result, 0.0);
-        }
-    }
-
-    public final void testOWAwithLessScoresThanWeights() {
-        double[] scores = new double[]{1, 0.8};
-        double expected_value = 0.52;
-        double result = OWA_AGGREGATOR.aggregate(scores);
-        assertEquals(expected_value, result, 0.0);
-    }
-
-    public final void testOWAwithNoScores() {
-        double[] scores = new double[]{};
-        double expected_value = 0.0;
-        double result = OWA_AGGREGATOR.aggregate(scores);
-        assertEquals(expected_value, result, 0.0);
-    }
 }
