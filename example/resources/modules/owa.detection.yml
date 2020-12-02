@@ -1,0 +1,8 @@
+---
+class_name:     be.cylab.mark.detection.OWAverage
+label:          agregation.owa
+trigger_label:  ^.*(timeaverage)|^.*(dummy)|^.*(filtered).*$
+parameters:
+  owa_weight_1: 0,2
+  owa_weight_2: 0.4
+  owa_weight_3: 0.3

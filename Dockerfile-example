@@ -19,6 +19,3 @@ EXPOSE 8080
 VOLUME /mark
 
 CMD ["/mark/run.sh"]
-
-
-

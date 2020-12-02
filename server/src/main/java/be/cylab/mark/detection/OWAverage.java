@@ -29,8 +29,11 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.ServerInterface;
 import info.debatty.java.aggregation.OWA;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -68,6 +71,18 @@ public final class OWAverage implements DetectionAgentInterface {
         Evidence[] evidences = datastore.findLastEvidences(
                 profile.getTriggerLabel(), event.getSubject());
 
+
+        Map<String, String[]> agent_labels = new HashMap<>();
+
+        long last_time = 0;
+        for (Evidence ev : evidences) {
+            agent_labels.put(ev.getLabel(),
+                    new String[]{Double.toString(ev.getScore()),
+                            ev.getId()});
+            if (last_time < ev.getTime()) {
+                last_time = ev.getTime();
+            }
+        }
         //get the scores of the evidences
         Double[] scores = new Double[evidences.length];
         for (int i = 0; i < evidences.length; i++) {
@@ -89,7 +104,6 @@ public final class OWAverage implements DetectionAgentInterface {
                     new_weights,
                     0,
                     owa_weights.length);
-            new_weights = normalizeVector(new_weights);
             owa_aggregator = new OWA(new_weights);
         } else if (ordered_scores.length < DEFAULT_OWA_WEIGHTS.length) {
             System.arraycopy(owa_weights,
@@ -100,6 +114,7 @@ public final class OWAverage implements DetectionAgentInterface {
             new_weights = normalizeVector(new_weights);
             owa_aggregator = new OWA(new_weights);
         } else {
+            owa_weights = normalizeVector(owa_weights);
             owa_aggregator = new OWA(owa_weights);
         }
 
@@ -114,7 +129,7 @@ public final class OWAverage implements DetectionAgentInterface {
         //the score for the evidence is the aggregated scores
         ev.setScore(owa_aggregator.aggregate(ordered_scores));
         ev.setSubject(event.getSubject());
-        ev.setTime(event.getTimestamp());
+        ev.setTime(last_time);
         ev.setReport("OWA Aggregation generated for evidences with"
                 + " label " + profile.getTriggerLabel());
         datastore.addEvidence(ev);
@@ -123,7 +138,7 @@ public final class OWAverage implements DetectionAgentInterface {
 
     static double[] normalizeVector(final double[] vector) {
         double sum = 0.0;
-        double threshold = 0.0000000001;
+        double threshold = 0.000000000001;
         for (double el : vector) {
             sum += el;
         }
