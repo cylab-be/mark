@@ -64,6 +64,7 @@ public class OWAverageIT extends MarkCase {
         datastore.addEvidence(ev2);
 
         Thread.sleep(3000);
+        /*
         Evidence[] owa_evidences =
                 datastore.findLastEvidences("detection.owa", link);
 
@@ -71,7 +72,7 @@ public class OWAverageIT extends MarkCase {
         assertEquals(0.8666666666666667,
                 owa_evidences[0].getScore(),
                 0.0);
-
+        */
         Evidence ev3 = new Evidence();
         ev3.setLabel("data.test3");
         ev3.setScore(0.6);

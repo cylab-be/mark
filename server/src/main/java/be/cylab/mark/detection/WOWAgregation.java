@@ -73,14 +73,14 @@ public class WOWAgregation implements DetectionAgentInterface {
             //w_weights = normalizeVector(w_weights);
         } else {
             w_weights = parseDoubleArray(w_weights_string);
-            w_weights = normalizeVector(w_weights);
+            //w_weights = normalizeVector(w_weights);
         }
         if (checkDefaultParameters(p_weights_string)) {
             p_weights = generateDefaultPVector();
-            p_weights = normalizeVector(p_weights);
+            //p_weights = normalizeVector(p_weights);
         } else {
             p_weights = parseDoubleArray(p_weights_string);
-            p_weights = normalizeVector(p_weights);
+            //p_weights = normalizeVector(p_weights);
         }
     }
     @Override
@@ -109,6 +109,8 @@ public class WOWAgregation implements DetectionAgentInterface {
             }
         }
         this.initParams(profile);
+        w_weights = normalizeVector(w_weights);
+        p_weights = normalizeVector(p_weights);
         WOWA aggregator = new WOWA(w_weights, p_weights);
         Evidence ev = new Evidence();
         String agents_output = "";
@@ -159,7 +161,7 @@ public class WOWAgregation implements DetectionAgentInterface {
                     0,
                     new_weights,
                     0,
-                    evidences_number - 1);
+                    DEFAULT_P_WEIGHTS.length);
         } else if (evidences_number < DEFAULT_P_WEIGHTS.length) {
             System.arraycopy(DEFAULT_P_WEIGHTS,
                     0,
