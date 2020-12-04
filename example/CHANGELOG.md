@@ -3,12 +3,6 @@
 ## Unreleased
 
 
-* **Correct timestamp on OWA evidences. Graph is now logical**
-[be52449ec1089a5](https://github.com/cylab/mark/commit/be52449ec1089a5) Alex *2020-12-02 13:15:35*
-* **Update OWAverage class. Not totally working yet**
-[20e818509cbbe6b](https://github.com/cylab/mark/commit/20e818509cbbe6b) Alex *2020-12-01 17:50:49*
-* **Update OWAverage class. Not totally working yet**
-[4a8e51a68e1fd93](https://github.com/cylab/mark/commit/4a8e51a68e1fd93) Alex *2020-12-01 17:50:26*
 * **Update docker-compose-example with the last version of mark-web image**
 [0f71892ff8f1470](https://github.com/cylab/mark/commit/0f71892ff8f1470) Alex *2020-11-26 08:55:10*
 * **updated README and documentation**

@@ -26,21 +26,20 @@ package be.cylab.mark.integration;
 import be.cylab.mark.client.Client;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
-import be.cylab.mark.detection.OWAverage;
+import be.cylab.mark.detection.WOWAgregation;
 import java.net.URL;
-import static junit.framework.TestCase.assertEquals;
 
 /**
  *
  * @author georgi
  */
-public class OWAverageIT extends MarkCase {
+public class WOWAggregationIT extends MarkCase {
 
-    public final void testOrderedWeightedAverage() throws Throwable {
+    public final void testWOWA() throws Throwable {
 
         DetectionAgentProfile agent = new DetectionAgentProfile();
-        agent.setClassName(OWAverage.class.getName());
-        agent.setLabel("detection.owa");
+        agent.setClassName(WOWAgregation.class.getName());
+        agent.setLabel("detection.wowa");
         agent.setTriggerLabel("data.");
         getActivationController().setAgentProfile(agent);
 
@@ -65,12 +64,12 @@ public class OWAverageIT extends MarkCase {
 
         Thread.sleep(3000);
         /*
-        Evidence[] owa_evidences =
-                datastore.findLastEvidences("detection.owa", link);
+        Evidence[] wowa_evidences =
+                datastore.findLastEvidences("detection.wowa", link);
 
-        assertEquals(1, owa_evidences.length);
+        assertEquals(1, wowa_evidences.length);
         assertEquals(0.8666666666666667,
-                owa_evidences[0].getScore(),
+                wowa_evidences[0].getScore(),
                 0.0);
         */
         Evidence ev3 = new Evidence();
@@ -95,12 +94,12 @@ public class OWAverageIT extends MarkCase {
         datastore.addEvidence(ev5);
 
         Thread.sleep(3000);
-        Evidence[] new_owa_evidences =
-                datastore.findLastEvidences("detection.owa", link);
+        Evidence[] new_wowa_evidences =
+                datastore.findLastEvidences("detection.wowa", link);
 
-        assertEquals(1, new_owa_evidences.length);
+        assertEquals(1, new_wowa_evidences.length);
         assertEquals(0.72,
-                new_owa_evidences[0].getScore(),
-                0.0);
+                new_wowa_evidences[0].getScore(),
+                0.0000001);
     }
 }

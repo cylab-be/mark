@@ -106,13 +106,13 @@ public final class OWAverage implements DetectionAgentInterface {
                     owa_weights.length);
             owa_aggregator = new OWA(new_weights);
         } else if (ordered_scores.length < DEFAULT_OWA_WEIGHTS.length) {
-                System.arraycopy(owa_weights,
-                        0,
-                        new_weights,
-                        0,
-                        new_weights.length);
-                new_weights = normalizeVector(new_weights);
-                owa_aggregator = new OWA(new_weights);
+            System.arraycopy(owa_weights,
+                    0,
+                    new_weights,
+                    0,
+                    new_weights.length);
+            new_weights = normalizeVector(new_weights);
+            owa_aggregator = new OWA(new_weights);
         } else {
             owa_weights = normalizeVector(owa_weights);
             owa_aggregator = new OWA(owa_weights);
