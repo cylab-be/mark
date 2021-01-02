@@ -46,7 +46,7 @@ import java.util.Map;
  * <li>file : the file to read</li>
  * <li>regex : the named regex to use</li>
  * </ul>
- * @url https://cylab.be/blog/115/mark-use-built-in-file-data-source
+ * @see https://cylab.be/blog/115/mark-use-built-in-file-data-source
  * @author Thibault Debatty
  */
 public class FileSource implements DataAgentInterface {
