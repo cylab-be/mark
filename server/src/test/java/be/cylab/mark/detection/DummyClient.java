@@ -44,6 +44,7 @@ import org.bson.types.ObjectId;
 public class DummyClient implements ServerInterface {
 
     private final List<Evidence> evidences = new LinkedList<>();
+    private final List<RawData> data = new LinkedList<>();
 
     @Override
     public String test() throws Throwable {
@@ -56,8 +57,8 @@ public class DummyClient implements ServerInterface {
     }
 
     @Override
-    public void addRawData(RawData data) throws Throwable {
-        System.out.println(data);
+    public void addRawData(final RawData data) throws Throwable {
+        this.data.add(data);
     }
 
     @Override
@@ -213,8 +214,12 @@ public class DummyClient implements ServerInterface {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    List<Evidence> getEvidences() {
+    public List<Evidence> getEvidences() {
         return this.evidences;
+    }
+
+    public List<RawData> getData() {
+        return this.data;
     }
 
     @Override
@@ -224,7 +229,7 @@ public class DummyClient implements ServerInterface {
 
     @Override
     public RawData[] findLastRawData() throws Throwable {
-        throw new UnsupportedOperationException("Not supported yet."); 
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

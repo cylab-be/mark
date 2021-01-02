@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -13,76 +11,12 @@ import org.yaml.snakeyaml.constructor.Constructor;
  *
  * @author Thibault Debatty
  */
-public class DataAgentProfile {
-
-    /**
-     * Name of the class to instantiate (must implement DataAgentInterface).
-     */
-    private String class_name;
-
-    /**
-     * The label for the data that will be added to the datastore.
-     */
-    private String label;
-
-    /**
-     * Additional parameters to pass to the agent (e.g time range).
-     */
-    private Map<String, String> parameters = new HashMap<>();
+public class DataAgentProfile extends AbstractAgentProfile {
 
     /**
      * The path to the profile file, can be used to compute relative paths.
      */
     private File path;
-
-
-    /**
-     *
-     * @return
-     */
-    public final String getClassName() {
-        return class_name;
-    }
-
-    /**
-     *
-     * @param class_name
-     */
-    public final void setClassName(final String class_name) {
-        this.class_name = class_name;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public final String getLabel() {
-        return label;
-    }
-
-    /**
-     *
-     * @param label
-     */
-    public final void setLabel(final String label) {
-        this.label = label;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public final Map<String, String> getParameters() {
-        return parameters;
-    }
-
-        /**
-     *
-     * @param parameters
-     */
-    public final void setParameters(final HashMap<String, String> parameters) {
-        this.parameters = parameters;
-    }
 
     /**
      *
@@ -128,11 +62,12 @@ public class DataAgentProfile {
             throws InvalidProfileException {
 
         try {
-            return (DataAgentInterface) Class.forName(class_name).newInstance();
+            return (DataAgentInterface)
+                    Class.forName(getClassName()).newInstance();
         } catch (ClassNotFoundException | InstantiationException
                 | IllegalAccessException ex) {
             throw new InvalidProfileException(
-                    "Cannot instantiate data agent " + class_name + " : "
+                    "Cannot instantiate data agent " + getClassName() + " : "
                     + ex.getMessage(),
                     ex);
         }

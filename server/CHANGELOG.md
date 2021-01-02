@@ -3,6 +3,142 @@
 ## Unreleased
 
 
+* **removed outdated tutorial**
+[8a65da7409e3997](https://github.com/cylab/mark/commit/8a65da7409e3997) Thibault Debatty *2020-12-18 12:27:16*
+
+## 2.2.2
+
+
+* **Correction in WOWAgragation (no more Exception because of weight sum != 1) + add OWA and WOWA in example**
+[6f2790fc6806d28](https://github.com/cylab/mark/commit/6f2790fc6806d28) Alex *2020-12-03 09:43:29*
+* **Correction docker-compose file name**
+[46247b20cd1e7a7](https://github.com/cylab/mark/commit/46247b20cd1e7a7) Alex *2020-12-02 15:51:12*
+* **Correct timestamp on OWA evidences. Graph is now logical**
+[be52449ec1089a5](https://github.com/cylab/mark/commit/be52449ec1089a5) Alex *2020-12-02 13:15:35*
+* **Update OWAverage class. Not totally working yet**
+[20e818509cbbe6b](https://github.com/cylab/mark/commit/20e818509cbbe6b) Alex *2020-12-01 17:50:49*
+* **Update OWAverage class. Not totally working yet**
+[4a8e51a68e1fd93](https://github.com/cylab/mark/commit/4a8e51a68e1fd93) Alex *2020-12-01 17:50:26*
+* **Add integration test for wowa opeator**
+[33e5d8ef2ba591a](https://github.com/cylab/mark/commit/33e5d8ef2ba591a) Alex *2020-12-01 16:49:08*
+* **Update pom.xml with last version of java-aggregation + update code to match with new version**
+[467d4b389cc2e1e](https://github.com/cylab/mark/commit/467d4b389cc2e1e) Alex *2020-11-30 15:42:26*
+* **Add WOWAgregation in example**
+[aadc4bbad7efca7](https://github.com/cylab/mark/commit/aadc4bbad7efca7) Alex *2020-11-27 14:20:48*
+* **Update docker-compose-example with the last version of mark-web image**
+[0f71892ff8f1470](https://github.com/cylab/mark/commit/0f71892ff8f1470) Alex *2020-11-26 08:55:10*
+* **updated README and documentation**
+[97b6ce64591d992](https://github.com/cylab/mark/commit/97b6ce64591d992) Thibault Debatty *2020-11-20 13:09:01*
+* **updated README and documentation**
+[f2ec266afdd152f](https://github.com/cylab/mark/commit/f2ec266afdd152f) Thibault Debatty *2020-11-20 13:08:47*
+
+## 2.2.1
+
+
+* **issue #75 : clean and document Threshold detector**
+[7e87ebeeedaae38](https://github.com/cylab/mark/commit/7e87ebeeedaae38) Thibault Debatty *2020-11-19 14:22:48*
+* **issue #75 : clean and document TimeAverage detector**
+[f049524f92d6041](https://github.com/cylab/mark/commit/f049524f92d6041) Thibault Debatty *2020-11-19 14:16:33*
+* **issue #75 : clean and document Max detector**
+[d6bba6f2f5e6fb0](https://github.com/cylab/mark/commit/d6bba6f2f5e6fb0) Thibault Debatty *2020-11-19 14:05:55*
+* **issue #75 : Fix and add documentation for the Counter detector.**
+[40699074625dc50](https://github.com/cylab/mark/commit/40699074625dc50) Thibault Debatty *2020-11-19 13:59:03*
+* **updated javadoc**
+[9667097d054b50e](https://github.com/cylab/mark/commit/9667097d054b50e) Thibault Debatty *2020-11-19 13:42:59*
+
+## 2.2.0
+
+
+* **fix gitlab-ci**
+[81fa587a123e9d7](https://github.com/cylab/mark/commit/81fa587a123e9d7) Thibault Debatty *2020-11-17 13:27:33*
+* **fix integration test**
+[ead624db96ea0fa](https://github.com/cylab/mark/commit/ead624db96ea0fa) Thibault Debatty *2020-11-17 13:15:44*
+* **fix gitlab-ci**
+[e5ed0106f7eb2c5](https://github.com/cylab/mark/commit/e5ed0106f7eb2c5) Thibault Debatty *2020-11-17 13:04:23*
+* **remove unused (and slow) test ignite compute.callAsync()**
+[2fd9dfc52065940](https://github.com/cylab/mark/commit/2fd9dfc52065940) Thibault Debatty *2020-11-17 12:58:21*
+* **fix gitlab-ci**
+[9ebb2294d6e013b](https://github.com/cylab/mark/commit/9ebb2294d6e013b) Thibault Debatty *2020-11-17 12:56:40*
+* **mark and mark-example are built in parallel. Fix issue #82**
+[9ee3f411afdee4e](https://github.com/cylab/mark/commit/9ee3f411afdee4e) Thibault Debatty *2020-11-17 12:54:14*
+* **show startup banner including version. Fix issue #83**
+[a9436925a48e839](https://github.com/cylab/mark/commit/a9436925a48e839) Thibault Debatty *2020-11-17 11:51:35*
+
+## 2.1.1
+
+
+* **fix version**
+[c7b2aab290be08a](https://github.com/cylab/mark/commit/c7b2aab290be08a) Thibault Debatty *2020-11-16 14:09:50*
+* **findLastEvidences**
+[878cba03d7f2249](https://github.com/cylab/mark/commit/878cba03d7f2249) Thibault Debatty *2020-11-16 14:05:43*
+* **add new methods findLastEvidences and findLastRawData to allow inspection of new data from the web interface**
+[45af5f4c0bb484c](https://github.com/cylab/mark/commit/45af5f4c0bb484c) Thibault Debatty *2020-11-16 13:54:11*
+
+## 2.0.1
+
+
+* **in mark-example docker image, use mark server 2.0.0**
+[8d70d88c3150935](https://github.com/cylab/mark/commit/8d70d88c3150935) Thibault Debatty *2020-11-16 10:58:35*
+* **remove config.SubjectAdapter Fix issue #81**
+[93b608ffbc1d005](https://github.com/cylab/mark/commit/93b608ffbc1d005) Thibault Debatty *2020-11-16 10:04:35*
+
+## 2.0.0
+
+
+* **updated changelog**
+[aa7879c72c9eab6](https://github.com/cylab/mark/commit/aa7879c72c9eab6) Thibault Debatty *2020-11-16 09:24:28*
+* **issue #64 : modify example module to use subject that is a map<String, String>**
+[36d2dec85315286](https://github.com/cylab/mark/commit/36d2dec85315286) Thibault Debatty *2020-11-16 09:09:54*
+* **issue #64 modify integration module to use subject that is actually a Map<String, String>. Removed findUniueSubjects() and findDistinctEntries() cause unused. Removed findData(bson.Document) because it can now be replaced by findRawData(Map subject)**
+[171e07ed6972eef](https://github.com/cylab/mark/commit/171e07ed6972eef) Thibault Debatty *2020-11-16 09:04:00*
+* **#64 : Subject is now a Map<String, String> in modules core, client and server**
+[7d400cf46fdb6a6](https://github.com/cylab/mark/commit/7d400cf46fdb6a6) Thibault Debatty *2020-11-15 13:12:26*
+
+## 1.5.3
+
+
+* **fix style**
+[d880c3ea1790f9a](https://github.com/cylab/mark/commit/d880c3ea1790f9a) Thibault Debatty *2020-11-13 13:52:58*
+* **fix style**
+[a5cc70b76679110](https://github.com/cylab/mark/commit/a5cc70b76679110) Thibault Debatty *2020-11-13 13:41:40*
+* **fix test**
+[e8b4553d04f0baa](https://github.com/cylab/mark/commit/e8b4553d04f0baa) Thibault Debatty *2020-11-13 13:14:40*
+* **add some debug info**
+[a8a17b28f086b4b](https://github.com/cylab/mark/commit/a8a17b28f086b4b) Thibault Debatty *2020-11-13 11:36:26*
+* **fix activationController.checkTriggerInterval**
+[5e5b5139c2b3b70](https://github.com/cylab/mark/commit/5e5b5139c2b3b70) Thibault Debatty *2020-11-13 11:34:56*
+* **add server call setAgentProfile to change the configuration parameters of a detector. Fix issue #80**
+[43ceb6aba56dbcd](https://github.com/cylab/mark/commit/43ceb6aba56dbcd) Thibault Debatty *2020-10-29 14:39:46*
+
+## 1.5.2
+
+
+* **reimplemented the addDataAgentProfile, as it is required to run integration tests**
+[28aa832396e3a62](https://github.com/cylab/mark/commit/28aa832396e3a62) Thibault Debatty *2020-10-29 08:51:10*
+* **improved javadoc**
+[baf17064fb1660d](https://github.com/cylab/mark/commit/baf17064fb1660d) Thibault Debatty *2020-10-28 14:45:52*
+* **fix ExampleDetector when there is no data**
+[0b2ee492f8739a6](https://github.com/cylab/mark/commit/0b2ee492f8739a6) Thibault Debatty *2020-10-28 13:44:01*
+
+## 1.5.1
+
+
+* **updated changelog**
+[322ac6799bb1975](https://github.com/cylab/mark/commit/322ac6799bb1975) Thibault Debatty *2020-10-28 13:03:14*
+* **ExampleDetector creates an evidence even if there is no matching data...**
+[ff5fffe182a3033](https://github.com/cylab/mark/commit/ff5fffe182a3033) Thibault Debatty *2020-10-28 13:02:56*
+
+## 1.5.0
+
+
+* **updated changelog**
+[2d7aac13c0515ac](https://github.com/cylab/mark/commit/2d7aac13c0515ac) Thibault Debatty *2020-10-28 10:24:10*
+* **add detector with pattern trigger_label. Fix issue 77**
+[ea70f366148a569](https://github.com/cylab/mark/commit/ea70f366148a569) Thibault Debatty *2020-10-28 10:19:39*
+* **fix style**
+[54fab051228758e](https://github.com/cylab/mark/commit/54fab051228758e) Thibault Debatty *2020-10-28 08:54:51*
+* **remove shadow in bar graph**
+[3521506737d06b0](https://github.com/cylab/mark/commit/3521506737d06b0) Thibault Debatty *2020-10-27 14:59:57*
 * **updated changelog**
 [1e459c6854f1f09](https://github.com/cylab/mark/commit/1e459c6854f1f09) Thibault Debatty *2020-10-27 14:30:29*
 * **fix style**

@@ -253,5 +253,12 @@
             <artifactId>jfreechart</artifactId>
             <version>1.0.13</version>
         </dependency>
+
+        <!-- named regexes -->
+        <dependency>
+            <groupId>com.github.tony19</groupId>
+            <artifactId>named-regexp</artifactId>
+            <version>0.2.5</version>
+        </dependency>
     </dependencies>
 </project>
