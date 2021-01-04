@@ -40,7 +40,10 @@ public class DatastoreTest extends TestCase {
     public void testStartDatastore() throws Exception {
         Config conf = Config.getTestConfig();
 
-        Datastore datastore = new Datastore(conf, new DummyActivationContoller());
+        Datastore datastore = new Datastore(
+                conf,
+                null,
+                null);
         datastore.start();
         Thread.sleep(1000);
         datastore.stop();

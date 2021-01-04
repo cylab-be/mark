@@ -3,12 +3,8 @@ package be.cylab.mark.server;
 import com.google.inject.Inject;
 import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.core.DataAgentProfile;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
-import java.util.LinkedList;
 import be.cylab.mark.activation.ActivationController;
-import be.cylab.mark.data.DataAgentContainer;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -22,9 +18,8 @@ public class Server {
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(Server.class);
 
-    private final Config config;
     private final Datastore datastore;
-    private final LinkedList<DataAgentContainer> data_agents;
+    private final DataSourcesController sources;
     private final ActivationController activation_controller;
     private final Thread monitor;
 
@@ -32,20 +27,20 @@ public class Server {
      * Initialize a server with default configuration, dummy subject adapter, no
      * data agents and no detection agents.
      *
-     * @param config
      * @param activation_controller
+     * @param sources
      * @param datastore
      * @throws java.lang.Throwable on any error
      */
     @Inject
-    public Server(final Config config,
+    public Server(
             final ActivationController activation_controller,
+            final DataSourcesController sources,
             final Datastore datastore) throws Throwable {
 
-        this.config = config;
         this.activation_controller = activation_controller;
         this.datastore = datastore;
-        this.data_agents = new LinkedList<>();
+        this.sources = sources;
 
         this.monitor = new Thread(new Monitor(datastore));
     }
@@ -63,22 +58,22 @@ public class Server {
             throws MalformedURLException, Exception {
 
         LOGGER.info("Starting server...");
-        LOGGER.debug(System.getProperty("java.class.path"));
-        this.parseModules();
+        sources.loadAgentsFromModulesDirectory();
 
         activation_controller.reload();
         activation_controller.start();
         datastore.start();
         monitor.start();
-
-
-        // Start data agents...
-        for (DataAgentContainer agent : data_agents) {
-            agent.start();
-        }
+        sources.start();
 
         LOGGER.info("=======================================");
-        LOGGER.info("MARk");
+        LOGGER.info(" __  __          _____  _    ");
+        LOGGER.info("|  \\/  |   /\\   |  __ \\| |   ");
+        LOGGER.info("| \\  / |  /  \\  | |__) | | __");
+        LOGGER.info("| |\\/| | / /\\ \\ |  _  /| |/ /");
+        LOGGER.info("| |  | |/ ____ \\| | \\ \\|   < ");
+        LOGGER.info("|_|  |_/_/    \\_\\_|  \\_\\_|\\_\\");
+        LOGGER.info("");
         LOGGER.info(getClass().getPackage().getImplementationVersion());
         LOGGER.info("=======================================");
     }
@@ -91,11 +86,11 @@ public class Server {
     public final void stop() throws Exception {
         LOGGER.info("Stopping server...");
         LOGGER.info("Ask data agents to stop...");
-        for (DataAgentContainer agent : data_agents) {
-            agent.interrupt();
-        }
+        sources.stop();
 
-        awaitTermination();
+        LOGGER.info(
+                "Wait for activation controller to finish running tasks...");
+        activation_controller.awaitTermination();
 
         LOGGER.info("Ask activation controller to stop...");
         activation_controller.interrupt();
@@ -108,21 +103,6 @@ public class Server {
     }
 
     /**
-     *
-     * @throws InterruptedException if thread is interrupted while waiting
-     */
-    public final void awaitTermination() throws InterruptedException {
-        LOGGER.info("Wait for data agents to finish...");
-        for (DataAgentContainer agent : data_agents) {
-            agent.join();
-        }
-
-        LOGGER.info(
-                "Wait for activation controller to finish running tasks...");
-        activation_controller.awaitTermination();
-    }
-
-    /**
      * Allows to programmatically add a data agent to the server.
      *
      * Used for integration tests for example.
@@ -130,40 +110,6 @@ public class Server {
      * @param profile
      */
     public final void addDataAgentProfile(final DataAgentProfile profile) {
-        data_agents.add(new DataAgentContainer(profile, config));
-    }
-
-
-    private void parseModules() throws FileNotFoundException {
-        LOGGER.info("Parsing modules directory ");
-        File modules_dir;
-        try {
-            modules_dir = config.getModulesDirectory();
-        } catch (FileNotFoundException ex) {
-            LOGGER.warn(ex.getMessage());
-            LOGGER.warn("Skipping modules parsing ...");
-            return;
-        }
-
-        LOGGER.info(modules_dir.getAbsolutePath());
-        this.loadDataAgents(modules_dir);
-    }
-
-    private void loadDataAgents(final File modules_dir)
-            throws FileNotFoundException {
-
-        // Parse *.data.yml files
-        File[] data_agent_files = modules_dir.listFiles(
-                (final File dir, final String name) ->
-                        name.endsWith(".data.yml"));
-
-        //Instanciate DataAgentProfiles for each previously parsed files.
-        for (File file : data_agent_files) {
-            data_agents.add(
-                    new DataAgentContainer(
-                            DataAgentProfile.fromFile(file),
-                            config));
-        }
-        LOGGER.info("Found " + data_agents.size() + " data agents ...");
+        sources.add(profile);
     }
 }

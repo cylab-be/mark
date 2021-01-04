@@ -25,11 +25,15 @@ package be.cylab.mark.integration;
 
 import be.cylab.mark.activation.ActivationController;
 import be.cylab.mark.activation.ExecutorInterface;
-import be.cylab.mark.activation.ThreadsExecutor;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.datastore.Datastore;
+import be.cylab.mark.server.BillingModule;
 import be.cylab.mark.server.Config;
+import be.cylab.mark.server.DataSourcesController;
 import be.cylab.mark.server.Server;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import java.io.File;
 import junit.framework.TestCase;
 
 /**
@@ -44,25 +48,11 @@ public class MarkCase extends TestCase {
     @Override
     protected final void setUp() throws Exception {
 
-        Config config = Config.getTestConfig();
-
-        ExecutorInterface executor = new ThreadsExecutor();
-
-        activation_controller
-                = new ActivationController(config, executor);
-        activation_controller.setAgentProfile(
-                DetectionAgentProfile.fromInputStream(
-                getClass().getResourceAsStream("/detection.dummy.yml")));
-
-        try {
-            server = new Server(
-                    config,
-                    activation_controller,
-                    new Datastore(config, activation_controller));
-            server.start();
-        } catch (Throwable ex) {
-            throw new Exception("failed to start server", ex);
-        }
+        File config_file = new File(getClass().getResource("/testconfig.yml").getPath());
+        Injector injector = Guice.createInjector(new BillingModule(config_file));
+        server = injector.getInstance(Server.class);
+        server.start();
+        activation_controller = injector.getInstance(ActivationController.class);
 
     }
 

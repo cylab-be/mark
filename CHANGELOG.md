@@ -3,12 +3,32 @@
 ## Unreleased
 
 
+* **fix javadoc**
+[7938e7f3292697f](https://github.com/cylab/mark/commit/7938e7f3292697f) Thibault Debatty *2021-01-02 08:30:26*
+* **add File data source, that uses a named regex**
+[1e632f602b82d4d](https://github.com/cylab/mark/commit/1e632f602b82d4d) Thibault Debatty *2021-01-02 07:52:40*
+* **removed outdated tutorial**
+[8a65da7409e3997](https://github.com/cylab/mark/commit/8a65da7409e3997) Thibault Debatty *2020-12-18 12:27:16*
+
+## 2.2.2
+
+
+* **Correction in WOWAgragation (no more Exception because of weight sum != 1) + add OWA and WOWA in example**
+[6f2790fc6806d28](https://github.com/cylab/mark/commit/6f2790fc6806d28) Alex *2020-12-03 09:43:29*
+* **Correction docker-compose file name**
+[46247b20cd1e7a7](https://github.com/cylab/mark/commit/46247b20cd1e7a7) Alex *2020-12-02 15:51:12*
 * **Correct timestamp on OWA evidences. Graph is now logical**
 [be52449ec1089a5](https://github.com/cylab/mark/commit/be52449ec1089a5) Alex *2020-12-02 13:15:35*
 * **Update OWAverage class. Not totally working yet**
 [20e818509cbbe6b](https://github.com/cylab/mark/commit/20e818509cbbe6b) Alex *2020-12-01 17:50:49*
 * **Update OWAverage class. Not totally working yet**
 [4a8e51a68e1fd93](https://github.com/cylab/mark/commit/4a8e51a68e1fd93) Alex *2020-12-01 17:50:26*
+* **Add integration test for wowa opeator**
+[33e5d8ef2ba591a](https://github.com/cylab/mark/commit/33e5d8ef2ba591a) Alex *2020-12-01 16:49:08*
+* **Update pom.xml with last version of java-aggregation + update code to match with new version**
+[467d4b389cc2e1e](https://github.com/cylab/mark/commit/467d4b389cc2e1e) Alex *2020-11-30 15:42:26*
+* **Add WOWAgregation in example**
+[aadc4bbad7efca7](https://github.com/cylab/mark/commit/aadc4bbad7efca7) Alex *2020-11-27 14:20:48*
 * **Update docker-compose-example with the last version of mark-web image**
 [0f71892ff8f1470](https://github.com/cylab/mark/commit/0f71892ff8f1470) Alex *2020-11-26 08:55:10*
 * **updated README and documentation**

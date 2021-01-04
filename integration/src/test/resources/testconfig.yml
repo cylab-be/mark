@@ -1,0 +1,12 @@
+mongo_host:     127.0.0.1
+mongo_port:     27017
+mongo_db:       MARK
+mongo_clean:    true
+
+server_host:    127.0.0.1
+server_port:    8080
+
+log_directory:  /tmp
+modules:        ./modules
+update_interval: 1
+max_threads:    9

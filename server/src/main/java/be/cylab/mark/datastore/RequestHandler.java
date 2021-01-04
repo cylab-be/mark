@@ -14,10 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import be.cylab.mark.activation.ActivationControllerInterface;
+import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
+import be.cylab.mark.server.DataSourcesController;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mongodb.BasicDBObject;
+import com.mongodb.MongoCommandException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.util.Collections;
@@ -33,6 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thibault Debatty
  */
+@Singleton
 public final class RequestHandler implements ServerInterface {
 
     private static final String COLLECTION_DATA = "DATA";
@@ -45,6 +51,7 @@ public final class RequestHandler implements ServerInterface {
     private final MongoDatabase mongodb;
     private final GridFSBucket gridfsbucket;
     private final ActivationControllerInterface activation_controller;
+    private final DataSourcesController sources;
     private final MongoParser parser;
 
     //Cache
@@ -55,16 +62,20 @@ public final class RequestHandler implements ServerInterface {
      *
      * @param mongodb
      * @param activation_controller
+     * @param sources
      * @param parser
      */
+    @Inject
     public RequestHandler(
             final MongoDatabase mongodb,
             final ActivationControllerInterface activation_controller,
+            final DataSourcesController sources,
             final MongoParser parser) {
 
         this.agents_cache = new HashMap();
         this.mongodb = mongodb;
         this.activation_controller = activation_controller;
+        this.sources = sources;
         this.parser = parser;
         this.gridfsbucket = GridFSBuckets.create(mongodb, COLLECTION_FILES);
 
@@ -515,24 +526,30 @@ public final class RequestHandler implements ServerInterface {
 
     private Map<String, Object> dbStatus() throws Throwable {
         Map<String, Object> status = new HashMap<>();
-        status.put(
-                "db.data.count",
-                mongodb.getCollection(COLLECTION_DATA).countDocuments());
-        status.put(
-                "db.evidence.count",
-                mongodb.getCollection(COLLECTION_EVIDENCE).countDocuments());
 
-        Document stats = mongodb.runCommand(
-                Document.parse(
-                        "{ collStats: '" + COLLECTION_DATA
-                                + "', scale: 1048576}"));
-        status.put("db.data.size", stats.getInteger("size"));
+        try {
+            status.put(
+                    "db.data.count",
+                    mongodb.getCollection(COLLECTION_DATA).countDocuments());
+            status.put(
+                    "db.evidence.count",
+                    mongodb.getCollection(COLLECTION_EVIDENCE)
+                            .countDocuments());
 
-        stats = mongodb.runCommand(
-                Document.parse(
-                        "{ collStats: '" + COLLECTION_EVIDENCE
-                                + "', scale: 1048576}"));
-        status.put("db.evidence.size", stats.getInteger("size"));
+            Document stats = mongodb.runCommand(
+                    Document.parse(
+                            "{ collStats: '" + COLLECTION_DATA
+                                    + "', scale: 1048576}"));
+            status.put("db.data.size", stats.getInteger("size"));
+
+            stats = mongodb.runCommand(
+                    Document.parse(
+                            "{ collStats: '" + COLLECTION_EVIDENCE
+                                    + "', scale: 1048576}"));
+            status.put("db.evidence.size", stats.getInteger("size"));
+        } catch (MongoCommandException ex) {
+            LOGGER.warn(ex.getMessage());
+        }
 
         return status;
     }
@@ -581,5 +598,12 @@ public final class RequestHandler implements ServerInterface {
                     .find()
                     .sort(query)
                     .limit(100));
+    }
+
+    @Override
+    public DataAgentProfile[] sources() throws Throwable {
+        List<DataAgentProfile> profiles = sources.getProfiles();
+        return profiles.toArray(
+                new DataAgentProfile[profiles.size()]);
     }
 }

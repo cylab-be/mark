@@ -25,7 +25,6 @@ package be.cylab.mark.data;
 
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.detection.DummyClient;
 import org.junit.Test;
 import static org.junit.Assert.*;

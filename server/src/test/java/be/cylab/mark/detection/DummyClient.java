@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,7 +38,7 @@ import org.bson.types.ObjectId;
 
 /**
  * A fake connection to MARK server, can be used for testing and debugging.It
- will simply return fake data, and write out what it receives...
+ * will simply return fake data, and write out what it receives...
  *
  * @author Thibault Debatty
  */
@@ -234,6 +235,11 @@ public class DummyClient implements ServerInterface {
 
     @Override
     public Evidence[] findLastEvidences() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DataAgentProfile[] sources() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -32,6 +32,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import junit.framework.TestCase;
 import be.cylab.mark.server.Config;
+import be.cylab.mark.server.DataSourcesController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -137,6 +138,7 @@ public class RequestHandlerTest extends TestCase {
         RequestHandler handler = new RequestHandler(
                 mongodb,
                 new DummyActivationContoller(),
+                new DataSourcesController(null),
                 new MongoParser());
 
         return handler;

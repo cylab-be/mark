@@ -24,6 +24,7 @@
 package be.cylab.mark.activation;
 
 import be.cylab.mark.client.Client;
+import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
@@ -370,5 +371,16 @@ public final class ClientWrapper implements ServerInterface {
     public Evidence[] findLastEvidences() throws Throwable {
 
         return client.findLastEvidences();
+    }
+
+    /**
+     *
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public DataAgentProfile[] sources() throws Throwable {
+
+        return client.sources();
     }
 }

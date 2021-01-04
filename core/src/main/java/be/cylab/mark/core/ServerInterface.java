@@ -212,6 +212,13 @@ public interface ServerInterface {
     void setAgentProfile(DetectionAgentProfile profile) throws Throwable;
 
     /**
+     * Get the configuration of data sources.
+     * @return
+     * @throws Throwable if something went wrong
+     */
+    DataAgentProfile[] sources() throws Throwable;
+
+    /**
      * Pause execution (no algorithm will be scheduled).
      *
      * @throws Throwable if something went wrong

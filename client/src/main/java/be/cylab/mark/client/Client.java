@@ -1,5 +1,6 @@
 package be.cylab.mark.client;
 
+import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DetectionAgentProfile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
@@ -333,5 +334,11 @@ public class Client implements ServerInterface {
     public final Evidence[] findLastEvidences() throws Throwable {
         return json_rpc_client.invoke(
                 "findLastEvidences", null, Evidence[].class);
+    }
+
+    @Override
+    public final DataAgentProfile[] sources() throws Throwable {
+        return json_rpc_client.invoke(
+                "sources", null, DataAgentProfile[].class);
     }
 }

@@ -10,7 +10,6 @@ import be.cylab.mark.client.Client;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import java.util.HashMap;
-import org.bson.Document;
 
 /**
  * The server must be compiled and started before we can run this test =>
@@ -161,8 +160,7 @@ public class ClientIT extends MarkCase {
         data.setTime(1234567);
         datastore.addRawData(data);
 
-        Thread.sleep(1000);
-        getTestServer().awaitTermination();
+        Thread.sleep(3000);
 
         int final_count = datastore
                 .findEvidence(

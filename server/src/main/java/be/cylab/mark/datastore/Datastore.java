@@ -2,10 +2,8 @@ package be.cylab.mark.datastore;
 
 import com.googlecode.jsonrpc4j.JsonRpcServer;
 import com.google.inject.Inject;
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import java.util.concurrent.ArrayBlockingQueue;
-import be.cylab.mark.activation.ActivationControllerInterface;
 import be.cylab.mark.core.InvalidProfileException;
 import be.cylab.mark.core.ServerInterface;
 import be.cylab.mark.server.Config;
@@ -26,24 +24,26 @@ public class Datastore {
     private static final org.slf4j.Logger LOGGER
             = LoggerFactory.getLogger(Datastore.class);
 
-    private Server server;
+    private Server jetty;
     private final Config config;
-    private final ActivationControllerInterface activation_controller;
-    private ServerInterface request_handler;
-    private MongoDatabase mongodb;
+    private final RequestHandler request_handler;
+    private final MongoDatabase mongodb;
 
     /**
      *
      * @param config
-     * @param activation_controller
+     * @param request_handler
+     * @param mongodb
      */
     @Inject
     public Datastore(
             final Config config,
-            final ActivationControllerInterface activation_controller) {
+            final RequestHandler request_handler,
+            final MongoDatabase mongodb) {
 
         this.config = config;
-        this.activation_controller = activation_controller;
+        this.request_handler = request_handler;
+        this.mongodb = mongodb;
     }
 
     /**
@@ -61,11 +61,27 @@ public class Datastore {
         LOGGER.info("Starting JSON-RPC datastore on " + config.getServerHost()
                 + " : " + config.getServerPort());
 
-        mongodb = this.connectToMongodb(config);
-        server = this.createJsonRPCServer(mongodb);
-        server.start();
+        // create jsonrpc server
+        JsonRpcServer jsonrpc_server
+                = new JsonRpcServer(request_handler);
 
-        while (!server.isStarted()) {
+        QueuedThreadPool thread_pool = new QueuedThreadPool(
+                config.getMaxThreads(),
+                config.getMinThreads(),
+                config.getIdleTimeout(),
+                new ArrayBlockingQueue<>(config.getMaxPendingRequests()));
+
+        jetty = new Server(thread_pool);
+
+        ServerConnector http_connector = new ServerConnector(jetty);
+        http_connector.setHost(config.getServerBind());
+        http_connector.setPort(config.getServerPort());
+
+        jetty.setConnectors(new Connector[]{http_connector});
+        jetty.setHandler(new JettyHandler(jsonrpc_server));
+        jetty.start();
+
+        while (!jetty.isStarted()) {
             Thread.sleep(STARTUP_DELAY);
         }
 
@@ -78,57 +94,11 @@ public class Datastore {
      * @throws Exception if jetty fails to stop.
      */
     public final void stop() throws Exception {
-        if (server == null) {
+        if (jetty == null) {
             return;
         }
 
-        server.stop();
-    }
-
-    private MongoDatabase connectToMongodb(final Config config) {
-
-        LOGGER.info("Connecting to mongo at " + config.getMongoHost() + ":"
-                + config.getMongoPort());
-
-        MongoClient mongo = new MongoClient(
-                config.getMongoHost(), config.getMongoPort());
-        MongoDatabase db = mongo.getDatabase(config.getMongoDb());
-
-        if (config.isMongoClean()) {
-            db.drop();
-        }
-
-        return db;
-    }
-
-    private Server createJsonRPCServer(final MongoDatabase mongodb)
-            throws InvalidProfileException {
-
-        request_handler = new RequestHandler(
-                mongodb,
-                activation_controller,
-                new MongoParser());
-
-
-        JsonRpcServer jsonrpc_server
-                = new JsonRpcServer(request_handler);
-
-        QueuedThreadPool thread_pool = new QueuedThreadPool(
-                config.getMaxThreads(),
-                config.getMinThreads(),
-                config.getIdleTimeout(),
-                new ArrayBlockingQueue<>(config.getMaxPendingRequests()));
-
-        Server jetty = new Server(thread_pool);
-
-        ServerConnector http_connector = new ServerConnector(jetty);
-        http_connector.setHost(config.getServerBind());
-        http_connector.setPort(config.getServerPort());
-
-        jetty.setConnectors(new Connector[]{http_connector});
-        jetty.setHandler(new JettyHandler(jsonrpc_server));
-
-        return jetty;
+        jetty.stop();
     }
 
     /**

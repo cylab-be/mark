@@ -31,6 +31,9 @@ import be.cylab.mark.activation.ActivationControllerInterface;
 import be.cylab.mark.activation.ExecutorInterface;
 import be.cylab.mark.activation.IgniteExecutor;
 import be.cylab.mark.activation.ThreadsExecutor;
+import com.google.inject.Provides;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -38,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Bunyamin Aslan
  */
-public class BillingModule extends AbstractModule {
+public final class BillingModule extends AbstractModule {
 
     private final File config_file;
     private static final org.slf4j.Logger LOGGER
@@ -54,7 +57,7 @@ public class BillingModule extends AbstractModule {
     }
 
     @Override
-    protected final void configure() {
+    protected void configure() {
         // read config file
         Config config = null;
         try {
@@ -81,4 +84,22 @@ public class BillingModule extends AbstractModule {
 
     }
 
+    /**
+     * Create and configure the mongodb instance.
+     * @param config
+     * @return
+     */
+    @Provides
+    public MongoDatabase mongoDB(final Config config) {
+
+        MongoClient mongo = new MongoClient(
+                config.getMongoHost(), config.getMongoPort());
+        MongoDatabase db = mongo.getDatabase(config.getMongoDb());
+
+        if (config.isMongoClean()) {
+            db.drop();
+        }
+
+        return db;
+    }
 }
