@@ -17,8 +17,7 @@ The server is independant of the data that will be analyzed (the subject). Hence
 - **client**: contains a java client class to connect to the server and perform requests
 - **server:** contains the server code, with basic agents
 - **integration:** contains integration tests (which require compiled core, client and server code)
-- **netrank:** contains a LinkAdapter (that implements the SubjectAdapter interface) to run the system with network related data, to rank the links bewteen computers according to suspiciousness
-- **mark:** maven parent module, that allows to compile and test all modules at once
+- **example**
 
 ## Building & running
 
@@ -31,20 +30,9 @@ mvn clean install
 
 The server/scripts folder contains a startup script with a basic configuration (no agents).
 
-The netrank/scripts also contains a startup script, which contains some real things to display: a source of data, an adapter and 2 detection agents in cascade.
+## UML
 
-```
-cd netrank
-./scripts/run.sh
-```
+![Server UML diagram](https://gitlab.cylab.be/cylab/mark/-/jobs/artifacts/master/raw/server/target/server.urm.png?job=test:jdk-11:mongo-4.4)
 
-When the server is started, it will launch your browser and display the status page.
 
-## Datastore calls
 
-The list of json-rpc calls available in the datastore is defined by the interface
-
-https://github.com/RUCD/mark/blob/master/core/src/main/java/mark/core/ServerInterface.java
-
-### status
-![status json-rpc call](./status-rpc.png)
