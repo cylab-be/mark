@@ -289,5 +289,14 @@
             <artifactId>named-regexp</artifactId>
             <version>0.2.5</version>
         </dependency>
+
+        <!-- to avoid com.googlecode.jsonrpc4j.JsonRpcBasicServer Could not find javax.jws.WebParam.name
+             https://github.com/briandilley/jsonrpc4j/issues/233 -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-ri</artifactId>
+            <version>2.3.0</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 </project>

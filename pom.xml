@@ -180,6 +180,7 @@
                                 <ignoreDependency>javax.portlet:portlet-api:*</ignoreDependency>
                                 <ignoreDependency>org.apache.logging.log4j:log4j-slf4j-impl:*</ignoreDependency>
                                 <ignoreDependency>org.apache.ignite:ignite-log4j2:*</ignoreDependency>
+                                <ignoreDependency>com.sun.xml.ws:jaxws-ri:*</ignoreDependency>
                             </ignoredDependencies>
                         </configuration>
                         <goals>
