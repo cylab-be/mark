@@ -74,27 +74,6 @@ integration:
     # test we have some results...
     - bash example/test.sh
 
-docker:
-  stage: integration
-
-  dependencies:
-    - test:jdk-11:mongo-4.4
-  # this job requires docker-in-docker
-  tags:
-    - dind
-  image: docker:19.03.1
-  services:
-    - docker:19.03.1-dind
-  before_script:
-    - docker info
-  script:
-    # pull previous image version to enable caching inside dind
-    - docker pull cylab/mark:latest || true
-    # standalone server
-    - docker build --tag cylab/mark:$CI_COMMIT_SHORT_SHA --tag cylab/mark:latest .
-    # mark-example
-    - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag cylab/mark-example:latest .
-
 #
 # build docker images and push to gitlab's built-in docker registry
 #
@@ -116,12 +95,12 @@ build:
     - docker pull cylab/mark:latest || true
     # mark-server
     - docker build --tag cylab/mark:$CI_COMMIT_SHORT_SHA --tag cylab/mark:latest .
-    - docker push cylab/mark:$CI_COMMIT_SHORT_SHA
-    - docker push cylab/mark:latest
+    - docker push gitlab.cylab.be/cylab/mark:$CI_COMMIT_SHORT_SHA
+    - docker push gitlab.cylab.be/cylab/mark:latest
     # mark-example
     - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag cylab/mark-example:latest .
-    - docker push cylab/mark-example:$CI_COMMIT_SHORT_SHA
-    - docker push cylab/mark-example:latest
+    - docker push gitlab.cylab.be/cylab/mark-example:$CI_COMMIT_SHORT_SHA
+    - docker push gitlab.cylab.be/cylab/mark-example:latest
 
 #
 # build docker images and push to Docker Hub
