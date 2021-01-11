@@ -36,9 +36,11 @@ import java.util.concurrent.TimeUnit;
  */
 public final class ThreadsExecutor implements ExecutorInterface {
 
-    private BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private ThreadPoolExecutor executor = new ThreadPoolExecutor(
-            10, 10, 0L, TimeUnit.SECONDS, queue);
+    private final int threads_count =
+            Runtime.getRuntime().availableProcessors() * 2 - 1;
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            threads_count, threads_count, 0L, TimeUnit.SECONDS, queue);
 
     @Override
     public void submit(final Runnable job) {

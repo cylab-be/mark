@@ -1,8 +1,14 @@
 # Changelog
 
-## Unreleased
+## 2.3.0
 
 
+* **add new jsonrpc call 'sources' + refactor**
+[e5aefe898c328e9](https://github.com/cylab/mark/commit/e5aefe898c328e9) Thibault Debatty *2021-01-04 11:09:38*
+* **fix javadoc**
+[7938e7f3292697f](https://github.com/cylab/mark/commit/7938e7f3292697f) Thibault Debatty *2021-01-02 08:30:26*
+* **add File data source, that uses a named regex**
+[1e632f602b82d4d](https://github.com/cylab/mark/commit/1e632f602b82d4d) Thibault Debatty *2021-01-02 07:52:40*
 * **removed outdated tutorial**
 [8a65da7409e3997](https://github.com/cylab/mark/commit/8a65da7409e3997) Thibault Debatty *2020-12-18 12:27:16*
 
