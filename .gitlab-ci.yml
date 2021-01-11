@@ -98,6 +98,9 @@ build:
 
 release:demo:
   stage: release
+  environment:
+    name: mark-demo
+    url: http://mark.kube.cylab.be
   image: cylab/kubectl
   before_script:
     # create the configuration (context) for our kubernetes cluster
