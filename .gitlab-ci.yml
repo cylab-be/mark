@@ -1,6 +1,7 @@
 stages:
   - test
   - integration
+  - build
   - release
 
 cache:
@@ -94,6 +95,38 @@ docker:
     # mark-example
     - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag cylab/mark-example:latest .
 
+#
+# build docker images and push to gitlab's built-in docker registry
+#
+build:
+  stage: build
+  dependencies:
+    - test:jdk-11:mongo-4.4
+  # this job requires docker-in-docker
+  tags:
+    - dind
+  image: docker:19.03.1
+  services:
+    - docker:19.03.1-dind
+  before_script:
+    - docker info
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    # pull previous image version to enable caching inside dind
+    - docker pull cylab/mark:latest || true
+    # mark-server
+    - docker build --tag cylab/mark:$CI_COMMIT_SHORT_SHA --tag cylab/mark:latest .
+    - docker push cylab/mark:$CI_COMMIT_SHORT_SHA
+    - docker push cylab/mark:latest
+    # mark-example
+    - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag cylab/mark-example:latest .
+    - docker push cylab/mark-example:$CI_COMMIT_SHORT_SHA
+    - docker push cylab/mark-example:latest
+
+#
+# build docker images and push to Docker Hub
+# (only for tags)
+#
 release:docker:
   stage: release
   # only when we push a new tag
