@@ -94,13 +94,13 @@ build:
     # pull previous image version to enable caching inside dind
     - docker pull cylab/mark:latest || true
     # mark-server
-    - docker build --tag gitlab.cylab.be/cylab/mark:$CI_COMMIT_SHORT_SHA --tag gitlab.cylab.be/cylab/mark:latest .
-    - docker push gitlab.cylab.be/cylab/mark:$CI_COMMIT_SHORT_SHA
-    - docker push gitlab.cylab.be/cylab/mark:latest
+    - docker build --tag $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/cylab/mark:latest .
+    - docker push $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY/cylab/mark:latest
     # mark-example
-    - docker build --file Dockerfile-example --tag gitlab.cylab.be/cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag gitlab.cylab.be/cylab/mark-example:latest .
-    - docker push gitlab.cylab.be/cylab/mark-example:$CI_COMMIT_SHORT_SHA
-    - docker push gitlab.cylab.be/cylab/mark-example:latest
+    - docker build --file Dockerfile-example --tag $CI_REGISTRY/cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/cylab/mark-example:latest .
+    - docker push $CI_REGISTRY/cylab/mark-example:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY/cylab/mark-example:latest
 
 #
 # build docker images and push to Docker Hub
