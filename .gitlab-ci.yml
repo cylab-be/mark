@@ -75,7 +75,7 @@ integration:
     - bash example/test.sh
 
 #
-# build docker images and push to gitlab's built-in docker registry
+# build docker image for example server and push to gitlab's built-in docker registry
 #
 build:
   stage: build
@@ -91,16 +91,10 @@ build:
     - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    # pull previous image version to enable caching inside dind
-    - docker pull cylab/mark:latest || true
-    # mark-server
-    - docker build --tag $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/cylab/mark:latest .
+    # mark-example
+    - docker build --file Dockerfile-example --tag $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/cylab/mark:latest .
     - docker push $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY/cylab/mark:latest
-    # mark-example
-    - docker build --file Dockerfile-example --tag $CI_REGISTRY/cylab/mark-example:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/cylab/mark-example:latest .
-    - docker push $CI_REGISTRY/cylab/mark-example:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_REGISTRY/cylab/mark-example:latest
 
 #
 # build docker images and push to Docker Hub
