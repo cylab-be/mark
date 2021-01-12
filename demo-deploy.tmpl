@@ -130,7 +130,7 @@ spec:
     spec:
       containers:
       - name: mark-web
-        image: cylab/mark-web:1.4.4
+        image: cylab/mark-web:1.4.5
         ports:
         - containerPort: 80
         env:
@@ -142,6 +142,8 @@ spec:
           value: "false"
         - name: APP_URL
           value: https://mark.kube.cylab.be
+        - name: APP_ENV
+          value: demo
 
 ---
 
