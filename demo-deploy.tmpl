@@ -80,12 +80,14 @@ spec:
         - name: MARK_MONGO_HOST
           value: mongo
         - name: _JAVA_OPTIONS
-          value: "-Xms2G -Xmx3G"
+          value: "-Xms1G -Xmx2G"
         resources:
           limits:
-            memory: "4000Mi"
+            memory: "2000Mi"
+            cpu: "2"
           requests:
-            memory: "4000Mi"
+            memory: "2000Mi"
+            cpu: "2"
 
 ---
 
