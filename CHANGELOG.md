@@ -3,6 +3,34 @@
 ## Unreleased
 
 
+* **compute number of executor threads from number of cpus**
+[12ed85a0cdca93b](https://github.com/cylab/mark/commit/12ed85a0cdca93b) Thibault Debatty *2021-01-11 14:22:35*
+* **define environment for mark demo deploy**
+[b3eb0330921da9c](https://github.com/cylab/mark/commit/b3eb0330921da9c) Thibault Debatty *2021-01-11 10:50:20*
+* **continuous deployment of the demo server**
+[14b7d9382780980](https://github.com/cylab/mark/commit/14b7d9382780980) Thibault Debatty *2021-01-11 10:45:29*
+* **build and push to built-in docker registry**
+[e92d15ac014892f](https://github.com/cylab/mark/commit/e92d15ac014892f) Thibault Debatty *2021-01-11 09:03:27*
+* **build and push to built-in docker registry**
+[bd4c83dcdbcb009](https://github.com/cylab/mark/commit/bd4c83dcdbcb009) Thibault Debatty *2021-01-11 08:44:38*
+* **build and push to built-in docker registry**
+[fa2b22c6bb40bc2](https://github.com/cylab/mark/commit/fa2b22c6bb40bc2) Thibault Debatty *2021-01-11 08:33:40*
+* **build and push to built-in docker registry**
+[4ac4b01bd227037](https://github.com/cylab/mark/commit/4ac4b01bd227037) Thibault Debatty *2021-01-11 08:21:44*
+* **build docker images and push to gitlab built-in docker registry**
+[2ea6fdea5d8a193](https://github.com/cylab/mark/commit/2ea6fdea5d8a193) Thibault Debatty *2021-01-11 07:56:52*
+* **show uml diagram (produced by gitlab-ci)**
+[a6d5831ad8522af](https://github.com/cylab/mark/commit/a6d5831ad8522af) Thibault Debatty *2021-01-06 14:12:03*
+* **create png uml diagram**
+[5c83ab4368d3a51](https://github.com/cylab/mark/commit/5c83ab4368d3a51) Thibault Debatty *2021-01-06 13:47:57*
+* **add uml-reverse-mapper plugin**
+[10cbe03b3a7d8d0](https://github.com/cylab/mark/commit/10cbe03b3a7d8d0) Thibault Debatty *2021-01-06 13:41:06*
+
+## 2.3.0
+
+
+* **add new jsonrpc call 'sources' + refactor**
+[e5aefe898c328e9](https://github.com/cylab/mark/commit/e5aefe898c328e9) Thibault Debatty *2021-01-04 11:09:38*
 * **fix javadoc**
 [7938e7f3292697f](https://github.com/cylab/mark/commit/7938e7f3292697f) Thibault Debatty *2021-01-02 08:30:26*
 * **add File data source, that uses a named regex**
