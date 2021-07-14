@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+* **minor fixes**
+[f2ef180d7ed6fee](https://github.com/cylab/mark/commit/f2ef180d7ed6fee) Thibault Debatty *2021-07-14 12:24:15*
+* **in batch mode, save rankings to json file**
+[feaf08fa2859a1c](https://github.com/cylab/mark/commit/feaf08fa2859a1c) Thibault Debatty *2021-07-14 12:21:33*
 * **add batch mode '-b' to stop when data sources have finished**
 [4ecbd8e2739ef74](https://github.com/cylab/mark/commit/4ecbd8e2739ef74) Thibault Debatty *2021-07-14 10:28:31*
 

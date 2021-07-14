@@ -1,0 +1,5 @@
+---
+class_name:     be.cylab.mark.example.ExampleDataSource
+label:          data.example
+parameters:
+  count: 20

@@ -63,14 +63,23 @@ integration:
     # so we don't have to compile the code ourselfs..
     - test:jdk-8:mongo-3.6
   script:
-    # install what we need
-    - apt-get update
-    - apt-get install -y mongodb openjdk-8-jdk
-    - service mongodb start
     # run example server
     - bash example/run.sh &
     - sleep 30
     - kill %1
+    # test we have some results...
+    - bash example/test.sh
+
+# test the batch mode
+integration:batch:
+  stage: integration
+  image: cylab/java8-mongo
+  dependencies:
+    # so we don't have to compile the code ourselfs..
+    - test:jdk-8:mongo-3.6
+  script:
+    # run example server in batch mode
+    - bash example/run-batch.sh
     # test we have some results...
     - bash example/test.sh
 
