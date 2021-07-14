@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+
+* **add batch mode '-b' to stop when data sources have finished**
+[4ecbd8e2739ef74](https://github.com/cylab/mark/commit/4ecbd8e2739ef74) Thibault Debatty *2021-07-14 10:28:31*
+
 ## 2.4.0
 
 

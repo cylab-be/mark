@@ -5,11 +5,32 @@ import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.core.DataAgentProfile;
 import java.net.MalformedURLException;
 import be.cylab.mark.activation.ActivationController;
+import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Evidence;
+import be.cylab.mark.core.ServerInterface;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a MARK server. It is composed of: - a webserver - an activation
- * controller - a datastore (json-rpc server) - optionally: some data agents
+ * Represents a MARK server. It is composed of:
+ * <ul>
+ * <li>a webserver</li>
+ * <li>an activation controller</li>
+ * <li>a datastore (json-rpc server)</li>
+ * <li>a monitor threat to save status</li>
+ * <li>optionally: some data agents</li>
+ * </ul>
  *
  * @author Thibault Debatty
  */
@@ -21,6 +42,7 @@ public class Server {
     private final Datastore datastore;
     private final DataSourcesController sources;
     private final ActivationController activation_controller;
+    private final Config config;
     private final Thread monitor;
 
     private boolean stopping = false;
@@ -38,11 +60,13 @@ public class Server {
     public Server(
             final ActivationController activation_controller,
             final DataSourcesController sources,
-            final Datastore datastore) throws Throwable {
+            final Datastore datastore,
+            final Config config) throws Throwable {
 
         this.activation_controller = activation_controller;
         this.datastore = datastore;
         this.sources = sources;
+        this.config = config;
 
         this.monitor = new Thread(new Monitor(datastore));
     }
@@ -113,9 +137,11 @@ public class Server {
         activation_controller.interrupt();
         activation_controller.join();
 
-        // Save ranking lists !!
 
-        LOGGER.info("Ask monitor recorder to stop...");
+        LOGGER.info("Save rankings...");
+        saveRankings();
+
+        LOGGER.info("Ask monitor to stop...");
         monitor.interrupt();
         monitor.join();
 
@@ -133,7 +159,7 @@ public class Server {
     public final void stop() throws Exception {
 
         // already stopping in another thread
-        // probably batch mode + data sources have finished
+        // probably running in batch mode, and data sources have finished
         if (stopping) {
             return;
         }
@@ -170,5 +196,43 @@ public class Server {
      */
     public final void addDataAgentProfile(final DataAgentProfile profile) {
         sources.add(profile);
+    }
+
+    private static final Charset ENCODING = StandardCharsets.UTF_8;
+
+    private void saveRankings() {
+        Map<String, List> rankings = new HashMap<>();
+        ServerInterface rq = datastore.getRequestHandler();
+        List<DetectionAgentProfile> profiles =
+                activation_controller.getProfiles();
+        for (DetectionAgentProfile profile : profiles) {
+            String label = profile.getLabel();
+            try {
+                Evidence[] evidences = rq.findEvidence(label);
+                rankings.put(label, List.of(evidences));
+            } catch (Throwable ex) {
+                LOGGER.error("Failed to get ranking for label", label);
+            }
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        String json = "";
+        try {
+            json = mapper.writerWithDefaultPrettyPrinter()
+                    .writeValueAsString(rankings);
+        } catch (JsonProcessingException ex) {
+            LOGGER.warn("Failed to build json from rankings");
+            return;
+        }
+
+        String rankings_file = config.getLogDirectory() + "/rankings.json";
+
+        Path path = Paths.get(rankings_file);
+        try (BufferedWriter writer = Files.newBufferedWriter(path, ENCODING)) {
+            writer.write(json);
+        } catch (IOException ex) {
+            LOGGER.warn("Failed to write ranking to " + rankings_file);
+        }
     }
 }
