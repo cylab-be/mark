@@ -32,6 +32,13 @@ import java.util.Random;
 /**
  * A dummy data source, for demo and testing purpose.
  *
+ * This data source accepts 1 optional parameter:
+ *
+ * <ul>
+ * <li>count (int) : number of data objects to submit (default = 0 = unlimited)
+ * </li>
+ * </ul>
+ *
  * @author tibo
  */
 public class ExampleDataSource implements DataAgentInterface {
@@ -44,6 +51,9 @@ public class ExampleDataSource implements DataAgentInterface {
     public final void run(
             final DataAgentProfile profile, final ServerInterface datastore)
             throws Throwable {
+
+        int count = profile.getParameterInt("count", 0);
+        int i = 0;
 
         while (true) {
 
@@ -58,6 +68,11 @@ public class ExampleDataSource implements DataAgentInterface {
             datastore.addRawData(data);
 
             Thread.sleep(1000);
+
+            i++;
+            if (count > 0 && i >= count) {
+                break;
+            }
         }
     }
 

@@ -32,6 +32,7 @@ public final class Main {
         // add t option
         options.addOption("c", true, "Configuration file to use");
         options.addOption("h", false, "Show this help");
+        options.addOption("b", false, "Run in batch mode");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -72,7 +73,11 @@ public final class Main {
         });
 
         try {
-            server.start();
+            if (cmd.hasOption("b")) {
+                server.batch();
+            } else {
+                server.start();
+            }
         } catch (Exception ex) {
             System.err.println("Failed to start server: " + ex.getMessage());
             System.exit(1);

@@ -70,6 +70,18 @@ public final class DataSourcesController {
     }
 
     /**
+     * Wait for data agents to finish.
+     *
+     * @throws InterruptedException if thread is interrupted during operation
+     */
+    public void awaitTermination() throws InterruptedException {
+        LOGGER.info("Wait for data agents to finish...");
+        for (DataAgentContainer agent : data_agents) {
+            agent.join();
+        }
+    }
+
+    /**
      *
      * @throws InterruptedException if thread was killed during stop
      */
@@ -78,10 +90,7 @@ public final class DataSourcesController {
             agent.interrupt();
         }
 
-        LOGGER.info("Wait for data agents to finish...");
-        for (DataAgentContainer agent : data_agents) {
-            agent.join();
-        }
+        this.awaitTermination();
     }
 
     /**

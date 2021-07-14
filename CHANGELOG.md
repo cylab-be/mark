@@ -1,8 +1,22 @@
 # Changelog
 
-## Unreleased
+## 2.4.0
 
 
+* **updated changelog**
+[a85555b072cd4e2](https://github.com/cylab/mark/commit/a85555b072cd4e2) Thibault Debatty *2021-02-04 16:18:17*
+* **update resources constraints**
+[5e3a7e7e19cafd1](https://github.com/cylab/mark/commit/5e3a7e7e19cafd1) Thibault Debatty *2021-01-12 10:24:27*
+* **use mark-web 1.4.5, with demo mode**
+[ebeccfc7ca140e3](https://github.com/cylab/mark/commit/ebeccfc7ca140e3) Thibault Debatty *2021-01-12 10:22:50*
+* **fix demo template**
+[2a5c9dc37622434](https://github.com/cylab/mark/commit/2a5c9dc37622434) Thibault Debatty *2021-01-12 09:30:27*
+* **use mark-web 1.4.4**
+[c70f413181fbba0](https://github.com/cylab/mark/commit/c70f413181fbba0) Thibault Debatty *2021-01-12 09:15:32*
+* **use mark-web 1.4.2**
+[59310f0c5483841](https://github.com/cylab/mark/commit/59310f0c5483841) Thibault Debatty *2021-01-12 08:41:48*
+* **get rid of error 'Could not find javax.jws.WebParam.name'**
+[bd33bbdb779695c](https://github.com/cylab/mark/commit/bd33bbdb779695c) Thibault Debatty *2021-01-11 14:33:56*
 * **compute number of executor threads from number of cpus**
 [12ed85a0cdca93b](https://github.com/cylab/mark/commit/12ed85a0cdca93b) Thibault Debatty *2021-01-11 14:22:35*
 * **define environment for mark demo deploy**

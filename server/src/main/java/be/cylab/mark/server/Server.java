@@ -23,6 +23,8 @@ public class Server {
     private final ActivationController activation_controller;
     private final Thread monitor;
 
+    private boolean stopping = false;
+
     /**
      * Initialize a server with default configuration, dummy subject adapter, no
      * data agents and no detection agents.
@@ -79,11 +81,64 @@ public class Server {
     }
 
     /**
+     * Run the server in batch mode.
+     * <ol>
+     * <li>start the server</li>
+     * <li>wait for data sources to complete</li>
+     * <li>save resulting ranking lists</li>
+     * <li>stop the server</li>
+     * </ol>
+     * @throws java.lang.Exception if Jetty caused an exception
+     */
+    public final void batch() throws Exception {
+        LOGGER.info("BATCH mode");
+        LOGGER.info("==========");
+        start();
+
+        sources.awaitTermination();
+        LOGGER.info("All data sources completed!");
+
+        // the stop method is already running in another thread
+        // (probably the result of ctrl+c)
+        if (stopping) {
+            return;
+        }
+        stopping = true;
+
+        LOGGER.info(
+                "Wait for activation controller to finish running tasks...");
+        activation_controller.awaitTermination();
+
+        LOGGER.info("Ask activation controller to stop...");
+        activation_controller.interrupt();
+        activation_controller.join();
+
+        // Save ranking lists !!
+
+        LOGGER.info("Ask monitor recorder to stop...");
+        monitor.interrupt();
+        monitor.join();
+
+        LOGGER.info("Ask datastore to stop...");
+        datastore.stop();
+
+        LOGGER.info("Server stopped!");
+    }
+
+    /**
      * Stop the data agents, wait for all detection agents to complete and
      * eventually stop the datastore.
      * @throws java.lang.Exception on any error
      */
     public final void stop() throws Exception {
+
+        // already stopping in another thread
+        // probably batch mode + data sources have finished
+        if (stopping) {
+            return;
+        }
+        stopping = true;
+
         LOGGER.info("Stopping server...");
         LOGGER.info("Ask data agents to stop...");
         sources.stop();
@@ -95,6 +150,10 @@ public class Server {
         LOGGER.info("Ask activation controller to stop...");
         activation_controller.interrupt();
         activation_controller.join();
+
+        LOGGER.info("Ask monitor recorder to stop...");
+        monitor.interrupt();
+        monitor.join();
 
         LOGGER.info("Ask datastore to stop...");
         datastore.stop();

@@ -16,4 +16,4 @@ tar --extract --file=./server-standalone.tar.gz --strip-components=1 --directory
 cp "$DIR/target/example-"*".jar" ./modules
 cp "$DIR/resources/modules/"* ./modules
 
-./run.sh
+./run.sh $@
