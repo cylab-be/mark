@@ -54,6 +54,7 @@ public class Server {
      * @param activation_controller
      * @param sources
      * @param datastore
+     * @param config
      * @throws java.lang.Throwable on any error
      */
     @Inject
@@ -83,7 +84,6 @@ public class Server {
     public final void start()
             throws MalformedURLException, Exception {
 
-        LOGGER.info("Starting server...");
         sources.loadAgentsFromModulesDirectory();
 
         activation_controller.reload();
@@ -115,8 +115,6 @@ public class Server {
      * @throws java.lang.Exception if Jetty caused an exception
      */
     public final void batch() throws Exception {
-        LOGGER.info("BATCH mode");
-        LOGGER.info("==========");
         start();
 
         sources.awaitTermination();
@@ -234,5 +232,7 @@ public class Server {
         } catch (IOException ex) {
             LOGGER.warn("Failed to write ranking to " + rankings_file);
         }
+
+        LOGGER.info("Rankings saved to " + rankings_file);
     }
 }

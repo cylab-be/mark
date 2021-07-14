@@ -10,12 +10,16 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thibault Debatty
  */
 public final class Main {
+
+    private static final org.slf4j.Logger LOGGER
+            = LoggerFactory.getLogger(Main.class);
 
     private Main() {
     }
@@ -74,8 +78,10 @@ public final class Main {
 
         try {
             if (cmd.hasOption("b")) {
+                LOGGER.info("Starting server in BATCH mode...");
                 server.batch();
             } else {
+                LOGGER.info("Starting server...");
                 server.start();
             }
         } catch (Exception ex) {
