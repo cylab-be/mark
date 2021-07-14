@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -207,7 +208,7 @@ public class Server {
             String label = profile.getLabel();
             try {
                 Evidence[] evidences = rq.findEvidence(label);
-                rankings.put(label, List.of(evidences));
+                rankings.put(label, Arrays.asList(evidences));
             } catch (Throwable ex) {
                 LOGGER.error("Failed to get ranking for label", label);
             }
