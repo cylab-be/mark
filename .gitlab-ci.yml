@@ -63,6 +63,7 @@ integration:
     # so we don't have to compile the code ourselfs..
     - test:jdk-8:mongo-3.6
   script:
+    - service mongodb start
     # run example server
     - bash example/run.sh &
     - sleep 30
@@ -78,6 +79,7 @@ integration:batch:
     # so we don't have to compile the code ourselfs..
     - test:jdk-8:mongo-3.6
   script:
+    - service mongodb start
     # run example server in batch mode
     - bash example/run-batch.sh
     # test we have some results...
