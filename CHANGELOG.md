@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.5.2
+
+
+* **fix sleep time**
+[cd470f37b2b729a](https://github.com/cylab/mark/commit/cd470f37b2b729a) Thibault Debatty *2021-07-15 11:28:06*
+
+## 2.5.1
+
+
+* **FileSource assumes timestamp is in seconds**
+[8007f8c4588c43b](https://github.com/cylab/mark/commit/8007f8c4588c43b) Thibault Debatty *2021-07-15 10:56:16*
+
 ## 2.5.0
 
 

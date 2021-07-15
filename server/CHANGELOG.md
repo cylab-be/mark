@@ -1,5 +1,73 @@
 # Changelog
 
+## 2.5.2
+
+
+* **fix sleep time**
+[cd470f37b2b729a](https://github.com/cylab/mark/commit/cd470f37b2b729a) Thibault Debatty *2021-07-15 11:28:06*
+
+## 2.5.1
+
+
+* **FileSource assumes timestamp is in seconds**
+[8007f8c4588c43b](https://github.com/cylab/mark/commit/8007f8c4588c43b) Thibault Debatty *2021-07-15 10:56:16*
+
+## 2.5.0
+
+
+* **start mongodb so we can run integration tests**
+[77ea54328e92fc2](https://github.com/cylab/mark/commit/77ea54328e92fc2) Thibault Debatty *2021-07-14 13:01:49*
+* **add integration test for batch mode**
+[77496c431eb3f8e](https://github.com/cylab/mark/commit/77496c431eb3f8e) Thibault Debatty *2021-07-14 12:55:09*
+* **fix to support java 8**
+[151117150903935](https://github.com/cylab/mark/commit/151117150903935) Thibault Debatty *2021-07-14 12:28:58*
+* **minor fixes**
+[f2ef180d7ed6fee](https://github.com/cylab/mark/commit/f2ef180d7ed6fee) Thibault Debatty *2021-07-14 12:24:15*
+* **in batch mode, save rankings to json file**
+[feaf08fa2859a1c](https://github.com/cylab/mark/commit/feaf08fa2859a1c) Thibault Debatty *2021-07-14 12:21:33*
+* **add batch mode '-b' to stop when data sources have finished**
+[4ecbd8e2739ef74](https://github.com/cylab/mark/commit/4ecbd8e2739ef74) Thibault Debatty *2021-07-14 10:28:31*
+
+## 2.4.0
+
+
+* **updated changelog**
+[a85555b072cd4e2](https://github.com/cylab/mark/commit/a85555b072cd4e2) Thibault Debatty *2021-02-04 16:18:17*
+* **update resources constraints**
+[5e3a7e7e19cafd1](https://github.com/cylab/mark/commit/5e3a7e7e19cafd1) Thibault Debatty *2021-01-12 10:24:27*
+* **use mark-web 1.4.5, with demo mode**
+[ebeccfc7ca140e3](https://github.com/cylab/mark/commit/ebeccfc7ca140e3) Thibault Debatty *2021-01-12 10:22:50*
+* **fix demo template**
+[2a5c9dc37622434](https://github.com/cylab/mark/commit/2a5c9dc37622434) Thibault Debatty *2021-01-12 09:30:27*
+* **use mark-web 1.4.4**
+[c70f413181fbba0](https://github.com/cylab/mark/commit/c70f413181fbba0) Thibault Debatty *2021-01-12 09:15:32*
+* **use mark-web 1.4.2**
+[59310f0c5483841](https://github.com/cylab/mark/commit/59310f0c5483841) Thibault Debatty *2021-01-12 08:41:48*
+* **get rid of error 'Could not find javax.jws.WebParam.name'**
+[bd33bbdb779695c](https://github.com/cylab/mark/commit/bd33bbdb779695c) Thibault Debatty *2021-01-11 14:33:56*
+* **compute number of executor threads from number of cpus**
+[12ed85a0cdca93b](https://github.com/cylab/mark/commit/12ed85a0cdca93b) Thibault Debatty *2021-01-11 14:22:35*
+* **define environment for mark demo deploy**
+[b3eb0330921da9c](https://github.com/cylab/mark/commit/b3eb0330921da9c) Thibault Debatty *2021-01-11 10:50:20*
+* **continuous deployment of the demo server**
+[14b7d9382780980](https://github.com/cylab/mark/commit/14b7d9382780980) Thibault Debatty *2021-01-11 10:45:29*
+* **build and push to built-in docker registry**
+[e92d15ac014892f](https://github.com/cylab/mark/commit/e92d15ac014892f) Thibault Debatty *2021-01-11 09:03:27*
+* **build and push to built-in docker registry**
+[bd4c83dcdbcb009](https://github.com/cylab/mark/commit/bd4c83dcdbcb009) Thibault Debatty *2021-01-11 08:44:38*
+* **build and push to built-in docker registry**
+[fa2b22c6bb40bc2](https://github.com/cylab/mark/commit/fa2b22c6bb40bc2) Thibault Debatty *2021-01-11 08:33:40*
+* **build and push to built-in docker registry**
+[4ac4b01bd227037](https://github.com/cylab/mark/commit/4ac4b01bd227037) Thibault Debatty *2021-01-11 08:21:44*
+* **build docker images and push to gitlab built-in docker registry**
+[2ea6fdea5d8a193](https://github.com/cylab/mark/commit/2ea6fdea5d8a193) Thibault Debatty *2021-01-11 07:56:52*
+* **show uml diagram (produced by gitlab-ci)**
+[a6d5831ad8522af](https://github.com/cylab/mark/commit/a6d5831ad8522af) Thibault Debatty *2021-01-06 14:12:03*
+* **create png uml diagram**
+[5c83ab4368d3a51](https://github.com/cylab/mark/commit/5c83ab4368d3a51) Thibault Debatty *2021-01-06 13:47:57*
+* **add uml-reverse-mapper plugin**
+[10cbe03b3a7d8d0](https://github.com/cylab/mark/commit/10cbe03b3a7d8d0) Thibault Debatty *2021-01-06 13:41:06*
+
 ## 2.3.0
 
 

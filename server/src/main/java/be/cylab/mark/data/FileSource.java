@@ -78,6 +78,8 @@ public class FileSource implements DataAgentInterface {
         pattern = Pattern.compile(regex);
 
         int line_count = 0;
+        // all times are expressed in milliseconds (except in the parser, see
+        // below)
         long start_time = 0;
         long first_data_time = 0;
 
@@ -101,12 +103,17 @@ public class FileSource implements DataAgentInterface {
                     first_data_time = rd.getTime();
                 }
 
+                // time difference between this record and the first record
+                double delta_time = rd.getTime() - first_data_time;
+                long simulated_deta_time = (long) (delta_time / speed);
                 // Simulated time for this new data
-                rd.setTime(rd.getTime() - first_data_time + start_time);
+                long simulated_time = start_time + simulated_deta_time;
+                rd.setTime(simulated_time);
 
-                long wait_time = (long) ((rd.getTime() - start_time) / speed
-                        / 1000);
-                Thread.sleep(wait_time);
+                long wait_time = simulated_time - System.currentTimeMillis();
+                if (wait_time > 0) {
+                    Thread.sleep(wait_time);
+                }
 
                 datastore.addRawData(rd);
             } catch (Exception ex) {
@@ -135,6 +142,7 @@ public class FileSource implements DataAgentInterface {
         }
 
         RawData data = new RawData();
+        // Parser expects timestamp expressed in seconds in the file
         double time = Double.valueOf(match.group("timestamp")) * 1000.0;
         data.setTime((long) time);
 

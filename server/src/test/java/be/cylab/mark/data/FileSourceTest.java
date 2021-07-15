@@ -71,6 +71,7 @@ public class FileSourceTest {
         profile.setParameter(
                 "regex",
                 "^(?<timestamp>\\d+)\\.\\d+\\s+\\d+\\s(?<client>\\d+\\.\\d+\\.\\d+\\.\\d+)");
+        profile.setParameter("speed", "10");
 
         DummyClient datastore = new DummyClient();
         FileSource instance = new FileSource();
