@@ -1,8 +1,14 @@
 # Changelog
 
-## Unreleased
+## 2.5.0
 
 
+* **start mongodb so we can run integration tests**
+[77ea54328e92fc2](https://github.com/cylab/mark/commit/77ea54328e92fc2) Thibault Debatty *2021-07-14 13:01:49*
+* **add integration test for batch mode**
+[77496c431eb3f8e](https://github.com/cylab/mark/commit/77496c431eb3f8e) Thibault Debatty *2021-07-14 12:55:09*
+* **fix to support java 8**
+[151117150903935](https://github.com/cylab/mark/commit/151117150903935) Thibault Debatty *2021-07-14 12:28:58*
 * **minor fixes**
 [f2ef180d7ed6fee](https://github.com/cylab/mark/commit/f2ef180d7ed6fee) Thibault Debatty *2021-07-14 12:24:15*
 * **in batch mode, save rankings to json file**

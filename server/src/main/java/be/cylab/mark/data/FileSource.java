@@ -134,7 +134,8 @@ public class FileSource implements DataAgentInterface {
         }
 
         RawData data = new RawData();
-        data.setTime(Integer.valueOf(match.group("timestamp")));
+        double time = Double.valueOf(match.group("timestamp")) * 1000.0;
+        data.setTime((long) time);
 
         // The subject consists of all other named groups
         Map<String, String> subject = match.namedGroups().get(0);

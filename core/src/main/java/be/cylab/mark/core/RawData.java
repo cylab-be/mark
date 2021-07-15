@@ -54,7 +54,7 @@ public class RawData {
     }
 
     /**
-     *
+     * Get timestamp of this data record, in milliseconds.
      * @return
      */
     public final long getTime() {
@@ -62,7 +62,7 @@ public class RawData {
     }
 
     /**
-     *
+     * Set timestamp of this data record, in milliseconds.
      * @param time
      */
     public final void setTime(final long time) {
