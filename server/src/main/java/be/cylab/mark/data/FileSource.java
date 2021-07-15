@@ -104,7 +104,8 @@ public class FileSource implements DataAgentInterface {
                 // Simulated time for this new data
                 rd.setTime(rd.getTime() - first_data_time + start_time);
 
-                long wait_time = (long) ((rd.getTime() - start_time) / speed);
+                long wait_time = (long) ((rd.getTime() - start_time) / speed
+                        / 1000);
                 Thread.sleep(wait_time);
 
                 datastore.addRawData(rd);
