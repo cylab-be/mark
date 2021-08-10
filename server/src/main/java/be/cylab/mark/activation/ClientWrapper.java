@@ -104,6 +104,19 @@ public final class ClientWrapper implements ServerInterface {
 
     /**
      *
+     * @param filename
+     * @param time
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public String createSharedFile(final String filename, final long time)
+            throws Throwable {
+        return client.createSharedFile(filename, time);
+    }
+
+    /**
+     *
      * @param data
      * @throws Throwable
      */
