@@ -36,6 +36,7 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
+import java.util.ArrayList;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -215,6 +216,11 @@ public class Frequency implements DetectionAgentInterface {
         String figures = "Spectrum: " + figure_spectrum_path + "\n"
                         + "Smoothed: " + figure_smooth_spectrum_path + "\n"
                         + "Histogram: " + figure_timeseries_path + "\n";
+
+        ArrayList<String> figures_list = new ArrayList<>();
+        figures_list.add(figure_spectrum_path);
+        figures_list.add(figure_smooth_spectrum_path);
+        figures_list.add(figure_timeseries_path);
         //generate report
         /*String freq_report = generateReport(
             "Found frequency peak for " + event.getSubject().toString()
@@ -237,6 +243,7 @@ public class Frequency implements DetectionAgentInterface {
         evidence.setLabel(dap.getLabel());
         evidence.setTime(data[data.length - 1].getTime());
         evidence.setReport(freq_report);
+        evidence.setFigures(figures_list);
         si.addEvidence(evidence);
     }
 
