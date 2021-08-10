@@ -20,6 +20,7 @@ public class Evidence
     private Map<String, String> subject = new HashMap<>();
     private double score;
     private String report = "";
+    private List<String> figures = new ArrayList<>();
     private List<String> references = new ArrayList<>();
     private List<String> requests = new ArrayList<>();
     private DetectionAgentProfile profile = new DetectionAgentProfile();
@@ -133,6 +134,22 @@ public class Evidence
      */
     public final List<String> getReferences() {
         return references;
+    }
+
+    /**
+     *
+     * @param figures
+     */
+    public final void setFigures(final List<String> figures) {
+        this.figures = figures;
+    }
+
+    /**
+     * Get the figures related to this evidence.
+     * @return
+     */
+    public final List<String> figures() {
+        return figures;
     }
 
     /**
