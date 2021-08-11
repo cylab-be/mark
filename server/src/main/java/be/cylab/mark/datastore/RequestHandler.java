@@ -127,7 +127,7 @@ public final class RequestHandler implements ServerInterface {
         Date date = new Date(time);
         String formated_date = sf.format(date);
         //create the folders to store the figure
-        File figure_folder = new File("/mark/data/"
+        File figure_folder = new File("./data/"
                                     + formated_date
                                     + "/");
         figure_folder.mkdirs();

@@ -35,6 +35,7 @@ import be.cylab.mark.server.Config;
 import be.cylab.mark.server.DataSourcesController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
 import java.io.IOException;
 import org.bson.Document;
 
@@ -123,6 +124,13 @@ public class RequestHandlerTest extends TestCase {
         assertEquals(100, last.length);
         assertEquals("199", last[0].getReport());
 
+    }
+
+    public void testCreateSharedFiles() throws Throwable
+    {
+        RequestHandler rq = getRequestHandler();
+        String file_path = rq.createSharedFile("testfile", 0);
+        assertEquals(true, new File(file_path).exists());
     }
 
     private RequestHandler getRequestHandler() {
