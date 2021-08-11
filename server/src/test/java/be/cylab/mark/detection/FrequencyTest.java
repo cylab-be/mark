@@ -30,6 +30,7 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -101,6 +102,17 @@ public class FrequencyTest extends TestCase {
         }
 
         assertTrue(evidences.get(0).getScore() < 0.2);
+    }
+
+    public void testFrequencyFigures() throws Throwable {
+        System.out.println("Frequency agent producing 1 evidence, test if"
+                + " figures are correctly generated and saved");
+
+        FrequencyTestClient client = new FrequencyTestClient(0, 300);
+
+        testWithClient(client);
+        List<Evidence> evidences = client.getEvidences();
+        assertEquals(3, evidences.get(0).figures().size());
     }
 
     private void testWithClient(FrequencyTestClient client)
