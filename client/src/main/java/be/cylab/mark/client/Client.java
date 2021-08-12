@@ -51,17 +51,6 @@ public class Client implements ServerInterface {
 
     /**
      * {@inheritDoc}
-     */
-    @Override
-    public final String createSharedFile(final String filename, final long time)
-            throws Throwable {
-
-        return json_rpc_client.invoke(
-                "createSharedFile", new Object[]{filename, time}, String.class);
-    }
-
-    /**
-     * {@inheritDoc}
      *
      * @param data {@inheritDoc}
      */

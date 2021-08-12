@@ -8,13 +8,5 @@ services:
       - "8080:8080"
     depends_on:
       - mongo
-    volumes:
-      - mark_data:/mark/data
   mongo:
     image: mongo:4.4
-    volumes:
-      - mark_mongodbdata:/data/db
-
-volumes:
-  mark_data:
-  mark_mongodbdata:

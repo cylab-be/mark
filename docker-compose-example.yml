@@ -7,8 +7,6 @@ services:
       - MARK_PORT=8080
     ports:
       - "8000:80"
-    volumes:
-      - mark_data:/mark/data
     depends_on:
       - mark
   mark:
@@ -17,15 +15,7 @@ services:
       dockerfile: Dockerfile-example
     environment:
       - MARK_MONGO_HOST=mark_mongo_1
-    volumes:
-      - mark_data:/mark/data
     depends_on:
       - mongo
   mongo:
     image: mongo:4.4
-    volumes:
-      - mark_mongodbdata:/data/db
-
-volumes:
-  mark_data:
-  mark_mongodbdata:

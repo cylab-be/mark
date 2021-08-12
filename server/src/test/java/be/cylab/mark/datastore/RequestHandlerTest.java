@@ -126,13 +126,6 @@ public class RequestHandlerTest extends TestCase {
 
     }
 
-    public void testCreateSharedFiles() throws Throwable
-    {
-        RequestHandler rq = getRequestHandler();
-        String file_path = rq.createSharedFile("testfile", 0);
-        assertEquals(true, new File(file_path).exists());
-    }
-
     private RequestHandler getRequestHandler() {
         String mongo_host = System.getenv(Config.ENV_MONGO_HOST);
         if (mongo_host == null) {

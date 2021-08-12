@@ -31,10 +31,6 @@ import java.util.Random;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,30 +55,6 @@ public class DummyClient implements ServerInterface {
     @Override
     public void testString(String data) throws Throwable {
 
-    }
-
-    @Override
-    public String createSharedFile(final String filename, final long time)
-            throws Throwable {
-        String figure_path = "";
-        //transform timestamp to create day folder for the figures
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date(time);
-        String formated_date = sf.format(date);
-        //create the folders to store the figure
-        File figure_folder = new File("/tmp/mark_figures/"
-                                    + formated_date
-                                    + "/");
-        figure_folder.mkdirs();
-        try {
-        //create the temporary figure file
-        File figure = File.createTempFile(filename, ".png",
-                        figure_folder);
-        figure_path = figure.getAbsolutePath();
-        } catch (IOException ex) {
-            System.out.println("Error creating shared file: " + ex.toString());
-        }
-        return figure_path;
     }
 
     @Override

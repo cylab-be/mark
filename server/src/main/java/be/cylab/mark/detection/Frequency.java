@@ -33,8 +33,9 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import be.cylab.mark.core.ServerInterface;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -199,26 +200,21 @@ public class Frequency implements DetectionAgentInterface {
         String figure_spectrum_path = createSpectrumFigure(freqs, values,
                 base_peak_freq,
                 computeThreshold(values),
-                event.getSubject().toString(), data[0].getTime(), si);
+                event.getSubject().toString(), data[0].getTime());
 
         String figure_smooth_spectrum_path = createSpectrumFigure(freqs,
                 smoothed_values, base_peak_freq,
                 smoothed_threshold,
                 "smoothing for " + event.getSubject().toString(),
-                data[0].getTime(), si);
+                data[0].getTime());
 
         String figure_timeseries_path = createTimeseriesFigure(time_bins,
                 start_time,
-                event.getSubject().toString(), si);
+                event.getSubject().toString());
 
         String figures = "Spectrum: " + figure_spectrum_path + "\n"
                         + "Smoothed: " + figure_smooth_spectrum_path + "\n"
                         + "Histogram: " + figure_timeseries_path + "\n";
-
-        ArrayList<String> figures_list = new ArrayList<>(Arrays.asList(
-                figure_spectrum_path,
-                figure_smooth_spectrum_path,
-                figure_timeseries_path));
         //generate report
         /*String freq_report = generateReport(
             "Found frequency peak for " + event.getSubject().toString()
@@ -241,7 +237,6 @@ public class Frequency implements DetectionAgentInterface {
         evidence.setLabel(dap.getLabel());
         evidence.setTime(data[data.length - 1].getTime());
         evidence.setReport(freq_report);
-        evidence.setFigures(figures_list);
         si.addEvidence(evidence);
     }
 
@@ -363,13 +358,12 @@ public class Frequency implements DetectionAgentInterface {
      * @param title
      * @param time
      * @return
-     * @throws Throwable
+     * @throws IOException
      */
     private String createTimeseriesFigure(
             final int[] time_bins,
             final long start_time,
-            final String title,
-            final ServerInterface si) throws Throwable {
+            final String title) throws IOException {
 
         XYSeries series = new XYSeries("Time Series");
         for (int i = 0; i < time_bins.length; i++) {
@@ -396,9 +390,15 @@ public class Frequency implements DetectionAgentInterface {
         XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();
         renderer.setShadowVisible(false);
 
-        String figure_path = si.createSharedFile("frequency_time_chart", 0);
-        ChartUtilities.saveChartAsPNG(new File(figure_path), chart, 1600, 1200);
-        return figure_path;
+        //create the folders to store the figure
+        File figure_path = new File("/tmp/mark_figures/");
+        figure_path.mkdirs();
+        //create the temporary figure file
+        File figure = File.createTempFile("frequency_time_chart", ".png",
+                        figure_path);
+        //load the chart into the figure file
+        ChartUtilities.saveChartAsPNG(figure, chart, 1600, 1200);
+        return figure.getAbsolutePath();
     }
 
     /**
@@ -406,16 +406,15 @@ public class Frequency implements DetectionAgentInterface {
      * Method for generating a graph from the data recovered from the database.
      * @param dataset
      * @param title
-     * @throws Throwable
+     * @throws IOException
      */
     private String createSpectrumFigure(final double[] freqs,
                             final double[] values,
                             final double lowest_frequency,
                             final double threshold,
                             final String title,
-                            final long time,
-                            final ServerInterface si)
-            throws Throwable {
+                            final long time)
+            throws IOException {
 
         final XYSeries series_average = new XYSeries("Threshold");
         series_average.add(freqs[0], threshold);
@@ -444,10 +443,22 @@ public class Frequency implements DetectionAgentInterface {
         NumberAxis domain = (NumberAxis) xyplot.getDomainAxis();
         domain.setRange(0, lowest_frequency * 20);
 
-        String figure_path = si.createSharedFile(
-                "frequency_spectrum_chart", time);
-        ChartUtilities.saveChartAsPNG(new File(figure_path), chart, 1600, 1200);
-        return figure_path;
+        //transform timestamp to create day folder for the figures
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date(time);
+        String formated_date = sf.format(date);
+        //create the folders to store the figure
+        File figure_path = new File("/tmp/mark_figures/"
+                                    + formated_date
+                                    + "/");
+        figure_path.mkdirs();
+        //create the temporary figure file
+        File figure = File.createTempFile("frequency_spectrum_chart", ".png",
+                        figure_path);
+        //load the chart into the figure file
+        ChartUtilities.saveChartAsPNG(figure, chart, 1600, 1200);
+        return figure.getAbsolutePath();
+
     }
 
     private double[] smooth(final double[] values) {
