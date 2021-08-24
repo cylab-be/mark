@@ -41,4 +41,16 @@ public interface ClientWrapperInterface extends ServerInterface {
      */
     File createSharedFile(String filename) throws IOException;
 
+    /**
+     * Convert a shared file into a URL (from mark-web).
+     *
+     * Can be used by detector to produce an HTML report with correct links.
+     *
+     * Ex: /mark/data/some_picture.png => /data/some_picture.png
+     *
+     * @param shared_file
+     * @return
+     */
+    String getURLFromFile(File shared_file);
+
 }

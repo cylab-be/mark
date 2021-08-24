@@ -247,6 +247,11 @@ public class DummyClient implements ClientWrapperInterface {
 
     @Override
     public File createSharedFile(String filename) throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return File.createTempFile("mark", filename);
+    }
+
+    @Override
+    public String getURLFromFile(File shared_file) {
+        return shared_file.getAbsolutePath();
     }
 }

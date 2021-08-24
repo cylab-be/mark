@@ -397,4 +397,17 @@ public final class ClientWrapper implements ClientWrapperInterface {
     public File createSharedFile(final String filename) throws IOException {
         return File.createTempFile("mark", filename, config.getDataDirectory());
     }
+
+    /**
+     * @@inheritDoc
+     * @param shared_file
+     * @return
+     */
+    @Override
+    public String getURLFromFile(final File shared_file) {
+        String data_path = config.getDataDirectory().getAbsolutePath();
+        String file_path = shared_file.getAbsolutePath();
+
+        return file_path.replace(data_path, "/data");
+    }
 }

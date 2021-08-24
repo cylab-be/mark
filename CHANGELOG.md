@@ -3,6 +3,10 @@
 ## Unreleased
 
 
+* **add volume to docker-compose files**
+[573ba0e6154a945](https://github.com/cylab/mark/commit/573ba0e6154a945) Thibault Debatty *2021-08-24 12:04:21*
+* **Created new class DetectionAgentConfig, new interface ClientWrapperInterface and added method to ClientWrapper to create File in shared data directory**
+[25f50d1361956f0](https://github.com/cylab/mark/commit/25f50d1361956f0) Thibault Debatty *2021-08-24 11:56:12*
 * **Reverted all changes done since 2.5.3, to be included to project via branch**
 [272bfabd48000f2](https://github.com/cylab/mark/commit/272bfabd48000f2) Georgi Nikolov *2021-08-12 12:15:39*
 * **Changed the directory to save figures in createSharedFiles() from "./data/" to "../data/" so it saves them in the global folder "mark" instead in the folder "lib" or "server"**

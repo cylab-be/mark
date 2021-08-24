@@ -34,8 +34,6 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -197,31 +195,28 @@ public class Frequency implements DetectionAgentInterface {
                 1.0);
         double score = fuzzy.determineMembership(relative_peak_value);
 
-        String figure_spectrum_path = createSpectrumFigure(freqs, values,
+        File spectrum_file = si.createSharedFile("spectrum.png");
+        String spectrum_url = si.getURLFromFile(spectrum_file);
+        createSpectrumFigure(freqs, values,
                 base_peak_freq,
                 computeThreshold(values),
-                event.getSubject().toString(), data[0].getTime());
+                event.getSubject().toString(),
+                spectrum_file);
 
-        String figure_smooth_spectrum_path = createSpectrumFigure(freqs,
+        File smooth_spectrum_file = si.createSharedFile("spectrum_smooth.png");
+        String smooth_url = si.getURLFromFile(spectrum_file);
+        createSpectrumFigure(freqs,
                 smoothed_values, base_peak_freq,
                 smoothed_threshold,
-                "smoothing for " + event.getSubject().toString(),
-                data[0].getTime());
+                "Smoothed : " + event.getSubject().toString(),
+                smooth_spectrum_file);
 
-        String figure_timeseries_path = createTimeseriesFigure(time_bins,
+        File timeseries_file = si.createSharedFile("timeseries.png");
+        String timeseries_url = si.getURLFromFile(timeseries_file);
+        createTimeseriesFigure(time_bins,
                 start_time,
-                event.getSubject().toString());
-
-        String figures = "Spectrum: " + figure_spectrum_path + "\n"
-                        + "Smoothed: " + figure_smooth_spectrum_path + "\n"
-                        + "Histogram: " + figure_timeseries_path + "\n";
-        //generate report
-        /*String freq_report = generateReport(
-            "Found frequency peak for " + event.getSubject().toString()
-                + "<br />with frequency " + min_freq_value + "\n"
-                + "= " + (1 / min_freq_value) + " seconds\n"
-                + "with score of: " + msf_result,
-            raw_data.length, figures, parameters);*/
+                event.getSubject().toString(),
+                timeseries_file);
 
         String freq_report =
             "Found frequency peak for " + event.getSubject().toString()
@@ -229,7 +224,9 @@ public class Frequency implements DetectionAgentInterface {
                 + "| interval: " + Math.round(1 / base_peak_freq)
                 + " seconds"
                 + "| score: " + score + "\n"
-                + figures;
+                + "<img src='" + spectrum_url + "'>"
+                + "<img src='" + smooth_url + "'>"
+                + "<img src='" + timeseries_url + "'>";
 
         Evidence evidence = new Evidence();
         evidence.setScore(score);
@@ -360,10 +357,11 @@ public class Frequency implements DetectionAgentInterface {
      * @return
      * @throws IOException
      */
-    private String createTimeseriesFigure(
+    private void createTimeseriesFigure(
             final int[] time_bins,
             final long start_time,
-            final String title) throws IOException {
+            final String title,
+            final File file) throws IOException {
 
         XYSeries series = new XYSeries("Time Series");
         for (int i = 0; i < time_bins.length; i++) {
@@ -390,15 +388,7 @@ public class Frequency implements DetectionAgentInterface {
         XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();
         renderer.setShadowVisible(false);
 
-        //create the folders to store the figure
-        File figure_path = new File("/tmp/mark_figures/");
-        figure_path.mkdirs();
-        //create the temporary figure file
-        File figure = File.createTempFile("frequency_time_chart", ".png",
-                        figure_path);
-        //load the chart into the figure file
-        ChartUtilities.saveChartAsPNG(figure, chart, 1600, 1200);
-        return figure.getAbsolutePath();
+        ChartUtilities.saveChartAsPNG(file, chart, 1600, 1200);
     }
 
     /**
@@ -408,12 +398,12 @@ public class Frequency implements DetectionAgentInterface {
      * @param title
      * @throws IOException
      */
-    private String createSpectrumFigure(final double[] freqs,
+    private void createSpectrumFigure(final double[] freqs,
                             final double[] values,
                             final double lowest_frequency,
                             final double threshold,
                             final String title,
-                            final long time)
+                            final File file)
             throws IOException {
 
         final XYSeries series_average = new XYSeries("Threshold");
@@ -443,22 +433,7 @@ public class Frequency implements DetectionAgentInterface {
         NumberAxis domain = (NumberAxis) xyplot.getDomainAxis();
         domain.setRange(0, lowest_frequency * 20);
 
-        //transform timestamp to create day folder for the figures
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date(time);
-        String formated_date = sf.format(date);
-        //create the folders to store the figure
-        File figure_path = new File("/tmp/mark_figures/"
-                                    + formated_date
-                                    + "/");
-        figure_path.mkdirs();
-        //create the temporary figure file
-        File figure = File.createTempFile("frequency_spectrum_chart", ".png",
-                        figure_path);
-        //load the chart into the figure file
-        ChartUtilities.saveChartAsPNG(figure, chart, 1600, 1200);
-        return figure.getAbsolutePath();
-
+        ChartUtilities.saveChartAsPNG(file, chart, 1600, 1200);
     }
 
     private double[] smooth(final double[] values) {
