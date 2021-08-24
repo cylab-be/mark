@@ -6,7 +6,16 @@ services:
       - MARK_MONGO_HOST=mark_mongo_1
     ports:
       - "8080:8080"
+    volumes:
+      - data:/mark/data
     depends_on:
       - mongo
   mongo:
     image: mongo:4.4
+    volumes:
+      - mongo:/data/db
+
+volumes:
+  data:
+  mongo:
+
