@@ -24,6 +24,7 @@
 
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +34,6 @@ import java.util.LinkedList;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
-import be.cylab.mark.core.ServerInterface;
 
 /**
  * Detection agent that runs an external command.
@@ -79,7 +79,7 @@ public class Run implements DetectionAgentInterface {
     public final void analyze(
             final Event event,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         LinkedList<String> command = new LinkedList<>();
         command.add(profile.getParameter(KEY_COMMAND));

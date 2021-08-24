@@ -23,11 +23,11 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
-import be.cylab.mark.core.ServerInterface;
 
 /**
  * A simple data counter. This detector counts the number of data records
@@ -59,7 +59,7 @@ public final class Counter implements DetectionAgentInterface {
     public void analyze(
             final Event event,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         long time_window = profile.getParameterInt(
                 "time_window", DEFAULT_TIME_WINDOW);

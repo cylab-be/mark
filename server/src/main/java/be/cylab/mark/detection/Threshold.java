@@ -23,11 +23,11 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
-import be.cylab.mark.core.ServerInterface;
 import java.util.Map;
 
 /**
@@ -58,7 +58,7 @@ public class Threshold implements DetectionAgentInterface {
     public final void analyze(
             final Event event,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         Map<String, String> subject = event.getSubject();
 

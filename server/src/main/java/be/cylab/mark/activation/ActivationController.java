@@ -264,10 +264,15 @@ public final class ActivationController extends SafeThread
                     "Trigger detector {} for {}",
                     profile.getClassName(),
                     event.getSubject().toString());
+
+
+            DetectionAgentConfig agent_config =
+                    DetectionAgentConfig.fromConfig(config);
+
             executor.submit(
                     new DetectionAgentContainer(
                             event,
-                            config.getDatastoreUrl(),
+                            agent_config,
                             profile,
                             profile.createInstance()));
 

@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DetectionAgentProfile;
 import java.net.MalformedURLException;
@@ -30,7 +31,8 @@ import java.net.URL;
 import java.util.Random;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.ServerInterface;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,7 @@ import org.bson.types.ObjectId;
  *
  * @author Thibault Debatty
  */
-public class DummyClient implements ServerInterface {
+public class DummyClient implements ClientWrapperInterface {
 
     private final List<Evidence> evidences = new LinkedList<>();
     private final List<RawData> data = new LinkedList<>();
@@ -240,6 +242,11 @@ public class DummyClient implements ServerInterface {
 
     @Override
     public DataAgentProfile[] sources() throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public File createSharedFile(String filename) throws IOException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

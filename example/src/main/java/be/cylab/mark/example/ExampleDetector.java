@@ -1,12 +1,12 @@
 package be.cylab.mark.example;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import java.util.Random;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.ServerInterface;
 
 /**
  * Dummy detection agent that reads some data from datastore and writes
@@ -20,7 +20,7 @@ public class ExampleDetector implements DetectionAgentInterface {
     public final void analyze(
             final Event ev,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         long now = System.currentTimeMillis();
         long since = now - 1000 * 300;

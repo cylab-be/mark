@@ -24,13 +24,13 @@
 
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import java.util.HashMap;
 import java.util.Map;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
-import be.cylab.mark.core.ServerInterface;
 
 /**
  *
@@ -45,7 +45,7 @@ public final class Average implements DetectionAgentInterface {
     public void analyze(
             final Event event,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         //check for parameters set through the config file
         int min_denominator = DEFAULT_MIN_DENOMINATOR;

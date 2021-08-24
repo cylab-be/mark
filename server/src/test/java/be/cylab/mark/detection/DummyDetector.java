@@ -1,9 +1,9 @@
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
-import be.cylab.mark.core.ServerInterface;
 
 /**
  * Dummy detection agent, which does not try to read or write to the datastore.
@@ -19,7 +19,7 @@ public class DummyDetector implements DetectionAgentInterface {
     public void analyze(
             final Event event,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         Thread.sleep(SLEEP_TIME);
     }

@@ -24,11 +24,13 @@
 package be.cylab.mark.activation;
 
 import be.cylab.mark.client.Client;
+import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.ServerInterface;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,23 +48,25 @@ import org.bson.types.ObjectId;
  *
  * @author tibo
  */
-public final class ClientWrapper implements ServerInterface {
+public final class ClientWrapper implements ClientWrapperInterface {
 
     private final DetectionAgentProfile profile;
     private final Client client;
     private final JsonRequestListener request_listener;
     private final ArrayList<String> requests = new ArrayList<>();
+    private final DetectionAgentConfig config;
 
     /**
      *
-     * @param server_url
+     * @param config
      * @param profile
      */
     public ClientWrapper(
-            final URL server_url,
+            final DetectionAgentConfig config,
             final DetectionAgentProfile profile) {
 
-        this.client = new Client(server_url);
+        this.config = config;
+        this.client = new Client(config.getServerUrl());
         this.profile = profile;
         this.request_listener = new JsonRequestListener();
         this.client.getJsonRpcClient().setRequestListener(request_listener);
@@ -382,5 +386,15 @@ public final class ClientWrapper implements ServerInterface {
     public DataAgentProfile[] sources() throws Throwable {
 
         return client.sources();
+    }
+
+    /**
+     * @@inheritDoc
+     * @param filename
+     * @return
+     */
+    @Override
+    public File createSharedFile(final String filename) throws IOException {
+        return File.createTempFile("mark", filename, config.getDataDirectory());
     }
 }

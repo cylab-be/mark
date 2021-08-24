@@ -23,6 +23,7 @@
  */
 package be.cylab.mark.detection;
 
+import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DetectionAgentInterface;
 import java.io.File;
 import java.util.Collections;
@@ -32,7 +33,6 @@ import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import be.cylab.mark.core.ServerInterface;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -129,7 +129,7 @@ public class Frequency implements DetectionAgentInterface {
     @Override
     public final void analyze(final Event event,
             final DetectionAgentProfile dap,
-            final ServerInterface si) throws Throwable {
+            final ClientWrapperInterface si) throws Throwable {
 
         //fetch any needed parameters from the configuration file
         initParams(dap);

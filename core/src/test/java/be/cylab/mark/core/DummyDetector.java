@@ -14,7 +14,7 @@ public class DummyDetector implements DetectionAgentInterface {
     public void analyze(
             final Event ev,
             final DetectionAgentProfile profile,
-            final ServerInterface datastore) throws Throwable {
+            final ClientWrapperInterface datastore) throws Throwable {
 
         Thread.sleep(SLEEP_TIME);
     }

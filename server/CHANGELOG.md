@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.5.3
+
+
+* **fix filesource wait time**
+[04033bf022cb5b4](https://github.com/cylab/mark/commit/04033bf022cb5b4) Thibault Debatty *2021-07-15 12:34:47*
+
 ## 2.5.2
 
 

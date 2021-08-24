@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Thibault Debatty.
+ * Copyright 2021 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package be.cylab.mark.core;
 
-
+import java.io.File;
+import java.io.IOException;
 
 /**
- *
- * @author Thibault Debatty
+ * List all methods that will be accessible by detection agents.
+ * @author tibo
  */
-public interface DetectionAgentInterface {
+public interface ClientWrapperInterface extends ServerInterface {
 
     /**
-     * Perform the analysis.
-     *
-     * @param event the event (label, subject, time) that triggered this
-     * detector
-     * @param profile
-     * @param datastore
-     * @throws Throwable if an error occured during analysis
+     * Create a File in the data directory, which is actually a volume shared
+     * between all containers.
+     * @param filename
+     * @return
+     * @throws java.io.IOException if we cannot create the file
      */
-    void analyze(
-            Event event,
-            DetectionAgentProfile profile,
-            ClientWrapperInterface datastore) throws Throwable;
+    File createSharedFile(String filename) throws IOException;
 
 }

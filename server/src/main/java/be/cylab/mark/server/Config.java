@@ -113,6 +113,15 @@ public final class Config {
     private String log_directory = DEFAULT_LOG_DIRECTORY;
     private static final String DEFAULT_LOG_DIRECTORY = "./log";
 
+    /**
+     * data directory path.
+     * If running using Docker (or Kubernetes), there should be a volume
+     * mounted at this location in all containers.
+     */
+    private String data_directory = DEFAULT_DATA_DIRECTORY;
+    private static final String DEFAULT_DATA_DIRECTORY = "./data";
+
+
     private String executor_class = ThreadsExecutor.class.getCanonicalName();
 
     /**
@@ -179,6 +188,7 @@ public final class Config {
     public static Config getTestConfig() {
         Config conf = new Config();
         conf.update_interval = 1;
+        conf.data_directory = "/tmp";
         conf.mongo_clean = true;
         conf.ignite_autodiscovery = false;
         conf.log_directory = "/tmp";
@@ -514,6 +524,43 @@ public final class Config {
     public void setLogDirectory(final String log_directory) {
         this.log_directory = log_directory;
     }
+
+    /**
+     *
+     * @return
+     * @throws java.io.FileNotFoundException if the director is invalid or does
+     * not exit
+     */
+    public File getDataDirectory() throws FileNotFoundException {
+        File data_dir_file = new File(data_directory);
+
+        if (!data_dir_file.isAbsolute()) {
+            // modules is a relative path...
+            if (path == null) {
+                throw new FileNotFoundException(
+                        "data directory is not valid (not a directory "
+                        + "or not a valid path)");
+            }
+            data_dir_file = new File(path.toURI().resolve(data_directory));
+        }
+
+        if (!data_dir_file.isDirectory()) {
+            throw new FileNotFoundException(
+                    "data directory is not valid (not a directory "
+                    + "or not a valid path)");
+        }
+
+        return data_dir_file;
+    }
+
+    /**
+     *
+     * @param data_directory
+     */
+    public void setDataDirectory(final String data_directory) {
+        this.data_directory = data_directory;
+    }
+
 
     /**
      *

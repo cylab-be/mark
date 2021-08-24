@@ -24,12 +24,7 @@
 package be.cylab.mark.integration;
 
 import be.cylab.mark.activation.ActivationController;
-import be.cylab.mark.activation.ExecutorInterface;
-import be.cylab.mark.core.DetectionAgentProfile;
-import be.cylab.mark.datastore.Datastore;
 import be.cylab.mark.server.BillingModule;
-import be.cylab.mark.server.Config;
-import be.cylab.mark.server.DataSourcesController;
 import be.cylab.mark.server.Server;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
