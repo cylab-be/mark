@@ -38,9 +38,10 @@ public class ExampleDetector implements DetectionAgentInterface {
         Random rand = new Random();
 
         // and create an illustration image
+        // see https://cylab.be/blog/166/mark-add-images-to-your-detector
+        // for a tutorial
         File file = datastore.createSharedFile("image.png");
         writeImage(1200, 600, file);
-
         // will be something like /data/123456_image.png
         String file_url = datastore.getURLFromFile(file);
 
