@@ -204,7 +204,7 @@ public class Frequency implements DetectionAgentInterface {
                 spectrum_file);
 
         File smooth_spectrum_file = si.createSharedFile("spectrum_smooth.png");
-        String smooth_url = si.getURLFromFile(spectrum_file);
+        String smooth_url = si.getURLFromFile(smooth_spectrum_file);
         createSpectrumFigure(freqs,
                 smoothed_values, base_peak_freq,
                 smoothed_threshold,
