@@ -326,6 +326,11 @@ public class Client implements ServerInterface {
     }
 
     @Override
+    public final void restart() throws Throwable {
+        json_rpc_client.invoke("restart", null);
+    }
+
+    @Override
     public final RawData[] findLastRawData() throws Throwable {
         return json_rpc_client.invoke("findLastRawData", null, RawData[].class);
     }

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2017 Thibault Debatty.
+ * Copyright 2021 tibo.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,45 +23,45 @@
  */
 package be.cylab.mark.data;
 
-import be.cylab.mark.core.DataAgentProfile;
 import be.cylab.mark.core.DataAgentInterface;
-import be.cylab.mark.client.Client;
-import be.cylab.mark.server.Config;
+import be.cylab.mark.core.DataAgentProfile;
+import be.cylab.mark.core.ServerInterface;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author Thibault Debatty
+ * Wrap an data source implementation to make it runnable by a classical
+ * thread.
+ * @author tibo
  */
-public class DataAgentContainer extends Thread {
+public class SourceWrapper implements Runnable {
 
-    private final Config config;
+    private final DataAgentInterface source;
     private final DataAgentProfile profile;
+    private final ServerInterface client;
 
     /**
-     *
+     * Wrap an data source implementation to make it runnable by a classical
+     * thread.
+     * @param source
      * @param profile
-     * @param config
+     * @param client
      */
-    public DataAgentContainer(
-            final DataAgentProfile profile, final Config config) {
+    public SourceWrapper(
+            final DataAgentInterface source,
+            final DataAgentProfile profile,
+            final ServerInterface client) {
+        this.source = source;
         this.profile = profile;
-        this.config = config;
+        this.client = client;
     }
 
     @Override
     public final void run() {
         try {
-            DataAgentInterface source = profile.createInstance();
-            source.run(
-                    profile,
-                    new Client(
-                            config.getDatastoreUrl()));
-
+            this.source.run(profile, client);
         } catch (Throwable ex) {
-            LoggerFactory.getLogger(
-                    DataAgentContainer.class.getName()).error(
-                    "Data agent failed to run!", ex);
+            LoggerFactory.getLogger(SourceWrapper.class).error(
+                    "Failed to start data source: " + ex.getMessage());
         }
     }
 

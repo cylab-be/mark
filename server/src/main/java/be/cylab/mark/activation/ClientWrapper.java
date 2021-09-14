@@ -410,4 +410,9 @@ public final class ClientWrapper implements ClientWrapperInterface {
 
         return file_path.replace(data_path, "/data");
     }
+
+    @Override
+    public void restart() throws Throwable {
+        client.restart();
+    }
 }

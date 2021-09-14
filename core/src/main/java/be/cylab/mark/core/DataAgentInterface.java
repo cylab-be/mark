@@ -39,4 +39,9 @@ public interface DataAgentInterface {
     void run(DataAgentProfile profile, ServerInterface datastore)
             throws Throwable;
 
+    /**
+     * So we can stop data agents correctly (without killing the thread).
+     */
+    void stop();
+
 }

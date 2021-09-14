@@ -58,6 +58,7 @@ public class FileSource implements DataAgentInterface {
     private static final double DEFAULT_SPEED = Double.MAX_VALUE;
 
     private Pattern pattern;
+    private volatile boolean must_stop = false;
 
     /**
      *
@@ -89,7 +90,7 @@ public class FileSource implements DataAgentInterface {
         String line = null;
 
         while ((line = in.readLine()) != null) {
-            if (Thread.currentThread().isInterrupted()) {
+            if (must_stop) {
                 break;
             }
 
@@ -153,5 +154,10 @@ public class FileSource implements DataAgentInterface {
 
         data.setData(line);
         return data;
+    }
+
+    @Override
+    public final void stop() {
+        this.must_stop = true;
     }
 }

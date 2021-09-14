@@ -254,4 +254,9 @@ public class DummyClient implements ClientWrapperInterface {
     public String getURLFromFile(File shared_file) {
         return shared_file.getAbsolutePath();
     }
+
+    @Override
+    public void restart() throws Throwable {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 }

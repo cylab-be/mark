@@ -46,6 +46,7 @@ public class ExampleDataSource implements DataAgentInterface {
     private final String[] names =
             {"Tibo", "Wim", "Georgi", "Alex", "Fred", "Paloma", "Zac"};
     private final Random rand = new Random();
+    private volatile boolean must_stop = false;
 
     @Override
     public final void run(
@@ -56,6 +57,10 @@ public class ExampleDataSource implements DataAgentInterface {
         int i = 0;
 
         while (true) {
+
+            if (must_stop) {
+                break;
+            }
 
             Subject subject = new Subject(
                     names[rand.nextInt(names.length)]);
@@ -74,6 +79,11 @@ public class ExampleDataSource implements DataAgentInterface {
                 break;
             }
         }
+    }
+
+    @Override
+    public final void stop() {
+        this.must_stop = true;
     }
 
 }

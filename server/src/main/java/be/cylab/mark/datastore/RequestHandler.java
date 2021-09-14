@@ -79,6 +79,10 @@ public final class RequestHandler implements ServerInterface {
         this.parser = parser;
         this.gridfsbucket = GridFSBuckets.create(mongodb, COLLECTION_FILES);
 
+        initialize(mongodb);
+    }
+
+    private void initialize(final MongoDatabase mongodb) {
         // Create indexes for LABEL and TIME
         Document index = new Document(MongoParser.LABEL, 1);
         mongodb.getCollection(COLLECTION_DATA).createIndex(index);
@@ -484,6 +488,16 @@ public final class RequestHandler implements ServerInterface {
     @Override
     public void reload() {
         this.activation_controller.reload();
+    }
+
+    @Override
+    public void restart() throws InterruptedException {
+        sources.stop();
+
+        this.mongodb.drop();
+        this.initialize(mongodb);
+
+        sources.start();
     }
 
     @Override

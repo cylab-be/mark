@@ -17,6 +17,8 @@ services:
       dockerfile: Dockerfile-example
     environment:
       - MARK_MONGO_HOST=mark_mongo_1
+    ports:
+      - "8080:8080"
     volumes:
       - data:/mark/data
     depends_on:

@@ -237,6 +237,12 @@ public interface ServerInterface {
      */
     void reload() throws Throwable;
 
+    /**
+     * Dangerous! Restart the server: wipe the DB and restart the data agents.
+     * @throws Throwable if something went wrong
+     */
+    void restart() throws Throwable;
+
 
     /**
      * Get the last previous status objects.
