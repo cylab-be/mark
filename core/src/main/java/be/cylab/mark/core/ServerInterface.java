@@ -98,6 +98,14 @@ public interface ServerInterface {
     Evidence[] findEvidenceSince(String label, Map<String, String> subject,
             long time) throws Throwable;
 
+    /**
+     *
+     * @param label
+     * @param time
+     * @return
+     * @throws Throwable if something goes wrong
+     */
+    Evidence[] findEvidenceSince(String label, long time) throws Throwable;
 
     /**
      * Find the evidences with highest score, for given label and for all
