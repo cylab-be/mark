@@ -288,6 +288,21 @@ public class Client implements ServerInterface {
         return evidences;
     }
 
+    @Override
+    public final Evidence[] findEvidenceSince(
+            final String label, final long time)
+            throws Throwable {
+
+        Evidence[] evidences = json_rpc_client.invoke(
+                "findEvidenceSince",
+                new Object[]{label, time},
+                Evidence[].class);
+
+        Arrays.sort(evidences, new EvidenceTimeComparator());
+
+        return evidences;
+    }
+
     /**
      * Get the internal json_rpc_client.
      *
