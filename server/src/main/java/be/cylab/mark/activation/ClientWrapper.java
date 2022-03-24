@@ -192,6 +192,20 @@ public final class ClientWrapper implements ClientWrapperInterface {
     /**
      *
      * @param label
+     * @param time
+     * @return
+     * @throws Throwable
+     */
+    @Override
+    public Evidence[] findEvidenceSince(
+            final String label, final long time)
+            throws Throwable {
+        return client.findEvidenceSince(label, time);
+    }
+
+    /**
+     *
+     * @param label
      * @return
      * @throws Throwable
      */
