@@ -36,6 +36,7 @@ import be.cylab.mark.server.DataSourcesController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Arrays;
 import org.bson.Document;
 
 /**
@@ -86,6 +87,25 @@ public class RequestHandlerTest extends TestCase {
 
         evidences = rq.findEvidenceSince(label, subject, 123500);
         assertEquals(0, evidences.length);
+        
+        //test FindEvidenceSince(label, time)
+        DummySubject subject2 = new DummySubject("test2");
+
+        ev.setSubject(subject2);
+        ev.setTime(123456);
+        rq.addEvidence(ev);
+
+        ev.setTime(123000);
+        rq.addEvidence(ev);
+
+        Evidence[] evidences2 = rq.findEvidenceSince(label, 0);
+        assertEquals(4, evidences2.length);
+
+        evidences2 = rq.findEvidenceSince(label, 123400);
+        assertEquals(2, evidences2.length);
+
+        evidences2 = rq.findEvidenceSince(label, 123500);
+        assertEquals(0, evidences2.length);
     }
 
     public void testFindLastRawData() throws Throwable
