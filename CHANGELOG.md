@@ -3,6 +3,32 @@
 ## Unreleased
 
 
+* **Updated the following dependencies: log4j-slf4j-impl [2.15.0 => 2.17.1], log4j-api [2.15.0=>2.17.1], log4j-core [2.15.0=>2.17.1] for vulnerability reasons**
+[0eaf34cea810652](https://github.com/cylab/mark/commit/0eaf34cea810652) Georgi Nikolov *2022-02-09 09:36:49*
+* **Updated the following libraries: slf4j-api [1.7.22=>], log4j-slf4j-impl [2.13.3=>2.15.0], log4j-api [2.13.3=>2.15.0], log4j-core [2.13.3=>2.15.0]; following discovered vulnerabilities with earlier versions of log4j**
+[2435e97ffe50281](https://github.com/cylab/mark/commit/2435e97ffe50281) Georgi Nikolov *2021-12-13 10:25:32*
+* **data sources must implement stop() + beter way of stopping/starting data sources + implemented 'restart' call**
+[8b8b1610a52b558](https://github.com/cylab/mark/commit/8b8b1610a52b558) Thibault Debatty *2021-09-14 10:09:33*
+* **Changed the smoothed figure path to be added to report, following issue #98**
+[dd50c67d993145b](https://github.com/cylab/mark/commit/dd50c67d993145b) Georgi Nikolov *2021-09-13 08:35:10*
+* **bump mark-web to 1.5.1 for mark.kube.cylab.be**
+[52b23946bc2909a](https://github.com/cylab/mark/commit/52b23946bc2909a) Thibault Debatty *2021-08-25 14:04:00*
+* **add data directory to standalone zip file, so our integration tests can run**
+[68c53149f1bf5f1](https://github.com/cylab/mark/commit/68c53149f1bf5f1) Thibault Debatty *2021-08-25 12:49:18*
+* **add reference to the blog post**
+[b7935d88677ecee](https://github.com/cylab/mark/commit/b7935d88677ecee) Thibault Debatty *2021-08-25 12:28:57*
+* **example detector now creates an illusation image, as a demo ...**
+[ee22bd2e429b540](https://github.com/cylab/mark/commit/ee22bd2e429b540) Thibault Debatty *2021-08-25 12:22:30*
+* **bump mark-web to 1.5.1 (fix redis cache)**
+[685e8a0bf34993c](https://github.com/cylab/mark/commit/685e8a0bf34993c) Thibault Debatty *2021-08-25 12:22:02*
+
+## 2.6.0
+
+
+* **test ClientWrapper implementation**
+[f3570f4539d622f](https://github.com/cylab/mark/commit/f3570f4539d622f) Thibault Debatty *2021-08-24 13:33:23*
+* **add ClientWrapper method to get URL of a shared file, plus test in Frequency detector**
+[18c3c5b290503ef](https://github.com/cylab/mark/commit/18c3c5b290503ef) Thibault Debatty *2021-08-24 13:10:10*
 * **add volume to docker-compose files**
 [573ba0e6154a945](https://github.com/cylab/mark/commit/573ba0e6154a945) Thibault Debatty *2021-08-24 12:04:21*
 * **Created new class DetectionAgentConfig, new interface ClientWrapperInterface and added method to ClientWrapper to create File in shared data directory**
