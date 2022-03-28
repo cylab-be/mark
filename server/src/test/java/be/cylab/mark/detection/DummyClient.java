@@ -199,6 +199,12 @@ public class DummyClient implements ClientWrapperInterface {
     }
 
     @Override
+    public Evidence[] findEvidenceSince(long time)
+            throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void pause() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
