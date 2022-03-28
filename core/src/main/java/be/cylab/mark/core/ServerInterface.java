@@ -88,7 +88,8 @@ public interface ServerInterface {
             throws Throwable;
 
     /**
-     *
+     * Find all evidences for a specific detector and specific subject since
+     * a given date.
      * @param label
      * @param subject
      * @param time
@@ -99,13 +100,21 @@ public interface ServerInterface {
             long time) throws Throwable;
 
     /**
-     *
+     * Find all evidences for a specific detector since a given date.
      * @param label
      * @param time
      * @return
      * @throws Throwable if something goes wrong
      */
     Evidence[] findEvidenceSince(String label, long time) throws Throwable;
+
+    /**
+     * Find all evidences produced since a given date.
+     * @param time
+     * @return
+     * @throws Throwable if something goes wrong
+     */
+    Evidence[] findEvidenceSince(long time) throws Throwable;
 
     /**
      * Find the evidences with highest score, for given label and for all
