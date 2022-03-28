@@ -480,6 +480,19 @@ public final class RequestHandler implements ServerInterface {
         return this.parseEvidences(documents);
     }
 
+    @Override
+    public Evidence[] findEvidenceSince(final long time)
+            throws Throwable {
+        Document query = new Document();
+        query.append(MongoParser.TIME, new BasicDBObject("$gt", time));
+
+        FindIterable<Document> documents = mongodb
+                .getCollection(COLLECTION_EVIDENCE)
+                .find(query);
+
+        return this.parseEvidences(documents);
+    }
+
     private Evidence[] parseEvidences(final FindIterable<Document> documents) {
         List<Evidence> evidences = new ArrayList<>();
 
