@@ -3,6 +3,16 @@
 ## Unreleased
 
 
+* **Added a unit test for the findEvidenceSince(label, time) method**
+[25519e3e67b8ec4](https://github.com/cylab/mark/commit/25519e3e67b8ec4) Georgi Nikolov *2022-03-24 08:25:16*
+* **Implemented the findEvidenceSince(label,time) method for the ClientWrapper and RequestHandler classes**
+[7bdfa7108153232](https://github.com/cylab/mark/commit/7bdfa7108153232) Georgi Nikolov *2022-03-24 08:24:37*
+* **Implemented the findEvidenceSince(label, time) method for the Client class**
+[1bbce533b297afe](https://github.com/cylab/mark/commit/1bbce533b297afe) Georgi Nikolov *2022-03-24 08:23:56*
+* **Added new method to the ServerInterface: findEvidenceSince(label, time)**
+[2854ea857bb3eb6](https://github.com/cylab/mark/commit/2854ea857bb3eb6) Georgi Nikolov *2022-03-24 08:23:32*
+* **update to the CHANGELOG**
+[dfe70ae35ccad14](https://github.com/cylab/mark/commit/dfe70ae35ccad14) Georgi Nikolov *2022-03-24 08:23:18*
 * **Updated the following dependencies: log4j-slf4j-impl [2.15.0 => 2.17.1], log4j-api [2.15.0=>2.17.1], log4j-core [2.15.0=>2.17.1] for vulnerability reasons**
 [0eaf34cea810652](https://github.com/cylab/mark/commit/0eaf34cea810652) Georgi Nikolov *2022-02-09 09:36:49*
 * **Updated the following libraries: slf4j-api [1.7.22=>], log4j-slf4j-impl [2.13.3=>2.15.0], log4j-api [2.13.3=>2.15.0], log4j-core [2.13.3=>2.15.0]; following discovered vulnerabilities with earlier versions of log4j**
