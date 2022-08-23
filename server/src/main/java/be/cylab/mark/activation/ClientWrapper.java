@@ -217,6 +217,18 @@ public final class ClientWrapper implements ClientWrapperInterface {
 
     /**
      *
+     * @param period
+     * @param interval
+     * @throws Throwable
+     */
+    @Override
+    public Evidence[][] findEvidenceForPeriodAndInterval(final int period,
+            final int interval) throws Throwable {
+        return client.findEvidenceForPeriodAndInterval(period, interval);
+    }
+
+    /**
+     *
      * @param label
      * @return
      * @throws Throwable

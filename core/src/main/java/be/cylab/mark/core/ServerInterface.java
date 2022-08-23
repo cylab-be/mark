@@ -171,6 +171,17 @@ public interface ServerInterface {
     Evidence[] findLastEvidences(String label, Map<String, String> subject)
             throws Throwable;
 
+    /**
+     * Find all evidences during a specific period, return information on how
+     * many evidences were produced by specific agent for a given time.
+     *
+     * @param period
+     * @param interval
+     * @return
+     * @throws Throwable if an error occured
+     */
+    Evidence[][] findEvidenceForPeriodAndInterval(int period, int interval)
+            throws Throwable;
 
     /**
      * get value from cache represented by a map.

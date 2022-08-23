@@ -317,6 +317,16 @@ public class Client implements ServerInterface {
         return evidences;
     }
 
+    @Override
+    public final Evidence[][] findEvidenceForPeriodAndInterval(final int period,
+            final int interval) throws Throwable {
+
+        return json_rpc_client.invoke(
+                "findEvidenceStatusInPeriod",
+                new Object[]{period, interval},
+                Evidence[][].class);
+    }
+
     /**
      * Get the internal json_rpc_client.
      *
