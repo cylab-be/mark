@@ -126,6 +126,37 @@ public class RequestHandlerTest extends TestCase {
         assertEquals(0, evidences3.length);
     }
 
+    public void testFindEvidenceForPeriodAndInterval() throws Throwable
+    {
+        RequestHandler rq = getRequestHandler();
+
+        long current_time = System.currentTimeMillis();
+
+        //test for a period of 1 day (24hours) and an interval of 1 hour
+        for (int i = 0; i < 24; i++) {
+            Evidence ev = new Evidence();
+            ev.setLabel("test.label");
+            ev.setReport("Some report...");
+            ev.setScore(0.99);
+            ev.setSubject(new DummySubject("test"));
+            ev.setTime(current_time - (3600 * i) * 1000);
+            rq.addEvidence(ev);
+        }
+
+        Evidence[][] evidences = rq.findEvidenceForPeriodAndInterval(86400, 3600);
+
+        assertEquals(24, evidences.length);
+        for (Evidence[] evidence : evidences) {
+            assertEquals(1, evidence.length);
+        }
+        
+        //test for a period of 1 hour and an interval of 10 min
+       
+        evidences = rq.findEvidenceForPeriodAndInterval(3600, 600);
+        assertEquals(6, evidences.length);
+        assertEquals(1, evidences[5].length);
+    }
+
     public void testFindLastRawData() throws Throwable
     {
         RequestHandler rq = getRequestHandler();

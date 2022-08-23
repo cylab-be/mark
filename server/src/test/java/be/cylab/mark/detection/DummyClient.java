@@ -205,6 +205,12 @@ public class DummyClient implements ClientWrapperInterface {
     }
 
     @Override
+    public Evidence[][] findEvidenceForPeriodAndInterval(int period,
+            int interval) throws Throwable {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
     public void pause() throws Throwable {
         throw new UnsupportedOperationException("Not supported yet.");
     }
