@@ -3,6 +3,16 @@
 ## Unreleased
 
 
+* **Implemented the findEvidenceSince(time) method for the Unit tests**
+[984e8c09d83ba7e](https://github.com/cylab/mark/commit/984e8c09d83ba7e) Georgi Nikolov *2022-03-28 11:36:56*
+* **implemented the findEvidenceSince(time) method as defined in the ServerInterface, fetch all evidences produced by all agents since a given time**
+[0bed44ee50261f9](https://github.com/cylab/mark/commit/0bed44ee50261f9) Georgi Nikolov *2022-03-28 11:36:25*
+* **Implemented the findEvidenceSince(time) method for the Client as defined in the ServerInterface**
+[17157f8ee7b82bc](https://github.com/cylab/mark/commit/17157f8ee7b82bc) Georgi Nikolov *2022-03-28 11:33:00*
+* **Added a method findEvidenceSince(time) that gets all evidences for all detectors since a given timestamp**
+[63b54de1e406aec](https://github.com/cylab/mark/commit/63b54de1e406aec) Georgi Nikolov *2022-03-28 11:32:25*
+* **Update to CHANGELOG**
+[f14f19714415d09](https://github.com/cylab/mark/commit/f14f19714415d09) Georgi Nikolov *2022-03-28 11:32:12*
 * **Added a unit test for the findEvidenceSince(label, time) method**
 [25519e3e67b8ec4](https://github.com/cylab/mark/commit/25519e3e67b8ec4) Georgi Nikolov *2022-03-24 08:25:16*
 * **Implemented the findEvidenceSince(label,time) method for the ClientWrapper and RequestHandler classes**
