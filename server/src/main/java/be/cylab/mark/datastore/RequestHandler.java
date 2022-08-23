@@ -643,6 +643,40 @@ public final class RequestHandler implements ServerInterface {
     }
 
     @Override
+    public Evidence[][] findEvidenceForPeriodAndInterval(
+            final int period, final int interval)
+            throws Throwable {
+        //define the start and end limit
+        long end_time = System.currentTimeMillis();
+        long start_time = end_time - 1000 * period;
+        //create the bins where the evidences will be stored
+        int bin_size = period / interval;
+        LinkedList<Evidence>[] bins = new LinkedList[bin_size];
+        //get all the evidences since the starting time
+        Evidence[] evidences = findEvidenceSince(start_time);
+        //go over the evidences and add them to the correct bin
+        for (Evidence ev : evidences) {
+            long position = (ev.getTime() - start_time) / (interval * 1000);
+            //check if an entry in the bucket already exist
+            if (bins[(int) position] == null) {
+                bins[(int) position] = new LinkedList<>();
+            }
+            //add the evidence to the bin
+            bins[(int) position].add(ev);
+        }
+        //transform the bins to array of arrays for better readability
+        Evidence[][] result = new Evidence[bins.length][];
+        for (int i = 0; i < bins.length; i++) {
+            if (bins[i] != null) {
+                Object[] obj_array = bins[i].toArray();
+                result[i] = Arrays.copyOf(obj_array,
+                        obj_array.length, Evidence[].class);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public DataAgentProfile[] sources() throws Throwable {
         List<DataAgentProfile> profiles = sources.getProfiles();
         return profiles.toArray(
