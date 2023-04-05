@@ -7,6 +7,7 @@ version: '2.0'
 services:
   mark-web:
     image: cylab/mark-web:1.5.1
+    restart: "unless-stopped"
     environment:
       - MARK_HOST=mark
       - MARK_PORT=8080
@@ -26,6 +27,7 @@ services:
       - traefik.http.routers.mark.tls.certresolver=letsencrypt
   mark:
     image: $CI_REGISTRY_IMAGE/example:$CI_COMMIT_SHORT_SHA
+    restart: "unless-stopped"
     environment:
       - MARK_MONGO_HOST=mongo
     volumes:
@@ -34,6 +36,7 @@ services:
       - mongo
   mongo:
     image: mongo:4.4
+    restart: "unless-stopped"
     volumes:
       - mark-mongo:/data/db
 
