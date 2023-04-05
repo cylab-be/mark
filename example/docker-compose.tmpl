@@ -16,6 +16,10 @@ services:
       - mark-data:/var/www/html/storage/app/data
     depends_on:
       - mark
+    labels:
+      - traefik.http.routers.mark.rule=Host(`mark.play.cylab.be`)
+      - traefik.http.routers.mark.tls=true
+      - traefik.http.routers.mark.tls.certresolver=letsencrypt
   mark:
     image: $CI_REGISTRY_IMAGE/example:$CI_COMMIT_SHORT_SHA
     environment:
