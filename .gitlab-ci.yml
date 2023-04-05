@@ -156,6 +156,10 @@ example:
     - docker push $CI_REGISTRY_IMAGE/example:$CI_COMMIT_SHORT_SHA
     - docker push $CI_REGISTRY_IMAGE/example:latest
 
+variables:
+  DEMO_SRV: "mark@cylab02.cylab.be"
+  DEMO_ROOT: "/home/mark/"
+
 # 
 # deploy demo server
 #
@@ -163,19 +167,30 @@ demo:
   stage: demo
   environment:
     name: mark-demo
-    url: http://mark.kube.cylab.be
-  image: cylab/kubectl
+    url: http://mark.play.cylab.be
+  image: alpine
   before_script:
-    # create the configuration (context) for our kubernetes cluster
-    - kubectl config set-cluster deploy-cluster --server="$KUBE_SERVER" --insecure-skip-tls-verify
-    - kubectl config set-credentials gitlab --token=$(echo $KUBE_TOKEN | base64 -d)
-    - kubectl config set-context deploy-cluster --cluster=deploy-cluster --namespace=mark-demo --user=gitlab
-    - kubectl config use-context deploy-cluster
+    # install envsubst
+    - apk add gettext
+    # install ssh-add
+    - apk add openssh-client
   script:
-    # use template to create the deploy config
-    - envsubst < demo-deploy.tmpl > demo-deploy.yaml
-    # deploy!
-    - kubectl apply -f demo-deploy.yaml
+    # create the new docker-compose.yml
+    - envsubst < example/docker-compose.tmpl > example/docker-compose.yml
+    # start ssh-agent and import ssh private key
+    - eval `ssh-agent`
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    # add server to list of known hosts
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - touch ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+    - echo $SSH_HOST_KEY >> ~/.ssh/known_hosts
+    # upload docker-compose and env.prod to server
+    - scp example/docker-compose.yml $DEMO_SRV:$DEMO_ROOT
+    # docker login and restart services
+    - ssh $DEMO_SRV "cd $DEMO_ROOT; docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY; docker compose up -d"
+
 
 
  
