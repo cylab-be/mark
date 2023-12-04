@@ -60,6 +60,7 @@ public class SourceWrapper implements Runnable {
         try {
             this.source.run(profile, client);
         } catch (Throwable ex) {
+            ex.printStackTrace(System.err);
             LoggerFactory.getLogger(SourceWrapper.class).error(
                     "Failed to start data source: " + ex.getMessage());
         }

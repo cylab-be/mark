@@ -51,6 +51,7 @@ public class DetectionAgentContainer implements Serializable, Runnable {
         try {
             agent.analyze(event, profile, datastore);
         } catch (Throwable ex) {
+            ex.printStackTrace(System.err);
             LoggerFactory.getLogger(this.getClass().getName()).error(
                     "Detector failed with exception!", ex);
         }
