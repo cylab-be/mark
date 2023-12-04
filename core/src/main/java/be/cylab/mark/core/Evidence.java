@@ -190,11 +190,12 @@ public class Evidence
 
     @Override
     public final int compareTo(final Evidence other) {
-        if (this.score >= other.score) {
-            return 1;
-        }
-
-        return -1;
+//        if (this.score >= other.score) {
+//            return 1;
+//        }
+//
+//        return -1;
+        return Double.compare(this.score, other.score);
     }
 
     /**
