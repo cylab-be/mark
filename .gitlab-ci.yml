@@ -2,7 +2,8 @@ stages:
   - test
   - integration
   - build
-  - release
+  - example
+  - demo
 
 cache:
   paths:
@@ -86,7 +87,7 @@ integration:batch:
     - bash example/test.sh
 
 #
-# build docker image for example server and push to gitlab's built-in docker registry
+# build docker image and push to gitlab's built-in docker registry
 #
 build:
   stage: build
@@ -95,42 +96,24 @@ build:
   # this job requires docker-in-docker
   tags:
     - dind
-  image: docker:19.03.1
+  image: docker:20.10.16
   services:
-    - docker:19.03.1-dind
+    - docker:20.10.16-dind
   before_script:
-    - docker info
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    # mark-example
-    - docker build --file Dockerfile-example --tag $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY/cylab/mark:latest .
-    - docker push $CI_REGISTRY/cylab/mark:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_REGISTRY/cylab/mark:latest
-
-release:demo:
-  stage: release
-  environment:
-    name: mark-demo
-    url: http://mark.kube.cylab.be
-  image: cylab/kubectl
-  before_script:
-    # create the configuration (context) for our kubernetes cluster
-    - kubectl config set-cluster deploy-cluster --server="$KUBE_SERVER" --insecure-skip-tls-verify
-    - kubectl config set-credentials gitlab --token=$(echo $KUBE_TOKEN | base64 -d)
-    - kubectl config set-context deploy-cluster --cluster=deploy-cluster --namespace=mark-demo --user=gitlab
-    - kubectl config use-context deploy-cluster
-  script:
-    # use template to create the deploy config
-    - envsubst < demo-deploy.tmpl > demo-deploy.yaml
-    # deploy!
-    - kubectl apply -f demo-deploy.yaml
+    # pull previous image version to enable caching inside dind
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
 
 #
 # build docker images and push to Docker Hub
 # (only for tags)
 #
-release:docker:
-  stage: release
+build:tagged:
+  stage: build
   # only when we push a new tag
   only:
     - tags
@@ -139,11 +122,10 @@ release:docker:
   # this job requires docker-in-docker
   tags:
     - dind
-  image: docker:19.03.1
+  image: docker:20.10.16
   services:
-    - docker:19.03.1-dind
+    - docker:20.10.16-dind
   before_script:
-    - docker info
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
   script:
     # pull previous image version to enable caching inside dind
@@ -152,17 +134,64 @@ release:docker:
     - docker build --tag cylab/mark:$CI_COMMIT_TAG --tag cylab/mark:latest .
     - docker push cylab/mark:$CI_COMMIT_TAG
     - docker push cylab/mark:latest
-    # mark-example
-    - docker build --file Dockerfile-example --tag cylab/mark-example:$CI_COMMIT_TAG --tag cylab/mark-example:latest .
-    - docker push cylab/mark-example:$CI_COMMIT_TAG
-    - docker push cylab/mark-example:latest
- 
 
-release:zip:
-  stage: release
-  only:
-    - tags
-  image: cylab/php72
+#
+# build the example image and store in GitLab built-in registry
+#
+example:
+  stage: example
+  dependencies:
+    - test:jdk-11:mongo-4.4
+  # this job requires docker-in-docker
+  tags:
+    - dind
+  image: docker:20.10.16
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - "curl https://download.cylab.be/api/mark/server-$CI_COMMIT_TAG-standalone.zip  --request POST --header \"Authorization: Bearer $UPLOAD_TOKEN\" -F \"file=@./server/target/server-$CI_COMMIT_TAG-standalone.zip\""
+    - cd example
+    - docker build --tag $CI_REGISTRY_IMAGE/example:$CI_COMMIT_SHORT_SHA --tag $CI_REGISTRY_IMAGE/example:latest .
+    - docker push $CI_REGISTRY_IMAGE/example:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE/example:latest
+
+variables:
+  DEMO_SRV: "mark@cylab02.cylab.be"
+  DEMO_ROOT: "/home/mark/"
+
+# 
+# deploy demo server
+#
+demo:
+  stage: demo
+  environment:
+    name: mark-demo
+    url: http://mark.play.cylab.be
+  image: alpine
+  before_script:
+    # install envsubst
+    - apk add gettext
+    # install ssh-add
+    - apk add openssh-client
+  script:
+    # create the new docker-compose.yml
+    - envsubst < example/docker-compose.tmpl > example/docker-compose.yml
+    # start ssh-agent and import ssh private key
+    - eval `ssh-agent`
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    # add server to list of known hosts
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - touch ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+    - echo $SSH_HOST_KEY >> ~/.ssh/known_hosts
+    # upload docker-compose and env.prod to server
+    - scp example/docker-compose.yml $DEMO_SRV:$DEMO_ROOT
+    # docker login and restart services
+    - ssh $DEMO_SRV "cd $DEMO_ROOT; docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY; docker compose up -d"
+
+
+
+ 
 

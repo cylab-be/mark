@@ -72,7 +72,7 @@ public class ExampleDataSource implements DataAgentInterface {
             data.setLabel("data.dummy");
             datastore.addRawData(data);
 
-            Thread.sleep(1000);
+            Thread.sleep(10000);
 
             i++;
             if (count > 0 && i >= count) {
