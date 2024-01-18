@@ -24,7 +24,6 @@
 package be.cylab.mark.detection;
 
 import be.cylab.mark.core.ClientWrapperInterface;
-import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
@@ -52,7 +51,7 @@ import java.util.Map;
  *
  * @author Thibault Debatty
  */
-public class Max implements DetectionAgentInterface {
+public class Max extends AbstractDetection {
 
     private static final int DEFAULT_TIME_WINDOW = 3600;
 
@@ -83,16 +82,15 @@ public class Max implements DetectionAgentInterface {
             new_ev.references().add(ev.getId());
         }
 
-        String report =
-                "Found <b>" + evidences.length + "</b> evidences with label "
-                + "<b>" + event.getLabel() + "</b> since "
-                + Instant.ofEpochMilli(from).toString() + "<br>"
-                + "Highest score was " + max;
-
+        // String report =
+        //         "Found <b>" + evidences.length + "</b> evidences with label "
+        //         + "<b>" + event.getLabel() + "</b> since "
+        //         + Instant.ofEpochMilli(from).toString() + "<br>"
+        //         + "Highest score was " + max;
         new_ev.setSubject(subject);
         new_ev.setTime(event.getTimestamp());
         new_ev.setScore(max);
-        new_ev.setReport(report);
+        new_ev.setReport(this.make_report());
         datastore.addEvidence(new_ev);
     }
 

@@ -3,7 +3,7 @@ services:
   mark-web:
     image: cylab/mark-web:1.5.1
     environment:
-      - MARK_HOST=mark_mark_1
+      - MARK_HOST=example-mark-1
       - MARK_PORT=8080
     ports:
       - "8000:80"
@@ -13,10 +13,10 @@ services:
       - mark
   mark:
     build:
-      context: .
-      dockerfile: Dockerfile-example
+      context: ..
+      dockerfile: Dockerfile
     environment:
-      - MARK_MONGO_HOST=mark_mongo_1
+      - MARK_MONGO_HOST=example-mongo-1
     ports:
       - "8080:8080"
     volumes:

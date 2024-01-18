@@ -3,17 +3,24 @@ services:
   mark:
     build: .
     environment:
-      - MARK_MONGO_HOST=mark_mongo_1
+      - MARK_MONGO_HOST=mark-mongo-1
+      - REPORT_MAKER_HOST=http://mark-report-maker:5000/jsonrpc
     ports:
       - "8080:8080"
     volumes:
       - data:/mark/data
     depends_on:
       - mongo
+      - repportmaker
   mongo:
     image: mongo:4.4
     volumes:
       - mongo:/data/db
+  repportmaker:
+    build: <path-to-report-maker>
+    container_name: mark-report-maker
+    ports:
+      - "4000:4000"
 
 volumes:
   data:
