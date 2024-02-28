@@ -234,7 +234,7 @@ public class Frequency extends AbstractDetection {
         evidence.setTime(data[data.length - 1].getTime());
 
         HashMap<String, Object> param = new HashMap<String, Object>();
-        param.put("subject", subject);
+        param.put("subject", event.getSubject());
         param.put("score", score);
         param.put("label", event.getLabel());
         param.put("old_report", freq_report);
