@@ -17,17 +17,26 @@ services:
       dockerfile: Dockerfile
     environment:
       - MARK_MONGO_HOST=example-mongo-1
+      - REPORT_MAKER_HOST=http://mark-report-maker:5000/jsonrpc
     ports:
       - "8080:8080"
     volumes:
       - data:/mark/data
     depends_on:
       - mongo
+      - reportmaker
   mongo:
     image: mongo:4.4
     volumes:
       - mongo:/data/db
+  reportmaker:
+    build: /home/stan/Documents/mark-python-report-maker
+    container_name: mark-report-maker
+    environment:
+          - MARK_HOST=http://mark:8080
 
+    ports:
+      - "4000:4000"
 volumes:
   data:
   mongo:

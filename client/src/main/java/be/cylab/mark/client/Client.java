@@ -44,7 +44,7 @@ public class Client implements ServerInterface {
      * {@inheritDoc}
      */
     @Override
-    public final String test() throws Throwable {
+    public String test() throws Throwable {
         return json_rpc_client.invoke("test", null, String.class);
 
     }
@@ -55,7 +55,7 @@ public class Client implements ServerInterface {
      * @param data {@inheritDoc}
      */
     @Override
-    public final void addRawData(final RawData data) throws Throwable {
+    public void addRawData(final RawData data) throws Throwable {
 
         json_rpc_client.invoke("addRawData", new Object[]{data});
 
@@ -67,7 +67,7 @@ public class Client implements ServerInterface {
      * @param bytes {@inheritDoc}
      */
     @Override
-    public final ObjectId addFile(final byte[] bytes, final String filename)
+    public ObjectId addFile(final byte[] bytes, final String filename)
             throws Throwable {
         return json_rpc_client.invoke(
                 "addFile", new Object[]{bytes, filename}, ObjectId.class);
@@ -79,7 +79,7 @@ public class Client implements ServerInterface {
      * @param file_id {@inheritDoc}
      */
     @Override
-    public final byte[] findFile(final ObjectId file_id) throws Throwable {
+    public byte[] findFile(final ObjectId file_id) throws Throwable {
         return json_rpc_client.invoke(
                 "findFile", new Object[]{file_id}, byte[].class);
     }
@@ -90,7 +90,7 @@ public class Client implements ServerInterface {
      * @param data {@inheritDoc}
      */
     @Override
-    public final void testString(final String data) throws Throwable {
+    public void testString(final String data) throws Throwable {
 
         json_rpc_client.invoke("testString", new Object[]{data});
     }
@@ -102,7 +102,7 @@ public class Client implements ServerInterface {
      * @return
      * @throws Throwable if something went wrong...
      */
-    public final RawData[] findData(final String json_query) throws Throwable {
+    public RawData[] findData(final String json_query) throws Throwable {
 
         ObjectNode node = new ObjectMapper().readValue(
                 json_query, ObjectNode.class);
@@ -118,7 +118,7 @@ public class Client implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public final RawData[] findRawData(
+    public RawData[] findRawData(
             final String label, final Map<String, String> subject,
             final long from, final long till) throws Throwable {
 
@@ -137,7 +137,7 @@ public class Client implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public final Evidence[] findEvidence(
+    public Evidence[] findEvidence(
             final String label, final Map<String, String> subject)
             throws Throwable {
 
@@ -159,7 +159,7 @@ public class Client implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public final Evidence findEvidenceById(final String id) throws Throwable {
+    public Evidence findEvidenceById(final String id) throws Throwable {
 
         return json_rpc_client.invoke(
                 "findEvidenceById",
@@ -174,7 +174,7 @@ public class Client implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public final void addEvidence(final Evidence evidence) throws Throwable {
+    public void addEvidence(final Evidence evidence) throws Throwable {
 
         json_rpc_client.invoke("addEvidence", new Object[]{evidence});
     }
@@ -187,7 +187,7 @@ public class Client implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public final Evidence[] findEvidence(final String label)
+    public Evidence[] findEvidence(final String label)
             throws Throwable {
 
         return json_rpc_client.invoke(
@@ -205,7 +205,7 @@ public class Client implements ServerInterface {
      * @throws Throwable
      */
     @Override
-    public final Evidence[] findEvidence(final String label, final int page)
+    public Evidence[] findEvidence(final String label, final int page)
             throws Throwable {
 
         return json_rpc_client.invoke(
@@ -215,7 +215,7 @@ public class Client implements ServerInterface {
     }
 
     @Override
-    public final Evidence[] findLastEvidences(
+    public Evidence[] findLastEvidences(
             final String label, final Map<String, String> subject)
             throws Throwable {
         return json_rpc_client.invoke(
@@ -225,25 +225,25 @@ public class Client implements ServerInterface {
     }
 
     @Override
-    public final URL getURL() {
+    public URL getURL() {
         return this.server_url;
     }
 
     @Override
-    public final Object getFromCache(final String key) throws Throwable {
+    public Object getFromCache(final String key) throws Throwable {
         return json_rpc_client.invoke(
                 "getFromCache", new Object[]{key}, Object.class);
     }
 
     @Override
-    public final void storeInCache(final String key, final Object value)
+    public void storeInCache(final String key, final Object value)
             throws Throwable {
         json_rpc_client.invoke(
                 "storeInCache", new Object[]{key, value}, Object.class);
     }
 
     @Override
-    public final boolean compareAndSwapInCache(
+    public boolean compareAndSwapInCache(
             final String key, final Object new_value, final Object old_value)
             throws Throwable {
         return json_rpc_client.invoke(
@@ -258,13 +258,13 @@ public class Client implements ServerInterface {
      * @throws Throwable if anything goes wrong
      */
     @Override
-    public final DetectionAgentProfile[] activation() throws Throwable {
+    public DetectionAgentProfile[] activation() throws Throwable {
         return json_rpc_client.invoke(
                 "activation", null, DetectionAgentProfile[].class);
     }
 
     @Override
-    public final void setAgentProfile(final DetectionAgentProfile profile)
+    public void setAgentProfile(final DetectionAgentProfile profile)
             throws Throwable {
 
         json_rpc_client.invoke(
@@ -273,7 +273,7 @@ public class Client implements ServerInterface {
     }
 
     @Override
-    public final Evidence[] findEvidenceSince(
+    public Evidence[] findEvidenceSince(
             final String label, final Map<String, String> subject,
             final long time)
             throws Throwable {
@@ -289,7 +289,7 @@ public class Client implements ServerInterface {
     }
 
     @Override
-    public final Evidence[] findEvidenceSince(
+    public Evidence[] findEvidenceSince(
             final String label, final long time)
             throws Throwable {
 
@@ -304,7 +304,7 @@ public class Client implements ServerInterface {
     }
 
     @Override
-    public final Evidence[] findEvidenceSince(final long time)
+    public Evidence[] findEvidenceSince(final long time)
             throws Throwable {
 
         Evidence[] evidences = json_rpc_client.invoke(
@@ -318,7 +318,7 @@ public class Client implements ServerInterface {
     }
 
     @Override
-    public final Evidence[][] findEvidenceForPeriodAndInterval(final int period,
+    public Evidence[][] findEvidenceForPeriodAndInterval(final int period,
             final int interval) throws Throwable {
 
         return json_rpc_client.invoke(
@@ -334,54 +334,54 @@ public class Client implements ServerInterface {
      *
      * @return
      */
-    public final JsonRpcClient getJsonRpcClient() {
+    public JsonRpcClient getJsonRpcClient() {
         return this.json_rpc_client;
     }
 
 
     @Override
-    public final void pause() throws Throwable {
+    public void pause() throws Throwable {
         json_rpc_client.invoke("pause", null);
     }
 
     @Override
-    public final void resume() throws Throwable {
+    public void resume() throws Throwable {
         json_rpc_client.invoke("resume", null);
     }
 
     @Override
-    public final Map status() throws Throwable {
+    public Map status() throws Throwable {
         return json_rpc_client.invoke("status", null, Map.class);
     }
 
     @Override
-    public final List<Map> history() throws Throwable {
+    public List<Map> history() throws Throwable {
         return json_rpc_client.invoke("history", null, List.class);
     }
 
     @Override
-    public final void reload() throws Throwable {
+    public void reload() throws Throwable {
         json_rpc_client.invoke("reload", null);
     }
 
     @Override
-    public final void restart() throws Throwable {
+    public void restart() throws Throwable {
         json_rpc_client.invoke("restart", null);
     }
 
     @Override
-    public final RawData[] findLastRawData() throws Throwable {
+    public RawData[] findLastRawData() throws Throwable {
         return json_rpc_client.invoke("findLastRawData", null, RawData[].class);
     }
 
     @Override
-    public final Evidence[] findLastEvidences() throws Throwable {
+    public Evidence[] findLastEvidences() throws Throwable {
         return json_rpc_client.invoke(
                 "findLastEvidences", null, Evidence[].class);
     }
 
     @Override
-    public final DataAgentProfile[] sources() throws Throwable {
+    public DataAgentProfile[] sources() throws Throwable {
         return json_rpc_client.invoke(
                 "sources", null, DataAgentProfile[].class);
     }
