@@ -78,7 +78,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author Thibault Debatty
  */
-public class Frequency implements DetectionAgentInterface {
+public class Frequency extends AbstractDetection {
 
     /**
      * Set default time window parameter.
@@ -144,7 +144,6 @@ public class Frequency implements DetectionAgentInterface {
         if (data.length < min_raw_data) {
             return;
         }
-
         // count the number of data records in each time bin
         int[] time_bins = bin(data, start_time, end_time);
 
@@ -233,7 +232,16 @@ public class Frequency implements DetectionAgentInterface {
         evidence.setSubject(event.getSubject());
         evidence.setLabel(dap.getLabel());
         evidence.setTime(data[data.length - 1].getTime());
-        evidence.setReport(freq_report);
+
+        HashMap<String, Object> param = new HashMap<String, Object>();
+        param.put("subject", subject);
+        param.put("score", score);
+        param.put("label", event.getLabel());
+        param.put("old_report", freq_report);
+        param.put("start", start_time);
+        param.put("end", end_time);
+
+        evidence.setReport(this.make_report(param));
         si.addEvidence(evidence);
     }
 

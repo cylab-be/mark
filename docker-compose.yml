@@ -11,14 +11,17 @@ services:
       - data:/mark/data
     depends_on:
       - mongo
-      - repportmaker
+      - reportmaker
   mongo:
     image: mongo:4.4
     volumes:
       - mongo:/data/db
-  repportmaker:
-    build: <path-to-report-maker>
+  reportmaker:
+    build: /home/stan/Documents/mark-python-report-maker
     container_name: mark-report-maker
+    environment:
+      - MARK_HOST=http://mark:8080
+
     ports:
       - "4000:4000"
 

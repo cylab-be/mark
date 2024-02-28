@@ -29,6 +29,7 @@ import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import java.time.Instant;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * This operator keeps the highest score of evidences reports produced during
@@ -82,15 +83,22 @@ public class Max extends AbstractDetection {
             new_ev.references().add(ev.getId());
         }
 
-        // String report =
+        // String report =testmail@example.be
         //         "Found <b>" + evidences.length + "</b> evidences with label "
         //         + "<b>" + event.getLabel() + "</b> since "
         //         + Instant.ofEpochMilli(from).toString() + "<br>"
         //         + "Highest score was " + max;
+        HashMap<String, Object> param = new HashMap<String, Object>();
+        // param.put("subject", subject);
+        param.put("score", max);
+        param.put("length", evidences.length);
+        param.put("label", event.getLabel());
+        param.put("evidences", evidences);
+        param.put("since", from);
         new_ev.setSubject(subject);
         new_ev.setTime(event.getTimestamp());
         new_ev.setScore(max);
-        new_ev.setReport(this.make_report());
+        new_ev.setReport(this.make_report(new Object[]{param}));
         datastore.addEvidence(new_ev);
     }
 
