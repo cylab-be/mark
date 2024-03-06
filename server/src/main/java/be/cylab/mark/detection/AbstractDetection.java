@@ -9,8 +9,8 @@ abstract class AbstractDetection implements DetectionAgentInterface{
         try {
             JsonRpcHttpClient jrc = new JsonRpcHttpClient(new URL(System.getenv("REPORT_MAKER_HOST")));
             return jrc.invoke(this.getClass().getTypeName(),  obj, String.class);
-        } catch {
-            return new String("Unable to connect to Report Server")
+        } catch (Throwable t){
+            return new String("Unable to connect to Report Server");
         }
     }
     protected final String make_report(){
