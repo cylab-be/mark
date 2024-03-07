@@ -239,7 +239,7 @@ public class Frequency extends AbstractDetection {
         param.put("start", start_time);
         param.put("end", end_time);
 
-        evidence.setReport(this.make_report(param));
+        evidence.setReport(this.makeReport(param));
         si.addEvidence(evidence);
     }
 

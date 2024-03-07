@@ -98,7 +98,7 @@ public class Max extends AbstractDetection {
         new_ev.setSubject(subject);
         new_ev.setTime(event.getTimestamp());
         new_ev.setScore(max);
-        new_ev.setReport(this.make_report(new Object[]{param}));
+        new_ev.setReport(this.makeReport(new Object[]{param}));
         datastore.addEvidence(new_ev);
     }
 

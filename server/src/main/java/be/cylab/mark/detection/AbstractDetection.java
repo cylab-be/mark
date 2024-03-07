@@ -5,16 +5,21 @@ import be.cylab.mark.core.DetectionAgentInterface;
 import java.net.URL;
 
 
-abstract class AbstractDetection implements DetectionAgentInterface{
-    protected final String make_report(Object[] obj){
+/**
+ * An Abstract class for Dectection Agent providing the communication
+ * with Report Maker Engine.
+ */
+abstract class AbstractDetection implements DetectionAgentInterface {
+    protected final String makeReport(final Object[] obj) {
         try {
-            JsonRpcHttpClient jrc = new JsonRpcHttpClient(new URL(System.getenv("REPORT_MAKER_HOST")));
-            return jrc.invoke(this.getClass().getTypeName(),  obj, String.class);
-        } catch (Throwable t){
+            JsonRpcHttpClient jrc = new JsonRpcHttpClient(
+                    new URL(System.getenv("REPORT_MAKER_HOST")));
+            return jrc.invoke(this.getClass().getTypeName(), obj, String.class);
+        } catch (Throwable t) {
             return "Unable to connect to Report Server";
         }
     }
-    protected final String make_report(Object obj){
-        return make_report(new Object[]{obj});
+    protected final String makeReport(final Object obj) {
+        return makeReport(new Object[] {obj});
     }
 }
