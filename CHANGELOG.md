@@ -3,6 +3,32 @@
 ## Unreleased
 
 
+* **Added some output when errors occur in the DetectionAgentContainer and SourceWrapper, printing the error stack trace to the error output. This is done for better visibility on where exactly the error occured for development purposes**
+[2f87771dc2592db](https://github.com/cylab/mark/commit/2f87771dc2592db) Georgi Nikolov *2023-12-04 10:36:11*
+* **Updated the compareTo() function as it was giving errors when using specifically comparing the scores (Doubles) in the normal way. Instead using the Double.compare() function offers better performance**
+[d5f2d4823ba13c3](https://github.com/cylab/mark/commit/d5f2d4823ba13c3) Georgi Nikolov *2023-12-04 10:34:02*
+* **add restart directive to example/docker-compose**
+[6a216de376ee971](https://github.com/cylab/mark/commit/6a216de376ee971) Thibault Debatty *2023-04-05 12:44:45*
+* **reduce flow of example data**
+[1a836d8dfd9c28c](https://github.com/cylab/mark/commit/1a836d8dfd9c28c) Thibault Debatty *2023-04-05 12:42:29*
+* **update env for mark demo**
+[a010ead9d24ecad](https://github.com/cylab/mark/commit/a010ead9d24ecad) Thibault Debatty *2023-04-05 12:20:42*
+* **add traefik config to docker-compose.tmpl**
+[174f72decd9ad19](https://github.com/cylab/mark/commit/174f72decd9ad19) Thibault Debatty *2023-04-05 12:06:18*
+* **auto-deploy with docker-compose**
+[ab8834851fa0e1d](https://github.com/cylab/mark/commit/ab8834851fa0e1d) Thibault Debatty *2023-04-05 10:22:16*
+* **refactor build pipeline**
+[c19a2138478a1fc](https://github.com/cylab/mark/commit/c19a2138478a1fc) Thibault Debatty *2023-04-05 09:52:47*
+* **Update dep.xml : create default data directory, otherwize detectors may crash with "invalid data directory"**
+[0894a0c369912d2](https://github.com/cylab/mark/commit/0894a0c369912d2) Tibo *2023-01-19 08:36:01*
+* **updated CHANGELOG**
+[804ea144a34f094](https://github.com/cylab/mark/commit/804ea144a34f094) Georgi Nikolov *2022-08-23 10:16:01*
+* **Added Unit tests for findEvidenceForPeriodAndInterval() method**
+[6f02ab7a946e5f8](https://github.com/cylab/mark/commit/6f02ab7a946e5f8) Georgi Nikolov *2022-08-23 10:15:26*
+* **Implemented the findEvidenceForPeriodAndInterval() method, responsible for fetching and binning all evidences since a given date and separating them in bins depending on the given interval**
+[87207f6a8fc97ab](https://github.com/cylab/mark/commit/87207f6a8fc97ab) Georgi Nikolov *2022-08-23 10:14:54*
+* **Added a new method findEvidenceForPeriodAndInterval() responsible for collecting and binning all evidences since a given date, depending on the interval given**
+[29e5e55b86875b8](https://github.com/cylab/mark/commit/29e5e55b86875b8) Georgi Nikolov *2022-08-23 10:13:59*
 * **Implemented the findEvidenceSince(time) method for the Unit tests**
 [984e8c09d83ba7e](https://github.com/cylab/mark/commit/984e8c09d83ba7e) Georgi Nikolov *2022-03-28 11:36:56*
 * **implemented the findEvidenceSince(time) method as defined in the ServerInterface, fetch all evidences produced by all agents since a given time**

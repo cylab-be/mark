@@ -24,16 +24,10 @@
 package be.cylab.mark.detection;
 
 import be.cylab.mark.core.ClientWrapperInterface;
-import be.cylab.mark.core.DetectionAgentInterface;
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import java.io.IOException;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -47,6 +41,11 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Perform a frequency analysis over the data regarding this subject.
@@ -116,7 +115,6 @@ public class Frequency extends AbstractDetection {
 
     /**
      * Analyze function inherited from the DetectionAgentInterface.
-     *
      * accepts the subject to analyze trigger of the agent the profile used
      * to load the agent the database to which to connect to gather RawData
      * @param event
@@ -359,9 +357,9 @@ public class Frequency extends AbstractDetection {
 
     /**
      * Method for drawing and saving to a file the timeseries figure.
-     * @param times
+     * @param time_bins
+     * @param start_time
      * @param title
-     * @param time
      * @return
      * @throws IOException
      */
@@ -402,7 +400,6 @@ public class Frequency extends AbstractDetection {
     /**
      * Method for generating a figure from the data recovered from the database.
      * Method for generating a graph from the data recovered from the database.
-     * @param dataset
      * @param title
      * @throws IOException
      */
@@ -466,7 +463,7 @@ public class Frequency extends AbstractDetection {
      * - the 2 points situated right after the peak
      *
      * @param values
-     * @param peak_value
+     * @param index_of_peak
      */
     private void removePeak(final double[] values, final int index_of_peak) {
         double[] erasure_values = new double[]{0.2, 0.1, 0, 0.1, 0.2};
@@ -498,7 +495,7 @@ public class Frequency extends AbstractDetection {
                                     final double threshold) {
 
         double[] values_to_analyze = values.clone();
-        Map<Integer, Double> peaks = new HashMap<>();
+        HashMap<Integer, Double> peaks = new HashMap<>();
         while (true) {
             double peak_value = max(values_to_analyze);
 
