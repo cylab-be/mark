@@ -23,7 +23,12 @@
  */
 package be.cylab.mark.detection;
 
-import be.cylab.mark.core.*;
+import be.cylab.mark.core.ClientWrapperInterface;
+import be.cylab.mark.core.DetectionAgentInterface;
+import be.cylab.mark.core.DetectionAgentProfile;
+import be.cylab.mark.core.Event;
+import be.cylab.mark.core.Evidence;
+import be.cylab.mark.core.RawData;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -73,7 +78,8 @@ import java.util.HashMap;
  *
  * @author Thibault Debatty
  */
-public class Frequency extends ReportPythonClient implements DetectionAgentInterface {
+public class Frequency
+        extends ReportPythonClient implements DetectionAgentInterface {
 
     /**
      * Set default time window parameter.
