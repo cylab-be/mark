@@ -1,6 +1,5 @@
 package be.cylab.mark.detection;
 import com.googlecode.jsonrpc4j.JsonRpcHttpClient;
-import be.cylab.mark.core.DetectionAgentInterface;
 
 import java.net.URL;
 
@@ -9,7 +8,7 @@ import java.net.URL;
  * An Abstract class for Dectection Agent providing the communication
  * with Report Maker Engine.
  */
-abstract class AbstractDetection implements DetectionAgentInterface {
+class ReportPythonClient {
     protected final String makeReport(final Object[] obj) {
         try {
             JsonRpcHttpClient jrc = new JsonRpcHttpClient(

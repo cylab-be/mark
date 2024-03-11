@@ -27,6 +27,7 @@ import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
+import be.cylab.mark.core.DetectionAgentInterface;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,7 +53,7 @@ import java.util.Map;
  *
  * @author Thibault Debatty
  */
-public class Max extends AbstractDetection {
+public class Max extends ReportPythonClient implements DetectionAgentInterface {
 
     private static final int DEFAULT_TIME_WINDOW = 3600;
 
