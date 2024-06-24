@@ -24,11 +24,12 @@
 package be.cylab.mark.detection;
 
 import be.cylab.mark.core.ClientWrapperInterface;
-import be.cylab.mark.core.DetectionAgentInterface;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
-import java.time.Instant;
+import be.cylab.mark.core.DetectionAgentInterface;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -52,7 +53,7 @@ import java.util.Map;
  *
  * @author Thibault Debatty
  */
-public class Max implements DetectionAgentInterface {
+public class Max extends ReportPythonClient implements DetectionAgentInterface {
 
     private static final int DEFAULT_TIME_WINDOW = 3600;
 
@@ -83,16 +84,22 @@ public class Max implements DetectionAgentInterface {
             new_ev.references().add(ev.getId());
         }
 
-        String report =
-                "Found <b>" + evidences.length + "</b> evidences with label "
-                + "<b>" + event.getLabel() + "</b> since "
-                + Instant.ofEpochMilli(from).toString() + "<br>"
-                + "Highest score was " + max;
-
+        // String report =testmail@example.be
+        //         "Found <b>" + evidences.length + "</b> evidences with label "
+        //         + "<b>" + event.getLabel() + "</b> since "
+        //         + Instant.ofEpochMilli(from).toString() + "<br>"
+        //         + "Highest score was " + max;
+        HashMap<String, Object> param = new HashMap<>();
+        // param.put("subject", subject);
+        param.put("score", max);
+        param.put("length", evidences.length);
+        param.put("label", event.getLabel());
+        param.put("evidences", evidences);
+        param.put("since", from);
         new_ev.setSubject(subject);
         new_ev.setTime(event.getTimestamp());
         new_ev.setScore(max);
-        new_ev.setReport(report);
+        new_ev.setReport(this.makeReport(new Object[]{param}));
         datastore.addEvidence(new_ev);
     }
 

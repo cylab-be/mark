@@ -25,15 +25,10 @@ package be.cylab.mark.detection;
 
 import be.cylab.mark.core.ClientWrapperInterface;
 import be.cylab.mark.core.DetectionAgentInterface;
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import be.cylab.mark.core.DetectionAgentProfile;
 import be.cylab.mark.core.Event;
 import be.cylab.mark.core.Evidence;
 import be.cylab.mark.core.RawData;
-import java.io.IOException;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
@@ -47,6 +42,11 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Perform a frequency analysis over the data regarding this subject.
@@ -78,7 +78,8 @@ import org.jfree.data.xy.XYSeriesCollection;
  *
  * @author Thibault Debatty
  */
-public class Frequency implements DetectionAgentInterface {
+public class Frequency
+        extends ReportPythonClient implements DetectionAgentInterface {
 
     /**
      * Set default time window parameter.
@@ -116,7 +117,6 @@ public class Frequency implements DetectionAgentInterface {
 
     /**
      * Analyze function inherited from the DetectionAgentInterface.
-     *
      * accepts the subject to analyze trigger of the agent the profile used
      * to load the agent the database to which to connect to gather RawData
      * @param event
@@ -144,7 +144,6 @@ public class Frequency implements DetectionAgentInterface {
         if (data.length < min_raw_data) {
             return;
         }
-
         // count the number of data records in each time bin
         int[] time_bins = bin(data, start_time, end_time);
 
@@ -233,7 +232,16 @@ public class Frequency implements DetectionAgentInterface {
         evidence.setSubject(event.getSubject());
         evidence.setLabel(dap.getLabel());
         evidence.setTime(data[data.length - 1].getTime());
-        evidence.setReport(freq_report);
+
+        HashMap<String, Object> param = new HashMap<String, Object>();
+        param.put("subject", event.getSubject());
+        param.put("score", score);
+        param.put("label", event.getLabel());
+        param.put("old_report", freq_report);
+        param.put("start", start_time);
+        param.put("end", end_time);
+
+        evidence.setReport(this.makeReport(param));
         si.addEvidence(evidence);
     }
 
@@ -351,9 +359,9 @@ public class Frequency implements DetectionAgentInterface {
 
     /**
      * Method for drawing and saving to a file the timeseries figure.
-     * @param times
+     * @param time_bins
+     * @param start_time
      * @param title
-     * @param time
      * @return
      * @throws IOException
      */
@@ -394,7 +402,6 @@ public class Frequency implements DetectionAgentInterface {
     /**
      * Method for generating a figure from the data recovered from the database.
      * Method for generating a graph from the data recovered from the database.
-     * @param dataset
      * @param title
      * @throws IOException
      */
@@ -458,7 +465,7 @@ public class Frequency implements DetectionAgentInterface {
      * - the 2 points situated right after the peak
      *
      * @param values
-     * @param peak_value
+     * @param index_of_peak
      */
     private void removePeak(final double[] values, final int index_of_peak) {
         double[] erasure_values = new double[]{0.2, 0.1, 0, 0.1, 0.2};
@@ -490,7 +497,7 @@ public class Frequency implements DetectionAgentInterface {
                                     final double threshold) {
 
         double[] values_to_analyze = values.clone();
-        Map<Integer, Double> peaks = new HashMap<>();
+        HashMap<Integer, Double> peaks = new HashMap<>();
         while (true) {
             double peak_value = max(values_to_analyze);
 

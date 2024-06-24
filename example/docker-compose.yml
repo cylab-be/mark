@@ -3,7 +3,7 @@ services:
   mark-web:
     image: cylab/mark-web:1.5.1
     environment:
-      - MARK_HOST=mark_mark_1
+      - MARK_HOST=example-mark-1
       - MARK_PORT=8080
     ports:
       - "8000:80"
@@ -13,21 +13,30 @@ services:
       - mark
   mark:
     build:
-      context: .
-      dockerfile: Dockerfile-example
+      context: ..
+      dockerfile: Dockerfile
     environment:
-      - MARK_MONGO_HOST=mark_mongo_1
+      - MARK_MONGO_HOST=example-mongo-1
+      - REPORT_MAKER_HOST=http://mark-report-maker:5000/jsonrpc
     ports:
       - "8080:8080"
     volumes:
       - data:/mark/data
     depends_on:
       - mongo
+      - reportmaker
   mongo:
     image: mongo:4.4
     volumes:
       - mongo:/data/db
+  reportmaker:
+    build: /home/stan/Documents/mark-python-report-maker
+    container_name: mark-report-maker
+    environment:
+          - MARK_HOST=http://mark:8080
 
+    ports:
+      - "4000:4000"
 volumes:
   data:
   mongo:
