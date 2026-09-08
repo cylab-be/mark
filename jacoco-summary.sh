@@ -26,9 +26,9 @@ awk -F ',' '{
   meth_covered += $13; } 
 END { 
   print "Code Coverage Summary:";
-  printf "  Instructions: %.2f% (%d/%d)\n", 100*inst_covered/inst, inst_covered, inst;
-  printf "  Branches:     %.2f% (%d/%d)\n", 100*br_covered/br, br_covered, br;
-  printf "  Lines:        %.2f% (%d/%d)\n", 100*line_covered/line, line_covered, line;
-  printf "  Complexity:   %.2f% (%d/%d)\n", 100*comp_covered/comp, comp_covered, comp;
-  printf "  Methods:      %.2f% (%d/%d)\n", 100*meth_covered/meth, meth_covered, meth; }
+  printf "  Instructions: %.2f%% (%d/%d)\n", 100*inst_covered/inst, inst_covered, inst;
+  printf "  Branches:     %.2f%% (%d/%d)\n", 100*br_covered/br, br_covered, br;
+  printf "  Lines:        %.2f%% (%d/%d)\n", 100*line_covered/line, line_covered, line;
+  printf "  Complexity:   %.2f%% (%d/%d)\n", 100*comp_covered/comp, comp_covered, comp;
+  printf "  Methods:      %.2f%% (%d/%d)\n", 100*meth_covered/meth, meth_covered, meth; }
 ' $1
