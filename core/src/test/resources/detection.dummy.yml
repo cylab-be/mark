@@ -3,6 +3,7 @@
 ---
 class_name:       mark.core.DummyDetector
 label:            detection.dummy
+description:      test of the description
 trigger_label:    data.http
 trigger_interval: 1800
 parameters:

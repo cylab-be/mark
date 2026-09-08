@@ -43,6 +43,7 @@ public class DataAgentProfileTest extends TestCase{
 
         assertEquals("mark.core.DummyData", profile.getClassName());
         assertEquals("data.dummy", profile.getLabel());
+        assertEquals("test", profile.getDescription());
         assertEquals("dummy_file.txt", profile.getParameters().get("file"));
 
     }

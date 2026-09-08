@@ -24,6 +24,7 @@ public class DetectionAgentProfileTest
 
         assertEquals("mark.core.DummyDetector", profile.getClassName());
         assertEquals("detection.dummy", profile.getLabel());
+        assertEquals("test of the description", profile.getDescription());
         assertEquals("data.http", profile.getTriggerLabel());
         assertEquals(1800, profile.getTriggerInterval());
         assertEquals("echo", profile.getParameter("say"));
