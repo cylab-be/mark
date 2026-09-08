@@ -43,6 +43,11 @@ public class AbstractAgentProfile {
     private String label;
 
     /**
+     * The description of what the agent does.
+     */
+    private String description;
+
+    /**
      * Additional parameters to pass to the agent (e.g time range).
      */
     private Map<String, String> parameters = new HashMap<>();
@@ -77,6 +82,22 @@ public class AbstractAgentProfile {
      */
     public final void setLabel(final String label) {
         this.label = label;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final String getDescription() {
+        return description;
+    }
+
+    /**
+     *
+     * @param label
+     */
+    public final void setDescription(final String description) {
+        this.description = description;
     }
 
     /**
