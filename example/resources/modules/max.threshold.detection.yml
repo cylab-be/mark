@@ -3,6 +3,7 @@
 ---
 class_name:     be.cylab.mark.detection.Threshold
 label:          detection.filtered.max.1h
+description:    test detector for filtered max values
 trigger_label:  detection.max.1h
 parameters:
   value: 0.8

@@ -1,0 +1,12 @@
+# A data agent that produces http entries
+# from a file
+#
+---
+class_name:  be.cylab.mark.data.FileSource
+label:       data.http
+description: data agent focused on processing proxy http data
+parameters:
+  speed:    100
+  file:     ./freq_test_data.txt
+  regex:    "(?<timestamp>\\d+\\.\\d+)\\s+\\d+\\s(?<client>\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\s\\S+\\s\\S+\\s\\S+\\s(http:\\/\\/|https:\\/\\/|ftp:\\/\\/)?(?<server>((\\w|-)*\\.?){2,})"
+

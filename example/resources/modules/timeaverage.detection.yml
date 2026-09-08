@@ -3,6 +3,7 @@
 ---
 class_name:     be.cylab.mark.detection.TimeAverage
 label:          detection.timeaverage
+description:    detection through the analysis of time average between connections
 trigger_label:  detection.example
 parameters:
   window: 3600

@@ -3,4 +3,5 @@
 ---
 class_name:     be.cylab.mark.example.ExampleDetector
 label:          detection.example
+description:    example detector
 trigger_label:  data

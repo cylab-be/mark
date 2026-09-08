@@ -1,6 +1,7 @@
 ---
 class_name:     be.cylab.mark.detection.WOWAgregation
 label:          agregation.wowa
+description:    aggregation through the use of Weighted Ordered Weighted Average
 trigger_label:  ^.*(timeaverage)|^.*(dummy)|^.*(filtered).*$
 parameters:
   w_weights:  0.1, 0.4, 0.5

@@ -3,4 +3,5 @@
 ---
 class_name:     be.cylab.mark.example.ExampleDetector
 label:          detection.dummy
+description:    test dummy detector for max values
 trigger_label:  detection.max

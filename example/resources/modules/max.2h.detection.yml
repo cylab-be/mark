@@ -3,6 +3,7 @@
 ---
 class_name:     be.cylab.mark.detection.Max
 label:          detection.max.2h
+description:    test detector focused on max values for 2h
 trigger_label:  detection.example
 parameters:
   window: 7200
